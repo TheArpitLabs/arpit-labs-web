@@ -5,6 +5,7 @@ export const labNoteSchema = z.object({
   slug: z.string().min(3, "Slug must be at least 3 characters."),
   excerpt: z.string().min(10, "Excerpt must be at least 10 characters.").optional(),
   content: z.string().optional(),
+  category: z.string().optional(),
   cover_image: z.string().url().optional(),
   tags: z.array(z.string()).optional().default([]),
   published: z.boolean().optional().default(false),

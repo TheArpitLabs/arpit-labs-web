@@ -6,7 +6,7 @@ import { handleDatabaseError } from "@/lib/errors";
 export const journeyRepository = {
   async getJourneyTimeline() {
     const { data, error } = await supabaseServer
-      .from("journey")
+      .from("journey_entries")
       .select("*")
       .order("display_order", { ascending: true })
       .order("year", { ascending: true });
@@ -17,7 +17,7 @@ export const journeyRepository = {
 
   async createJourneyEntry(payload: JourneyInput) {
     const { data, error } = await supabaseServer
-      .from("journey")
+      .from("journey_entries")
       .insert(payload)
       .select()
       .single();
@@ -28,7 +28,7 @@ export const journeyRepository = {
 
   async updateJourneyEntry(id: string, payload: Partial<JourneyInput>) {
     const { data, error } = await supabaseServer
-      .from("journey")
+      .from("journey_entries")
       .update(payload)
       .eq("id", id)
       .select()
@@ -39,7 +39,7 @@ export const journeyRepository = {
   },
 
   async deleteJourneyEntry(id: string) {
-    const { error } = await supabaseServer.from("journey").delete().eq("id", id);
+    const { error } = await supabaseServer.from("journey_entries").delete().eq("id", id);
     if (error) throw handleDatabaseError(error);
     return true;
   }

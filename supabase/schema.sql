@@ -2,6 +2,22 @@
 
 create extension if not exists "pgcrypto";
 
+create table if not exists projects (
+  id uuid primary key default gen_random_uuid(),
+  title text not null,
+  slug text unique not null,
+  description text not null,
+  content text,
+  category text not null,
+  tags text[] default array[]::text[],
+  github_url text,
+  demo_url text,
+  cover_image text,
+  featured boolean default false,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
 create table if not exists experiments (
   id uuid primary key default gen_random_uuid(),
   title text not null,
@@ -57,7 +73,7 @@ create table if not exists newsletter_subscribers (
 );
 
 -- Storage buckets prepared for future asset uploads
+-- projects
 -- experiments
 -- lab-notes
 -- uploads
--- future-projects

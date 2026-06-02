@@ -6,6 +6,7 @@ export const experimentSchema = z.object({
   description: z.string().min(10, "Description must be at least 10 characters."),
   status: z.string().min(3),
   category: z.string().optional(),
+  tech_stack: z.array(z.string()).optional().default([]),
   featured: z.boolean().optional().default(false),
   cover_image: z.string().url().optional(),
   content: z.string().optional()

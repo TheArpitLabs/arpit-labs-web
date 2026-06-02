@@ -1,10 +1,19 @@
 interface NexusLogoProps {
   className?: string;
+  size?: number;
 }
 
-export function NexusLogo({ className }: NexusLogoProps) {
+export function NexusLogo({ className, size = 120 }: NexusLogoProps) {
   return (
-    <svg viewBox="0 0 120 120" fill="none" className={className} aria-hidden="true" role="img">
+    <svg 
+      width={size} 
+      height={size} 
+      viewBox="0 0 120 120" 
+      fill="none" 
+      className={className} 
+      aria-hidden="true" 
+      role="img"
+    >
       <defs>
         <linearGradient id="nexus-gradient" x1="0" y1="0" x2="1" y2="1">
           <stop offset="0%" stopColor="#2563EB" />

@@ -8,22 +8,15 @@ import { Timeline } from "@/components/shared/Timeline";
 import { Card, BentoCard } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Brain, Cpu, Code2, Wifi } from "lucide-react";
+import { getExperiments, getLabNotes, getJourneyTimeline } from "@/lib/actions/server-actions";
 
-const experiments = [
-  { title: "Edge AI Research", status: "Researching" },
-  { title: "ESP32 Smart Home", status: "Building" },
-  { title: "Autonomous Navigation", status: "Testing" },
-  { title: "Cybersecurity Toolkit", status: "Completed" }
-];
+export default async function HomePage() {
+  const [experiments, notes, journey] = await Promise.all([
+    getExperiments(),
+    getLabNotes(),
+    getJourneyTimeline()
+  ]);
 
-const notes = [
-  { title: "How I Learned Edge AI", description: "A practical approach to model optimization for constrained hardware." },
-  { title: "Building Embedded Systems", description: "Integrating sensors, firmware, and real-time control loops." },
-  { title: "Traffic Management Research", description: "Designing resilient systems for city-scale automation." },
-  { title: "Lessons From Hackathons", description: "Rapid experimentation with engineering-first workflows." }
-];
-
-export default function HomePage() {
   return (
     <main className="bg-background text-foreground">
       <Navbar />
@@ -162,22 +155,28 @@ export default function HomePage() {
                 <h2 className="text-section-title">Live work in progress across the lab.</h2>
               </div>
               <p className="max-w-xl text-body text-muted">
-                Mock exploration snapshots that feel like engineering research and product discovery.
+                Recent exploration snapshots from the lab research and product discovery.
               </p>
             </div>
 
             <div className="mt-10 grid gap-6 lg:grid-cols-2">
-              {experiments.map((experiment) => (
-                <Card key={experiment.title} className="border-border/70 p-6 dark:border-slate-800">
-                  <div className="flex items-center justify-between gap-4">
-                    <div>
-                      <h3 className="text-xl font-semibold text-foreground">{experiment.title}</h3>
-                      <p className="mt-2 text-body text-muted">A concise view of the current lab work.</p>
+              {experiments.length > 0 ? (
+                experiments.map((experiment) => (
+                  <Card key={experiment.id} className="border-border/70 p-6 dark:border-slate-800">
+                    <div className="flex items-center justify-between gap-4">
+                      <div className="space-y-1">
+                        <h3 className="text-xl font-semibold text-foreground">{experiment.title}</h3>
+                        <p className="text-body text-muted line-clamp-2">{experiment.description}</p>
+                      </div>
+                      <Badge variant="status">{experiment.status}</Badge>
                     </div>
-                    <Badge variant="status">{experiment.status}</Badge>
-                  </div>
-                </Card>
-              ))}
+                  </Card>
+                ))
+              ) : (
+                <div className="col-span-full py-12 text-center text-muted">
+                  No active experiments to display right now.
+                </div>
+              )}
             </div>
           </section>
         </AnimatedSection>
@@ -188,17 +187,23 @@ export default function HomePage() {
               <p className="text-sm uppercase tracking-[0.28em] text-muted">Lab Notes</p>
               <h2 className="text-section-title">Insights from experiments and systems work.</h2>
               <p className="max-w-3xl text-body text-muted">
-                Notion-inspired note previews that feel calm and focused, not cluttered or overly personal.
+                Focused engineering documentation and system design patterns.
               </p>
             </div>
 
             <div className="mt-10 grid gap-6 xl:grid-cols-2">
-              {notes.map((note) => (
-                <Card key={note.title} className="border-border/70 p-6 dark:border-slate-800">
-                  <h3 className="text-xl font-semibold text-foreground">{note.title}</h3>
-                  <p className="mt-3 text-body text-muted">{note.description}</p>
-                </Card>
-              ))}
+              {notes.length > 0 ? (
+                notes.map((note) => (
+                  <Card key={note.id} className="border-border/70 p-6 dark:border-slate-800">
+                    <h3 className="text-xl font-semibold text-foreground">{note.title}</h3>
+                    <p className="mt-3 text-body text-muted line-clamp-3">{note.excerpt || note.content}</p>
+                  </Card>
+                ))
+              ) : (
+                <div className="col-span-full py-12 text-center text-muted">
+                  New lab notes are currently being drafted.
+                </div>
+              )}
             </div>
           </section>
         </AnimatedSection>
@@ -212,7 +217,7 @@ export default function HomePage() {
                 A modern timeline that highlights engineering milestones and the lab&apos;s growing systems focus.
               </p>
             </div>
-            <Timeline />
+            <Timeline items={journey} />
           </section>
         </AnimatedSection>
 

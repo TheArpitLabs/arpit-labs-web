@@ -1,47 +1,71 @@
-export interface OpenGraphOptions {
+import type { Metadata } from "next";
+
+const siteName = "Arpit Labs";
+const siteUrl = "https://arpitlabs.example";
+const defaultImage = "/og-image.png";
+
+interface CreateMetadataOptions {
   title: string;
   description: string;
-  url: string;
+  path?: string;
   image?: string;
-  siteName?: string;
+  keywords?: string[];
 }
 
-export interface TwitterCardOptions extends OpenGraphOptions {
-  card?: "summary" | "summary_large_image" | "app" | "player";
-  creator?: string;
-}
+export function createPageMetadata({
+  title,
+  description,
+  path = "/",
+  image = defaultImage,
+  keywords = [],
+}: CreateMetadataOptions): Metadata {
+  const url = new URL(path, siteUrl).toString();
 
-export function buildMetadata(options: OpenGraphOptions) {
   return {
-    title: options.title,
-    description: options.description,
+    title,
+    description,
+    keywords,
+    alternates: {
+      canonical: path,
+    },
     openGraph: {
-      title: options.title,
-      description: options.description,
-      url: options.url,
-      siteName: options.siteName ?? "Arpit Labs",
-      images: options.image ? [{ url: options.image }] : []
-    }
-  };
-}
-
-export function buildTwitterMetadata(options: TwitterCardOptions) {
-  return {
+      title,
+      description,
+      url,
+      siteName,
+      type: "website",
+      images: [{ url: image }],
+    },
     twitter: {
-      card: options.card ?? "summary_large_image",
-      title: options.title,
-      description: options.description,
-      creator: options.creator ?? "@arpitlabs"
-    }
+      card: "summary_large_image",
+      title,
+      description,
+      creator: "@arpitlabs",
+      images: [image],
+    },
   };
 }
 
-export function buildCanonicalUrl(url: string) {
-  return { canonical: url };
-}
+export function createArticleMetadata({
+  title,
+  description,
+  path,
+  image = defaultImage,
+  keywords = [],
+}: CreateMetadataOptions): Metadata {
+  const metadata = createPageMetadata({ title, description, path, image, keywords });
 
-export function buildStructuredData(data: Record<string, unknown>) {
   return {
-    structuredData: data
+    ...metadata,
+    openGraph: {
+      ...metadata.openGraph,
+      type: "article",
+    },
   };
 }
+
+export const seoConfig = {
+  siteName,
+  siteUrl,
+  defaultImage,
+};
