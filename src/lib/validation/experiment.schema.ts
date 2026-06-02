@@ -5,6 +5,7 @@ export const experimentSchema = z.object({
   slug: z.string().min(3, "Slug must be at least 3 characters."),
   description: z.string().min(10, "Description must be at least 10 characters."),
   status: z.string().min(3),
+  difficulty: z.string().optional(),
   category: z.string().optional(),
   tech_stack: z.array(z.string()).optional().default([]),
   featured: z.boolean().optional().default(false),

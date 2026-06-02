@@ -15,6 +15,7 @@ export interface Project {
   github_url?: string | null;
   demo_url?: string | null;
   cover_image?: string | null;
+  published?: boolean | null;
   featured: boolean;
   created_at: string;
   updated_at: string;
@@ -26,6 +27,7 @@ export interface Experiment {
   slug: string;
   description: string;
   status: string;
+  difficulty?: string | null;
   category?: string | null;
   tech_stack?: string[] | null;
   featured: boolean;

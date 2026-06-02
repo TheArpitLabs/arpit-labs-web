@@ -16,6 +16,7 @@ export const projectSchema = z.object({
   github_url: z.string().url().optional().or(z.literal("")),
   demo_url: z.string().url().optional().or(z.literal("")),
   cover_image: z.string().url().optional().or(z.literal("")),
+  published: z.boolean().optional().default(false),
   featured: z.boolean().default(false),
 });
 
