@@ -9,16 +9,16 @@ import { contentGenerationService } from '@/lib/ai-services';
 
 export async function POST(request: NextRequest) {
   try {
-    const { category } = await request.json();
+    const { domain, difficulty, budget, techStack } = await request.json();
 
-    if (!category) {
+    if (!domain) {
       return NextResponse.json(
-        { success: false, error: 'Missing category' },
+        { success: false, error: 'Missing domain' },
         { status: 400 }
       );
     }
 
-    const project = await contentGenerationService.generateProject(category);
+    const project = await contentGenerationService.generateProject(domain, difficulty, budget, techStack);
 
     return NextResponse.json(
       {

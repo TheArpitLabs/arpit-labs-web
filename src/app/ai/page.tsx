@@ -381,7 +381,9 @@ export default function AIPage() {
 
           {/* Main chat area */}
           <div className="lg:col-span-3">
-            {!currentConversation ? (
+            {viewMode === 'search' ? (
+              renderSearchResults()
+            ) : !currentConversation ? (
               <Card className="bg-slate-800/50 border-slate-700 h-full flex items-center justify-center min-h-96">
                 <div className="text-center">
                   <h2 className="text-2xl font-bold text-white mb-4">Welcome to AI Chat</h2>
@@ -433,7 +435,35 @@ export default function AIPage() {
                               : 'bg-slate-700 text-slate-100'
                           )}
                         >
-                          <p className="text-sm whitespace-pre-wrap break-words">{msg.content}</p>
+                          {msg.role === 'assistant' ? (
+                            <div className="prose prose-invert max-w-none text-sm">
+                              <ReactMarkdown
+                                components={{
+                                  code: ({ node, inline, className, children, ...props }: any) => {
+                                    const match = /language-(\w+)/.exec(className || '');
+                                    return !inline && match ? (
+                                      <SyntaxHighlighter
+                                        style={atomDark}
+                                        language={match[1]}
+                                        PreTag="div"
+                                        {...props}
+                                      >
+                                        {String(children).replace(/\n$/, '')}
+                                      </SyntaxHighlighter>
+                                    ) : (
+                                      <code className="bg-slate-800 px-2 py-1 rounded text-xs" {...props}>
+                                        {children}
+                                      </code>
+                                    );
+                                  },
+                                }}
+                              >
+                                {msg.content}
+                              </ReactMarkdown>
+                            </div>
+                          ) : (
+                            <p className="text-sm whitespace-pre-wrap break-words">{msg.content}</p>
+                          )}
                           <button
                             onClick={() => copyMessage(msg.content)}
                             className="mt-2 inline-flex items-center gap-1 text-xs opacity-60 hover:opacity-100"

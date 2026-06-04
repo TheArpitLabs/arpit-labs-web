@@ -315,6 +315,13 @@ interface GeneratedProject {
   description: string;
   techStack: Record<string, string[]>;
   difficulty: 'beginner' | 'intermediate' | 'advanced';
+  estimatedBudget: number;
+  estimatedDuration: string;
+  learningOutcomes: string[];
+  features: string[];
+  architecture: string;
+  roadmap: string[];
+  learningPath: string[];
 }
 
 /**
@@ -613,22 +620,68 @@ export class ContentGenerationService {
   /**
    * Generate a single project idea payload
    */
-  async generateProject(category: string): Promise<GeneratedProject> {
+  async generateProject(
+    category: string,
+    difficulty: 'beginner' | 'intermediate' | 'advanced' = 'beginner',
+    budget: number = 5000,
+    techStack: string[] = []
+  ): Promise<GeneratedProject> {
     console.log(`Generating project idea for category: ${category}`);
 
     const ideas = await this.generateProjectIdeas(category, 1);
     const title = ideas[0]?.replace(/^\d+\.\s*/, '') || `${category} project idea`;
     const description = `A ${category} project idea designed to showcase ${category.toLowerCase()} innovation, practical architecture, and real-world impact.`;
-    const techStack = await this.generateTechStack(description);
-    const difficulty = ['beginner', 'intermediate', 'advanced'][
-      Math.floor(Math.random() * 3)
-    ] as GeneratedProject['difficulty'];
+    const generatedTechStack = await this.generateTechStack(description);
+    const techStackPayload: Record<string, string[]> = techStack.length > 0 ? {
+      frontend: techStack.filter((item) => /react|next|vue|angular|svelte/i.test(item)) || generatedTechStack.frontend,
+      backend: techStack.filter((item) => /node|express|fastify|python|django|flask|go|rust|java|spring/i.test(item)) || generatedTechStack.backend,
+      database: techStack.filter((item) => /postgre|mysql|mongo|redis|supabase|sqlite|cassandra/i.test(item)) || generatedTechStack.database,
+      devops: techStack.filter((item) => /docker|kubernetes|terraform|vercel|github actions|aws|gcp|azure/i.test(item)) || generatedTechStack.devops,
+    } : generatedTechStack;
+    const projectDifficulty = difficulty as GeneratedProject['difficulty'];
+    const durationMap = {
+      beginner: '4-6 weeks',
+      intermediate: '6-10 weeks',
+      advanced: '10-16 weeks',
+    } as const;
 
     return {
       title,
       description,
-      techStack,
-      difficulty,
+      techStack: {
+        frontend: techStackPayload.frontend.length ? techStackPayload.frontend : generatedTechStack.frontend,
+        backend: techStackPayload.backend.length ? techStackPayload.backend : generatedTechStack.backend,
+        database: techStackPayload.database.length ? techStackPayload.database : generatedTechStack.database,
+        devops: techStackPayload.devops.length ? techStackPayload.devops : generatedTechStack.devops,
+      },
+      difficulty: projectDifficulty,
+      estimatedBudget: budget,
+      estimatedDuration: durationMap[projectDifficulty],
+      learningOutcomes: [
+        'Apply practical engineering skills',
+        'Learn system design and architecture',
+        'Implement end-to-end workflows',
+        'Deploy and measure a production-ready solution',
+      ],
+      features: [
+        'Core feature set tailored to the selected domain',
+        'Responsive UI and polished UX',
+        'Reliable backend and data persistence',
+        'Monitoring and deployment pipeline',
+      ],
+      architecture: `Frontend → API layer → Database\n      Services: ${projectDifficulty} architecture`,
+      roadmap: [
+        'Phase 1: Design and planning',
+        'Phase 2: Core development',
+        'Phase 3: Integration and testing',
+        'Phase 4: Deployment and launch',
+      ],
+      learningPath: [
+        'Review foundational concepts for the chosen domain',
+        'Build the core components incrementally',
+        'Add integrations and polish the user experience',
+        'Deploy the app and validate the solution',
+      ],
     };
   }
 

@@ -28,6 +28,7 @@ interface GeneratedProject {
   features: string[];
   architecture: string;
   roadmap: string[];
+  learningPath: string[];
 }
 
 type Domain = 'IoT' | 'AI' | 'Cybersecurity' | 'Web Development' | '';
@@ -36,6 +37,7 @@ export default function ProjectGeneratorPage() {
   const [domain, setDomain] = useState<Domain>('');
   const [difficulty, setDifficulty] = useState<'beginner' | 'intermediate' | 'advanced'>('beginner');
   const [budget, setBudget] = useState(5000);
+  const [techStackInput, setTechStackInput] = useState('React, Supabase, TypeScript');
   const [generatedProject, setGeneratedProject] = useState<GeneratedProject | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -53,7 +55,12 @@ export default function ProjectGeneratorPage() {
       const response = await fetch('/api/ai/generate/project', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ domain, difficulty, budget }),
+        body: JSON.stringify({
+          domain,
+          difficulty,
+          budget,
+          techStack: techStackInput.split(',').map((item) => item.trim()).filter(Boolean),
+        }),
       });
 
       const data = await response.json();
@@ -61,11 +68,11 @@ export default function ProjectGeneratorPage() {
         setGeneratedProject(data.project);
       } else {
         // Fallback to mock data for demo
-        setGeneratedProject(generateMockProject(domain, difficulty, budget));
+        setGeneratedProject(generateMockProject(domain, difficulty, budget, techStackInput));
       }
     } catch (error) {
       console.error('Failed to generate project:', error);
-      setGeneratedProject(generateMockProject(domain, difficulty, budget));
+      setGeneratedProject(generateMockProject(domain, difficulty, budget, techStackInput));
     } finally {
       setIsLoading(false);
     }
@@ -148,7 +155,7 @@ export default function ProjectGeneratorPage() {
                 </div>
 
                 {/* Budget */}
-                <div className="mb-8">
+                <div className="mb-6">
                   <label className="block text-sm font-semibold text-slate-300 mb-3">
                     Budget: ${budget.toLocaleString()}
                   </label>
@@ -166,6 +173,22 @@ export default function ProjectGeneratorPage() {
                     <span>$50K</span>
                     <span>$100K</span>
                   </div>
+                </div>
+
+                {/* Tech stack */}
+                <div className="mb-8">
+                  <label className="block text-sm font-semibold text-slate-300 mb-3">
+                    Preferred Tech Stack
+                  </label>
+                  <input
+                    value={techStackInput}
+                    onChange={(e) => setTechStackInput(e.target.value)}
+                    placeholder="React, Next.js, Supabase, TypeScript"
+                    className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded text-sm text-white placeholder-slate-400 focus:outline-none focus:border-blue-500"
+                  />
+                  <p className="text-xs text-slate-500 mt-2">
+                    Use comma-separated values for frameworks, platforms, and tools.
+                  </p>
                 </div>
 
                 {/* Generate Button */}
@@ -304,6 +327,18 @@ export default function ProjectGeneratorPage() {
                     </div>
                   </Card>
 
+                  {/* Learning Path */}
+                  <Card className="bg-slate-800/50 border-slate-700 p-6">
+                    <h3 className="text-xl font-bold text-white mb-4">Learning Path</h3>
+                    <div className="space-y-3">
+                      {generatedProject.learningPath.map((step, idx) => (
+                        <div key={idx} className="text-slate-300 text-sm">
+                          <span className="font-semibold text-blue-400">Step {idx + 1}:</span> {step}
+                        </div>
+                      ))}
+                    </div>
+                  </Card>
+
                   {/* Learning Outcomes */}
                   <Card className="bg-slate-800/50 border-slate-700 p-6">
                     <h3 className="text-xl font-bold text-white mb-4">Learning Outcomes</h3>
@@ -329,8 +364,8 @@ export default function ProjectGeneratorPage() {
 }
 
 // Mock project generator for demo purposes
-function generateMockProject(domain: string, difficulty: string, budget: number): GeneratedProject {
-  const projects: Record<string, GeneratedProject> = {
+function generateMockProject(domain: string, difficulty: string, budget: number, techStackInput: string): GeneratedProject {
+  const projects: Record<string, any> = {
     IoT_beginner: {
       title: 'Smart Temperature Monitor with Cloud Sync',
       description:
@@ -371,7 +406,14 @@ function generateMockProject(domain: string, difficulty: string, budget: number)
         'Phase 4: Build dashboard UI',
         'Phase 5: Add alerts and notifications',
       ],
-    },
+      learningPath: [
+        'Understand IoT sensors and microcontrollers',
+        'Build firmware and connectivity logic',
+        'Create a cloud service for data ingestion',
+        'Design a responsive monitoring dashboard',
+        'Add notification and alert workflows',
+      ],
+    } as GeneratedProject,
     AI_beginner: {
       title: 'AI Recommendation Engine for Personal Content',
       description:
@@ -414,7 +456,14 @@ function generateMockProject(domain: string, difficulty: string, budget: number)
         'Phase 4: API endpoints',
         'Phase 5: Frontend integration and optimization',
       ],
-    },
+      learningPath: [
+        'Learn machine learning fundamentals and recommendation models',
+        'Understand data pipelines and feature engineering',
+        'Implement model training and evaluation',
+        'Build backend APIs for model inference',
+        'Design dashboards to visualize insights',
+      ],
+    } as GeneratedProject,
     Cybersecurity_intermediate: {
       title: 'End-to-End Encrypted Chat Application',
       description:
@@ -455,8 +504,15 @@ function generateMockProject(domain: string, difficulty: string, budget: number)
         'Phase 4: WebSocket communication',
         'Phase 5: Message storage and retrieval',
       ],
-    },
-    ['Web Development_advanced']: {
+      learningPath: [
+        'Study cryptography and secure communication',
+        'Implement authentication and authorization',
+        'Build encrypted messaging flows',
+        'Secure data storage and session handling',
+        'Test security and threat protection mechanisms',
+      ],
+    } as GeneratedProject,
+    'Web Development_advanced': {
       title: 'Multi-Tenant SaaS Platform with AI Features',
       description:
         'Develop a comprehensive SaaS platform supporting multiple tenants with AI-powered features, analytics, and automated workflows.',
@@ -499,7 +555,14 @@ function generateMockProject(domain: string, difficulty: string, budget: number)
         'Phase 5: Analytics and reporting',
         'Phase 6: Production deployment and scaling',
       ],
-    },
+      learningPath: [
+        'Research multi-tenant SaaS patterns and AI workflows',
+        'Design the tenant model and secure data boundaries',
+        'Build the core platform and admin experience',
+        'Integrate AI automation and reporting features',
+        'Deploy and optimize for scale and reliability',
+      ],
+    } as GeneratedProject,
   };
 
   const key = `${domain}_${difficulty}`;
@@ -524,6 +587,13 @@ function generateMockProject(domain: string, difficulty: string, budget: number)
         'Core development',
         'Testing',
         'Deployment',
+      ],
+      learningPath: [
+        'Research the domain and core technologies',
+        'Sketch the architecture and wireframes',
+        'Build the core MVP features',
+        'Test and refine the user experience',
+        'Deploy and measure the outcome',
       ],
     }
   );
