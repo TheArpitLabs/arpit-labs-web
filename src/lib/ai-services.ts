@@ -173,6 +173,17 @@ export class AIChatService {
    */
   private async searchKnowledgeBase(query: string, topic: string): Promise<string[]> {
     try {
+      // Use semantic search service to retrieve relevant chunks
+      // semanticSearchService instance is created at module export time below
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const results = typeof semanticSearchService !== 'undefined' ? await semanticSearchService.search(query, 3) : null;
+
+      if (Array.isArray(results) && results.length > 0) {
+        return results.map((r: any) => r.preview || r.chunk || '');
+      }
+
+      // Fallback: direct DB query for matching source_type
       const { data } = await supabase
         .from('ai_knowledge_base')
         .select('content')
@@ -385,9 +396,34 @@ export class KnowledgeBaseService {
    * Generate embeddings for content chunks
    */
   private async generateEmbeddings(chunks: string[]): Promise<number[][]> {
-    // This will use OpenAI Embeddings API
-    // For now, return placeholder
-    return chunks.map(() => Array(1536).fill(0.1));
+    const apiKey = process.env.OPENAI_API_KEY;
+    if (!apiKey) {
+      throw new Error('Missing OPENAI_API_KEY for embedding generation');
+    }
+
+    try {
+      const res = await fetch('https://api.openai.com/v1/embeddings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({ model: 'text-embedding-3-small', input: chunks }),
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`OpenAI Embeddings error: ${res.status} ${text}`);
+      }
+
+      const data = await res.json();
+      // data.data is an array of { embedding: number[] }
+      return data.data.map((d: any) => d.embedding as number[]);
+    } catch (error) {
+      console.error('Embedding generation failed:', error);
+      // Fallback to deterministic zero-ish embeddings to avoid crashes
+      return chunks.map(() => Array(1536).fill(0));
+    }
   }
 
   /**
@@ -401,7 +437,27 @@ export class KnowledgeBaseService {
     chunkNumber: number;
   }): Promise<void> {
     console.log(`Storing embedding for chunk ${data.chunkNumber}`);
-    // await supabase.from('ai_embeddings').insert({...})
+    try {
+      const title = null;
+      const metadata = { chunkNumber: data.chunkNumber };
+
+      const { error } = await supabase.from('content_embeddings').insert([
+        {
+          content_type: data.sourceType,
+          content_id: data.sourceId,
+          title,
+          chunk: data.content,
+          embedding: data.embedding,
+          metadata,
+        },
+      ]);
+
+      if (error) {
+        console.error('Failed to store embedding in Supabase:', error.message || error);
+      }
+    } catch (err) {
+      console.error('Error storing embedding:', err);
+    }
   }
 
   /**
@@ -446,69 +502,30 @@ export class SemanticSearchService {
     console.log(`Semantic search for: ${query}`);
 
     try {
-      // Step 1: Fetch all projects, blog posts, experiments
-      const [{ data: projects }, { data: blogPosts }, { data: experiments }] = await Promise.all([
-        supabase.from('projects').select('id, title, description, slug').eq('published', true),
-        supabase.from('lab_notes').select('id, title, excerpt, slug').eq('published', true),
-        supabase.from('experiments').select('id, title, description, slug').eq('published', true),
-      ]);
+      // 1) Generate embedding for query
+      const queryEmbedding = await this.generateQueryEmbedding(query);
 
-      // Step 2: Score results based on keyword match
-      const allResults: SearchResult[] = [];
+      // 2) Call Supabase RPC to search content_embeddings
+      const rpc = await supabase.rpc('search_content_embeddings', {
+        query_embedding: queryEmbedding,
+        match_count: limit,
+        similarity_threshold: 0.0,
+      });
 
-      if (projects) {
-        projects.forEach((p: any) => {
-          const score = this.calculateSimilarity(query, `${p.title} ${p.description}`);
-          if (score > 0.3) {
-            allResults.push({
-              id: p.id,
-              title: p.title,
-              sourceType: 'project',
-              sourceId: p.id,
-              similarity: score,
-              preview: p.description?.substring(0, 150) || '',
-              url: `/projects/${p.slug}`,
-            });
-          }
-        });
-      }
+      const rows = Array.isArray(rpc.data) ? rpc.data : [];
 
-      if (blogPosts) {
-        blogPosts.forEach((b: any) => {
-          const score = this.calculateSimilarity(query, `${b.title} ${b.excerpt}`);
-          if (score > 0.3) {
-            allResults.push({
-              id: b.id,
-              title: b.title,
-              sourceType: 'blog',
-              sourceId: b.id,
-              similarity: score,
-              preview: b.excerpt?.substring(0, 150) || '',
-              url: `/blog/${b.slug}`,
-            });
-          }
-        });
-      }
+      // 3) Map RPC results to SearchResult
+      const results: SearchResult[] = rows.map((r: any) => ({
+        id: r.id,
+        title: r.title || (r.metadata && r.metadata.title) || 'Untitled',
+        sourceType: r.content_type || 'unknown',
+        sourceId: r.content_id,
+        similarity: r.similarity || 0,
+        preview: (r.chunk || '').substring(0, 200),
+        url: r.metadata?.url || '#',
+      }));
 
-      if (experiments) {
-        experiments.forEach((e: any) => {
-          const score = this.calculateSimilarity(query, `${e.title} ${e.description}`);
-          if (score > 0.3) {
-            allResults.push({
-              id: e.id,
-              title: e.title,
-              sourceType: 'experiment',
-              sourceId: e.id,
-              similarity: score,
-              preview: e.description?.substring(0, 150) || '',
-              url: `/experiments/${e.slug}`,
-            });
-          }
-        });
-      }
-
-      // Step 3: Sort by similarity and limit results
-      return allResults.sort((a, b) => b.similarity - a.similarity).slice(0, limit);
+      return results;
     } catch (error) {
       console.error('Search failed:', error);
       return [];
@@ -533,7 +550,33 @@ export class SemanticSearchService {
    * Generate embedding for search query
    */
   private async generateQueryEmbedding(query: string): Promise<number[]> {
-    return Array(1536).fill(0.1);
+    const apiKey = process.env.OPENAI_API_KEY;
+    if (!apiKey) {
+      return Array(1536).fill(0);
+    }
+
+    try {
+      const res = await fetch('https://api.openai.com/v1/embeddings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({ model: 'text-embedding-3-small', input: query }),
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        console.error('OpenAI embedding error:', res.status, text);
+        return Array(1536).fill(0);
+      }
+
+      const data = await res.json();
+      return data?.data?.[0]?.embedding || Array(1536).fill(0);
+    } catch (err) {
+      console.error('Failed to generate query embedding:', err);
+      return Array(1536).fill(0);
+    }
   }
 
   /**
@@ -982,9 +1025,9 @@ export class RecruiterAssistantService {
 // Export all services
 // ============================================================================
 
+export const semanticSearchService = new SemanticSearchService();
 export const aiChatService = new AIChatService();
 export const knowledgeBaseService = new KnowledgeBaseService();
-export const semanticSearchService = new SemanticSearchService();
 export const contentGenerationService = new ContentGenerationService();
 export const analyticsService = new AnalyticsService();
 export const automationService = new AutomationService();
