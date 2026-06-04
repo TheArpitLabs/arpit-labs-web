@@ -365,7 +365,7 @@ export function AIProjectGenerator({ className = '' }: AIProjectGeneratorProps) 
                 key={cat}
                 onClick={() => handleGenerate(cat)}
                 disabled={isLoading}
-                variant={category === cat ? 'default' : 'outline'}
+                variant={category === cat ? 'primary' : 'outline'}
               >
                 {cat}
               </Button>
