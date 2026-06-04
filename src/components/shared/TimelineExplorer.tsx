@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Award, GraduationCap, MapPin, Milestone, Sparkles, Trophy } from "lucide-react";
+import { Award, GraduationCap, MapPin, Milestone, Sparkles, Trophy, Briefcase } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { JourneyEntryType, JourneyItem } from "@/types/content";
@@ -12,6 +12,7 @@ interface TimelineExplorerProps {
 
 const filterLabels: Array<{ key: JourneyEntryType | "all"; label: string }> = [
   { key: "all", label: "All" },
+  { key: "work", label: "Experience" },
   { key: "education", label: "Education" },
   { key: "competition", label: "Competitions" },
   { key: "hackathon", label: "Hackathons" },
@@ -20,7 +21,9 @@ const filterLabels: Array<{ key: JourneyEntryType | "all"; label: string }> = [
 ];
 
 const iconMap: Record<JourneyEntryType, React.ReactNode> = {
+  work: <Briefcase size={18} />,
   education: <GraduationCap size={18} />,
+  achievement: <Trophy size={18} />,
   competition: <Trophy size={18} />,
   hackathon: <Sparkles size={18} />,
   certification: <Award size={18} />,

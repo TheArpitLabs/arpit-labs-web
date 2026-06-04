@@ -4,14 +4,28 @@ import { LabNoteInput } from "@/lib/validation/labnote.schema";
 import { handleDatabaseError } from "@/lib/errors";
 
 export const labNotesRepository = {
-  async getLabNotes() {
-    const { data, error } = await supabaseServer
+  async getLabNotes(filters?: { published?: boolean; search?: string; category?: string }) {
+    let query = supabaseServer
       .from("lab_notes")
       .select("*")
-      .order("published", { ascending: false })
       .order("created_at", { ascending: false });
 
-    if (error) throw handleDatabaseError(error);
+    if (filters?.published !== undefined) {
+      query = query.eq("published", filters.published);
+    }
+    if (filters?.category) {
+      query = query.eq("category", filters.category);
+    }
+    if (filters?.search) {
+      query = query.ilike("title", `%${filters.search}%`);
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      console.error("Database error in getLabNotes:", error);
+      throw handleDatabaseError(error);
+    }
     return data ?? [];
   },
 
@@ -23,7 +37,10 @@ export const labNotesRepository = {
       .limit(1)
       .single();
 
-    if (error) throw handleDatabaseError(error);
+    if (error) {
+      console.error("Database error in getLabNoteBySlug:", error);
+      throw handleDatabaseError(error);
+    }
     return data;
   },
 
@@ -34,7 +51,10 @@ export const labNotesRepository = {
       .select()
       .single();
 
-    if (error) throw handleDatabaseError(error);
+    if (error) {
+      console.error("Database error in createLabNote:", error);
+      throw handleDatabaseError(error);
+    }
     return data;
   },
 
@@ -46,13 +66,19 @@ export const labNotesRepository = {
       .select()
       .single();
 
-    if (error) throw handleDatabaseError(error);
+    if (error) {
+      console.error("Database error in updateLabNote:", error);
+      throw handleDatabaseError(error);
+    }
     return data;
   },
 
   async deleteLabNote(id: string) {
     const { error } = await supabaseServer.from("lab_notes").delete().eq("id", id);
-    if (error) throw handleDatabaseError(error);
+    if (error) {
+      console.error("Database error in deleteLabNote:", error);
+      throw handleDatabaseError(error);
+    }
     return true;
   }
 };

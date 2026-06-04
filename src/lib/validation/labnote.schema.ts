@@ -1,15 +1,15 @@
 import { z } from "zod";
 
 export const labNoteSchema = z.object({
-  title: z.string().min(5, "Title must be at least 5 characters."),
-  slug: z.string().min(3, "Slug must be at least 3 characters."),
-  excerpt: z.string().min(10, "Excerpt must be at least 10 characters.").optional(),
-  content: z.string().optional(),
-  category: z.string().optional(),
-  cover_image: z.string().url().optional(),
-  tags: z.array(z.string()).optional().default([]),
-  published: z.boolean().optional().default(false),
-  reading_time: z.number().int().optional()
+  title: z.string().min(1, "Title is required"),
+  slug: z.string().min(1, "Slug is required"),
+  excerpt: z.string().nullable().default(null),
+  content: z.string().min(1, "Content is required"),
+  category: z.string().nullable().default(null),
+  cover_image: z.string().nullable().default(null),
+  tags: z.array(z.string()).default([]),
+  published: z.boolean().default(false),
+  reading_time: z.number().int().default(0),
 });
 
 export type LabNoteInput = z.infer<typeof labNoteSchema>;

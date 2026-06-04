@@ -10,7 +10,10 @@ export const newsletterRepository = {
       .select()
       .single();
 
-    if (error) throw handleDatabaseError(error);
+    if (error) {
+      console.error("Database error in subscribeNewsletter:", error);
+      throw handleDatabaseError(error);
+    }
     return data;
   },
 
@@ -20,7 +23,19 @@ export const newsletterRepository = {
       .select("*")
       .order("subscribed_at", { ascending: false });
 
-    if (error) throw handleDatabaseError(error);
+    if (error) {
+      console.error("Database error in getSubscribers:", error);
+      throw handleDatabaseError(error);
+    }
     return data ?? [];
+  },
+
+  async deleteSubscriber(id: string) {
+    const { error } = await supabaseServer.from("newsletter_subscribers").delete().eq("id", id);
+    if (error) {
+      console.error("Database error in deleteSubscriber:", error);
+      throw handleDatabaseError(error);
+    }
+    return true;
   }
 };

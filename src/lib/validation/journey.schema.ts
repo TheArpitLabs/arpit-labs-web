@@ -1,14 +1,22 @@
 import { z } from "zod";
 
 export const journeySchema = z.object({
-  year: z.number().int().min(2000, "Year must be a valid number."),
-  title: z.string().min(5, "Title must be at least 5 characters."),
-  description: z.string().min(10, "Description must be at least 10 characters."),
-  entry_type: z.enum(["education", "competition", "hackathon", "certification", "milestone"]).optional(),
-  organization: z.string().optional(),
-  location: z.string().optional(),
-  icon: z.string().optional(),
-  display_order: z.number().int().optional().default(0)
+  year: z.number().int().min(1900, "Year must be a valid number."),
+  title: z.string().min(1, "Title is required"),
+  description: z.string().min(1, "Description is required"),
+  entry_type: z.enum([
+    "work", 
+    "education", 
+    "achievement", 
+    "milestone", 
+    "competition", 
+    "hackathon", 
+    "certification"
+  ]),
+  organization: z.string().optional().nullable(),
+  location: z.string().optional().nullable(),
+  icon: z.string().optional().nullable(),
+  display_order: z.number().int().default(0)
 });
 
 export type JourneyInput = z.infer<typeof journeySchema>;

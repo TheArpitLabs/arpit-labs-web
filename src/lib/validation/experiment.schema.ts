@@ -1,16 +1,17 @@
 import { z } from "zod";
 
 export const experimentSchema = z.object({
-  title: z.string().min(5, "Title must be at least 5 characters."),
-  slug: z.string().min(3, "Slug must be at least 3 characters."),
-  description: z.string().min(10, "Description must be at least 10 characters."),
-  status: z.string().min(3),
-  difficulty: z.string().optional(),
-  category: z.string().optional(),
-  tech_stack: z.array(z.string()).optional().default([]),
-  featured: z.boolean().optional().default(false),
-  cover_image: z.string().url().optional(),
-  content: z.string().optional()
+  title: z.string().min(1, "Title is required"),
+  slug: z.string().min(1, "Slug is required"),
+  description: z.string().min(1, "Description is required"),
+  content: z.string().nullable().default(null),
+  category: z.string().nullable().default(null),
+  difficulty: z.enum(["beginner", "intermediate", "advanced"]).nullable().default(null),
+  tech_stack: z.array(z.string()).default([]),
+  status: z.enum(["draft", "completed", "in-progress"]).default("draft"),
+  featured: z.boolean().default(false),
+  published: z.boolean().default(false),
+  cover_image: z.string().nullable().optional(),
 });
 
 export type ExperimentInput = z.infer<typeof experimentSchema>;

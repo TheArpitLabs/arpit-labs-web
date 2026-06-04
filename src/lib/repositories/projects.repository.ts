@@ -4,14 +4,32 @@ import { ProjectInput } from "@/lib/validation/project.schema";
 import { handleDatabaseError } from "@/lib/errors";
 
 export const projectsRepository = {
-  async getProjects() {
-    const { data, error } = await supabaseServer
+  async getProjects(filters?: { published?: boolean; featured?: boolean; search?: string; category?: string }) {
+    let query = supabaseServer
       .from("projects")
       .select("*")
       .order("featured", { ascending: false })
       .order("created_at", { ascending: false });
 
-    if (error) throw handleDatabaseError(error);
+    if (filters?.published !== undefined) {
+      query = query.eq("published", filters.published);
+    }
+    if (filters?.featured !== undefined) {
+      query = query.eq("featured", filters.featured);
+    }
+    if (filters?.category) {
+      query = query.eq("category", filters.category);
+    }
+    if (filters?.search) {
+      query = query.ilike("title", `%${filters.search}%`);
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      console.error("Database error in getProjects:", error);
+      throw handleDatabaseError(error);
+    }
     return data ?? [];
   },
 
@@ -23,7 +41,10 @@ export const projectsRepository = {
       .limit(1)
       .single();
 
-    if (error) throw handleDatabaseError(error);
+    if (error) {
+      console.error("Database error in getProjectBySlug:", error);
+      throw handleDatabaseError(error);
+    }
     return data;
   },
 
@@ -34,7 +55,10 @@ export const projectsRepository = {
       .select()
       .single();
 
-    if (error) throw handleDatabaseError(error);
+    if (error) {
+      console.error("Database error in createProject:", error);
+      throw handleDatabaseError(error);
+    }
     return data;
   },
 
@@ -46,13 +70,19 @@ export const projectsRepository = {
       .select()
       .single();
 
-    if (error) throw handleDatabaseError(error);
+    if (error) {
+      console.error("Database error in updateProject:", error);
+      throw handleDatabaseError(error);
+    }
     return data;
   },
 
   async deleteProject(id: string) {
     const { error } = await supabaseServer.from("projects").delete().eq("id", id);
-    if (error) throw handleDatabaseError(error);
+    if (error) {
+      console.error("Database error in deleteProject:", error);
+      throw handleDatabaseError(error);
+    }
     return true;
   }
 };

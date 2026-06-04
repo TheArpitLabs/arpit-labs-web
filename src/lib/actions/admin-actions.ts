@@ -1,0 +1,260 @@
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { createClient } from "@supabase/supabase-js";
+import { clearAdminSessionCookies, requireAdmin, setAdminSessionCookies } from "@/lib/auth";
+import { uploadFileToBucket } from "@/lib/admin-storage";
+import { contactsRepository } from "@/lib/repositories/contacts.repository";
+import { experimentsRepository } from "@/lib/repositories/experiments.repository";
+import { journeyRepository } from "@/lib/repositories/journey.repository";
+import { labNotesRepository } from "@/lib/repositories/labnotes.repository";
+import { newsletterRepository } from "@/lib/repositories/newsletter.repository";
+import { projectsRepository } from "@/lib/repositories/projects.repository";
+import { experimentSchema, journeySchema, labNoteSchema, projectSchema } from "@/lib/validation";
+
+function createAuthClient() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseAnonKey) {
+    throw new Error("Missing Supabase auth environment variables.");
+  }
+
+  return createClient(supabaseUrl, supabaseAnonKey, {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+    },
+  });
+}
+
+function asString(value: FormDataEntryValue | null) {
+  return typeof value === "string" ? value.trim() : "";
+}
+
+function asOptionalString(value: FormDataEntryValue | null) {
+  const normalized = asString(value);
+  return normalized.length > 0 ? normalized : undefined;
+}
+
+function asBoolean(value: FormDataEntryValue | null) {
+  return value === "on" || value === "true";
+}
+
+function asStringArray(value: FormDataEntryValue | null, separator = ",") {
+  const str = asString(value);
+  if (!str) return [];
+  return str
+    .split(separator)
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+async function maybeUpload(bucket: "projects" | "blog" | "experiments" | "uploads", folder: string, entry: FormDataEntryValue | null) {
+  if (!entry || typeof entry === "string") {
+    return undefined;
+  }
+
+  if (entry.size === 0) {
+    return undefined;
+  }
+
+  return uploadFileToBucket(bucket, folder, entry);
+}
+
+export async function adminSignIn(formData: FormData) {
+  const email = asString(formData.get("email"));
+  const password = asString(formData.get("password"));
+  const redirectTo = asString(formData.get("redirectTo")) || "/admin";
+
+  const authClient = createAuthClient();
+  const { data, error } = await authClient.auth.signInWithPassword({ 
+    email, 
+    password 
+  });
+
+  if (error || !data.session) {
+    redirect("/admin/login?error=" + encodeURIComponent("Invalid credentials") as never);
+  }
+
+  await setAdminSessionCookies(data.session.access_token, data.session.refresh_token);
+  redirect(redirectTo as never);
+}
+
+export async function adminSignOut() {
+  await clearAdminSessionCookies();
+  redirect("/admin/login" as never);
+}
+
+export async function saveProjectAction(formData: FormData) {
+  await requireAdmin();
+
+  const id = asString(formData.get("id"));
+  const payload = projectSchema.parse({
+    title: asString(formData.get("title")),
+    slug: asString(formData.get("slug")),
+    description: asString(formData.get("description")),
+    category: asString(formData.get("category")),
+    content: asOptionalString(formData.get("content")),
+    overview: asOptionalString(formData.get("overview")),
+    problem_statement: asOptionalString(formData.get("problem_statement")),
+    architecture: asOptionalString(formData.get("architecture")),
+    tech_stack: asStringArray(formData.get("tech_stack")),
+    github_url: asOptionalString(formData.get("github_url")),
+    demo_url: asOptionalString(formData.get("demo_url")),
+    cover_image: asOptionalString(formData.get("cover_image")),
+    screenshots: asStringArray(formData.get("screenshots")),
+    lessons_learned: asStringArray(formData.get("lessons_learned"), "|"),
+    tags: asStringArray(formData.get("tags")),
+    featured: asBoolean(formData.get("featured")),
+    published: asBoolean(formData.get("published")),
+  });
+
+  if (id) {
+    await projectsRepository.updateProject(id, payload);
+  } else {
+    await projectsRepository.createProject(payload);
+  }
+
+  revalidatePath("/admin/projects");
+  revalidatePath("/projects");
+  revalidatePath("/");
+  redirect("/admin/projects" as never);
+}
+
+export async function deleteProjectAction(formData: FormData) {
+  await requireAdmin();
+  const id = asString(formData.get("id"));
+  await projectsRepository.deleteProject(id);
+  revalidatePath("/admin/projects");
+  revalidatePath("/projects");
+}
+
+export async function saveLabNoteAction(formData: FormData) {
+  await requireAdmin();
+
+  const id = asString(formData.get("id"));
+  const payload = labNoteSchema.parse({
+    title: asString(formData.get("title")),
+    slug: asString(formData.get("slug")),
+    excerpt: asOptionalString(formData.get("excerpt")),
+    content: asString(formData.get("content")),
+    category: asOptionalString(formData.get("category")),
+    cover_image: asOptionalString(formData.get("cover_image")),
+    tags: asStringArray(formData.get("tags")),
+    published: asBoolean(formData.get("published")),
+    reading_time: Number(asString(formData.get("reading_time")) || 0),
+  });
+
+  if (id) {
+    await labNotesRepository.updateLabNote(id, payload);
+  } else {
+    await labNotesRepository.createLabNote(payload);
+  }
+
+  revalidatePath("/admin/blog");
+  revalidatePath("/blog");
+  redirect("/admin/blog" as never);
+}
+
+export async function deleteLabNoteAction(formData: FormData) {
+  await requireAdmin();
+  const id = asString(formData.get("id"));
+  await labNotesRepository.deleteLabNote(id);
+  revalidatePath("/admin/blog");
+  revalidatePath("/blog");
+}
+
+export async function saveExperimentAction(formData: FormData) {
+  await requireAdmin();
+
+  const id = asString(formData.get("id"));
+  const payload = experimentSchema.parse({
+    title: asString(formData.get("title")),
+    slug: asString(formData.get("slug")),
+    description: asString(formData.get("description")),
+    content: asOptionalString(formData.get("content")),
+    category: asOptionalString(formData.get("category")),
+    difficulty: asOptionalString(formData.get("difficulty")),
+    tech_stack: asStringArray(formData.get("tech_stack")),
+    status: asString(formData.get("status")),
+    featured: asBoolean(formData.get("featured")),
+    published: asBoolean(formData.get("published")),
+    cover_image: asOptionalString(formData.get("cover_image")),
+  });
+
+  if (id) {
+    await experimentsRepository.updateExperiment(id, payload);
+  } else {
+    await experimentsRepository.createExperiment(payload);
+  }
+
+  revalidatePath("/admin/experiments");
+  revalidatePath("/experiments");
+  redirect("/admin/experiments" as never);
+}
+
+export async function deleteExperimentAction(formData: FormData) {
+  await requireAdmin();
+  const id = asString(formData.get("id"));
+  await experimentsRepository.deleteExperiment(id);
+  revalidatePath("/admin/experiments");
+  revalidatePath("/experiments");
+}
+
+export async function saveJourneyEntryAction(formData: FormData) {
+  await requireAdmin();
+
+  const id = asString(formData.get("id"));
+  const payload = journeySchema.parse({
+    year: Number(asString(formData.get("year"))),
+    title: asString(formData.get("title")),
+    description: asString(formData.get("description")),
+    entry_type: asString(formData.get("entry_type")),
+    organization: asOptionalString(formData.get("organization")),
+    location: asOptionalString(formData.get("location")),
+    icon: asOptionalString(formData.get("icon")),
+    display_order: Number(asString(formData.get("display_order")) || 0),
+  });
+
+  if (id) {
+    await journeyRepository.updateJourneyEntry(id, payload);
+  } else {
+    await journeyRepository.createJourneyEntry(payload);
+  }
+
+  revalidatePath("/admin/journey");
+  revalidatePath("/journey");
+  redirect("/admin/journey" as never);
+}
+
+export async function deleteJourneyEntryAction(formData: FormData) {
+  await requireAdmin();
+  const id = asString(formData.get("id"));
+  await journeyRepository.deleteJourneyEntry(id);
+  revalidatePath("/admin/journey");
+  revalidatePath("/journey");
+}
+
+export async function markMessageReadAction(formData: FormData) {
+  await requireAdmin();
+  const id = asString(formData.get("id"));
+  const isRead = asBoolean(formData.get("isRead"));
+  await contactsRepository.updateContactMessage(id, { is_read: isRead });
+  revalidatePath("/admin/messages");
+}
+
+export async function deleteContactMessageAction(formData: FormData) {
+  await requireAdmin();
+  const id = asString(formData.get("id"));
+  await contactsRepository.deleteContactMessage(id);
+  revalidatePath("/admin/messages");
+}
+
+export async function deleteSubscriberAction(formData: FormData) {
+  await requireAdmin();
+  const id = asString(formData.get("id"));
+  await newsletterRepository.deleteSubscriber(id);
+  revalidatePath("/admin/newsletter");
+}

@@ -1,22 +1,24 @@
+export type JourneyEntryType = 'work' | 'education' | 'achievement' | 'milestone' | 'competition' | 'hackathon' | 'certification';
+
 export interface Project {
   id: string;
   title: string;
   slug: string;
   description: string;
+  category: string;
   content?: string | null;
   overview?: string | null;
   problem_statement?: string | null;
   architecture?: string | null;
-  tech_stack?: string[] | null;
-  screenshots?: string[] | null;
-  lessons_learned?: string[] | null;
-  category: string;
-  tags: string[];
+  tech_stack: string[];
   github_url?: string | null;
   demo_url?: string | null;
   cover_image?: string | null;
-  published?: boolean | null;
+  screenshots: string[];
+  lessons_learned?: string[] | null;
+  tags: string[];
   featured: boolean;
+  published: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -26,13 +28,14 @@ export interface Experiment {
   title: string;
   slug: string;
   description: string;
-  status: string;
-  difficulty?: string | null;
-  category?: string | null;
-  tech_stack?: string[] | null;
-  featured: boolean;
-  cover_image?: string | null;
   content?: string | null;
+  category?: string | null;
+  difficulty?: string | null;
+  tech_stack: string[];
+  status: string;
+  featured: boolean;
+  published: boolean;
+  cover_image?: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -52,19 +55,12 @@ export interface LabNote {
   updated_at: string;
 }
 
-export type JourneyEntryType =
-  | "education"
-  | "competition"
-  | "hackathon"
-  | "certification"
-  | "milestone";
-
 export interface JourneyItem {
   id: string;
   year: number;
   title: string;
   description: string;
-  entry_type?: JourneyEntryType | null;
+  entry_type: JourneyEntryType;
   organization?: string | null;
   location?: string | null;
   icon?: string | null;
@@ -79,6 +75,7 @@ export interface ContactMessage {
   email: string;
   subject: string;
   message: string;
+  is_read: boolean;
   created_at: string;
 }
 
@@ -86,4 +83,14 @@ export interface NewsletterSubscriber {
   id: string;
   email: string;
   subscribed_at: string;
+}
+
+export interface AdminStats {
+  projectsCount: number;
+  articlesCount: number;
+  experimentsCount: number;
+  subscribersCount: number;
+  messagesCount: number;
+  draftCount: number;
+  publishedCount: number;
 }

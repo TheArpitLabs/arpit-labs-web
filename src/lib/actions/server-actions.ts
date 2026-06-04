@@ -38,7 +38,8 @@ export async function getExperiments(): Promise<Experiment[]> {
 
 export async function getLabNotes(): Promise<LabNote[]> {
   try {
-    return await labNotesRepository.getLabNotes() as LabNote[];
+    const notes = await labNotesRepository.getLabNotes() as LabNote[];
+    return notes.filter((note) => note.published);
   } catch {
     return [];
   }
@@ -46,7 +47,8 @@ export async function getLabNotes(): Promise<LabNote[]> {
 
 export async function getLabNoteBySlug(slug: string): Promise<LabNote | null> {
   try {
-    return await labNotesRepository.getLabNoteBySlug(slug) as LabNote | null;
+    const note = await labNotesRepository.getLabNoteBySlug(slug) as LabNote | null;
+    return note?.published ? note : null;
   } catch {
     return null;
   }
@@ -62,7 +64,8 @@ export async function getJourneyTimeline(): Promise<JourneyItem[]> {
 
 export async function getProjects(): Promise<Project[]> {
   try {
-    return await projectsRepository.getProjects() as Project[];
+    const projects = await projectsRepository.getProjects() as Project[];
+    return projects.filter((project) => project.published ?? true);
   } catch {
     return [];
   }
@@ -70,7 +73,8 @@ export async function getProjects(): Promise<Project[]> {
 
 export async function getProjectBySlug(slug: string): Promise<Project | null> {
   try {
-    return await projectsRepository.getProjectBySlug(slug) as Project | null;
+    const project = await projectsRepository.getProjectBySlug(slug) as Project | null;
+    return project && (project.published ?? true) ? project : null;
   } catch {
     return null;
   }
