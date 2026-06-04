@@ -11,16 +11,24 @@ import { Container } from '@/components/layout/Container';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { SendIcon, TrashIcon, CopyIcon } from 'lucide-react';
+import clsx from 'clsx';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import clsx from 'clsx';
 
 interface Message {
   id: string;
   role: 'user' | 'assistant';
   content: string;
   timestamp: Date;
+}
+interface SearchResult {
+  id: string;
+  title: string;
+  sourceType: string;
+  preview: string;
+  similarity: number;
+  url: string;
 }
 
 interface Conversation {
@@ -31,13 +39,70 @@ interface Conversation {
 }
 
 export default function AIPage() {
+  const [viewMode, setViewMode] = useState<'chat' | 'search'>('chat');
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [currentConversation, setCurrentConversation] = useState<Conversation | null>(null);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [topic, setTopic] = useState<'projects' | 'blog' | 'experiments' | 'general'>('general');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchMessage, setSearchMessage] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  const LOCAL_STORAGE_CONVERSATIONS_KEY = 'arpit_ai_conversations';
+  const LOCAL_STORAGE_CURRENT_KEY = 'arpit_ai_current';
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const savedConversations = window.localStorage.getItem(LOCAL_STORAGE_CONVERSATIONS_KEY);
+    const savedCurrent = window.localStorage.getItem(LOCAL_STORAGE_CURRENT_KEY);
+
+    if (savedConversations) {
+      try {
+        const parsed: Conversation[] = JSON.parse(savedConversations);
+        const hydrated = parsed.map((conversation) => ({
+          ...conversation,
+          messages: conversation.messages.map((message) => ({
+            ...message,
+            timestamp: new Date(message.timestamp),
+          })),
+        }));
+        setConversations(hydrated);
+      } catch (error) {
+        console.warn('Failed to parse saved conversations', error);
+      }
+    }
+
+    if (savedCurrent) {
+      try {
+        const parsed: Conversation = JSON.parse(savedCurrent);
+        setCurrentConversation({
+          ...parsed,
+          messages: parsed.messages.map((message) => ({
+            ...message,
+            timestamp: new Date(message.timestamp),
+          })),
+        });
+      } catch (error) {
+        console.warn('Failed to parse saved current conversation', error);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    window.localStorage.setItem(LOCAL_STORAGE_CONVERSATIONS_KEY, JSON.stringify(conversations));
+    if (currentConversation) {
+      window.localStorage.setItem(LOCAL_STORAGE_CURRENT_KEY, JSON.stringify(currentConversation));
+    } else {
+      window.localStorage.removeItem(LOCAL_STORAGE_CURRENT_KEY);
+    }
+  }, [conversations, currentConversation]);
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -74,7 +139,8 @@ export default function AIPage() {
           messages: [],
         };
         setCurrentConversation(newConversation);
-        setConversations([newConversation, ...conversations]);
+        setConversations((prevConversations) => [newConversation, ...prevConversations]);
+        setViewMode('chat');
       }
     } catch (error) {
       console.error('Failed to start conversation:', error);
@@ -130,8 +196,8 @@ export default function AIPage() {
         setCurrentConversation(finalConversation);
 
         // Update conversations list
-        setConversations(
-          conversations.map((c) => (c.id === finalConversation.id ? finalConversation : c))
+        setConversations((prevConversations) =>
+          prevConversations.map((c) => (c.id === finalConversation.id ? finalConversation : c))
         );
       }
     } catch (error) {
@@ -149,6 +215,88 @@ export default function AIPage() {
     navigator.clipboard.writeText(content);
   };
 
+  const renderSearchResults = () => (
+    <div className="space-y-4">
+      <form className="mb-6" onSubmit={async (event) => {
+        event.preventDefault();
+        if (!searchQuery.trim()) return;
+
+        setIsSearching(true);
+        setSearchResults([]);
+        setSearchMessage('Searching for relevant content...');
+
+        try {
+          const response = await fetch('/api/ai/search', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query: searchQuery, limit: 10 }),
+          });
+
+          const data = await response.json();
+          if (data.success) {
+            setSearchResults(data.results || []);
+          } else {
+            setSearchMessage('No search results found.');
+          }
+        } catch (error) {
+          console.error('Search failed:', error);
+          setSearchMessage('Search failed. Please try again.');
+        } finally {
+          setIsSearching(false);
+        }
+      }}>
+        <div className="flex gap-2 flex-col sm:flex-row">
+          <input
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search projects, blog posts, experiments, and journey entries"
+            className="flex-1 px-4 py-3 bg-slate-700 border border-slate-600 rounded text-white placeholder-slate-400 focus:outline-none focus:border-blue-500"
+          />
+          <Button
+            type="submit"
+            disabled={isSearching || !searchQuery.trim()}
+            className="bg-blue-600 hover:bg-blue-700"
+          >
+            Search
+          </Button>
+        </div>
+      </form>
+
+      {isSearching ? (
+        <Card className="bg-slate-800/50 border-slate-700 p-6">
+          <div className="text-slate-300">{searchMessage}</div>
+        </Card>
+      ) : searchResults.length === 0 ? (
+        <Card className="bg-slate-800/50 border-slate-700 p-6">
+          <div className="text-slate-300">Search results will appear here after you submit a query.</div>
+        </Card>
+      ) : (
+        searchResults.map((result) => (
+          <Card key={result.id} className="bg-slate-800/50 border-slate-700 p-6">
+            <div className="flex flex-col gap-3">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
+                <div>
+                  <h3 className="text-xl font-bold text-white">{result.title}</h3>
+                  <p className="text-slate-400 text-sm capitalize">{result.sourceType}</p>
+                </div>
+                <span className="text-slate-300 text-sm">
+                  Relevance: {(result.similarity * 100).toFixed(0)}%
+                </span>
+              </div>
+              <p className="text-slate-300 leading-relaxed">{result.preview}</p>
+              <a
+                href={result.url}
+                className="text-blue-400 hover:text-blue-300 text-sm"
+              >
+                View full content
+              </a>
+            </div>
+          </Card>
+        ))
+      )}
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900">
       <Container className="py-20">
@@ -157,6 +305,33 @@ export default function AIPage() {
           <div className="lg:col-span-1">
             <Card className="bg-slate-800/50 border-slate-700 h-full">
               <div className="p-4">
+                <div className="flex gap-2 mb-4">
+                  <button
+                    type="button"
+                    onClick={() => setViewMode('chat')}
+                    className={clsx(
+                      'flex-1 px-3 py-2 rounded text-sm font-semibold transition',
+                      viewMode === 'chat'
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-slate-700 text-slate-300 hover:bg-slate-700'
+                    )}
+                  >
+                    Chat
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setViewMode('search')}
+                    className={clsx(
+                      'flex-1 px-3 py-2 rounded text-sm font-semibold transition',
+                      viewMode === 'search'
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-slate-700 text-slate-300 hover:bg-slate-700'
+                    )}
+                  >
+                    Search
+                  </button>
+                </div>
+
                 <h3 className="text-lg font-bold text-white mb-4">Conversations</h3>
 
                 {/* Topic selector */}
@@ -258,35 +433,7 @@ export default function AIPage() {
                               : 'bg-slate-700 text-slate-100'
                           )}
                         >
-                          {msg.role === 'assistant' ? (
-                            <div className="prose prose-invert max-w-none text-sm">
-                              <ReactMarkdown
-                                components={{
-                                  code: ({ node, inline, className, children, ...props }: any) => {
-                                    const match = /language-(\w+)/.exec(className || '');
-                                    return !inline && match ? (
-                                      <SyntaxHighlighter
-                                        style={atomDark}
-                                        language={match[1]}
-                                        PreTag="div"
-                                        {...props}
-                                      >
-                                        {String(children).replace(/\n$/, '')}
-                                      </SyntaxHighlighter>
-                                    ) : (
-                                      <code className="bg-slate-800 px-2 py-1 rounded text-xs" {...props}>
-                                        {children}
-                                      </code>
-                                    );
-                                  },
-                                }}
-                              >
-                                {msg.content}
-                              </ReactMarkdown>
-                            </div>
-                          ) : (
-                            msg.content
-                          )}
+                          <p className="text-sm whitespace-pre-wrap break-words">{msg.content}</p>
                           <button
                             onClick={() => copyMessage(msg.content)}
                             className="mt-2 inline-flex items-center gap-1 text-xs opacity-60 hover:opacity-100"

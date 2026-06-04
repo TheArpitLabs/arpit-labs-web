@@ -44,14 +44,11 @@ export class AIChatService {
   private conversationHistory: Map<string, AIConversation> = new Map();
 
   constructor() {
-    // Initialize LangChain and OpenAI integration
     this.initializeAI();
   }
 
   private initializeAI() {
-    // Initialize the AI service environment
-    // This will be configured with OPENAI_API_KEY from environment
-    console.log('AI Service initialized');
+    console.log('AI Chat Service initialized');
   }
 
   /**
@@ -72,6 +69,20 @@ export class AIChatService {
     };
 
     this.conversationHistory.set(conversationId, conversation);
+
+    // Persist to database
+    try {
+      await supabase.from('ai_conversations').insert({
+        id: conversationId,
+        user_id: userId,
+        title: `Chat about ${topic}`,
+        topic,
+        created_at: new Date().toISOString(),
+      });
+    } catch (error) {
+      console.error('Failed to save conversation to DB:', error);
+    }
+
     return conversation;
   }
 
@@ -93,6 +104,19 @@ export class AIChatService {
       content: userMessage,
     });
 
+    // Save user message to DB
+    try {
+      await supabase.from('ai_messages').insert({
+        conversation_id: conversationId,
+        role: 'user',
+        content: userMessage,
+        model: this.model,
+        created_at: new Date().toISOString(),
+      });
+    } catch (error) {
+      console.error('Failed to save message to DB:', error);
+    }
+
     // Generate AI response
     const response = await this.generateResponse(conversation);
 
@@ -102,6 +126,19 @@ export class AIChatService {
       content: response,
     });
 
+    // Save assistant message to DB
+    try {
+      await supabase.from('ai_messages').insert({
+        conversation_id: conversationId,
+        role: 'assistant',
+        content: response,
+        model: this.model,
+        created_at: new Date().toISOString(),
+      });
+    } catch (error) {
+      console.error('Failed to save response to DB:', error);
+    }
+
     return {
       response,
       conversationId,
@@ -109,42 +146,45 @@ export class AIChatService {
   }
 
   /**
-   * Generate response using LangChain + OpenAI
+   * Generate response using OpenAI
    */
   private async generateResponse(conversation: AIConversation): Promise<string> {
-    // This will use LangChain to:
-    // 1. Search knowledge base for relevant content
-    // 2. Build RAG prompt with context
-    // 3. Call OpenAI GPT-4
-    // 4. Return formatted response
-
-    // Placeholder implementation
     const knowledgeContext = await this.searchKnowledgeBase(
       conversation.messages[conversation.messages.length - 1].content,
       conversation.topic
     );
 
     const systemPrompt = this.buildSystemPrompt(conversation.topic, knowledgeContext);
+    const messages = conversation.messages.map(msg => ({
+      role: msg.role,
+      content: msg.content,
+    }));
 
-    // In production, call OpenAI API here
-    const mockResponse = `I found information about ${conversation.topic}. Based on your question, here's what I can help with...`;
-
-    return mockResponse;
+    try {
+      return await this.callOpenAI(systemPrompt, messages);
+    } catch (error) {
+      console.error('OpenAI call failed:', error);
+      return this.generateFallbackResponse(conversation.topic);
+    }
   }
 
   /**
    * Search knowledge base for relevant content
    */
   private async searchKnowledgeBase(query: string, topic: string): Promise<string[]> {
-    // This will:
-    // 1. Convert query to embedding
-    // 2. Search vector database (Pinecone/Weaviate)
-    // 3. Return top results
+    try {
+      const { data } = await supabase
+        .from('ai_knowledge_base')
+        .select('content')
+        .eq('source_type', topic)
+        .eq('is_active', true)
+        .limit(3);
 
-    console.log(`Searching knowledge base for: ${query} in ${topic}`);
-
-    // Placeholder
-    return ['content1', 'content2', 'content3'];
+      return data ? data.map((item: any) => item.content) : [];
+    } catch (error) {
+      console.error('Failed to search knowledge base:', error);
+      return [];
+    }
   }
 
   /**
@@ -179,6 +219,59 @@ export class AIChatService {
   }
 
   /**
+   * Call OpenAI API
+   */
+  private async callOpenAI(systemPrompt: string, messages: any[]): Promise<string> {
+    const apiKey = process.env.OPENAI_API_KEY;
+    if (!apiKey) {
+      return this.generateFallbackResponse('general');
+    }
+
+    try {
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model: this.model,
+          messages: [
+            { role: 'system', content: systemPrompt },
+            ...messages,
+          ],
+          max_tokens: this.maxTokens,
+          temperature: this.temperature,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`OpenAI API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data?.choices?.[0]?.message?.content?.trim() || 'Unable to generate response';
+    } catch (error) {
+      console.error('OpenAI call error:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Generate fallback response when OpenAI is unavailable
+   */
+  private generateFallbackResponse(topic: string): string {
+    const fallbacks: Record<string, string> = {
+      projects: 'I can help you explore various software projects and technical solutions. What would you like to know?',
+      blog: 'I can discuss blog articles on various technical topics. What interests you?',
+      experiments: 'I can explain experiments and research concepts. What would you like to explore?',
+      general: 'I am an AI assistant ready to help. How can I assist you today?',
+    };
+
+    return fallbacks[topic] || fallbacks.general;
+  }
+
+  /**
    * Get conversation history
    */
   getConversation(conversationId: string): AIConversation | undefined {
@@ -194,9 +287,13 @@ export class AIChatService {
       throw new Error(`Conversation ${conversationId} not found`);
     }
 
-    // Save to Supabase
-    // await supabase.from('ai_conversations').insert({...})
-    console.log(`Saving conversation ${conversationId} to database`);
+    try {
+      await supabase.from('ai_conversations').update({
+        updated_at: new Date().toISOString(),
+      }).eq('id', conversationId);
+    } catch (error) {
+      console.error('Failed to save conversation:', error);
+    }
   }
 }
 
@@ -341,35 +438,101 @@ export class SemanticSearchService {
   async search(query: string, limit: number = 5): Promise<SearchResult[]> {
     console.log(`Semantic search for: ${query}`);
 
-    // 1. Generate embedding for query
-    const queryEmbedding = await this.generateQueryEmbedding(query);
+    try {
+      // Step 1: Fetch all projects, blog posts, experiments
+      const [{ data: projects }, { data: blogPosts }, { data: experiments }] = await Promise.all([
+        supabase.from('projects').select('id, title, description, slug').eq('published', true),
+        supabase.from('lab_notes').select('id, title, excerpt, slug').eq('published', true),
+        supabase.from('experiments').select('id, title, description, slug').eq('published', true),
+      ]);
 
-    // 2. Search Pinecone/Weaviate for similar embeddings
-    const results = await this.searchVectorDatabase(queryEmbedding, limit);
+      // Step 2: Score results based on keyword match
+      const allResults: SearchResult[] = [];
 
-    // 3. Enrich results with metadata
-    const enrichedResults = await this.enrichResults(results);
+      if (projects) {
+        projects.forEach((p: any) => {
+          const score = this.calculateSimilarity(query, `${p.title} ${p.description}`);
+          if (score > 0.3) {
+            allResults.push({
+              id: p.id,
+              title: p.title,
+              sourceType: 'project',
+              sourceId: p.id,
+              similarity: score,
+              preview: p.description?.substring(0, 150) || '',
+              url: `/projects/${p.slug}`,
+            });
+          }
+        });
+      }
 
-    return enrichedResults;
+      if (blogPosts) {
+        blogPosts.forEach((b: any) => {
+          const score = this.calculateSimilarity(query, `${b.title} ${b.excerpt}`);
+          if (score > 0.3) {
+            allResults.push({
+              id: b.id,
+              title: b.title,
+              sourceType: 'blog',
+              sourceId: b.id,
+              similarity: score,
+              preview: b.excerpt?.substring(0, 150) || '',
+              url: `/blog/${b.slug}`,
+            });
+          }
+        });
+      }
+
+      if (experiments) {
+        experiments.forEach((e: any) => {
+          const score = this.calculateSimilarity(query, `${e.title} ${e.description}`);
+          if (score > 0.3) {
+            allResults.push({
+              id: e.id,
+              title: e.title,
+              sourceType: 'experiment',
+              sourceId: e.id,
+              similarity: score,
+              preview: e.description?.substring(0, 150) || '',
+              url: `/experiments/${e.slug}`,
+            });
+          }
+        });
+      }
+
+      // Step 3: Sort by similarity and limit results
+      return allResults.sort((a, b) => b.similarity - a.similarity).slice(0, limit);
+    } catch (error) {
+      console.error('Search failed:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Calculate similarity between query and text (simple keyword-based)
+   */
+  private calculateSimilarity(query: string, text: string): number {
+    const queryWords = query.toLowerCase().split(/\s+/).filter(w => w.length > 2);
+    const textWords = text.toLowerCase().split(/\s+/);
+
+    if (queryWords.length === 0) return 0;
+
+    const matches = queryWords.filter(qw => textWords.some(tw => tw.includes(qw) || qw.includes(tw))).length;
+
+    return matches / queryWords.length;
   }
 
   /**
    * Generate embedding for search query
    */
   private async generateQueryEmbedding(query: string): Promise<number[]> {
-    // Use OpenAI Embeddings API
     return Array(1536).fill(0.1);
   }
 
   /**
    * Search vector database
    */
-  private async searchVectorDatabase(
-    embedding: number[],
-    limit: number
-  ): Promise<any[]> {
-    // Search Pinecone/Weaviate for similar vectors
-    // Return top results
+  private async searchVectorDatabase(embedding: number[], limit: number): Promise<any[]> {
     return [];
   }
 
@@ -377,7 +540,6 @@ export class SemanticSearchService {
    * Enrich search results with metadata
    */
   private async enrichResults(results: any[]): Promise<SearchResult[]> {
-    // Add titles, URLs, previews from Supabase
     return results.map((r) => ({
       id: r.id,
       title: r.title || 'Untitled',
@@ -404,13 +566,17 @@ export class ContentGenerationService {
   async generateProjectIdeas(category: string, count: number = 5): Promise<string[]> {
     console.log(`Generating ${count} project ideas for ${category}`);
 
-    const prompt = `Generate ${count} creative project ideas for ${category} (IoT, AI, Cybersecurity, or Web Development). 
-    Each idea should be unique and interesting. Format as a numbered list.`;
+    const prompt = `Generate ${count} creative and practical project ideas for ${category} (IoT, AI, Cybersecurity, or Web Development). 
+    Each idea should be unique, interesting, and achievable.
+    Format as a numbered list with just the project titles, no descriptions.`;
 
-    // Call OpenAI GPT-4
-    const ideas = await this.callOpenAI(prompt);
-
-    return ideas.split('\n').filter((idea) => idea.trim().length > 0);
+    try {
+      const response = await this.callOpenAI(prompt);
+      return response.split('\n').filter((idea) => idea.trim().length > 0);
+    } catch (error) {
+      console.error('Failed to generate ideas:', error);
+      return this.getFallbackIdeas(category);
+    }
   }
 
   /**
@@ -420,24 +586,28 @@ export class ContentGenerationService {
     console.log('Generating tech stack suggestions...');
 
     const prompt = `Based on this project: "${projectDescription}", suggest a modern tech stack with categories for:
-    - Frontend
-    - Backend
-    - Database
-    - DevOps
-    Format as JSON.`;
-
-    const response = await this.callOpenAI(prompt);
+    - frontend
+    - backend
+    - database
+    - devops
+    Format as JSON with these exact keys.`;
 
     try {
-      return JSON.parse(response);
-    } catch {
-      return {
-        frontend: ['React', 'TypeScript', 'Tailwind CSS'],
-        backend: ['Node.js', 'Express', 'PostgreSQL'],
-        database: ['PostgreSQL', 'Redis'],
-        devops: ['Docker', 'Kubernetes', 'CI/CD'],
-      };
+      const response = await this.callOpenAI(prompt);
+      const jsonMatch = response.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        return JSON.parse(jsonMatch[0]);
+      }
+    } catch (error) {
+      console.error('Failed to generate tech stack:', error);
     }
+
+    return {
+      frontend: ['React', 'TypeScript', 'Tailwind CSS'],
+      backend: ['Node.js', 'Express', 'PostgreSQL'],
+      database: ['PostgreSQL', 'Redis'],
+      devops: ['Docker', 'GitHub Actions', 'Vercel'],
+    };
   }
 
   /**
@@ -447,7 +617,7 @@ export class ContentGenerationService {
     console.log(`Generating project idea for category: ${category}`);
 
     const ideas = await this.generateProjectIdeas(category, 1);
-    const title = ideas[0] || `${category} project idea`;
+    const title = ideas[0]?.replace(/^\d+\.\s*/, '') || `${category} project idea`;
     const description = `A ${category} project idea designed to showcase ${category.toLowerCase()} innovation, practical architecture, and real-world impact.`;
     const techStack = await this.generateTechStack(description);
     const difficulty = ['beginner', 'intermediate', 'advanced'][
@@ -468,50 +638,101 @@ export class ContentGenerationService {
   async generateArchitectureDiagram(projectDescription: string): Promise<string> {
     console.log('Generating architecture diagram...');
 
-    const prompt = `Create a detailed ASCII architecture diagram for: "${projectDescription}"`;
+    const prompt = `Create a detailed ASCII architecture diagram for: "${projectDescription}". 
+    Include components, data flow, and external services. Keep it concise but complete.`;
 
-    return await this.callOpenAI(prompt);
+    try {
+      return await this.callOpenAI(prompt);
+    } catch (error) {
+      return 'Frontend → Backend → Database';
+    }
+  }
+
+  /**
+   * Get fallback ideas for demo
+   */
+  private getFallbackIdeas(category: string): string[] {
+    const fallbacks: Record<string, string[]> = {
+      IoT: [
+        'Smart Home Energy Monitor',
+        'IoT Weather Station',
+        'Connected Fitness Tracker',
+        'Smart Plant Watering System',
+        'IoT Fire Safety System',
+      ],
+      AI: [
+        'AI Image Classification System',
+        'Chatbot for Customer Support',
+        'Sentiment Analysis Tool',
+        'Recommendation Engine',
+        'Predictive Analytics Dashboard',
+      ],
+      Cybersecurity: [
+        'Network Intrusion Detection System',
+        'Password Manager with Encryption',
+        'Vulnerability Scanner',
+        'Secure File Sharing Platform',
+        'Security Audit Tool',
+      ],
+      ['Web Development']: [
+        'Multi-tenant SaaS Platform',
+        'Real-time Collaboration Tool',
+        'E-commerce Platform',
+        'Project Management Tool',
+        'Social Media Analytics Dashboard',
+      ],
+    };
+
+    return fallbacks[category] || fallbacks['Web Development'] || [];
   }
 
   /**
    * Call OpenAI API
    */
   private async callOpenAI(prompt: string): Promise<string> {
-    const apiKey = process.env.OPENAI_API_KEY || process.env.NEXT_PUBLIC_OPENAI_API_KEY;
+    const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
-      console.log('OpenAI key missing - returning placeholder response');
-      return 'Generated content placeholder';
-    }
-
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model: 'gpt-4',
-        messages: [
-          { role: 'system', content: 'You are a helpful AI assistant for generating technical content.' },
-          { role: 'user', content: prompt },
-        ],
-        max_tokens: 500,
-        temperature: 0.7,
-      }),
-    });
-
-    const text = await response.text();
-
-    if (!response.ok) {
-      console.error('OpenAI API error:', response.status, text);
+      console.log('OpenAI key missing');
       return 'Generated content placeholder';
     }
 
     try {
-      const data = JSON.parse(text);
-      return data?.choices?.[0]?.message?.content?.trim() ?? 'Generated content placeholder';
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model: 'gpt-4',
+          messages: [
+            {
+              role: 'system',
+              content: 'You are a helpful AI assistant for generating technical content and project ideas.',
+            },
+            { role: 'user', content: prompt },
+          ],
+          max_tokens: 500,
+          temperature: 0.7,
+        }),
+      });
+
+      const text = await response.text();
+
+      if (!response.ok) {
+        console.error('OpenAI API error:', response.status, text);
+        return 'Generated content placeholder';
+      }
+
+      try {
+        const data = JSON.parse(text);
+        return data?.choices?.[0]?.message?.content?.trim() ?? 'Generated content placeholder';
+      } catch (error) {
+        console.error('Failed to parse OpenAI response:', error);
+        return 'Generated content placeholder';
+      }
     } catch (error) {
-      console.error('Failed to parse OpenAI response:', error, text);
+      console.error('OpenAI call failed:', error);
       return 'Generated content placeholder';
     }
   }
