@@ -60,7 +60,7 @@ export function AIChat({ defaultTopic = 'general', className = '' }: AIChatProps
         {
           id: `msg_${Date.now()}`,
           role: 'assistant',
-          content: `Hi! I'm your AI assistant. I can help you explore your ${defaultTopic}. What would you like to know?`,
+          content: `Hi! I&apos;m your AI assistant. I can help you explore your ${defaultTopic}. What would you like to know?`,
           timestamp: new Date(),
         },
       ]);
@@ -273,7 +273,7 @@ export function AISearch({ className = '' }: AISearchProps) {
           ) : results.length > 0 ? (
             <div>
               <p className="text-sm font-medium mb-3">
-                Found {results.length} results for "{query}"
+                Found {results.length} results for &quot;{query}&quot;
               </p>
               {results.map((result) => (
                 <Card key={result.id} className="p-4 hover:shadow-md transition">

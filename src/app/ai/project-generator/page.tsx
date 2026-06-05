@@ -209,7 +209,7 @@ export default function ProjectGeneratorPage() {
                 <Card className="bg-slate-800/50 border-slate-700 p-12 flex items-center justify-center min-h-96">
                   <div className="text-center">
                     <p className="text-slate-400 text-lg">
-                      Configure your preferences and click "Generate Project" to get started
+                      Configure your preferences and click &quot;Generate Project&quot; to get started
                     </p>
                   </div>
                 </Card>

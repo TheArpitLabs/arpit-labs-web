@@ -180,7 +180,6 @@ export class AIChatService {
     try {
       // Use semantic search service to retrieve relevant chunks
       // semanticSearchService instance is created at module export time below
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       const results = typeof semanticSearchService !== 'undefined' ? await semanticSearchService.search(query, 3) : null;
 

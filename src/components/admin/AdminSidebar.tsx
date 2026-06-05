@@ -14,6 +14,7 @@ const navigationItems: Array<{
   { href: "/admin/blog", label: "Blog", icon: <FileText size={18} /> },
   { href: "/admin/journey", label: "Journey", icon: <Milestone size={18} /> },
   { href: "/admin/newsletter", label: "Newsletter", icon: <Users size={18} /> },
+  { href: "/admin/community" as Route, label: "Community", icon: <FileText size={18} /> },
   { href: "/admin/messages", label: "Messages", icon: <Inbox size={18} /> },
 ];
 

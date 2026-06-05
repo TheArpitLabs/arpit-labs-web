@@ -43,7 +43,7 @@ export function ContactForm() {
         </div>
         <h3 className="text-2xl font-bold text-foreground">Message Sent!</h3>
         <p className="mt-4 text-muted">
-          Thank you for reaching out. I'll get back to you as soon as possible.
+          Thank you for reaching out. I&apos;ll get back to you as soon as possible.
         </p>
         <button
           onClick={() => setStatus("idle")}
