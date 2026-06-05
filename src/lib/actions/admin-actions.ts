@@ -258,3 +258,119 @@ export async function deleteSubscriberAction(formData: FormData) {
   await newsletterRepository.deleteSubscriber(id);
   revalidatePath("/admin/newsletter");
 }
+
+// ============================================================================
+// LEARNING PLATFORM ACTIONS
+// ============================================================================
+
+export async function saveCourseAction(formData: FormData) {
+  await requireAdmin();
+  
+  const { coursesRepository } = await import("@/lib/repositories/courses.repository");
+  const { courseSchema } = await import("@/lib/validation/learning.schema");
+
+  const id = asString(formData.get("id"));
+  const payload = courseSchema.parse({
+    title: asString(formData.get("title")),
+    slug: asString(formData.get("slug")),
+    description: asString(formData.get("description")),
+    content: asOptionalString(formData.get("content")),
+    category: asString(formData.get("category")),
+    difficulty: asString(formData.get("difficulty")),
+    duration: Number(asString(formData.get("duration"))),
+    thumbnail: asOptionalString(formData.get("thumbnail")),
+    published: asBoolean(formData.get("published")),
+  });
+
+  if (id) {
+    await coursesRepository.update(id, payload);
+  } else {
+    await coursesRepository.create(payload);
+  }
+
+  revalidatePath("/admin/courses");
+  revalidatePath("/courses");
+  redirect("/admin/courses" as never);
+}
+
+export async function deleteCourseAction(formData: FormData) {
+  await requireAdmin();
+  const { coursesRepository } = await import("@/lib/repositories/courses.repository");
+  const id = asString(formData.get("id"));
+  await coursesRepository.delete(id);
+  revalidatePath("/admin/courses");
+  revalidatePath("/courses");
+}
+
+export async function saveLabAction(formData: FormData) {
+  await requireAdmin();
+  
+  const { labsRepository } = await import("@/lib/repositories/labs.repository");
+  const { labSchema } = await import("@/lib/validation/learning.schema");
+
+  const id = asString(formData.get("id"));
+  const payload = labSchema.parse({
+    title: asString(formData.get("title")),
+    slug: asString(formData.get("slug")),
+    description: asString(formData.get("description")),
+    instructions: asString(formData.get("instructions")),
+    difficulty: asString(formData.get("difficulty")),
+    category: asString(formData.get("category")),
+    published: asBoolean(formData.get("published")),
+  });
+
+  if (id) {
+    await labsRepository.update(id, payload);
+  } else {
+    await labsRepository.create(payload);
+  }
+
+  revalidatePath("/admin/labs");
+  revalidatePath("/labs");
+  redirect("/admin/labs" as never);
+}
+
+export async function deleteLabAction(formData: FormData) {
+  await requireAdmin();
+  const { labsRepository } = await import("@/lib/repositories/labs.repository");
+  const id = asString(formData.get("id"));
+  await labsRepository.delete(id);
+  revalidatePath("/admin/labs");
+  revalidatePath("/labs");
+}
+
+export async function saveRoadmapAction(formData: FormData) {
+  await requireAdmin();
+  
+  const { roadmapsRepository } = await import("@/lib/repositories/roadmaps.repository");
+  const { roadmapSchema } = await import("@/lib/validation/learning.schema");
+
+  const id = asString(formData.get("id"));
+  const payload = roadmapSchema.parse({
+    title: asString(formData.get("title")),
+    slug: asString(formData.get("slug")),
+    description: asString(formData.get("description")),
+    category: asString(formData.get("category")),
+    content: asString(formData.get("content")),
+    published: asBoolean(formData.get("published")),
+  });
+
+  if (id) {
+    await roadmapsRepository.update(id, payload);
+  } else {
+    await roadmapsRepository.create(payload);
+  }
+
+  revalidatePath("/admin/roadmaps");
+  revalidatePath("/roadmaps");
+  redirect("/admin/roadmaps" as never);
+}
+
+export async function deleteRoadmapAction(formData: FormData) {
+  await requireAdmin();
+  const { roadmapsRepository } = await import("@/lib/repositories/roadmaps.repository");
+  const id = asString(formData.get("id"));
+  await roadmapsRepository.delete(id);
+  revalidatePath("/admin/roadmaps");
+  revalidatePath("/roadmaps");
+}

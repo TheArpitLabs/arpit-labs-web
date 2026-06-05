@@ -94,3 +94,73 @@ export interface AdminStats {
   draftCount: number;
   publishedCount: number;
 }
+
+// ============================================================================
+// LEARNING PLATFORM TYPES
+// ============================================================================
+
+export type LearningCategory = 'IoT' | 'AI' | 'Cybersecurity' | 'Web Development';
+export type LearningDifficulty = 'beginner' | 'intermediate' | 'advanced';
+
+export interface Course {
+  id: string;
+  title: string;
+  slug: string;
+  description: string;
+  content?: string | null;
+  category: LearningCategory;
+  difficulty: LearningDifficulty;
+  duration: number; // in minutes
+  thumbnail?: string | null;
+  published: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CourseModule {
+  id: string;
+  course_id: string;
+  title: string;
+  content: string;
+  order_index: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Lab {
+  id: string;
+  title: string;
+  slug: string;
+  description: string;
+  instructions: string;
+  difficulty: LearningDifficulty;
+  category: LearningCategory;
+  published: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Roadmap {
+  id: string;
+  title: string;
+  slug: string;
+  description: string;
+  category: LearningCategory;
+  content: string;
+  published: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface UserCourseProgress {
+  id: string;
+  user_id: string;
+  course_id: string;
+  progress_percentage: number;
+  completed: boolean;
+  updated_at: string;
+}
+
+export interface CourseWithProgress extends Course {
+  progress?: UserCourseProgress | null;
+}
