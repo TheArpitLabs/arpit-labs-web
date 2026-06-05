@@ -1,0 +1,18 @@
+{
+  "Common": {
+    "title": "Arpit Labs",
+    "description": "Engineering the Future",
+    "home": "Home",
+    "about": "About",
+    "research": "Research",
+    "university": "University",
+    "innovation": "Innovation",
+    "community": "Community"
+  },
+  "Hero": {
+    "title": "Engineering the future through AI, IoT, Software & Hardware.",
+    "subtitle": "Arpit Labs is a digital engineering lab where ideas are designed, built, and transformed into impactful systems.",
+    "cta_primary": "Explore the Lab",
+    "cta_secondary": "View My Journey"
+  }
+}

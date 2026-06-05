@@ -9,3 +9,4 @@ export { productsRepository } from "./products.repository";
 export { productFeaturesRepository } from "./product-features.repository";
 export { productScreenshotsRepository } from "./product-screenshots.repository";
 export { saasRepository } from "./saas.repository";
+export { ecosystemRepository } from "./ecosystem.repository";

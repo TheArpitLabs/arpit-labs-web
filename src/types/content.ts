@@ -175,12 +175,148 @@ export interface AdminStats {
 }
 
 // ============================================================================
-// LEARNING PLATFORM TYPES
+// PHASE 10: ECOSYSTEM TYPES
 // ============================================================================
 
-export type LearningCategory = 'IoT' | 'AI' | 'Cybersecurity' | 'Web Development';
+// 1. RESEARCH
+export type ResearchDivision = 'ai' | 'iot' | 'cybersecurity';
+
+export interface ResearchPaper {
+  id: string;
+  title: string;
+  slug: string;
+  abstract: string;
+  content?: string | null;
+  authors: string[];
+  division: ResearchDivision;
+  tags: string[];
+  published_at?: string | null;
+  is_featured: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ResearchDataset {
+  id: string;
+  title: string;
+  slug: string;
+  description: string;
+  download_url?: string | null;
+  size?: string | null;
+  format?: string | null;
+  license?: string | null;
+  created_at: string;
+}
+
+// 2. UNIVERSITY
+export type LearningCategory = 'AI' | 'IoT' | 'Cybersecurity' | 'Web Development' | 'Data Science';
 export type LearningDifficulty = 'beginner' | 'intermediate' | 'advanced';
 
+export interface Certification {
+  id: string;
+  title: string;
+  slug: string;
+  description: string;
+  topic: LearningCategory;
+  level: LearningDifficulty;
+  image_url?: string | null;
+  created_at: string;
+}
+
+export interface Exam {
+  id: string;
+  certification_id: string;
+  title: string;
+  questions: any[];
+  passing_score: number;
+  duration_minutes: number;
+  created_at: string;
+}
+
+export interface Badge {
+  id: string;
+  name: string;
+  description: string;
+  icon_url?: string | null;
+  criteria?: string | null;
+  created_at: string;
+}
+
+// 3. INNOVATION & VENTURE
+export interface Startup {
+  id: string;
+  name: string;
+  slug: string;
+  description: string;
+  logo_url?: string | null;
+  website_url?: string | null;
+  founder_id?: string | null;
+  stage: string;
+  created_at: string;
+}
+
+export interface InnovationProject {
+  id: string;
+  title: string;
+  description: string;
+  challenge_id?: string | null;
+  team_members: string[];
+  created_at: string;
+}
+
+export interface Founder {
+  id: string;
+  bio?: string | null;
+  expertise: string[];
+  linked_in?: string | null;
+  created_at: string;
+}
+
+export interface Investor {
+  id: string;
+  firm_name?: string | null;
+  investment_focus: string[];
+  ticket_size_min?: number | null;
+  ticket_size_max?: number | null;
+  created_at: string;
+}
+
+// 4. GLOBAL COMMUNITY
+export interface CommunityChapter {
+  id: string;
+  name: string;
+  country: string;
+  city?: string | null;
+  lead_id?: string | null;
+  member_count: number;
+  created_at: string;
+}
+
+export interface CommunityEvent {
+  id: string;
+  chapter_id: string;
+  title: string;
+  description: string;
+  event_type: 'meetup' | 'webinar' | 'workshop';
+  location?: string | null;
+  start_time: string;
+  end_time?: string | null;
+  max_attendees?: number | null;
+  created_at: string;
+}
+
+// 5. DATA & AI
+export interface Recommendation {
+  id: string;
+  user_id: string;
+  recommended_entity_type: string;
+  recommended_entity_id: string;
+  score: number;
+  reason?: string | null;
+  created_at: string;
+}
+
+// EXISTING (Legacy/Redundant but kept for compatibility)
 export interface Course {
   id: string;
   title: string;

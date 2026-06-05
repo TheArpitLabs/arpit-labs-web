@@ -1,31 +1,30 @@
 "use client";
 
-import { useState } from "react";
-import { Menu, X, LayoutDashboard } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Menu, X, LayoutDashboard, Globe, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/shared/ThemeToggle";
 import { NexusLogo } from "@/components/shared/NexusLogo";
 import Link from "next/link";
 import type { Route } from "next";
-import { usePathname } from "next/navigation";
-import { useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { supabaseClient } from "@/lib/supabase/client";
 
 const navItems = [
   { href: "/", label: "Home" },
-  { href: "/about", label: "About" },
+  { href: "/research", label: "Research" },
+  { href: "/university", label: "University" },
+  { href: "/innovation", label: "Innovation" },
+  { href: "/community/global", label: "Community" },
   { href: "/products", label: "Products" },
   { href: "/marketplace", label: "Marketplace" },
-  { href: "/projects", label: "Projects" },
-  { href: "/experiments", label: "Experiments" },
-  { href: "/blog", label: "Lab Notes" },
-  { href: "/hackathons", label: "Hackathons" },
-  { href: "/journey", label: "Journey" },
 ] as const satisfies ReadonlyArray<{ href: Route; label: string }>;
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
+  const [langOpen, setLangOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
   const [user, setUser] = useState<any | null>(null);
   const [profile, setProfile] = useState<any | null>(null);
 
@@ -60,6 +59,19 @@ export function Navbar() {
     };
   }, []);
 
+  const switchLanguage = (locale: string) => {
+    const segments = pathname.split('/');
+    if (segments[1] === 'en' || segments[1] === 'hi') {
+      segments[1] = locale;
+    } else {
+      segments.splice(1, 0, locale);
+    }
+    router.push(segments.join('/'));
+    setLangOpen(false);
+  };
+
+  const currentLang = pathname.startsWith('/hi') ? 'Hindi' : 'English';
+
   return (
     <header className="sticky top-0 z-50 border-b border-border/70 bg-background/80 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-950/80">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-4 py-4 sm:px-6 lg:px-8">
@@ -68,7 +80,7 @@ export function Navbar() {
             <NexusLogo className="h-5 w-5" />
           </span>
           <span className="sr-only">Arpit Labs</span>
-          <span>Arpit Labs</span>
+          <span className="hidden sm:inline">Arpit Labs</span>
         </Link>
 
         <nav className="hidden items-center gap-6 lg:gap-8 md:flex">
@@ -84,65 +96,49 @@ export function Navbar() {
               {item.label}
             </Link>
           ))}
-          {user && (
-            <Link 
-              href="/dashboard" 
-              className={cn(
-                "text-sm font-bold transition hover:text-foreground flex items-center gap-2",
-                pathname.startsWith("/dashboard") || pathname.startsWith("/organizations") ? "text-primary" : "text-muted"
-              )}
-            >
-              <LayoutDashboard size={16} />
-              Dashboard
-            </Link>
-          )}
         </nav>
 
         <div className="flex items-center gap-3">
-          <ThemeToggle />
-          {!user ? (
-            <>
-              <Link
-                href="/login"
-                className="rounded-2xl px-3 py-2 text-sm font-semibold text-foreground transition hover:bg-surface"
-              >
-                Login
-              </Link>
-              <Link
-                href="/register"
-                className="hidden rounded-2xl border border-border/70 bg-surface px-4 py-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary/5 dark:border-slate-700 dark:bg-slate-900 sm:inline-flex"
-              >
-                Register
-              </Link>
-            </>
-          ) : (
-            <div className="relative">
-              <div className="inline-flex items-center gap-2">
-                <Link href="/profile" className="hidden lg:block text-sm font-medium text-foreground">
-                  {profile?.full_name ?? user.email}
-                </Link>
-                <button
-                  onClick={async () => {
-                    await supabaseClient.auth.signOut();
-                    setUser(null);
-                    setProfile(null);
-                    window.location.href = "/";
-                  }}
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-border/70 bg-surface text-foreground transition hover:bg-primary/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70 dark:border-slate-700 dark:bg-slate-900"
-                  title="Logout"
-                >
-                  <span className="sr-only">Logout</span>
-                  ⎋
-                </button>
+          {/* Language Switcher */}
+          <div className="relative">
+            <button 
+              onClick={() => setLangOpen(!langOpen)}
+              className="flex items-center gap-1.5 rounded-xl border border-border/70 bg-surface px-3 py-1.5 text-xs font-bold text-foreground transition hover:border-primary"
+            >
+              <Globe size={14} />
+              <span className="hidden sm:inline">{currentLang}</span>
+              <ChevronDown size={12} className={cn("transition", langOpen && "rotate-180")} />
+            </button>
+            {langOpen && (
+              <div className="absolute right-0 mt-2 w-32 overflow-hidden rounded-2xl border border-border/70 bg-card p-1 shadow-xl">
+                <button onClick={() => switchLanguage('en')} className="w-full rounded-xl px-4 py-2 text-left text-xs font-medium hover:bg-surface">English</button>
+                <button onClick={() => switchLanguage('hi')} className="w-full rounded-xl px-4 py-2 text-left text-xs font-medium hover:bg-surface">हिन्दी</button>
               </div>
-            </div>
+            )}
+          </div>
+
+          <ThemeToggle />
+          
+          {!user ? (
+            <Link
+              href="/login"
+              className="rounded-2xl bg-primary px-4 py-2 text-sm font-bold text-white shadow-lg shadow-primary/20 transition hover:bg-primary/90"
+            >
+              Join
+            </Link>
+          ) : (
+            <Link 
+              href="/dashboard" 
+              className="flex h-10 w-10 items-center justify-center rounded-2xl border border-border/70 bg-surface text-primary transition hover:bg-primary/5 dark:border-slate-700 dark:bg-slate-900"
+            >
+              <LayoutDashboard size={20} />
+            </Link>
           )}
+          
           <button
             type="button"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-border/70 bg-surface text-foreground transition hover:bg-primary/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70 dark:border-slate-700 dark:bg-slate-900 md:hidden"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-border/70 bg-surface text-foreground md:hidden"
             onClick={() => setOpen((prev) => !prev)}
-            aria-label={open ? "Close navigation menu" : "Open navigation menu"}
-            aria-expanded={open}
           >
             {open ? <X size={20} /> : <Menu size={20} />}
           </button>
@@ -157,7 +153,7 @@ export function Navbar() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "rounded-2xl px-4 py-3 text-base font-medium transition hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70 dark:hover:bg-slate-900",
+                  "rounded-2xl px-4 py-3 text-base font-medium transition hover:bg-surface",
                   pathname === item.href ? "bg-primary/5 text-primary" : "text-foreground"
                 )}
                 onClick={() => setOpen(false)}
@@ -165,22 +161,6 @@ export function Navbar() {
                 {item.label}
               </Link>
             ))}
-            {user && (
-              <Link
-                href="/dashboard"
-                className="rounded-2xl px-4 py-3 text-base font-bold text-primary transition hover:bg-primary/5"
-                onClick={() => setOpen(false)}
-              >
-                Dashboard
-              </Link>
-            )}
-            <Link
-              href="/contact"
-              className="rounded-2xl px-4 py-3 text-base font-medium text-foreground transition hover:bg-surface"
-              onClick={() => setOpen(false)}
-            >
-              Contact
-            </Link>
           </div>
         </div>
       </div>
