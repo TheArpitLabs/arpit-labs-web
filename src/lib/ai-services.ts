@@ -1323,6 +1323,9 @@ Return JSON with keys seoDescription, metaTags, openGraph, keywords.`;
     tokensUsed: number | null,
     metadata: Record<string, any>
   ): Promise<AiGenerationRecord | null> {
+    // Store output as text to match migration schema; stringify objects.
+    const outputText = typeof output === 'string' ? output : JSON.stringify(output);
+
     const { data, error } = await supabase
       .from('ai_generations')
       .insert([
@@ -1331,9 +1334,11 @@ Return JSON with keys seoDescription, metaTags, openGraph, keywords.`;
           source_type: sourceType,
           source_id: sourceId,
           status: 'completed',
-          output,
+          prompt: null,
+          output: outputText,
           tokens_used: tokensUsed,
           metadata,
+          created_at: new Date().toISOString(),
         },
       ])
       .select()
@@ -1342,6 +1347,15 @@ Return JSON with keys seoDescription, metaTags, openGraph, keywords.`;
     if (error || !data) {
       console.error('Failed to create AI generation record:', error);
       return null;
+    }
+
+    // Try to parse output back into object for the caller
+    try {
+      if (data.output && typeof data.output === 'string') {
+        data.output = JSON.parse(data.output);
+      }
+    } catch (e) {
+      // keep as string if JSON parse fails
     }
 
     return data as AiGenerationRecord;
@@ -1421,7 +1435,7 @@ Return JSON with keys seoDescription, metaTags, openGraph, keywords.`;
     }).eq('id', jobId);
   }
 
-  private async parseJSON<T>(raw: string): T | null {
+  private parseJSON<T>(raw: string): T | null {
     const jsonMatch = raw.match(/\{[\s\S]*\}/m);
     if (!jsonMatch) {
       return null;

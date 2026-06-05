@@ -1,6 +1,5 @@
 import React from 'react';
 import { supabaseServer } from '@/lib/supabase/server';
-import { Button } from '@/components/ui/Button';
 
 export default async function AIAutomationDashboard() {
   const [kbCountRes, embeddingCountRes, conversationCountRes, recruiterReqRes, generationsRes, reportsRes] = await Promise.all([
