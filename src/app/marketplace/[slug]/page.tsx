@@ -9,8 +9,9 @@ import { ShoppingBag, Download, ArrowLeft, ShieldCheck, Zap } from "lucide-react
 import Link from "next/link";
 import { purchaseItemAction, trackItemViewAction } from "@/lib/actions/marketplace-actions";
 
-export default async function MarketplaceItemPage({ params }: { params: { slug: string } }) {
-  const item = await marketplaceRepository.getBySlug(params.slug);
+export default async function MarketplaceItemPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const item = await marketplaceRepository.getBySlug(slug);
 
   if (!item || !item.published) {
     notFound();

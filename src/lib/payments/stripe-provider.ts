@@ -1,13 +1,26 @@
 import Stripe from "stripe";
 import type { CheckoutSessionPayload, CheckoutSessionResult, PaymentProvider } from "@/lib/payments/payment-provider";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2023-10-16" as any,
-});
+const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+const stripe = stripeSecretKey
+  ? new Stripe(stripeSecretKey, {
+      apiVersion: "2023-10-16" as any,
+    })
+  : null;
 
 export const StripeProvider: PaymentProvider = {
   providerName: "stripe",
   async createCheckoutSession(payload: CheckoutSessionPayload): Promise<CheckoutSessionResult> {
+    if (!stripe) {
+      console.error("Stripe client is not configured. STRIPE_SECRET_KEY is missing.");
+      return {
+        success: false,
+        provider: "stripe",
+        checkoutUrl: "",
+        sessionId: "",
+      };
+    }
+
     try {
       const session = await stripe.checkout.sessions.create({
         payment_method_types: ["card"],

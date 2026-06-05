@@ -1,12 +1,12 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
+import { supabaseServer } from "@/lib/supabase/server";
 import { marketplaceItemSchema } from "@/lib/validation/marketplace.schema";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 export async function saveMarketplaceItemAction(formData: FormData) {
-  const supabase = await createClient();
+  const supabase = supabaseServer;
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) throw new Error("Unauthorized");
@@ -54,7 +54,7 @@ export async function saveMarketplaceItemAction(formData: FormData) {
 }
 
 export async function toggleItemStatusAction(id: string, field: "published" | "featured", value: boolean) {
-  const supabase = await createClient();
+  const supabase = supabaseServer;
   const { error } = await supabase
     .from("marketplace_items")
     .update({ [field]: value })
@@ -65,7 +65,7 @@ export async function toggleItemStatusAction(id: string, field: "published" | "f
 }
 
 export async function deleteMarketplaceItemAction(id: string) {
-  const supabase = await createClient();
+  const supabase = supabaseServer;
   const { error } = await supabase
     .from("marketplace_items")
     .delete()
@@ -76,7 +76,7 @@ export async function deleteMarketplaceItemAction(id: string) {
 }
 
 export async function purchaseItemAction(itemId: string) {
-  const supabase = await createClient();
+  const supabase = supabaseServer;
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
@@ -114,12 +114,12 @@ export async function purchaseItemAction(itemId: string) {
 }
 
 export async function trackItemViewAction(itemId: string) {
-  const supabase = await createClient();
+  const supabase = supabaseServer;
   await supabase.rpc('increment_marketplace_views', { item_id: itemId });
 }
 
 export async function saveCategoryAction(formData: FormData) {
-  const supabase = await createClient();
+  const supabase = supabaseServer;
   const name = formData.get("name") as string;
   const slug = formData.get("slug") as string;
   const id = formData.get("id") as string;
@@ -134,7 +134,7 @@ export async function saveCategoryAction(formData: FormData) {
 }
 
 export async function deleteCategoryAction(id: string) {
-  const supabase = await createClient();
+  const supabase = supabaseServer;
   await supabase.from("marketplace_categories").delete().eq("id", id);
   revalidatePath("/admin/marketplace");
 }

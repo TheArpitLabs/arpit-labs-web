@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { supabaseServer } from "@/lib/supabase/server";
 
 export interface MarketplaceItem {
   id: string;
@@ -27,7 +27,7 @@ export interface MarketplaceItem {
 
 export const marketplaceRepository = {
   async getAll(filters?: { category?: string; featured?: boolean; published?: boolean }) {
-    const supabase = await createClient();
+    const supabase = supabaseServer;
     let query = supabase
       .from("marketplace_items")
       .select("*, category:marketplace_categories(name, slug)");
@@ -48,7 +48,7 @@ export const marketplaceRepository = {
   },
 
   async getBySlug(slug: string) {
-    const supabase = await createClient();
+    const supabase = supabaseServer;
     const { data, error } = await supabase
       .from("marketplace_items")
       .select("*, category:marketplace_categories(name, slug)")
@@ -60,7 +60,7 @@ export const marketplaceRepository = {
   },
 
   async getCategories() {
-    const supabase = await createClient();
+    const supabase = supabaseServer;
     const { data, error } = await supabase
       .from("marketplace_categories")
       .select("*")
@@ -71,7 +71,7 @@ export const marketplaceRepository = {
   },
 
   async getBySeller(sellerId: string) {
-    const supabase = await createClient();
+    const supabase = supabaseServer;
     const { data, error } = await supabase
       .from("marketplace_items")
       .select("*, category:marketplace_categories(name, slug)")
@@ -83,7 +83,7 @@ export const marketplaceRepository = {
   },
 
   async getOrders(userId: string) {
-    const supabase = await createClient();
+    const supabase = supabaseServer;
     const { data, error } = await supabase
       .from("marketplace_orders")
       .select("*, item:marketplace_items(title, preview_image, slug)")

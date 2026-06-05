@@ -52,7 +52,7 @@ export default async function InnovationHubPage() {
                 <div className="rounded-3xl border border-border/70 bg-card p-6 shadow-sm">
                   <div className="mb-3 text-green-500"><Target size={24} /></div>
                   <h4 className="font-bold">Market Access</h4>
-                  <p className="text-xs text-muted">Direct pipelines to Arpit Labs' global partner network.</p>
+                  <p className="text-xs text-muted">Direct pipelines to Arpit Labs&apos; global partner network.</p>
                 </div>
                 <div className="rounded-3xl border border-border/70 bg-card p-6 shadow-sm">
                   <div className="mb-3 text-orange-500"><Zap size={24} /></div>
@@ -97,9 +97,13 @@ export default async function InnovationHubPage() {
                       <Globe size={16} /> Website
                     </a>
                   )}
-                  <Link href={`/innovation/${startup.slug}`} className="text-sm font-medium text-muted hover:text-foreground">
-                    Learn more →
-                  </Link>
+                  {startup.slug ? (
+                    <a href={`/innovation/${startup.slug}`} className="text-sm font-medium text-muted hover:text-foreground">
+                      Learn more →
+                    </a>
+                  ) : (
+                    <span className="text-sm font-medium text-muted">Not available</span>
+                  )}
                 </div>
               </div>
             ))}

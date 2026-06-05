@@ -16,7 +16,7 @@ alter table if exists public.experiments
   add column if not exists difficulty text,
   add column if not exists tech_stack text[] default '{}';
 
-alter table if exists public.journey_entries
+alter table if exists public.journey
   add column if not exists entry_type text default 'milestone',
   add column if not exists organization text,
   add column if not exists location text;

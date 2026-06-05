@@ -1,11 +1,12 @@
-import { createClient } from "@/lib/supabase/server";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { supabaseServer } from "@/lib/supabase/server";
 
 export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  { params }: any
 ) {
-  const supabase = await createClient();
+  const { id } = params;
+  const supabase = supabaseServer;
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
@@ -17,7 +18,7 @@ export async function GET(
     .from("marketplace_orders")
     .select("status")
     .eq("user_id", user.id)
-    .eq("item_id", params.id)
+    .eq("item_id", id)
     .eq("status", "completed")
     .single();
 
@@ -29,7 +30,7 @@ export async function GET(
   const { data: item, error: itemError } = await supabase
     .from("marketplace_items")
     .select("download_url, title")
-    .eq("id", params.id)
+    .eq("id", id)
     .single();
 
   if (itemError || !item || !item.download_url) {
@@ -40,7 +41,7 @@ export async function GET(
   await supabase
     .from("marketplace_items")
     .update({ downloads_count: (item as any).downloads_count + 1 })
-    .eq("id", params.id);
+    .eq("id", id);
 
   return NextResponse.redirect(item.download_url);
 }

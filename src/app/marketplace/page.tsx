@@ -9,18 +9,19 @@ import { Search, Filter, ShoppingBag } from "lucide-react";
 export default async function MarketplacePage({
   searchParams,
 }: {
-  searchParams: { category?: string; q?: string };
+  searchParams: Promise<{ category?: string; q?: string }>;
 }) {
+  const resolvedSearchParams = await searchParams;
   const categories = await marketplaceRepository.getCategories();
   const items = await marketplaceRepository.getAll({
-    category: searchParams.category,
+    category: resolvedSearchParams.category,
     published: true,
   });
 
-  const filteredItems = searchParams.q
+  const filteredItems = resolvedSearchParams.q
     ? items.filter((item) =>
-        item.title.toLowerCase().includes(searchParams.q!.toLowerCase()) ||
-        item.description?.toLowerCase().includes(searchParams.q!.toLowerCase())
+        item.title.toLowerCase().includes(resolvedSearchParams.q!.toLowerCase()) ||
+        item.description?.toLowerCase().includes(resolvedSearchParams.q!.toLowerCase())
       )
     : items;
 
@@ -37,14 +38,14 @@ export default async function MarketplacePage({
         <div className="mb-12 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           <div className="flex flex-wrap gap-2">
             <Link href="/marketplace">
-              <Badge variant={!searchParams.category ? "default" : "outline"} className="cursor-pointer">
+              <Badge variant={!resolvedSearchParams.category ? "secondary" : "outline"} className="cursor-pointer">
                 All
               </Badge>
             </Link>
             {categories.map((cat) => (
               <Link key={cat.id} href={`/marketplace?category=${cat.slug}`}>
                 <Badge
-                  variant={searchParams.category === cat.slug ? "default" : "outline"}
+                  variant={resolvedSearchParams.category === cat.slug ? "secondary" : "outline"}
                   className="cursor-pointer"
                 >
                   {cat.name}
@@ -56,10 +57,10 @@ export default async function MarketplacePage({
           <div className="relative w-full max-w-sm">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
             <form action="/marketplace" method="GET">
-              {searchParams.category && <input type="hidden" name="category" value={searchParams.category} />}
+              {resolvedSearchParams.category && <input type="hidden" name="category" value={resolvedSearchParams.category} />}
               <input
                 name="q"
-                defaultValue={searchParams.q}
+                defaultValue={resolvedSearchParams.q}
                 placeholder="Search assets..."
                 className="w-full rounded-full border border-border/70 bg-background pl-10 pr-4 py-2 text-sm outline-none focus:border-primary"
               />

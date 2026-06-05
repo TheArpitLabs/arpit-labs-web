@@ -3,6 +3,8 @@ import { ThemeProvider } from "next-themes";
 import type { Metadata } from "next";
 import { seoConfig } from "@/lib/seo";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: {
     default: "Arpit Labs | Engineering the Future",

@@ -1,14 +1,28 @@
 import Razorpay from "razorpay";
 import type { CheckoutSessionPayload, CheckoutSessionResult, PaymentProvider } from "@/lib/payments/payment-provider";
 
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID!,
-  key_secret: process.env.RAZORPAY_KEY_SECRET!,
-});
+const razorpayKeyId = process.env.RAZORPAY_KEY_ID;
+const razorpayKeySecret = process.env.RAZORPAY_KEY_SECRET;
+const razorpay = razorpayKeyId && razorpayKeySecret
+  ? new Razorpay({
+      key_id: razorpayKeyId,
+      key_secret: razorpayKeySecret,
+    })
+  : null;
 
 export const RazorpayProvider: PaymentProvider = {
   providerName: "razorpay",
   async createCheckoutSession(payload: CheckoutSessionPayload): Promise<CheckoutSessionResult> {
+    if (!razorpay) {
+      console.error("Razorpay client is not configured. RAZORPAY_KEY_ID or RAZORPAY_KEY_SECRET is missing.");
+      return {
+        success: false,
+        provider: "razorpay",
+        checkoutUrl: "",
+        sessionId: "",
+      };
+    }
+
     try {
       // Razorpay uses "Orders" for one-time and "Subscriptions" for recurring
       // For simplicity in this implementation, we create an order

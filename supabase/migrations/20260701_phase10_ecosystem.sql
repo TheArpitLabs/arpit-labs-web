@@ -210,7 +210,7 @@ create table if not exists recommendations (
 -- Research
 alter table research_papers enable row level security;
 create policy "Public can view published research" on research_papers for select using (published_at <= now());
-create policy "Admins can manage research_papers" on research_papers for all using (auth.jwt() ->> 'role' = 'service_role' or exists (select 1 from profiles where id = auth.uid() and email = 'arpit@labs.com')); -- Assuming arpit@labs.com is admin
+create policy "Admins can manage research_papers" on research_papers for all using (auth.jwt() ->> 'role' = 'service_role' or exists (select 1 from profiles where id = auth.uid() and email = 'arpit@arpitlabs.com')); -- Assuming arpit@arpitlabs.com is admin
 
 alter table research_datasets enable row level security;
 create policy "Public can view research_datasets" on research_datasets for select using (true);
@@ -253,3 +253,38 @@ alter table pitch_decks enable row level security;
 alter table funding_rounds enable row level security;
 alter table analytics_events enable row level security;
 alter table recommendations enable row level security;
+
+-- Add missing RLS policies for new tables
+create policy "Public can view research_projects" on research_projects for select using (true);
+create policy "Admins can manage research_projects" on research_projects for all using (auth.jwt() ->> 'role' = 'service_role' or exists (select 1 from profiles where id = auth.uid() and email = 'arpit@arpitlabs.com'));
+
+create policy "Public can view badges" on badges for select using (true);
+create policy "Admins can manage badges" on badges for all using (auth.jwt() ->> 'role' = 'service_role' or exists (select 1 from profiles where id = auth.uid() and email = 'arpit@arpitlabs.com'));
+
+create policy "Users can view their own badges" on user_badges for select using (auth.uid() = user_id);
+create policy "Users can insert their own badges" on user_badges for insert with check (auth.uid() = user_id);
+create policy "Admins can manage user_badges" on user_badges for all using (auth.jwt() ->> 'role' = 'service_role' or exists (select 1 from profiles where id = auth.uid() and email = 'arpit@arpitlabs.com'));
+
+create policy "Public can view innovation_projects" on innovation_projects for select using (true);
+create policy "Admins can manage innovation_projects" on innovation_projects for all using (auth.jwt() ->> 'role' = 'service_role' or exists (select 1 from profiles where id = auth.uid() and email = 'arpit@arpitlabs.com'));
+
+create policy "Public can view mentorship_programs" on mentorship_programs for select using (true);
+create policy "Admins can manage mentorship_programs" on mentorship_programs for all using (auth.jwt() ->> 'role' = 'service_role' or exists (select 1 from profiles where id = auth.uid() and email = 'arpit@arpitlabs.com'));
+
+create policy "Founders can manage their profile" on founders for all using (auth.uid() = id);
+create policy "Public can view founders" on founders for select using (true);
+
+create policy "Investors can manage their profile" on investors for all using (auth.uid() = id);
+create policy "Public can view investors" on investors for select using (true);
+
+create policy "Founders can manage their pitch_decks" on pitch_decks for all using (auth.uid() = (select founder_id from startups where id = pitch_decks.startup_id));
+create policy "Admins can manage pitch_decks" on pitch_decks for all using (auth.jwt() ->> 'role' = 'service_role' or exists (select 1 from profiles where id = auth.uid() and email = 'arpit@arpitlabs.com'));
+
+create policy "Public can view funding_rounds" on funding_rounds for select using (true);
+create policy "Admins can manage funding_rounds" on funding_rounds for all using (auth.jwt() ->> 'role' = 'service_role' or exists (select 1 from profiles where id = auth.uid() and email = 'arpit@arpitlabs.com'));
+
+create policy "Only system/admins can view analytics_events" on analytics_events for select using (auth.jwt() ->> 'role' = 'service_role' or exists (select 1 from profiles where id = auth.uid() and email = 'arpit@arpitlabs.com'));
+create policy "Only system/admins can manage analytics_events" on analytics_events for all using (auth.jwt() ->> 'role' = 'service_role' or exists (select 1 from profiles where id = auth.uid() and email = 'arpit@arpitlabs.com'));
+
+create policy "Users can view their own recommendations" on recommendations for select using (auth.uid() = user_id);
+create policy "Admins can manage recommendations" on recommendations for all using (auth.jwt() ->> 'role' = 'service_role' or exists (select 1 from profiles where id = auth.uid() and email = 'arpit@arpitlabs.com'));

@@ -6,8 +6,8 @@ export async function getCurrentOrganization(slug: string) {
   return saasRepository.getOrganizationBySlug(slug);
 }
 
-export async function getCurrentWorkspace(orgSlug: string, workspaceSlug: string) {
-  return saasRepository.getWorkspaceBySlug(orgSlug, workspaceSlug);
+export async function getCurrentWorkspace(workspaceSlug: string) {
+  return saasRepository.getWorkspaceBySlug(workspaceSlug);
 }
 
 export async function hasOrganizationPermission(

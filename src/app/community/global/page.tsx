@@ -4,9 +4,18 @@ import { Footer } from "@/components/layout/Footer";
 import { ecosystemRepository } from "@/lib/repositories/ecosystem.repository";
 import { Globe, Users, MessageSquare, MapPin, Search } from "lucide-react";
 import Link from "next/link";
+import type { CommunityChapter } from "@/types/content";
+
+export const dynamic = "force-dynamic";
 
 export default async function GlobalCommunityPage() {
-  const chapters = await ecosystemRepository.getCommunityChapters();
+  let chapters: CommunityChapter[] = [];
+
+  try {
+    chapters = await ecosystemRepository.getCommunityChapters();
+  } catch (error) {
+    console.error("Failed to load community chapters:", error);
+  }
 
   return (
     <main className="min-h-screen bg-background">

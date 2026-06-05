@@ -66,7 +66,7 @@ export function Navbar() {
     } else {
       segments.splice(1, 0, locale);
     }
-    router.push(segments.join('/'));
+    router.push(segments.join('/') as any);
     setLangOpen(false);
   };
 

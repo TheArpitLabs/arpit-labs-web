@@ -115,3 +115,29 @@ export async function saveCommunityChapterAction(formData: FormData) {
   revalidatePath("/community");
   redirect("/admin/community");
 }
+
+export async function saveCommunityEventAction(formData: FormData) {
+  const id = formData.get("id") as string;
+  const data = {
+    chapter_id: formData.get("chapter_id"),
+    title: formData.get("title"),
+    description: formData.get("description"),
+    event_type: formData.get("event_type"),
+    location: formData.get("location"),
+    start_time: formData.get("start_time"),
+    end_time: formData.get("end_time"),
+    max_attendees: formData.get("max_attendees"),
+  };
+
+  const validated = communityEventSchema.parse(data);
+
+  if (id) {
+    await supabaseServer.from("community_events").update(validated).eq("id", id);
+  } else {
+    await supabaseServer.from("community_events").insert(validated);
+  }
+
+  revalidatePath("/admin/community");
+  revalidatePath("/community");
+  redirect("/admin/community");
+}

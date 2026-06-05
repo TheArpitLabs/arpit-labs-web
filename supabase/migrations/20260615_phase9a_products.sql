@@ -76,6 +76,15 @@ ON product_screenshots FOR ALL
 USING (public.is_admin())
 WITH CHECK (public.is_admin());
 
+-- Function for updated_at
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = now();
+    RETURN NEW;
+END;
+$$ language 'plpgsql';
+
 -- Trigger for updated_at
 CREATE OR REPLACE TRIGGER update_products_updated_at
     BEFORE UPDATE ON products

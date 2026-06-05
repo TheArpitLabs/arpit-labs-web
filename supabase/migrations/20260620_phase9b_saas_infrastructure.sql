@@ -49,7 +49,6 @@ ALTER TABLE IF EXISTS projects ADD COLUMN IF NOT EXISTS organization_id UUID REF
 ALTER TABLE IF EXISTS products ADD COLUMN IF NOT EXISTS organization_id UUID REFERENCES organizations(id);
 ALTER TABLE IF EXISTS experiments ADD COLUMN IF NOT EXISTS organization_id UUID REFERENCES organizations(id);
 ALTER TABLE IF EXISTS lab_notes ADD COLUMN IF NOT EXISTS organization_id UUID REFERENCES organizations(id);
-ALTER TABLE IF EXISTS hackathons ADD COLUMN IF NOT EXISTS organization_id UUID REFERENCES organizations(id);
 
 -- 3. RLS Policies
 ALTER TABLE organizations ENABLE ROW LEVEL SECURITY;

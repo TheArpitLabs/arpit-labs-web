@@ -5,9 +5,18 @@ import { ecosystemRepository } from "@/lib/repositories/ecosystem.repository";
 import { GraduationCap, Award, CheckCircle2, ArrowRight, ShieldCheck, Zap } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
+import type { Certification } from "@/types/content";
+
+export const dynamic = "force-dynamic";
 
 export default async function UniversityPage() {
-  const certifications = await ecosystemRepository.getCertifications();
+  let certifications: Certification[] = [];
+
+  try {
+    certifications = await ecosystemRepository.getCertifications();
+  } catch (error) {
+    console.error("Failed to load certifications:", error);
+  }
 
   return (
     <main className="min-h-screen bg-background">
@@ -74,12 +83,12 @@ export default async function UniversityPage() {
                     <p className="mb-6 flex-1 text-sm leading-relaxed text-muted line-clamp-3">
                       {cert.description}
                     </p>
-                    <Link 
+                    <a 
                       href={`/university/${cert.slug}`}
                       className="inline-flex items-center justify-center gap-2 rounded-2xl bg-foreground px-6 py-3 text-sm font-bold text-background transition hover:bg-primary hover:text-white"
                     >
                       View Syllabus <ArrowRight size={16} />
-                    </Link>
+                    </a>
                   </div>
                 </div>
               ))}

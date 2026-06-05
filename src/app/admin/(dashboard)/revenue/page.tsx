@@ -13,51 +13,47 @@ export default async function RevenueDashboardPage() {
       <AdminSection title="Revenue Overview" description="Monitor platform earnings and subscription growth.">
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           <MetricCard
-            title="Total Revenue"
+            label="Total Revenue"
             value={`$${metrics.totalRevenue.toLocaleString()}`}
-            icon={<DollarSign className="h-5 w-5" />}
-            trend="+12% from last month"
+            helper="+12% from last month"
           />
           <MetricCard
-            title="Subscription Revenue"
+            label="Subscription Revenue"
             value={`$${metrics.subscriptionRevenue.toLocaleString()}`}
-            icon={<CreditCard className="h-5 w-5" />}
-            trend="+5% from last month"
+            helper="+5% from last month"
           />
           <MetricCard
-            title="Marketplace Revenue"
+            label="Marketplace Revenue"
             value={`$${metrics.marketplaceRevenue.toLocaleString()}`}
-            icon={<ShoppingBag className="h-5 w-5" />}
-            trend="+24% from last month"
+            helper="+24% from last month"
           />
           <MetricCard
-            title="Active Subscribers"
+            label="Active Subscribers"
             value={metrics.activeSubscribers.toString()}
-            icon={<Users className="h-5 w-5" />}
-            trend="+3% from last month"
+            helper="+3% from last month"
           />
         </div>
       </AdminSection>
 
       <AdminSection title="Recent Transactions" description="List of the most recent payments.">
-        <AdminTable
-          headers={["Date", "User", "Amount", "Provider", "Type", "Status"]}
-          data={metrics.transactions.slice(0, 10).map((t: any) => ({
-            id: t.id,
-            Date: new Date(t.created_at).toLocaleDateString(),
-            User: t.user_id || "Anonymous",
-            Amount: `$${t.amount}`,
-            Provider: t.provider.toUpperCase(),
-            Type: t.type === "subscription" ? "Subscription" : "One-Time",
-            Status: (
-              <span className={`px-2 py-1 rounded-full text-xs ${
-                t.status === "succeeded" ? "bg-green-500/10 text-green-500" : "bg-red-500/10 text-red-500"
-              }`}>
-                {t.status}
-              </span>
-            ),
-          }))}
-        />
+        <AdminTable headers={["Date", "User", "Amount", "Provider", "Type", "Status"]}>
+          {metrics.transactions.slice(0, 10).map((t: any) => (
+            <tr key={t.id}>
+              <td className="px-4 py-4">{new Date(t.created_at).toLocaleDateString()}</td>
+              <td className="px-4 py-4">{t.user_id || "Anonymous"}</td>
+              <td className="px-4 py-4">${t.amount}</td>
+              <td className="px-4 py-4">{t.provider.toUpperCase()}</td>
+              <td className="px-4 py-4">{t.type === "subscription" ? "Subscription" : "One-Time"}</td>
+              <td className="px-4 py-4">
+                <span className={`px-2 py-1 rounded-full text-xs ${
+                  t.status === "succeeded" ? "bg-green-500/10 text-green-500" : "bg-red-500/10 text-red-500"
+                }`}>
+                  {t.status}
+                </span>
+              </td>
+            </tr>
+          ))}
+        </AdminTable>
       </AdminSection>
 
       <div className="grid gap-6 lg:grid-cols-2">

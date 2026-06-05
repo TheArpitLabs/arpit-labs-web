@@ -51,13 +51,13 @@ export default async function WorkspaceDetailPage({ params }: WorkspaceDetailPag
               </div>
 
               <div className="flex gap-2">
-                <Link
+                <a
                   href={`/workspaces/${slug}/settings`}
                   className="inline-flex h-10 items-center gap-2 rounded-xl border border-border/70 bg-surface px-4 text-sm font-semibold transition hover:border-primary"
                 >
                   <Settings size={16} />
                   Workspace Settings
-                </Link>
+                </a>
               </div>
             </div>
           </div>

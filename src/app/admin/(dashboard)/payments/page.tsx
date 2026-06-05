@@ -32,41 +32,37 @@ export default async function AdminPaymentsPage() {
       </div>
 
       <AdminSection title="Recent Activity" description="Detailed list of all platform transactions.">
-        <AdminTable
-          headers={["Transaction ID", "User", "Amount", "Provider", "Type", "Status", "Date"]}
-          data={transactions.map((t: any) => ({
-            id: t.id,
-            "Transaction ID": (
-              <span className="font-mono text-xs text-muted-foreground">
-                {t.provider_transaction_id.substring(0, 12)}...
-              </span>
-            ),
-            User: t.user_id || "Guest",
-            Amount: (
-              <span className="font-semibold text-foreground">
-                ${t.amount}
-              </span>
-            ),
-            Provider: (
-              <span className="capitalize">{t.provider}</span>
-            ),
-            Type: (
-              <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
-                t.type === "subscription" ? "bg-blue-500/10 text-blue-500" : "bg-purple-500/10 text-purple-500"
-              }`}>
-                {t.type}
-              </span>
-            ),
-            Status: (
-              <span className={`px-2 py-1 rounded-full text-xs ${
-                t.status === "succeeded" ? "bg-green-500/10 text-green-500" : "bg-red-500/10 text-red-500"
-              }`}>
-                {t.status}
-              </span>
-            ),
-            Date: new Date(t.created_at).toLocaleDateString(),
-          }))}
-        />
+        <AdminTable headers={["Transaction ID", "User", "Amount", "Provider", "Type", "Status", "Date"]}>
+          {transactions.map((t: any) => (
+            <tr key={t.id}>
+              <td className="px-4 py-4">
+                <span className="font-mono text-xs text-muted-foreground">
+                  {t.provider_transaction_id?.substring(0, 12)}...
+                </span>
+              </td>
+              <td className="px-4 py-4">{t.user_id || "Guest"}</td>
+              <td className="px-4 py-4">
+                <span className="font-semibold text-foreground">${t.amount}</span>
+              </td>
+              <td className="px-4 py-4 capitalize">{t.provider}</td>
+              <td className="px-4 py-4">
+                <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
+                  t.type === "subscription" ? "bg-blue-500/10 text-blue-500" : "bg-purple-500/10 text-purple-500"
+                }`}>
+                  {t.type}
+                </span>
+              </td>
+              <td className="px-4 py-4">
+                <span className={`px-2 py-1 rounded-full text-xs ${
+                  t.status === "succeeded" ? "bg-green-500/10 text-green-500" : "bg-red-500/10 text-red-500"
+                }`}>
+                  {t.status}
+                </span>
+              </td>
+              <td className="px-4 py-4">{new Date(t.created_at).toLocaleDateString()}</td>
+            </tr>
+          ))}
+        </AdminTable>
       </AdminSection>
     </div>
   );

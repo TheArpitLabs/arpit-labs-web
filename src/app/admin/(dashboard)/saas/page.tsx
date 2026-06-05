@@ -20,10 +20,10 @@ export default async function SaasAdminDashboard() {
       />
 
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <MetricCard label="Organizations" value={stats.organizationsCount} icon={<Building2 className="h-4 w-4" />} />
-        <MetricCard label="Workspaces" value={stats.workspacesCount} icon={<Layout className="h-4 w-4" />} />
-        <MetricCard label="Total Members" value={stats.totalMembersCount} icon={<Users className="h-4 w-4" />} />
-        <MetricCard label="Active Workspaces" value={stats.activeWorkspacesCount} icon={<Activity className="h-4 w-4" />} />
+        <MetricCard label="Organizations" value={stats.organizationsCount} helper="Total registered" />
+        <MetricCard label="Workspaces" value={stats.workspacesCount} helper="Across all orgs" />
+        <MetricCard label="Total Members" value={stats.totalMembersCount} helper="Platform-wide" />
+        <MetricCard label="Active Workspaces" value={stats.activeWorkspacesCount} helper="Currently active" />
       </section>
 
       <div className="grid gap-6">

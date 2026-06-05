@@ -1,6 +1,6 @@
 import React from "react";
 import { marketplaceRepository } from "@/lib/repositories/marketplace.repository";
-import { createClient } from "@/lib/supabase/server";
+import { supabaseServer } from "@/lib/supabase/server";
 import { Container } from "@/components/layout/Container";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -21,16 +21,17 @@ import { redirect } from "next/navigation";
 export default async function MarketplaceDashboard({
   searchParams,
 }: {
-  searchParams: { tab?: string };
+  searchParams: Promise<{ tab?: string }>;
 }) {
-  const supabase = await createClient();
+  const supabase = supabaseServer;
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
     redirect("/login?returnUrl=/dashboard/marketplace");
   }
 
-  const activeTab = searchParams.tab || "purchases";
+  const resolvedSearchParams = await searchParams;
+  const activeTab = resolvedSearchParams.tab || "purchases";
   const categories = await marketplaceRepository.getCategories();
   const orders = await marketplaceRepository.getOrders(user.id);
   const myItems = await marketplaceRepository.getBySeller(user.id);
@@ -167,7 +168,7 @@ export default async function MarketplaceDashboard({
               <h3 className="text-xl font-bold">My Items</h3>
               {myItems.length === 0 ? (
                 <Card className="flex flex-col items-center justify-center py-12 text-center">
-                  <p className="text-muted-foreground">You haven't listed any items yet.</p>
+                  <p className="text-muted-foreground">You haven&apos;t listed any items yet.</p>
                 </Card>
               ) : (
                 <div className="grid gap-4">
@@ -181,7 +182,7 @@ export default async function MarketplaceDashboard({
                           <div>
                             <h4 className="font-semibold">{item.title}</h4>
                             <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                              <Badge variant={item.published ? "default" : "outline"} className="h-5 px-1.5">
+                              <Badge variant={item.published ? "secondary" : "outline"} className="h-5 px-1.5">
                                 {item.published ? "Live" : "Draft"}
                               </Badge>
                               <span>${item.price}</span>

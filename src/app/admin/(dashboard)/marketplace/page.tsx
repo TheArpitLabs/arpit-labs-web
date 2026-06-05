@@ -26,13 +26,6 @@ export default async function AdminMarketplacePage() {
       <AdminSection
         title="Marketplace Management"
         description="Manage assets, templates, and digital products."
-        icon={<ShoppingBag className="h-5 w-5" />}
-        action={
-          <button className="flex items-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90">
-            <Plus className="h-4 w-4" />
-            Add New Item
-          </button>
-        }
       >
         <div className="mb-8">
           <h3 className="mb-4 text-lg font-semibold">Add / Edit Item</h3>
@@ -76,7 +69,7 @@ export default async function AdminMarketplacePage() {
               </td>
               <td className="px-4 py-4">
                 <div className="flex flex-wrap gap-2">
-                  <Badge variant={item.published ? "default" : "outline"}>
+                  <Badge variant={item.published ? "secondary" : "outline"}>
                     {item.published ? "Published" : "Draft"}
                   </Badge>
                   {item.featured && (

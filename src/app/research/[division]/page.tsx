@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Container } from "@/components/layout/Container";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
@@ -19,11 +20,12 @@ export default async function DivisionPage({ params }: DivisionPageProps) {
 
   const papers = await ecosystemRepository.getResearchPapers(division);
   
-  const info = {
+  const infoMap: Record<"ai" | "iot" | "cybersecurity", { name: string; icon: ReactNode; description: string }> = {
     ai: { name: "AI Research", icon: <Brain />, description: "Pushing the limits of neural architectures and machine intelligence." },
     iot: { name: "IoT Innovation", icon: <Wifi />, description: "Connecting the physical world through resilient edge computing." },
     cybersecurity: { name: "Cybersecurity", icon: <Shield />, description: "Building secure-by-design systems for the next generation of infrastructure." },
-  }[division as keyof typeof info];
+  };
+  const info = infoMap[division as keyof typeof infoMap];
 
   return (
     <main className="min-h-screen bg-background">

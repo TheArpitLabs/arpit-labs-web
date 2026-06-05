@@ -51,7 +51,7 @@ export async function GET(request: Request) {
       currency: invoice.currency,
     });
 
-    return new Response(pdfBuffer, {
+    return new Response(new Uint8Array(pdfBuffer), {
       headers: {
         "Content-Type": "application/pdf",
         "Content-Disposition": `attachment; filename="invoice-${invoice.invoice_number}.pdf"`,
