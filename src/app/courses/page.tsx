@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { coursesRepository } from "@/lib/repositories/courses.repository";
 import Link from "next/link";
 import { Clock, BarChart3 } from "lucide-react";
@@ -51,11 +52,12 @@ export default async function CoursesPage() {
                           className="group relative rounded-2xl border border-border/40 bg-background/60 backdrop-blur-sm p-6 transition-all hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10"
                         >
                           {course.thumbnail && (
-                            <div className="mb-4 h-40 w-full overflow-hidden rounded-xl bg-gradient-to-br from-primary/20 to-primary/10">
-                              <img
+                            <div className="mb-4 h-40 w-full overflow-hidden rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 relative">
+                              <Image
                                 src={course.thumbnail}
                                 alt={course.title}
-                                className="h-full w-full object-cover transition-transform group-hover:scale-105"
+                                fill
+                                className="object-cover transition-transform group-hover:scale-105"
                               />
                             </div>
                           )}

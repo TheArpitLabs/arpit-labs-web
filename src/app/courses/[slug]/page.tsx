@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { coursesRepository, courseModulesRepository } from "@/lib/repositories/courses.repository";
 import { notFound } from "next/navigation";
 import Link from "next/link";
@@ -47,11 +48,12 @@ export default async function CourseDetailPage({ params }: CourseDetailPageProps
             </Link>
 
             {course.thumbnail && (
-              <div className="mb-8 h-64 w-full overflow-hidden rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10">
-                <img
+              <div className="mb-8 h-64 w-full overflow-hidden rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 relative">
+                <Image
                   src={course.thumbnail}
                   alt={course.title}
-                  className="h-full w-full object-cover"
+                  fill
+                  className="object-cover"
                 />
               </div>
             )}

@@ -14,6 +14,7 @@ import { supabaseClient } from "@/lib/supabase/client";
 const navItems = [
   { href: "/", label: "Home" },
   { href: "/about", label: "About" },
+  { href: "/products", label: "Products" },
   { href: "/projects", label: "Projects" },
   { href: "/experiments", label: "Experiments" },
   { href: "/blog", label: "Lab Notes" },

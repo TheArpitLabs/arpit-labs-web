@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { getProjectBySlug } from "@/lib/actions/server-actions";
 import { Github, ExternalLink, Calendar, Tag, ArrowLeft } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { NexusLogo } from "@/components/shared/NexusLogo";
@@ -129,10 +130,11 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
 
             <div className="relative aspect-video overflow-hidden rounded-[2.5rem] border border-border/70 bg-surface/50 dark:border-slate-800 dark:bg-slate-900/50 shadow-2xl">
               {project.cover_image ? (
-                <img 
-                  src={project.cover_image} 
-                  alt={project.title} 
-                  className="h-full w-full object-cover"
+                <Image
+                  src={project.cover_image}
+                  alt={project.title}
+                  fill
+                  className="object-cover"
                 />
               ) : (
                 <div className="flex h-full w-full items-center justify-center text-muted/10">
@@ -193,11 +195,12 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
                 {project.screenshots && project.screenshots.length > 0 ? (
                   <div className="mt-6 grid gap-4">
                     {project.screenshots.map((image, index) => (
-                      <div key={image} className="overflow-hidden rounded-[1.5rem] border border-border/70 dark:border-slate-800">
-                        <img
+                      <div key={image} className="relative overflow-hidden rounded-[1.5rem] border border-border/70 dark:border-slate-800 aspect-[16/9]">
+                        <Image
                           src={image}
                           alt={`${project.title} screenshot ${index + 1}`}
-                          className="h-full w-full object-cover"
+                          fill
+                          className="object-cover"
                         />
                       </div>
                     ))}

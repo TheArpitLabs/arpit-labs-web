@@ -23,6 +23,34 @@ export interface Project {
   updated_at: string;
 }
 
+export interface ProductFeature {
+  id: string;
+  product_id: string;
+  title: string;
+  description: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Product {
+  id: string;
+  title: string;
+  slug: string;
+  description: string;
+  category: string;
+  pricing_type: string;
+  pricing_details?: string | null;
+  overview?: string | null;
+  demo_url?: string | null;
+  documentation_url?: string | null;
+  cover_image?: string | null;
+  screenshots: string[];
+  featured: boolean;
+  published: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface Experiment {
   id: string;
   title: string;

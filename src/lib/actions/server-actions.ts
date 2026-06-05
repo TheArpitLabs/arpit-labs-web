@@ -5,11 +5,12 @@ import { newsletterRepository } from "@/lib/repositories/newsletter.repository";
 import { experimentsRepository } from "@/lib/repositories/experiments.repository";
 import { labNotesRepository } from "@/lib/repositories/labnotes.repository";
 import { journeyRepository } from "@/lib/repositories/journey.repository";
+import { productsRepository } from "@/lib/repositories/products.repository";
 import { projectsRepository } from "@/lib/repositories/projects.repository";
 import { hackathonsRepository } from "@/lib/repositories/hackathons.repository";
 import { contactFormSchema, newsletterSchema } from "@/lib/validation";
 import { handleValidationError } from "@/lib/errors";
-import { Experiment, Hackathon, HackathonSubmission, HackathonTeam, HackathonTeamMember, LabNote, JourneyItem, Project } from "@/types/content";
+import { Experiment, Hackathon, HackathonSubmission, HackathonTeam, HackathonTeamMember, LabNote, JourneyItem, Product, Project } from "@/types/content";
 import { contentGenerationService } from "@/lib/ai-services";
 
 export async function submitContactMessage(formData: unknown) {
@@ -77,6 +78,24 @@ export async function getProjectBySlug(slug: string): Promise<Project | null> {
   try {
     const project = await projectsRepository.getProjectBySlug(slug) as Project | null;
     return project && (project.published ?? true) ? project : null;
+  } catch {
+    return null;
+  }
+}
+
+export async function getProducts(): Promise<Product[]> {
+  try {
+    const products = await productsRepository.getProducts({ published: true });
+    return products;
+  } catch {
+    return [];
+  }
+}
+
+export async function getProductBySlug(slug: string): Promise<Product | null> {
+  try {
+    const product = await productsRepository.getProductBySlug(slug) as Product | null;
+    return product && product.published ? product : null;
   } catch {
     return null;
   }

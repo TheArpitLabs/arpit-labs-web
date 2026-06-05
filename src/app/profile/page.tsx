@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import { supabaseClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import { formatPrice, membershipPlans } from "@/lib/memberships";
@@ -81,7 +82,14 @@ export default function ProfilePage() {
   return (
     <main className="mx-auto max-w-3xl px-4 py-12">
       <div className="mb-6 flex items-center gap-4">
-        <img src={profile?.avatar_url ?? "/avatar-placeholder.png"} alt="avatar" className="h-16 w-16 rounded-full" />
+        <div className="relative h-16 w-16 overflow-hidden rounded-full bg-muted/20">
+          <Image
+            src={profile?.avatar_url ?? "/avatar-placeholder.png"}
+            alt="avatar"
+            fill
+            className="object-cover"
+          />
+        </div>
         <div>
           <h1 className="text-2xl font-semibold">{profile?.full_name ?? user.email}</h1>
           <p className="text-sm text-muted">{profile?.bio}</p>

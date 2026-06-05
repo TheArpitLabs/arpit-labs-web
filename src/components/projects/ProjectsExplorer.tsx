@@ -1,6 +1,7 @@
 "use client";
 
 import { useDeferredValue, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import type { Route } from "next";
 import { ExternalLink, Github, Search } from "lucide-react";
@@ -82,10 +83,11 @@ export function ProjectsExplorer({ projects }: ProjectsExplorerProps) {
                 <Card className="group flex h-full flex-col overflow-hidden p-0">
                   <div className="relative aspect-video w-full bg-surface/50 dark:bg-slate-900">
                     {project.cover_image ? (
-                      <img
+                      <Image
                         src={project.cover_image}
                         alt={project.title}
-                        className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                        fill
+                        className="object-cover transition duration-500 group-hover:scale-105"
                       />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center text-muted/20">

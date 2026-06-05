@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef } from "react";
+import Image from "next/image";
 import { Upload, X, Loader2, Image as ImageIcon } from "lucide-react";
 import { uploadFileToBucket } from "@/lib/admin-storage";
 import { Button } from "@/components/ui/button";
@@ -64,7 +65,7 @@ export function ImageUploader({
       
       {preview ? (
         <div className="relative aspect-video w-full overflow-hidden rounded-2xl border border-border/70 bg-muted/30">
-          <img src={preview} alt="Preview" className="h-full w-full object-cover" />
+          <Image src={preview} alt="Preview" fill className="object-cover" />
           <button
             type="button"
             onClick={handleRemove}

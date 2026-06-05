@@ -1,5 +1,6 @@
 "use server";
 
+import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@supabase/supabase-js";
@@ -11,8 +12,11 @@ import { hackathonsRepository } from "@/lib/repositories/hackathons.repository";
 import { journeyRepository } from "@/lib/repositories/journey.repository";
 import { labNotesRepository } from "@/lib/repositories/labnotes.repository";
 import { newsletterRepository } from "@/lib/repositories/newsletter.repository";
+import { productsRepository } from "@/lib/repositories/products.repository";
+import { productFeaturesRepository } from "@/lib/repositories/product-features.repository";
 import { projectsRepository } from "@/lib/repositories/projects.repository";
 import { experimentSchema, journeySchema, labNoteSchema, projectSchema } from "@/lib/validation";
+import { productSchema, productFeatureSchema } from "@/lib/validation/product.schema";
 import { hackathonSchema } from "@/lib/validation/hackathon.schema";
 
 function createAuthClient() {
@@ -131,6 +135,64 @@ export async function deleteProjectAction(formData: FormData) {
   await projectsRepository.deleteProject(id);
   revalidatePath("/admin/projects");
   revalidatePath("/projects");
+}
+
+export async function saveProductAction(formData: FormData) {
+  await requireAdmin();
+
+  const id = asString(formData.get("id"));
+  const payload = productSchema.parse({
+    title: asString(formData.get("title")),
+    slug: asString(formData.get("slug")),
+    description: asString(formData.get("description")),
+    category: asString(formData.get("category")),
+    pricing_type: asString(formData.get("pricing_type")),
+    overview: asOptionalString(formData.get("overview")),
+    pricing_details: asOptionalString(formData.get("pricing_details")),
+    demo_url: asOptionalString(formData.get("demo_url")),
+    documentation_url: asOptionalString(formData.get("documentation_url")),
+    cover_image: asOptionalString(formData.get("cover_image")),
+    screenshots: (() => {
+      const raw = asOptionalString(formData.get("screenshots")) || "[]";
+      try {
+        return JSON.parse(raw) as string[];
+      } catch {
+        return [];
+      }
+    })(),
+    featured: asBoolean(formData.get("featured")),
+    published: asBoolean(formData.get("published")),
+  });
+
+  const rawFeatures = asOptionalString(formData.get("features")) || "[]";
+  let features = [] as Array<{ title: string; description: string }>;
+
+  try {
+    features = JSON.parse(rawFeatures);
+  } catch {
+    features = [];
+  }
+
+  const parsedFeatures = z.array(productFeatureSchema).parse(features);
+
+  const product = id
+    ? await productsRepository.updateProduct(id, payload)
+    : await productsRepository.createProduct(payload);
+
+  await productFeaturesRepository.replaceFeatures(product.id, parsedFeatures);
+
+  revalidatePath("/admin/products");
+  revalidatePath("/products");
+  revalidatePath("/");
+  redirect("/admin/products" as never);
+}
+
+export async function deleteProductAction(formData: FormData) {
+  await requireAdmin();
+  const id = asString(formData.get("id"));
+  await productsRepository.deleteProduct(id);
+  revalidatePath("/admin/products");
+  revalidatePath("/products");
 }
 
 export async function saveLabNoteAction(formData: FormData) {

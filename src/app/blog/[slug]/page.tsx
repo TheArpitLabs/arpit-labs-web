@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { getLabNoteBySlug, getLabNotes } from "@/lib/actions/server-actions";
 import { Clock, Calendar, ArrowLeft, Share2, Tag } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { LabNote } from "@/types/content";
@@ -113,11 +114,14 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
 
             {note.cover_image && (
               <div className="mt-12 aspect-[21/9] overflow-hidden rounded-[2.5rem] border border-border/70 dark:border-slate-800">
-                <img 
-                  src={note.cover_image} 
-                  alt={note.title} 
-                  className="h-full w-full object-cover"
-                />
+                <div className="relative h-full w-full">
+                  <Image
+                    src={note.cover_image}
+                    alt={note.title}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
               </div>
             )}
 
