@@ -10,6 +10,11 @@
  */
 
 import { createClient } from '@supabase/supabase-js';
+import { experimentsRepository } from '@/lib/repositories/experiments.repository';
+import { journeyRepository } from '@/lib/repositories/journey.repository';
+import { labNotesRepository } from '@/lib/repositories/labnotes.repository';
+import { projectsRepository } from '@/lib/repositories/projects.repository';
+import type { Experiment, JourneyItem, LabNote, Project } from '@/types/content';
 
 // Initialize Supabase client
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
@@ -335,12 +340,101 @@ interface GeneratedProject {
   learningPath: string[];
 }
 
+interface GeneratedBlogContent {
+  title: string;
+  excerpt: string;
+  content: string;
+  metaDescription: string;
+  tags: string[];
+}
+
+interface GeneratedSocialContent {
+  linkedin: string;
+  twitter: string;
+  announcement: string;
+  launch: string;
+}
+
+interface NewsletterPayload {
+  title: string;
+  summary: string;
+  highlights: string[];
+  newProjects: Array<{ title: string; summary: string; url?: string }>;
+  recentArticles: Array<{ title: string; summary: string; url?: string }>;
+  experimentUpdates: Array<{ title: string; summary: string; url?: string }>;
+  newsletterHtml: string;
+}
+
+interface WeeklyReportPayload {
+  title: string;
+  visitorInsights: string;
+  popularProjects: string[];
+  popularArticles: string[];
+  searchTrends: string[];
+  recruiterActivity: string;
+  summary: string;
+  reportContent: string;
+  metrics: Record<string, any>;
+}
+
+interface EnhanceContentPayload {
+  seoDescription: string;
+  metaTags: string[];
+  openGraph: {
+    title: string;
+    description: string;
+    image?: string;
+  };
+  keywords: string[];
+}
+
+interface AiGenerationRecord {
+  id: string;
+  generation_type: string;
+  source_type?: string;
+  source_id?: string;
+  status: string;
+  output: Record<string, any>;
+  tokens_used?: number;
+  created_at: string;
+  updated_at: string;
+  metadata: Record<string, any>;
+}
+
+interface AiReportRecord {
+  id: string;
+  report_type: string;
+  period: string;
+  title: string;
+  summary?: string;
+  content?: string;
+  metrics: Record<string, any>;
+  generated_at: string;
+  updated_at: string;
+  metadata: Record<string, any>;
+}
+
+interface AiJobRecord {
+  id: string;
+  type: string;
+  status: string;
+  payload: Record<string, any>;
+  result: Record<string, any>;
+  error_message?: string;
+  tokens_used?: number;
+  started_at?: string;
+  completed_at?: string;
+  created_at: string;
+  updated_at: string;
+  metadata: Record<string, any>;
+}
+
 /**
  * Knowledge Base Service - Manages indexed content for AI
  */
 export class KnowledgeBaseService {
-  private chunkSize = 1000;
-  private chunkOverlap = 200;
+  private chunkSize = 800;
+  private chunkOverlap = 100;
 
   constructor() {}
 
@@ -350,43 +444,48 @@ export class KnowledgeBaseService {
   async indexContent(item: KnowledgeBaseItem): Promise<void> {
     console.log(`Indexing ${item.sourceType}: ${item.title}`);
 
+    await this.deleteExistingEmbeddings(item);
+
     // 1. Split content into chunks
     const chunks = await this.splitText(item.content);
+
+    if (chunks.length === 0) {
+      console.warn(`No content to index for ${item.sourceType}:${item.sourceId}`);
+      return;
+    }
 
     // 2. Generate embeddings for each chunk
     const embeddings = await this.generateEmbeddings(chunks);
 
-    // 3. Store in Supabase + Pinecone/Weaviate
+    // 3. Store embeddings in Supabase
     for (let i = 0; i < chunks.length; i++) {
       await this.storeEmbedding({
         content: chunks[i],
         embedding: embeddings[i],
         sourceType: item.sourceType,
         sourceId: item.sourceId,
+        title: item.title,
+        url: item.url,
         chunkNumber: i,
       });
     }
   }
 
   private async splitText(text: string): Promise<string[]> {
+    const normalized = text.trim().replace(/\s+/g, ' ');
     const chunks: string[] = [];
-    const words = text.split(/\s+/);
-    let chunk = '';
+    let start = 0;
 
-    for (const word of words) {
-      const next = chunk ? `${chunk} ${word}` : word;
-      if (next.length > this.chunkSize) {
-        if (chunk) {
-          chunks.push(chunk);
-        }
-        chunk = word;
-      } else {
-        chunk = next;
+    while (start < normalized.length) {
+      const end = Math.min(start + this.chunkSize, normalized.length);
+      const chunk = normalized.slice(start, end).trim();
+      if (chunk) {
+        chunks.push(chunk);
       }
-    }
-
-    if (chunk) {
-      chunks.push(chunk);
+      if (end >= normalized.length) {
+        break;
+      }
+      start = Math.max(0, end - this.chunkOverlap);
     }
 
     return chunks;
@@ -417,11 +516,9 @@ export class KnowledgeBaseService {
       }
 
       const data = await res.json();
-      // data.data is an array of { embedding: number[] }
       return data.data.map((d: any) => d.embedding as number[]);
     } catch (error) {
       console.error('Embedding generation failed:', error);
-      // Fallback to deterministic zero-ish embeddings to avoid crashes
       return chunks.map(() => Array(1536).fill(0));
     }
   }
@@ -434,18 +531,22 @@ export class KnowledgeBaseService {
     embedding: number[];
     sourceType: string;
     sourceId: string;
+    title: string;
+    url: string;
     chunkNumber: number;
   }): Promise<void> {
-    console.log(`Storing embedding for chunk ${data.chunkNumber}`);
     try {
-      const title = null;
-      const metadata = { chunkNumber: data.chunkNumber };
+      const metadata = {
+        title: data.title,
+        url: data.url,
+        chunkNumber: data.chunkNumber,
+      };
 
       const { error } = await supabase.from('content_embeddings').insert([
         {
           content_type: data.sourceType,
           content_id: data.sourceId,
-          title,
+          title: data.title,
           chunk: data.content,
           embedding: data.embedding,
           metadata,
@@ -460,18 +561,132 @@ export class KnowledgeBaseService {
     }
   }
 
+  private async deleteExistingEmbeddings(item: KnowledgeBaseItem): Promise<void> {
+    try {
+      const { error } = await supabase
+        .from('content_embeddings')
+        .delete()
+        .match({ content_type: item.sourceType, content_id: item.sourceId });
+
+      if (error) {
+        console.error('Failed to delete existing embeddings:', error.message || error);
+      }
+    } catch (error) {
+      console.error('Error deleting existing embeddings:', error);
+    }
+  }
+
+  private buildProjectContent(project: Project): string {
+    return [
+      project.title,
+      project.description,
+      project.overview,
+      project.problem_statement,
+      project.architecture,
+      project.lessons_learned?.join(' '),
+      `Tech stack: ${project.tech_stack.join(', ')}`,
+      project.github_url,
+      project.demo_url,
+    ]
+      .filter(Boolean)
+      .join(' ');
+  }
+
+  private buildLabNoteContent(note: LabNote): string {
+    return [
+      note.title,
+      note.excerpt,
+      note.content,
+      note.category,
+      note.tags?.join(', '),
+    ]
+      .filter(Boolean)
+      .join(' ');
+  }
+
+  private buildExperimentContent(experiment: Experiment): string {
+    return [
+      experiment.title,
+      experiment.description,
+      experiment.content,
+      experiment.category,
+      `Tech stack: ${experiment.tech_stack.join(', ')}`,
+      `Status: ${experiment.status}`,
+    ]
+      .filter(Boolean)
+      .join(' ');
+  }
+
+  private buildJourneyContent(entry: JourneyItem): string {
+    return [
+      entry.title,
+      entry.description,
+      entry.organization,
+      entry.location,
+      entry.entry_type,
+      `Year: ${entry.year}`,
+    ]
+      .filter(Boolean)
+      .join(' ');
+  }
+
   /**
    * Update knowledge base from projects/blog/experiments
    */
   async refreshKnowledgeBase(): Promise<{ count: number; timestamp: string }> {
     console.log('Refreshing knowledge base...');
 
-    // 1. Fetch all projects, blog posts, experiments
-    // 2. Index new/updated items
-    // 3. Remove deleted items
+    const [projects, labNotes, experiments, journey] = await Promise.all([
+      projectsRepository.getProjects(),
+      labNotesRepository.getLabNotes({ published: true }),
+      experimentsRepository.getExperiments({ published: true }),
+      journeyRepository.getJourneyTimeline(),
+    ]);
+
+    const items: KnowledgeBaseItem[] = [
+      ...projects.map((project) => ({
+        id: project.id,
+        sourceType: 'project' as const,
+        sourceId: project.id,
+        title: project.title,
+        url: `/projects/${project.slug}`,
+        content: this.buildProjectContent(project),
+      })),
+      ...labNotes.map((note) => ({
+        id: note.id,
+        sourceType: 'blog' as const,
+        sourceId: note.id,
+        title: note.title,
+        url: `/blog/${note.slug}`,
+        content: this.buildLabNoteContent(note),
+      })),
+      ...experiments.map((experiment) => ({
+        id: experiment.id,
+        sourceType: 'experiment' as const,
+        sourceId: experiment.id,
+        title: experiment.title,
+        url: `/experiments/${experiment.slug}`,
+        content: this.buildExperimentContent(experiment),
+      })),
+      ...journey.map((entry) => ({
+        id: entry.id,
+        sourceType: 'journey' as const,
+        sourceId: entry.id,
+        title: entry.title,
+        url: `/journey`,
+        content: this.buildJourneyContent(entry),
+      })),
+    ];
+
+    let count = 0;
+
+    for (const item of items) {
+      await this.indexContent(item);
+      count += await this.splitText(item.content).then((chunks) => chunks.length);
+    }
 
     return {
-      count: 0,
+      count,
       timestamp: new Date().toISOString(),
     };
   }
@@ -831,6 +1046,397 @@ export class ContentGenerationService {
       console.error('OpenAI call failed:', error);
       return 'Generated content placeholder';
     }
+  }
+
+  async generateNewsletter(period: 'weekly' | 'monthly' = 'weekly'): Promise<NewsletterPayload> {
+    const job = await this.createJobRecord('newsletter', 'running', { period });
+    try {
+      const recentProjects = await this.fetchRecentProjects();
+      const recentArticles = await this.fetchRecentArticles();
+      const recentExperiments = await this.fetchRecentExperiments();
+      const recentJourney = await this.fetchRecentJourney();
+      const title = `${period.charAt(0).toUpperCase()}${period.slice(1)} AI Newsletter`;
+
+      const prompt = `Create a ${period} Arpit Labs newsletter with highlights, new projects, recent articles, and experiment updates. Use the following source content to build each section.
+
+Projects:
+${recentProjects
+        .map((project) => `- ${project.title}: ${project.description}`)
+        .join('\n')}
+
+Articles:
+${recentArticles
+        .map((article) => `- ${article.title}: ${article.excerpt || article.description || ''}`)
+        .join('\n')}
+
+Experiments:
+${recentExperiments
+        .map((experiment) => `- ${experiment.title}: ${experiment.description}`)
+        .join('\n')}
+
+Journey updates:
+${recentJourney.map((entry) => `- ${entry.title}: ${entry.description}`).join('\n')}
+
+Return JSON with keys: title, summary, highlights, newProjects, recentArticles, experimentUpdates, newsletterHtml.`;
+
+      const aiResponse = await this.callOpenAI(prompt);
+      const parsed = this.parseJSON<NewsletterPayload>(aiResponse);
+      const newsletter = parsed ?? {
+        title,
+        summary: `Your ${period} update from Arpit Labs, including recent projects, articles, and experiments.`,
+        highlights: recentProjects.slice(0, 3).map((project) => project.title),
+        newProjects: recentProjects.slice(0, 3).map((project) => ({ title: project.title, summary: project.description, url: project.github_url || undefined })),
+        recentArticles: recentArticles.slice(0, 3).map((article) => ({ title: article.title, summary: article.excerpt || '', url: article.url || undefined })),
+        experimentUpdates: recentExperiments.slice(0, 3).map((experiment) => ({ title: experiment.title, summary: experiment.description, url: experiment.url || undefined })),
+        newsletterHtml: `<h1>${title}</h1><p>${recentProjects.length} projects, ${recentArticles.length} articles, and ${recentExperiments.length} experiments were reviewed.</p>`,
+      };
+
+      await this.createGenerationRecord('newsletter', 'newsletter', null, newsletter, this.estimateTokens(aiResponse), { period });
+      await this.updateJobStatus(job?.id, 'completed', newsletter, null, this.estimateTokens(aiResponse));
+      return newsletter;
+    } catch (error) {
+      await this.updateJobStatus(job?.id, 'failed', null, error instanceof Error ? error.message : 'Unknown error', null);
+      throw error;
+    }
+  }
+
+  async generateBlogContent(topic: string, category: string, difficulty: 'beginner' | 'intermediate' | 'advanced'): Promise<GeneratedBlogContent> {
+    const job = await this.createJobRecord('blog', 'running', { topic, category, difficulty });
+    try {
+      const prompt = `Generate blog content for Arpit Labs about the topic '${topic}' in the category '${category}'. Create a title, excerpt, full content, meta description, and tags. Use a ${difficulty} developer audience and return JSON with keys title, excerpt, content, metaDescription, tags.`;
+      const aiResponse = await this.callOpenAI(prompt);
+      const parsed = this.parseJSON<GeneratedBlogContent>(aiResponse);
+
+      const content = parsed ?? {
+        title: `${topic} for ${category}`,
+        excerpt: `A ${difficulty}-level overview of ${topic} for technical readers.`,
+        content: `This article explores ${topic} within the ${category} category. It includes practical guidance, examples, and actionable insights for ${difficulty} engineers.`,
+        metaDescription: `Learn how ${topic} fits into ${category} with a ${difficulty}-level technical approach from Arpit Labs.`,
+        tags: [topic, category, difficulty],
+      };
+
+      await this.createGenerationRecord('blog', 'blog', null, content, this.estimateTokens(aiResponse), { topic, category, difficulty });
+      await this.updateJobStatus(job?.id, 'completed', content, null, this.estimateTokens(aiResponse));
+      return content;
+    } catch (error) {
+      await this.updateJobStatus(job?.id, 'failed', null, error instanceof Error ? error.message : 'Unknown error', null);
+      throw error;
+    }
+  }
+
+  async generateSocialContent(
+    sourceType: 'project' | 'blog' | 'experiment',
+    sourceId: string,
+    postType: 'linkedin' | 'twitter' | 'announcement' | 'launch'
+  ): Promise<GeneratedSocialContent> {
+    const job = await this.createJobRecord('social', 'running', { sourceType, sourceId, postType });
+    try {
+      const item = await this.fetchSourceItem(sourceType, sourceId);
+      if (!item) {
+        throw new Error(`Unable to load ${sourceType} item for social content generation`);
+      }
+
+      const prompt = `Create social media posts for a ${postType} based on the following ${sourceType} entry:
+
+Title: ${item.title}
+Summary: ${item.excerpt || item.description || ''}
+Category: ${item.category || ''}
+
+Return JSON with keys linkedin, twitter, announcement, launch.`;
+      const aiResponse = await this.callOpenAI(prompt);
+      const parsed = this.parseJSON<GeneratedSocialContent>(aiResponse);
+
+      const socialContent = parsed ?? {
+        linkedin: `Introducing ${item.title} — an update from Arpit Labs. ${item.excerpt || item.description || ''}`,
+        twitter: `${item.title} — read the latest update from Arpit Labs. #tech #ai`,
+        announcement: `Announcing ${item.title} from Arpit Labs. Learn more about the latest developments and why it matters.`,
+        launch: `Launching ${item.title}! Explore the new update and see what’s next from Arpit Labs.`,
+      };
+
+      await this.createGenerationRecord('social', sourceType, sourceId, socialContent, this.estimateTokens(aiResponse), { postType });
+      await this.updateJobStatus(job?.id, 'completed', socialContent, null, this.estimateTokens(aiResponse));
+      return socialContent;
+    } catch (error) {
+      await this.updateJobStatus(job?.id, 'failed', null, error instanceof Error ? error.message : 'Unknown error', null);
+      throw error;
+    }
+  }
+
+  async generateWeeklyReport(): Promise<WeeklyReportPayload> {
+    const job = await this.createJobRecord('report', 'running', { reportType: 'weekly' });
+    try {
+      const projectCount = await this.fetchCount('projects', { published: true });
+      const articleCount = await this.fetchCount('lab_notes', { published: true });
+      const experimentCount = await this.fetchCount('experiments', { published: true });
+      const journeyCount = await this.fetchCount('journey');
+      const recruiterCount = await this.fetchCount('recruiter_interactions');
+      const knowledgeBaseCount = await this.fetchCount('ai_knowledge_base');
+      const embeddingCount = await this.fetchCount('ai_embeddings');
+      const visitorPrediction = await analyticsService.predictVisitorInterests(null);
+      const contentPrediction = await analyticsService.predictPopularContent();
+      const technologyPrediction = await analyticsService.predictTrendingTechnologies();
+
+      const prompt = `Generate a weekly report for Arpit Labs. Include visitor insights, popular projects, popular articles, search trends, and recruiter activity.
+
+Metrics:
+- Published projects: ${projectCount}
+- Published articles: ${articleCount}
+- Published experiments: ${experimentCount}
+- Journey entries: ${journeyCount}
+- Recruiter interactions: ${recruiterCount}
+- Knowledge base entries: ${knowledgeBaseCount}
+- Embeddings: ${embeddingCount}
+
+Predictions:
+- Visitor interests: ${visitorPrediction.predictions.join(', ')}
+- Popular content: ${contentPrediction.predictions.join(', ')}
+- Technology trends: ${technologyPrediction.predictions.join(', ')}
+
+Return JSON with keys title, visitorInsights, popularProjects, popularArticles, searchTrends, recruiterActivity, summary, reportContent, metrics.`;
+
+      const aiResponse = await this.callOpenAI(prompt);
+      const parsed = this.parseJSON<WeeklyReportPayload>(aiResponse);
+      const report = parsed ?? {
+        title: 'Weekly AI Insights Report',
+        visitorInsights: `Visitor interest is trending toward ${visitorPrediction.predictions.join(', ')}.`,
+        popularProjects: [contentPrediction.predictions[0] || 'AI product', contentPrediction.predictions[1] || 'Developer tools'],
+        popularArticles: [contentPrediction.predictions[0] || 'AI trends', contentPrediction.predictions[1] || 'Platform engineering'],
+        searchTrends: technologyPrediction.predictions,
+        recruiterActivity: `Recruiter engagement remains steady with ${recruiterCount} interactions this week.`,
+        summary: 'This weekly report provides a concise review of performance metrics and content highlights.',
+        reportContent: `Projects: ${projectCount}, Articles: ${articleCount}, Experiments: ${experimentCount}, Recruiter interactions: ${recruiterCount}.`,
+        metrics: {
+          projectCount,
+          articleCount,
+          experimentCount,
+          journeyCount,
+          recruiterCount,
+          knowledgeBaseCount,
+          embeddingCount,
+        },
+      };
+
+      await this.createReportRecord('weekly', 'weekly', report.title, report.summary, report.reportContent, report.metrics);
+      await this.updateJobStatus(job?.id, 'completed', report, null, this.estimateTokens(aiResponse));
+      return report;
+    } catch (error) {
+      await this.updateJobStatus(job?.id, 'failed', null, error instanceof Error ? error.message : 'Unknown error', null);
+      throw error;
+    }
+  }
+
+  async enhanceContent(sourceType: 'project' | 'blog' | 'experiment', sourceId: string): Promise<EnhanceContentPayload> {
+    const job = await this.createJobRecord('enhancement', 'running', { sourceType, sourceId });
+    try {
+      const item = await this.fetchSourceItem(sourceType, sourceId);
+      if (!item) {
+        throw new Error(`Unable to load ${sourceType} item for enhancement`);
+      }
+
+      const sourceDescription = `${item.title} - ${item.excerpt || item.description || ''}`;
+      const prompt = `Create SEO metadata and OpenGraph content for this content item:
+
+${sourceDescription}
+
+Return JSON with keys seoDescription, metaTags, openGraph, keywords.`;
+      const aiResponse = await this.callOpenAI(prompt);
+      const parsed = this.parseJSON<EnhanceContentPayload>(aiResponse);
+
+      const enhancement = parsed ?? {
+        seoDescription: `Learn about ${item.title} at Arpit Labs, with expert insights and practical guidance.`,
+        metaTags: [item.title, sourceType, 'Arpit Labs', 'technical article'],
+        openGraph: {
+          title: item.title,
+          description: item.excerpt || item.description || '',
+        },
+        keywords: [item.title, sourceType, 'AI', 'engineering'],
+      };
+
+      await this.createGenerationRecord('enhancement', sourceType, sourceId, enhancement, this.estimateTokens(aiResponse), {});
+      await this.updateJobStatus(job?.id, 'completed', enhancement, null, this.estimateTokens(aiResponse));
+      return enhancement;
+    } catch (error) {
+      await this.updateJobStatus(job?.id, 'failed', null, error instanceof Error ? error.message : 'Unknown error', null);
+      throw error;
+    }
+  }
+
+  private async fetchSourceItem(sourceType: string, sourceId: string) {
+    const table = sourceType === 'blog' ? 'lab_notes' : sourceType === 'experiment' ? 'experiments' : 'projects';
+    const { data } = await supabase.from(table).select('*').eq('id', sourceId).single();
+    return data as any;
+  }
+
+  private async fetchRecentProjects() {
+    const { data } = await supabase
+      .from('projects')
+      .select('id,title,description,github_url')
+      .eq('published', true)
+      .order('updated_at', { ascending: false })
+      .limit(5);
+    return data || [];
+  }
+
+  private async fetchRecentArticles() {
+    const { data } = await supabase
+      .from('lab_notes')
+      .select('id,title,excerpt,url,description')
+      .eq('published', true)
+      .order('updated_at', { ascending: false })
+      .limit(5);
+    return data || [];
+  }
+
+  private async fetchRecentExperiments() {
+    const { data } = await supabase
+      .from('experiments')
+      .select('id,title,description,url')
+      .eq('published', true)
+      .order('updated_at', { ascending: false })
+      .limit(5);
+    return data || [];
+  }
+
+  private async fetchRecentJourney() {
+    const { data } = await supabase
+      .from('journey')
+      .select('id,title,description')
+      .order('created_at', { ascending: false })
+      .limit(5);
+    return data || [];
+  }
+
+  private async fetchCount(table: string, filters: Record<string, any> = {}) {
+    let query = supabase.from(table).select('id', { count: 'exact', head: true });
+    for (const [key, value] of Object.entries(filters)) {
+      query = query.eq(key, value);
+    }
+    const { count } = await query;
+    return count ?? 0;
+  }
+
+  private async createGenerationRecord(
+    generationType: string,
+    sourceType: string | null,
+    sourceId: string | null,
+    output: Record<string, any>,
+    tokensUsed: number | null,
+    metadata: Record<string, any>
+  ): Promise<AiGenerationRecord | null> {
+    const { data, error } = await supabase
+      .from('ai_generations')
+      .insert([
+        {
+          generation_type: generationType,
+          source_type: sourceType,
+          source_id: sourceId,
+          status: 'completed',
+          output,
+          tokens_used: tokensUsed,
+          metadata,
+        },
+      ])
+      .select()
+      .single();
+
+    if (error || !data) {
+      console.error('Failed to create AI generation record:', error);
+      return null;
+    }
+
+    return data as AiGenerationRecord;
+  }
+
+  private async createReportRecord(
+    reportType: string,
+    period: string,
+    title: string,
+    summary: string,
+    content: string,
+    metrics: Record<string, any>
+  ): Promise<AiReportRecord | null> {
+    const { data, error } = await supabase
+      .from('ai_reports')
+      .insert([
+        {
+          report_type: reportType,
+          period,
+          title,
+          summary,
+          content,
+          metrics,
+        },
+      ])
+      .select()
+      .single();
+
+    if (error || !data) {
+      console.error('Failed to create AI report record:', error);
+      return null;
+    }
+
+    return data as AiReportRecord;
+  }
+
+  private async createJobRecord(type: string, status: string, payload: Record<string, any>): Promise<AiJobRecord | null> {
+    const { data, error } = await supabase
+      .from('ai_jobs')
+      .insert([
+        {
+          type,
+          status,
+          payload,
+          started_at: new Date().toISOString(),
+        },
+      ])
+      .select()
+      .single();
+
+    if (error || !data) {
+      console.error('Failed to create AI job record:', error);
+      return null;
+    }
+
+    return data as AiJobRecord;
+  }
+
+  private async updateJobStatus(
+    jobId: string | undefined,
+    status: string,
+    result: Record<string, any> | null,
+    errorMessage: string | null,
+    tokensUsed: number | null
+  ): Promise<void> {
+    if (!jobId) {
+      return;
+    }
+
+    await supabase.from('ai_jobs').update({
+      status,
+      result,
+      error_message: errorMessage,
+      tokens_used: tokensUsed,
+      completed_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    }).eq('id', jobId);
+  }
+
+  private async parseJSON<T>(raw: string): T | null {
+    const jsonMatch = raw.match(/\{[\s\S]*\}/m);
+    if (!jsonMatch) {
+      return null;
+    }
+
+    try {
+      return JSON.parse(jsonMatch[0]) as T;
+    } catch (error) {
+      console.error('JSON parse failed:', error);
+      return null;
+    }
+  }
+
+  private estimateTokens(content: string): number {
+    return Math.max(1, Math.ceil(content.length / 4));
   }
 }
 
