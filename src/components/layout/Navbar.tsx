@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LayoutDashboard } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/shared/ThemeToggle";
 import { NexusLogo } from "@/components/shared/NexusLogo";
@@ -15,12 +15,12 @@ const navItems = [
   { href: "/", label: "Home" },
   { href: "/about", label: "About" },
   { href: "/products", label: "Products" },
+  { href: "/marketplace", label: "Marketplace" },
   { href: "/projects", label: "Projects" },
   { href: "/experiments", label: "Experiments" },
   { href: "/blog", label: "Lab Notes" },
   { href: "/hackathons", label: "Hackathons" },
   { href: "/journey", label: "Journey" },
-  { href: "/contact", label: "Contact" }
 ] as const satisfies ReadonlyArray<{ href: Route; label: string }>;
 
 export function Navbar() {
@@ -71,7 +71,7 @@ export function Navbar() {
           <span>Arpit Labs</span>
         </Link>
 
-        <nav className="hidden items-center gap-8 md:flex">
+        <nav className="hidden items-center gap-6 lg:gap-8 md:flex">
           {navItems.map((item) => (
             <Link 
               key={item.href} 
@@ -84,6 +84,18 @@ export function Navbar() {
               {item.label}
             </Link>
           ))}
+          {user && (
+            <Link 
+              href="/dashboard" 
+              className={cn(
+                "text-sm font-bold transition hover:text-foreground flex items-center gap-2",
+                pathname.startsWith("/dashboard") || pathname.startsWith("/organizations") ? "text-primary" : "text-muted"
+              )}
+            >
+              <LayoutDashboard size={16} />
+              Dashboard
+            </Link>
+          )}
         </nav>
 
         <div className="flex items-center gap-3">
@@ -106,7 +118,7 @@ export function Navbar() {
           ) : (
             <div className="relative">
               <div className="inline-flex items-center gap-2">
-                <Link href="/profile" className="text-sm font-medium text-foreground">
+                <Link href="/profile" className="hidden lg:block text-sm font-medium text-foreground">
                   {profile?.full_name ?? user.email}
                 </Link>
                 <button
@@ -120,21 +132,14 @@ export function Navbar() {
                   title="Logout"
                 >
                   <span className="sr-only">Logout</span>
-                  {/* Simple logout icon */}
                   ⎋
                 </button>
               </div>
             </div>
           )}
-          <Link
-            href="/contact"
-            className="hidden rounded-2xl border border-border/70 bg-surface px-4 py-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary/5 dark:border-slate-700 dark:bg-slate-900 sm:inline-flex"
-          >
-            Let&apos;s Connect
-          </Link>
           <button
             type="button"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-border/70 bg-surface text-foreground transition hover:bg-primary/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70 dark:border-slate-700 dark:bg-slate-900"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-border/70 bg-surface text-foreground transition hover:bg-primary/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70 dark:border-slate-700 dark:bg-slate-900 md:hidden"
             onClick={() => setOpen((prev) => !prev)}
             aria-label={open ? "Close navigation menu" : "Open navigation menu"}
             aria-expanded={open}
@@ -160,6 +165,22 @@ export function Navbar() {
                 {item.label}
               </Link>
             ))}
+            {user && (
+              <Link
+                href="/dashboard"
+                className="rounded-2xl px-4 py-3 text-base font-bold text-primary transition hover:bg-primary/5"
+                onClick={() => setOpen(false)}
+              >
+                Dashboard
+              </Link>
+            )}
+            <Link
+              href="/contact"
+              className="rounded-2xl px-4 py-3 text-base font-medium text-foreground transition hover:bg-surface"
+              onClick={() => setOpen(false)}
+            >
+              Contact
+            </Link>
           </div>
         </div>
       </div>

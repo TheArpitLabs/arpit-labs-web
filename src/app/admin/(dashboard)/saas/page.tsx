@@ -7,15 +7,10 @@ import { Globe, Building2, Layout, Users, Activity } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 export default async function SaasAdminDashboard() {
-  const organizations = await saasRepository.getOrganizations();
-  
-  // In a real app, these would be aggregated from the DB
-  const stats = {
-    organizations: organizations.length,
-    workspaces: 42, // Mock for now or would need a count method
-    members: 128,
-    activeToday: 15
-  };
+  const [organizations, stats] = await Promise.all([
+    saasRepository.getOrganizations(),
+    saasRepository.getAdminStats()
+  ]);
 
   return (
     <div className="space-y-6">
@@ -25,10 +20,10 @@ export default async function SaasAdminDashboard() {
       />
 
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <MetricCard label="Organizations" value={stats.organizations} icon={<Building2 className="h-4 w-4" />} />
-        <MetricCard label="Workspaces" value={stats.workspaces} icon={<Layout className="h-4 w-4" />} />
-        <MetricCard label="Total Members" value={stats.members} icon={<Users className="h-4 w-4" />} />
-        <MetricCard label="Active Today" value={stats.activeToday} icon={<Activity className="h-4 w-4" />} />
+        <MetricCard label="Organizations" value={stats.organizationsCount} icon={<Building2 className="h-4 w-4" />} />
+        <MetricCard label="Workspaces" value={stats.workspacesCount} icon={<Layout className="h-4 w-4" />} />
+        <MetricCard label="Total Members" value={stats.totalMembersCount} icon={<Users className="h-4 w-4" />} />
+        <MetricCard label="Active Workspaces" value={stats.activeWorkspacesCount} icon={<Activity className="h-4 w-4" />} />
       </section>
 
       <div className="grid gap-6">
@@ -49,8 +44,8 @@ export default async function SaasAdminDashboard() {
                     {org.slug}
                   </Badge>
                 </td>
-                <td className="px-4 py-4 text-sm text-muted">5</td>
-                <td className="px-4 py-4 text-sm text-muted">12</td>
+                <td className="px-4 py-4 text-sm text-muted">--</td>
+                <td className="px-4 py-4 text-sm text-muted">--</td>
                 <td className="px-4 py-4 text-xs text-muted">
                   {new Date(org.created_at).toLocaleDateString()}
                 </td>

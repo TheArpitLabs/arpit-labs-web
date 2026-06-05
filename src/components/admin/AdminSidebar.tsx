@@ -1,6 +1,19 @@
 import Link from "next/link";
 import type { Route } from "next";
-import { Blocks, CreditCard, FileText, FlaskConical, Inbox, LayoutDashboard, Milestone, Rocket, Sparkles, Users, Globe } from "lucide-react";
+import { 
+  Blocks, 
+  CreditCard, 
+  FileText, 
+  FlaskConical, 
+  Inbox, 
+  LayoutDashboard, 
+  Milestone, 
+  Rocket, 
+  Sparkles, 
+  Users, 
+  Globe,
+  ShoppingBag
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navigationItems: Array<{
@@ -10,6 +23,7 @@ const navigationItems: Array<{
 }> = [
   { href: "/admin", label: "Dashboard", icon: <LayoutDashboard size={18} /> },
   { href: "/admin/saas" as Route, label: "SaaS Infrastructure", icon: <Globe size={18} /> },
+  { href: "/admin/marketplace" as Route, label: "Marketplace", icon: <ShoppingBag size={18} /> },
   { href: "/admin/projects", label: "Projects", icon: <Blocks size={18} /> },
   { href: "/admin/experiments", label: "Experiments", icon: <FlaskConical size={18} /> },
   { href: "/admin/blog", label: "Blog", icon: <FileText size={18} /> },
