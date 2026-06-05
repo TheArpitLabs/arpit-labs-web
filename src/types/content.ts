@@ -85,6 +85,47 @@ export interface NewsletterSubscriber {
   subscribed_at: string;
 }
 
+export interface Hackathon {
+  id: string;
+  title: string;
+  slug: string;
+  description: string;
+  organizer: string;
+  start_date?: string | null;
+  end_date?: string | null;
+  registration_deadline?: string | null;
+  status: string;
+  created_at: string;
+}
+
+export interface HackathonTeam {
+  id: string;
+  hackathon_id: string;
+  team_name: string;
+  leader_id: string;
+  description?: string | null;
+  created_at: string;
+}
+
+export interface HackathonTeamMember {
+  id: string;
+  team_id: string;
+  user_id: string;
+}
+
+export interface HackathonSubmission {
+  id: string;
+  hackathon_id: string;
+  team_id: string;
+  title: string;
+  description?: string | null;
+  github_url?: string | null;
+  demo_url?: string | null;
+  documentation_url?: string | null;
+  score?: number | null;
+  submitted_at: string;
+}
+
 export interface AdminStats {
   projectsCount: number;
   articlesCount: number;

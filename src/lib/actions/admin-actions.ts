@@ -7,11 +7,13 @@ import { clearAdminSessionCookies, requireAdmin, setAdminSessionCookies } from "
 import { uploadFileToBucket } from "@/lib/admin-storage";
 import { contactsRepository } from "@/lib/repositories/contacts.repository";
 import { experimentsRepository } from "@/lib/repositories/experiments.repository";
+import { hackathonsRepository } from "@/lib/repositories/hackathons.repository";
 import { journeyRepository } from "@/lib/repositories/journey.repository";
 import { labNotesRepository } from "@/lib/repositories/labnotes.repository";
 import { newsletterRepository } from "@/lib/repositories/newsletter.repository";
 import { projectsRepository } from "@/lib/repositories/projects.repository";
 import { experimentSchema, journeySchema, labNoteSchema, projectSchema } from "@/lib/validation";
+import { hackathonSchema } from "@/lib/validation/hackathon.schema";
 
 function createAuthClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -235,6 +237,49 @@ export async function deleteJourneyEntryAction(formData: FormData) {
   await journeyRepository.deleteJourneyEntry(id);
   revalidatePath("/admin/journey");
   revalidatePath("/journey");
+}
+
+export async function saveHackathonAction(formData: FormData) {
+  await requireAdmin();
+
+  const id = asString(formData.get("id"));
+  const payload = hackathonSchema.parse({
+    title: asString(formData.get("title")),
+    slug: asString(formData.get("slug")),
+    description: asString(formData.get("description")),
+    organizer: asString(formData.get("organizer")),
+    start_date: asOptionalString(formData.get("start_date")),
+    end_date: asOptionalString(formData.get("end_date")),
+    registration_deadline: asOptionalString(formData.get("registration_deadline")),
+    status: asString(formData.get("status")),
+  });
+
+  if (id) {
+    await hackathonsRepository.updateHackathon(id, payload);
+  } else {
+    await hackathonsRepository.createHackathon(payload);
+  }
+
+  revalidatePath("/admin/hackathons");
+  revalidatePath("/hackathons");
+  redirect("/admin/hackathons" as never);
+}
+
+export async function deleteHackathonAction(formData: FormData) {
+  await requireAdmin();
+  const id = asString(formData.get("id"));
+  await hackathonsRepository.deleteHackathon(id);
+  revalidatePath("/admin/hackathons");
+  revalidatePath("/hackathons");
+}
+
+export async function saveHackathonScoreAction(formData: FormData) {
+  await requireAdmin();
+
+  const id = asString(formData.get("id"));
+  const score = Number(asString(formData.get("score")) || 0);
+  await hackathonsRepository.updateSubmissionScore(id, score);
+  revalidatePath("/admin/hackathons");
 }
 
 export async function markMessageReadAction(formData: FormData) {

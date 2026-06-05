@@ -4,3 +4,4 @@ export { journeyRepository } from "./journey.repository";
 export { contactsRepository } from "./contacts.repository";
 export { newsletterRepository } from "./newsletter.repository";
 export { projectsRepository } from "./projects.repository";
+export { hackathonsRepository } from "./hackathons.repository";

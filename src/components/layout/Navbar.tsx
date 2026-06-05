@@ -17,6 +17,7 @@ const navItems = [
   { href: "/projects", label: "Projects" },
   { href: "/experiments", label: "Experiments" },
   { href: "/blog", label: "Lab Notes" },
+  { href: "/hackathons", label: "Hackathons" },
   { href: "/journey", label: "Journey" },
   { href: "/contact", label: "Contact" }
 ] as const satisfies ReadonlyArray<{ href: Route; label: string }>;

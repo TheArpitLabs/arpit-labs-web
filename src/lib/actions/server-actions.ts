@@ -6,9 +6,11 @@ import { experimentsRepository } from "@/lib/repositories/experiments.repository
 import { labNotesRepository } from "@/lib/repositories/labnotes.repository";
 import { journeyRepository } from "@/lib/repositories/journey.repository";
 import { projectsRepository } from "@/lib/repositories/projects.repository";
+import { hackathonsRepository } from "@/lib/repositories/hackathons.repository";
 import { contactFormSchema, newsletterSchema } from "@/lib/validation";
 import { handleValidationError } from "@/lib/errors";
-import { Experiment, LabNote, JourneyItem, Project } from "@/types/content";
+import { Experiment, Hackathon, HackathonSubmission, HackathonTeam, HackathonTeamMember, LabNote, JourneyItem, Project } from "@/types/content";
+import { contentGenerationService } from "@/lib/ai-services";
 
 export async function submitContactMessage(formData: unknown) {
   try {
@@ -77,5 +79,53 @@ export async function getProjectBySlug(slug: string): Promise<Project | null> {
     return project && (project.published ?? true) ? project : null;
   } catch {
     return null;
+  }
+}
+
+export async function getHackathons(): Promise<Hackathon[]> {
+  try {
+    return await hackathonsRepository.getHackathons() as Hackathon[];
+  } catch {
+    return [];
+  }
+}
+
+export async function getHackathonBySlug(slug: string): Promise<Hackathon | null> {
+  try {
+    return await hackathonsRepository.getHackathonBySlug(slug);
+  } catch {
+    return null;
+  }
+}
+
+export async function getHackathonTeams(hackathonId: string): Promise<HackathonTeam[]> {
+  try {
+    return await hackathonsRepository.getHackathonTeams(hackathonId) as HackathonTeam[];
+  } catch {
+    return [];
+  }
+}
+
+export async function getHackathonSubmissions(hackathonId: string): Promise<HackathonSubmission[]> {
+  try {
+    return await hackathonsRepository.getHackathonSubmissions(hackathonId) as HackathonSubmission[];
+  } catch {
+    return [];
+  }
+}
+
+export async function getLeaderboard(hackathonId?: string): Promise<HackathonSubmission[]> {
+  try {
+    return await hackathonsRepository.getLeaderboard(hackathonId) as HackathonSubmission[];
+  } catch {
+    return [];
+  }
+}
+
+export async function generateHackathonSuggestions(hackathonTitle: string): Promise<string[]> {
+  try {
+    return await contentGenerationService.generateProjectIdeas(hackathonTitle, 4);
+  } catch {
+    return [];
   }
 }
