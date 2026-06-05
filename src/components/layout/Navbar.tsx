@@ -8,6 +8,8 @@ import { NexusLogo } from "@/components/shared/NexusLogo";
 import Link from "next/link";
 import type { Route } from "next";
 import { usePathname } from "next/navigation";
+import { useEffect } from "react";
+import { supabaseClient } from "@/lib/supabase/client";
 
 const navItems = [
   { href: "/", label: "Home" },
@@ -22,6 +24,39 @@ const navItems = [
 export function Navbar() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const [user, setUser] = useState<any | null>(null);
+  const [profile, setProfile] = useState<any | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function init() {
+      const { data } = await supabaseClient.auth.getUser();
+      if (!mounted) return;
+      setUser(data?.user ?? null);
+
+      if (data?.user) {
+        const { data: p } = await supabaseClient.from("profiles").select("full_name,avatar_url").eq("id", data.user.id).single();
+        setProfile(p ?? null);
+      }
+    }
+
+    init();
+
+    const { data: listener } = supabaseClient.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        supabaseClient.from("profiles").select("full_name,avatar_url").eq("id", session.user.id).single().then(({ data: p }) => setProfile(p ?? null));
+      } else {
+        setProfile(null);
+      }
+    });
+
+    return () => {
+      mounted = false;
+      listener?.subscription.unsubscribe();
+    };
+  }, []);
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/70 bg-background/80 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-950/80">
@@ -51,6 +86,44 @@ export function Navbar() {
 
         <div className="flex items-center gap-3">
           <ThemeToggle />
+          {!user ? (
+            <>
+              <Link
+                href="/login"
+                className="rounded-2xl px-3 py-2 text-sm font-semibold text-foreground transition hover:bg-surface"
+              >
+                Login
+              </Link>
+              <Link
+                href="/register"
+                className="hidden rounded-2xl border border-border/70 bg-surface px-4 py-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary/5 dark:border-slate-700 dark:bg-slate-900 sm:inline-flex"
+              >
+                Register
+              </Link>
+            </>
+          ) : (
+            <div className="relative">
+              <div className="inline-flex items-center gap-2">
+                <Link href="/profile" className="text-sm font-medium text-foreground">
+                  {profile?.full_name ?? user.email}
+                </Link>
+                <button
+                  onClick={async () => {
+                    await supabaseClient.auth.signOut();
+                    setUser(null);
+                    setProfile(null);
+                    window.location.href = "/";
+                  }}
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-border/70 bg-surface text-foreground transition hover:bg-primary/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70 dark:border-slate-700 dark:bg-slate-900"
+                  title="Logout"
+                >
+                  <span className="sr-only">Logout</span>
+                  {/* Simple logout icon */}
+                  ⎋
+                </button>
+              </div>
+            </div>
+          )}
           <Link
             href="/contact"
             className="hidden rounded-2xl border border-border/70 bg-surface px-4 py-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary/5 dark:border-slate-700 dark:bg-slate-900 sm:inline-flex"
