@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { semanticSearchService } from '@/lib/ai-services';
+import { membershipRepository } from '@/lib/repositories/membership.repository';
 
 interface RecruiterQueryResult {
   answer: string;
@@ -58,6 +59,15 @@ async function generateAnswer(question: string, contextEntries: Array<{ title: s
 
 export async function POST(request: NextRequest) {
   try {
+    const access = await membershipRepository.validateFeatureAccessFromRequest(request, 'recruiter_assistant');
+
+    if (!access.allowed) {
+      return NextResponse.json(
+        { success: false, error: access.error },
+        { status: access.status }
+      );
+    }
+
     const payload = await request.json();
 
     const question = typeof payload?.question === 'string' ? payload.question.trim() : '';

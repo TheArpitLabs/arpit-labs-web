@@ -78,6 +78,18 @@ export const analytics = {
   newsletterSignup: () =>
     trackEvent('conversion', 'newsletter_signup', 'newsletter', 1),
 
+  planUpgrade: (planSlug: string) =>
+    trackEvent('membership', 'plan_upgrade', planSlug, 1),
+
+  planDowngrade: (planSlug: string) =>
+    trackEvent('membership', 'plan_downgrade', planSlug, 1),
+
+  featureUsage: (featureKey: string, planSlug?: string) =>
+    trackEvent('membership', 'feature_usage', planSlug ? `${featureKey}:${planSlug}` : featureKey, 1),
+
+  aiUsageByPlan: (featureKey: string, planSlug: string) =>
+    trackEvent('ai', 'ai_usage_by_plan', `${featureKey}:${planSlug}`, 1),
+
   downloadResume: () =>
     trackEvent('conversion', 'download_resume', 'resume', 1),
 

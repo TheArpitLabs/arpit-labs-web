@@ -4,7 +4,9 @@ import React, { useEffect, useState } from 'react';
 import { Container } from '@/components/layout/Container';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { DownloadIcon, LinkIcon, MailIcon } from 'lucide-react';
+import { DownloadIcon, LinkIcon } from 'lucide-react';
+import { supabaseClient } from '@/lib/supabase/client';
+import { analytics } from '@/lib/analytics';
 
 interface RecruiterData {
   resumeSummary: string;
@@ -59,7 +61,19 @@ export default function RecruiterPage() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/recruiter/report');
+      const { data: session } = await supabaseClient.auth.getSession();
+      const accessToken = session?.session?.access_token;
+
+      if (!accessToken) {
+        window.location.href = '/login';
+        return;
+      }
+
+      const response = await fetch('/api/recruiter/report', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
       const payload = await response.json();
 
       if (!response.ok || !payload.success) {
@@ -67,6 +81,7 @@ export default function RecruiterPage() {
       }
 
       setData(payload.report as RecruiterData);
+      analytics.featureUsage('recruiter_assistant', 'premium');
     } catch (error) {
       console.error('Failed to fetch recruiter data:', error);
     } finally {
@@ -80,10 +95,19 @@ export default function RecruiterPage() {
     setQueryAnswer(null);
 
     try {
+      const { data: session } = await supabaseClient.auth.getSession();
+      const accessToken = session?.session?.access_token;
+
+      if (!accessToken) {
+        window.location.href = '/login';
+        return;
+      }
+
       const response = await fetch('/api/recruiter/query', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify({ question }),
       });
@@ -95,6 +119,7 @@ export default function RecruiterPage() {
       }
 
       setQueryAnswer(payload.answer as string);
+      analytics.aiUsageByPlan('recruiter_assistant', 'premium');
     } catch (error) {
       setQueryError(error instanceof Error ? error.message : 'Something went wrong');
       console.error(error);

@@ -39,6 +39,16 @@ function hasAdminRole(user: { email?: string | null; app_metadata?: Record<strin
   return appRole === "admin" || metadataRole === "admin" || isAdminEmail(user.email);
 }
 
+function getCookieValue(cookieHeader: string | null, name: string) {
+  if (!cookieHeader) return undefined;
+
+  return cookieHeader
+    .split(";")
+    .map((cookie) => cookie.trim())
+    .find((cookie) => cookie.startsWith(`${name}=`))
+    ?.slice(name.length + 1);
+}
+
 export async function setAdminSessionCookies(accessToken: string, refreshToken: string) {
   const cookieStore = await cookies();
 
@@ -101,6 +111,24 @@ export async function getAdminSession() {
     refreshToken: sessionData.session.refresh_token,
     user: userData.user,
   };
+}
+
+export async function getAdminUserFromRequest(request: Request) {
+  const token =
+    request.headers.get("authorization")?.replace("Bearer ", "") ??
+    getCookieValue(request.headers.get("cookie"), adminAccessCookieName);
+
+  if (!token) {
+    return null;
+  }
+
+  const { data: userData, error: userError } = await supabaseServer.auth.getUser(token);
+
+  if (userError || !userData.user || !hasAdminRole(userData.user)) {
+    return null;
+  }
+
+  return userData.user;
 }
 
 export async function requireAdmin() {

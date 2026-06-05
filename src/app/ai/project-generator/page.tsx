@@ -11,6 +11,8 @@ import { Container } from '@/components/layout/Container';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { SparklesIcon, CopyIcon, RefreshCwIcon } from 'lucide-react';
+import { supabaseClient } from '@/lib/supabase/client';
+import { analytics } from '@/lib/analytics';
 
 interface GeneratedProject {
   title: string;
@@ -41,6 +43,7 @@ export default function ProjectGeneratorPage() {
   const [generatedProject, setGeneratedProject] = useState<GeneratedProject | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const domains: Domain[] = ['IoT', 'AI', 'Cybersecurity', 'Web Development'];
 
@@ -51,10 +54,22 @@ export default function ProjectGeneratorPage() {
     }
 
     setIsLoading(true);
+    setErrorMessage(null);
     try {
+      const { data: session } = await supabaseClient.auth.getSession();
+      const accessToken = session?.session?.access_token;
+
+      if (!accessToken) {
+        window.location.href = '/login';
+        return;
+      }
+
       const response = await fetch('/api/ai/generate/project', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
         body: JSON.stringify({
           domain,
           difficulty,
@@ -64,15 +79,17 @@ export default function ProjectGeneratorPage() {
       });
 
       const data = await response.json();
-      if (data.success) {
-        setGeneratedProject(data.project);
-      } else {
-        // Fallback to mock data for demo
-        setGeneratedProject(generateMockProject(domain, difficulty, budget, techStackInput));
+      if (!response.ok || !data.success) {
+        throw new Error(data?.error || 'Unable to generate a project right now.');
       }
+
+      setGeneratedProject(data.project);
+      analytics.featureUsage('ai_project_generator', 'premium');
+      analytics.aiUsageByPlan('ai_project_generator', 'premium');
     } catch (error) {
       console.error('Failed to generate project:', error);
-      setGeneratedProject(generateMockProject(domain, difficulty, budget, techStackInput));
+      setGeneratedProject(null);
+      setErrorMessage(error instanceof Error ? error.message : 'Unable to generate a project right now.');
     } finally {
       setIsLoading(false);
     }
@@ -200,6 +217,11 @@ export default function ProjectGeneratorPage() {
                   <SparklesIcon className="w-5 h-5" />
                   {isLoading ? 'Generating...' : 'Generate Project'}
                 </Button>
+                {errorMessage && (
+                  <p className="mt-4 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+                    {errorMessage}
+                  </p>
+                )}
               </Card>
             </div>
 
@@ -360,241 +382,5 @@ export default function ProjectGeneratorPage() {
         </div>
       </Container>
     </div>
-  );
-}
-
-// Mock project generator for demo purposes
-function generateMockProject(domain: string, difficulty: string, budget: number, techStackInput: string): GeneratedProject {
-  const projects: Record<string, any> = {
-    IoT_beginner: {
-      title: 'Smart Temperature Monitor with Cloud Sync',
-      description:
-        'Build an IoT temperature monitoring system using Arduino/ESP32 that syncs data to the cloud with real-time alerts.',
-      techStack: {
-        frontend: ['React', 'Tailwind CSS', 'Charts.js'],
-        backend: ['Node.js', 'Express', 'MQTT'],
-        database: ['PostgreSQL', 'Supabase'],
-        devops: ['Docker', 'Raspberry Pi'],
-      },
-      difficulty: 'beginner',
-      estimatedBudget: budget,
-      estimatedDuration: '4-6 weeks',
-      learningOutcomes: [
-        'IoT fundamentals and protocols',
-        'Arduino/ESP32 programming',
-        'Cloud integration basics',
-        'Real-time data visualization',
-      ],
-      features: [
-        'Temperature and humidity sensors',
-        'Real-time data collection',
-        'Cloud storage and sync',
-        'Alert notifications',
-        'Data visualization dashboard',
-      ],
-      architecture: `IoT Device (Arduino/ESP32)
-        ↓ (MQTT/HTTP)
-    MQTT Broker / Cloud API
-        ↓
-    PostgreSQL + Supabase
-        ↓
-    React Dashboard`,
-      roadmap: [
-        'Phase 1: Set up hardware and sensors',
-        'Phase 2: Implement local data collection',
-        'Phase 3: Cloud connection and storage',
-        'Phase 4: Build dashboard UI',
-        'Phase 5: Add alerts and notifications',
-      ],
-      learningPath: [
-        'Understand IoT sensors and microcontrollers',
-        'Build firmware and connectivity logic',
-        'Create a cloud service for data ingestion',
-        'Design a responsive monitoring dashboard',
-        'Add notification and alert workflows',
-      ],
-    } as GeneratedProject,
-    AI_beginner: {
-      title: 'AI Recommendation Engine for Personal Content',
-      description:
-        'Create a machine learning recommendation system that suggests content based on user preferences using collaborative filtering.',
-      techStack: {
-        frontend: ['React', 'Tailwind CSS', 'Recharts'],
-        backend: ['Python', 'FastAPI', 'scikit-learn'],
-        database: ['PostgreSQL', 'Redis'],
-        devops: ['Docker', 'GitHub Actions'],
-      },
-      difficulty: 'beginner',
-      estimatedBudget: budget,
-      estimatedDuration: '6-8 weeks',
-      learningOutcomes: [
-        'Machine learning basics',
-        'Recommendation algorithms',
-        'Data processing and feature engineering',
-        'Model training and evaluation',
-      ],
-      features: [
-        'User preference tracking',
-        'Collaborative filtering algorithm',
-        'Content recommendations',
-        'Performance analytics',
-        'A/B testing framework',
-      ],
-      architecture: `User Interaction
-        ↓
-    FastAPI Backend
-        ↓ (scikit-learn)
-    ML Model
-        ↓
-    PostgreSQL + Redis Cache
-        ↓
-    React Frontend`,
-      roadmap: [
-        'Phase 1: Data collection and preprocessing',
-        'Phase 2: Feature engineering',
-        'Phase 3: Algorithm implementation and training',
-        'Phase 4: API endpoints',
-        'Phase 5: Frontend integration and optimization',
-      ],
-      learningPath: [
-        'Learn machine learning fundamentals and recommendation models',
-        'Understand data pipelines and feature engineering',
-        'Implement model training and evaluation',
-        'Build backend APIs for model inference',
-        'Design dashboards to visualize insights',
-      ],
-    } as GeneratedProject,
-    Cybersecurity_intermediate: {
-      title: 'End-to-End Encrypted Chat Application',
-      description:
-        'Build a secure messaging platform with end-to-end encryption using WebSocket for real-time communication.',
-      techStack: {
-        frontend: ['React', 'TypeScript', 'TweetNaCl.js'],
-        backend: ['Node.js', 'Express', 'Socket.io'],
-        database: ['MongoDB', 'Redis'],
-        devops: ['Docker', 'nginx', 'Let\'s Encrypt'],
-      },
-      difficulty: 'intermediate',
-      estimatedBudget: budget,
-      estimatedDuration: '8-10 weeks',
-      learningOutcomes: [
-        'Cryptography fundamentals',
-        'End-to-end encryption',
-        'WebSocket implementation',
-        'Security best practices',
-      ],
-      features: [
-        'User authentication',
-        'End-to-end encryption',
-        'Real-time messaging',
-        'Message history',
-        'User verification',
-      ],
-      architecture: `React Client
-        ↓ (WebSocket + E2E Encryption)
-    Node.js Server
-        ↓
-    MongoDB (Encrypted)
-        ↓
-    Message Queue (Redis)`,
-      roadmap: [
-        'Phase 1: Setup project structure and dependencies',
-        'Phase 2: Implement user authentication',
-        'Phase 3: Add encryption/decryption logic',
-        'Phase 4: WebSocket communication',
-        'Phase 5: Message storage and retrieval',
-      ],
-      learningPath: [
-        'Study cryptography and secure communication',
-        'Implement authentication and authorization',
-        'Build encrypted messaging flows',
-        'Secure data storage and session handling',
-        'Test security and threat protection mechanisms',
-      ],
-    } as GeneratedProject,
-    'Web Development_advanced': {
-      title: 'Multi-Tenant SaaS Platform with AI Features',
-      description:
-        'Develop a comprehensive SaaS platform supporting multiple tenants with AI-powered features, analytics, and automated workflows.',
-      techStack: {
-        frontend: ['Next.js', 'TypeScript', 'Tailwind CSS', 'Zustand'],
-        backend: ['Node.js', 'Fastify', 'Prisma', 'OpenAI API'],
-        database: ['PostgreSQL', 'Supabase', 'Redis'],
-        devops: ['Docker', 'Kubernetes', 'CI/CD', 'Terraform'],
-      },
-      difficulty: 'advanced',
-      estimatedBudget: budget,
-      estimatedDuration: '12-16 weeks',
-      learningOutcomes: [
-        'Multi-tenant architecture',
-        'Advanced TypeScript patterns',
-        'AI integration',
-        'Production deployment',
-      ],
-      features: [
-        'Multi-tenant isolation',
-        'Role-based access control',
-        'AI-powered automation',
-        'Analytics dashboard',
-        'API ecosystem',
-      ],
-      architecture: `Next.js Frontend (Multi-tenant)
-        ↓
-    Fastify API Gateway
-        ↓
-    Microservices (Auth, AI, Analytics)
-        ↓
-    PostgreSQL + Redis + S3
-        ↓
-    Kubernetes Cluster`,
-      roadmap: [
-        'Phase 1: Architecture planning and setup',
-        'Phase 2: Core authentication and multi-tenancy',
-        'Phase 3: Admin dashboard and management',
-        'Phase 4: AI feature integration',
-        'Phase 5: Analytics and reporting',
-        'Phase 6: Production deployment and scaling',
-      ],
-      learningPath: [
-        'Research multi-tenant SaaS patterns and AI workflows',
-        'Design the tenant model and secure data boundaries',
-        'Build the core platform and admin experience',
-        'Integrate AI automation and reporting features',
-        'Deploy and optimize for scale and reliability',
-      ],
-    } as GeneratedProject,
-  };
-
-  const key = `${domain}_${difficulty}`;
-  return (
-    projects[key] || {
-      title: 'Custom Project',
-      description: 'A custom project tailored to your specifications',
-      techStack: {
-        frontend: ['React', 'TypeScript', 'Tailwind CSS'],
-        backend: ['Node.js', 'Express'],
-        database: ['PostgreSQL'],
-        devops: ['Docker'],
-      },
-      difficulty: difficulty as any,
-      estimatedBudget: budget,
-      estimatedDuration: '8 weeks',
-      learningOutcomes: ['Problem solving', 'Architecture design', 'Implementation'],
-      features: ['Core functionality', 'User interface', 'Data persistence'],
-      architecture: 'Frontend → Backend → Database',
-      roadmap: [
-        'Setup and planning',
-        'Core development',
-        'Testing',
-        'Deployment',
-      ],
-      learningPath: [
-        'Research the domain and core technologies',
-        'Sketch the architecture and wireframes',
-        'Build the core MVP features',
-        'Test and refine the user experience',
-        'Deploy and measure the outcome',
-      ],
-    }
   );
 }

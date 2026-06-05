@@ -3,11 +3,13 @@
 import React, { useEffect, useState } from "react";
 import { supabaseClient } from "@/lib/supabase/client";
 import Link from "next/link";
+import { formatPrice, membershipPlans } from "@/lib/memberships";
 
 export default function ProfilePage() {
   const [user, setUser] = useState<any | null>(null);
   const [profile, setProfile] = useState<any | null>(null);
   const [saved, setSaved] = useState<any[]>([]);
+  const [subscription, setSubscription] = useState<any | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -18,12 +20,21 @@ export default function ProfilePage() {
       setUser(data?.user ?? null);
 
       if (data?.user) {
-        const [{ data: p }, { data: s }] = await Promise.all([
+        const [{ data: p }, { data: s }, { data: sub }] = await Promise.all([
           supabaseClient.from("profiles").select("*").eq("id", data.user.id).single(),
-          supabaseClient.from("saved_content").select("*").eq("user_id", data.user.id).order("created_at", { ascending: false })
+          supabaseClient.from("saved_content").select("*").eq("user_id", data.user.id).order("created_at", { ascending: false }),
+          supabaseClient
+            .from("user_subscriptions")
+            .select("*, membership_plans(*)")
+            .eq("user_id", data.user.id)
+            .eq("status", "active")
+            .order("created_at", { ascending: false })
+            .limit(1)
+            .single()
         ]);
         setProfile(p ?? null);
         setSaved(s ?? []);
+        setSubscription(sub ?? null);
       }
     }
 
@@ -33,9 +44,19 @@ export default function ProfilePage() {
       if (session?.user) {
         supabaseClient.from("profiles").select("*").eq("id", session.user.id).single().then(({ data: p }) => setProfile(p ?? null));
         supabaseClient.from("saved_content").select("*").eq("user_id", session.user.id).order("created_at", { ascending: false }).then(({ data: s }) => setSaved(s ?? []));
+        supabaseClient
+          .from("user_subscriptions")
+          .select("*, membership_plans(*)")
+          .eq("user_id", session.user.id)
+          .eq("status", "active")
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .single()
+          .then(({ data: sub }) => setSubscription(sub ?? null));
       } else {
         setProfile(null);
         setSaved([]);
+        setSubscription(null);
       }
     });
 
@@ -54,6 +75,9 @@ export default function ProfilePage() {
     );
   }
 
+  const activePlan = subscription?.membership_plans ?? membershipPlans[0];
+  const aiLimitLabel = activePlan.slug === "premium" ? "Unlimited" : activePlan.slug === "student" ? "Higher limit" : "Limited";
+
   return (
     <main className="mx-auto max-w-3xl px-4 py-12">
       <div className="mb-6 flex items-center gap-4">
@@ -63,6 +87,37 @@ export default function ProfilePage() {
           <p className="text-sm text-muted">{profile?.bio}</p>
         </div>
       </div>
+
+      <section className="mb-6 rounded-2xl border border-border/70 bg-card p-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <p className="text-sm uppercase tracking-[0.24em] text-muted">Current membership</p>
+            <h2 className="mt-2 text-2xl font-semibold">{activePlan.name}</h2>
+            <p className="mt-2 text-sm text-muted">{activePlan.description}</p>
+          </div>
+          <Link
+            href={activePlan.slug === "premium" ? "/account/subscription" : "/pricing"}
+            className="inline-flex items-center justify-center rounded-2xl bg-primary px-4 py-3 text-sm font-semibold text-white transition hover:bg-primary/90"
+          >
+            {activePlan.slug === "premium" ? "Manage subscription" : "Upgrade membership"}
+          </Link>
+        </div>
+
+        <div className="mt-6 grid gap-3 sm:grid-cols-3">
+          <div className="rounded-xl border border-border/70 bg-background p-4">
+            <p className="text-xs uppercase tracking-[0.18em] text-muted">Status</p>
+            <p className="mt-2 font-semibold capitalize">{subscription?.status ?? "Free"}</p>
+          </div>
+          <div className="rounded-xl border border-border/70 bg-background p-4">
+            <p className="text-xs uppercase tracking-[0.18em] text-muted">AI usage</p>
+            <p className="mt-2 font-semibold">{aiLimitLabel}</p>
+          </div>
+          <div className="rounded-xl border border-border/70 bg-background p-4">
+            <p className="text-xs uppercase tracking-[0.18em] text-muted">Plan value</p>
+            <p className="mt-2 font-semibold">{formatPrice(activePlan.monthly_price)} / month</p>
+          </div>
+        </div>
+      </section>
 
       <section className="mb-6">
         <h2 className="mb-3 text-lg font-semibold">Saved content</h2>

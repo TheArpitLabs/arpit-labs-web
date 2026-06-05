@@ -6,9 +6,19 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { contentGenerationService } from '@/lib/ai-services';
+import { membershipRepository } from '@/lib/repositories/membership.repository';
 
 export async function POST(request: NextRequest) {
   try {
+    const access = await membershipRepository.validateFeatureAccessFromRequest(request, 'ai_project_generator');
+
+    if (!access.allowed) {
+      return NextResponse.json(
+        { success: false, error: access.error },
+        { status: access.status }
+      );
+    }
+
     const { domain, difficulty, budget, techStack } = await request.json();
 
     if (!domain) {

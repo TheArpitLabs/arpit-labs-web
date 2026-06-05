@@ -1,6 +1,7 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getExperiments, getJourneyTimeline, getProjects } from '@/lib/actions/server-actions';
 import { Experiment, JourneyItem, Project } from '@/types/content';
+import { membershipRepository } from '@/lib/repositories/membership.repository';
 
 interface RecruiterReport {
   resumeSummary: string;
@@ -168,8 +169,17 @@ function buildInnovationScore(projects: Project[], experiments: Experiment[]) {
   return `${score} / 100`;
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const access = await membershipRepository.validateFeatureAccessFromRequest(request, 'recruiter_assistant');
+
+    if (!access.allowed) {
+      return NextResponse.json(
+        { success: false, error: access.error },
+        { status: access.status }
+      );
+    }
+
     const [projects, experiments, journey] = await Promise.all([getProjects(), getExperiments(), getJourneyTimeline()]);
 
     const skills = buildSkillSummary(projects, experiments);
