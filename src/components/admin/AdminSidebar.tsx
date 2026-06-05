@@ -12,7 +12,9 @@ import {
   Sparkles, 
   Users, 
   Globe,
-  ShoppingBag
+  ShoppingBag,
+  BarChart3,
+  Receipt
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -22,6 +24,7 @@ const navigationItems: Array<{
   icon: React.ReactNode;
 }> = [
   { href: "/admin", label: "Dashboard", icon: <LayoutDashboard size={18} /> },
+  { href: "/admin/revenue" as Route, label: "Revenue", icon: <BarChart3 size={18} /> },
   { href: "/admin/saas" as Route, label: "SaaS Infrastructure", icon: <Globe size={18} /> },
   { href: "/admin/marketplace" as Route, label: "Marketplace", icon: <ShoppingBag size={18} /> },
   { href: "/admin/projects", label: "Projects", icon: <Blocks size={18} /> },
@@ -29,6 +32,7 @@ const navigationItems: Array<{
   { href: "/admin/blog", label: "Blog", icon: <FileText size={18} /> },
   { href: "/admin/hackathons", label: "Hackathons", icon: <Sparkles size={18} /> },
   { href: "/admin/memberships", label: "Memberships", icon: <CreditCard size={18} /> },
+  { href: "/admin/payments" as Route, label: "Payments", icon: <Receipt size={18} /> },
   { href: "/admin/journey", label: "Journey", icon: <Milestone size={18} /> },
   { href: "/admin/newsletter", label: "Newsletter", icon: <Users size={18} /> },
   { href: "/admin/community" as Route, label: "Community", icon: <FileText size={18} /> },
@@ -52,7 +56,7 @@ export function AdminSidebar({ pathname }: AdminSidebarProps) {
         </div>
       </div>
 
-      <nav className="space-y-2">
+      <nav className="space-y-2 overflow-y-auto pr-2">
         {navigationItems.map((item) => {
           const active = pathname === item.href;
 
