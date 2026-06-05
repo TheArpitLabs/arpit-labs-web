@@ -4,10 +4,10 @@ import { AdminSection } from "@/components/admin/AdminSection";
 import { AdminTable } from "@/components/admin/AdminTable";
 import { AdminTopbar } from "@/components/admin/AdminTopbar";
 import { ProductForm } from "@/components/admin/ProductForm";
-import { deleteProductAction, saveProductAction } from "@/lib/actions/admin-actions";
-import { productFeaturesRepository } from "@/lib/repositories/product-features.repository";
+import { deleteProductAction } from "@/lib/actions/admin-actions";
 import { productsRepository } from "@/lib/repositories/products.repository";
 import { Search } from "lucide-react";
+import { Product } from "@/types/content";
 
 interface AdminProductsPageProps {
   searchParams?: Promise<{
@@ -28,9 +28,9 @@ export default async function AdminProductsPage({ searchParams }: AdminProductsP
 
   const products = await productsRepository.getProducts(filters);
   const editingProduct = params?.edit
-    ? (await productsRepository.getProductById(params.edit).catch(() => null)) || await productsRepository.getProductBySlug(params.edit).catch(() => null)
+    ? await productsRepository.getProductById(params.edit).catch(() => null) || 
+      await productsRepository.getProductBySlug(params.edit).catch(() => null)
     : null;
-  const editingFeatures = editingProduct ? await productFeaturesRepository.getFeaturesByProductId(editingProduct.id) : [];
 
   const categories = Array.from(new Set(products.map((product) => product.category))).filter(Boolean);
 
@@ -44,7 +44,7 @@ export default async function AdminProductsPage({ searchParams }: AdminProductsP
             title={editingProduct ? "Edit Product" : "Create Product"}
             description="Manage product metadata, media, pricing, and feature details."
           >
-            <ProductForm product={editingProduct ? { ...editingProduct, features: editingFeatures } : undefined} />
+            <ProductForm product={editingProduct as Product} />
           </AdminSection>
         </div>
 
@@ -74,7 +74,7 @@ export default async function AdminProductsPage({ searchParams }: AdminProductsP
                 <button type="submit" className="h-10 rounded-xl bg-primary px-4 text-sm font-medium text-primary-foreground">
                   Apply
                 </button>
-                {Object.keys(params || {}).length > 0 && (
+                {params && Object.keys(params).length > 0 && (
                   <Link href="/admin/products" className="flex h-10 items-center justify-center rounded-xl border border-border/70 px-4 text-sm font-medium">
                     Clear
                   </Link>

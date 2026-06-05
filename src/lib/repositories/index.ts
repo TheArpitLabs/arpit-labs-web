@@ -5,3 +5,7 @@ export { contactsRepository } from "./contacts.repository";
 export { newsletterRepository } from "./newsletter.repository";
 export { projectsRepository } from "./projects.repository";
 export { hackathonsRepository } from "./hackathons.repository";
+export { productsRepository } from "./products.repository";
+export { productFeaturesRepository } from "./product-features.repository";
+export { productScreenshotsRepository } from "./product-screenshots.repository";
+export { saasRepository } from "./saas.repository";

@@ -2,7 +2,6 @@ import { productsRepository } from "@/lib/repositories/products.repository";
 import { Container } from "@/components/layout/Container";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
-import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Product } from "@/types/content";
 import Link from "next/link";
@@ -74,13 +73,9 @@ export default async function ProductsPage() {
                       </Badge>
                     </div>
                     <h2 className="text-2xl font-semibold text-foreground">{product.title}</h2>
-                    <p className="text-sm leading-relaxed text-muted">{product.description}</p>
-                    <div className="flex flex-wrap gap-2 pt-4">
-                      {product.screenshots.slice(0, 3).map((screen: string) => (
-                        <span key={screen} className="rounded-full bg-muted/70 px-3 py-1 text-[11px] uppercase tracking-[0.24em] text-muted">
-                          Screenshot
-                        </span>
-                      ))}
+                    <p className="text-sm leading-relaxed text-muted line-clamp-2">{product.description}</p>
+                    <div className="pt-4 flex items-center text-primary font-medium text-sm">
+                      View Details →
                     </div>
                   </div>
                 </Link>

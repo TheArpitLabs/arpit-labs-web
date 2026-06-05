@@ -8,15 +8,20 @@ import { saveProductAction } from "@/lib/actions/admin-actions";
 import { ImageUploader } from "./ImageUploader";
 import { AdminSubmitButton } from "./AdminSubmitButton";
 import { X, Plus } from "lucide-react";
+import { Product, ProductFeature, ProductScreenshot } from "@/types/content";
 
 interface ProductFormProps {
-  product?: ProductInput & { id: string; features?: ProductFeatureInput[] };
+  product?: Product & { features?: ProductFeature[]; screenshots?: ProductScreenshot[] };
 }
 
 export function ProductForm({ product }: ProductFormProps) {
   const [coverImage, setCoverImage] = useState<string>(product?.cover_image || "");
-  const [screenshots, setScreenshots] = useState<string[]>(product?.screenshots || []);
-  const [features, setFeatures] = useState<ProductFeatureInput[]>(product?.features || []);
+  const [screenshots, setScreenshots] = useState<string[]>(
+    product?.screenshots?.map(s => s.image_url) || []
+  );
+  const [features, setFeatures] = useState<ProductFeatureInput[]>(
+    product?.features?.map(f => ({ title: f.title, description: f.description })) || []
+  );
 
   const {
     register,
@@ -34,7 +39,6 @@ export function ProductForm({ product }: ProductFormProps) {
       demo_url: product?.demo_url || null,
       documentation_url: product?.documentation_url || null,
       cover_image: product?.cover_image || null,
-      screenshots: product?.screenshots || [],
       featured: product?.featured ?? false,
       published: product?.published ?? false,
     },
@@ -160,7 +164,7 @@ export function ProductForm({ product }: ProductFormProps) {
           <div className="flex items-center justify-between gap-3">
             <div>
               <p className="text-sm font-medium">Screenshots</p>
-              <p className="text-xs text-muted">Add URLs separated by Enter.</p>
+              <p className="text-xs text-muted">Add URLs for product visual gallery.</p>
             </div>
             <button
               type="button"
@@ -218,7 +222,7 @@ export function ProductForm({ product }: ProductFormProps) {
               features.map((feature, index) => (
                 <div key={index} className="rounded-2xl border border-border/70 bg-surface p-4">
                   <div className="flex items-center justify-between gap-4">
-                    <div className="space-y-1">
+                    <div className="flex-1 space-y-1">
                       <label className="text-sm font-medium">Title</label>
                       <input
                         value={feature.title}
@@ -226,7 +230,7 @@ export function ProductForm({ product }: ProductFormProps) {
                         className="w-full rounded-xl border border-border/70 bg-background px-4 py-2 text-sm outline-none focus:border-primary"
                       />
                     </div>
-                    <button type="button" onClick={() => removeFeature(index)} className="text-red-500">
+                    <button type="button" onClick={() => removeFeature(index)} className="text-red-500 mt-6">
                       <X className="h-4 w-4" />
                     </button>
                   </div>

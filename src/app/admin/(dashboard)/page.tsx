@@ -6,15 +6,17 @@ import { experimentsRepository } from "@/lib/repositories/experiments.repository
 import { labNotesRepository } from "@/lib/repositories/labnotes.repository";
 import { newsletterRepository } from "@/lib/repositories/newsletter.repository";
 import { projectsRepository } from "@/lib/repositories/projects.repository";
-import { FileText, Beaker, Users, MessageSquare, Star, Layout } from "lucide-react";
+import { productsRepository } from "@/lib/repositories/products.repository";
+import { FileText, Beaker, Users, MessageSquare, Star, Layout, ShoppingBag } from "lucide-react";
 
 export default async function AdminDashboardPage() {
-  const [projects, notes, experiments, subscribers, messages] = await Promise.all([
+  const [projects, notes, experiments, subscribers, messages, products] = await Promise.all([
     projectsRepository.getProjects(),
     labNotesRepository.getLabNotes(),
     experimentsRepository.getExperiments(),
     newsletterRepository.getSubscribers(),
     contactsRepository.getContactMessages(),
+    productsRepository.getProducts(),
   ]);
 
   const stats = {
@@ -23,15 +25,18 @@ export default async function AdminDashboardPage() {
     experiments: experiments.length,
     subscribers: subscribers.length,
     messages: messages.length,
+    products: products.length,
     drafts: [
       ...projects.filter(p => !p.published),
       ...notes.filter(n => !n.published),
-      ...experiments.filter(e => !e.published)
+      ...experiments.filter(e => !e.published),
+      ...products.filter(p => !p.published)
     ].length,
     published: [
       ...projects.filter(p => p.published),
       ...notes.filter(n => n.published),
-      ...experiments.filter(e => e.published)
+      ...experiments.filter(e => e.published),
+      ...products.filter(p => p.published)
     ].length
   };
 
@@ -42,10 +47,11 @@ export default async function AdminDashboardPage() {
         subtitle="Operational overview of Arpit Labs content and audience growth." 
       />
 
-      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
+      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8">
         <MetricCard label="Projects" value={stats.projects} helper="Engineering builds" />
         <MetricCard label="Articles" value={stats.articles} helper="Lab notes" />
         <MetricCard label="Experiments" value={stats.experiments} helper="Research" />
+        <MetricCard label="Products" value={stats.products} helper="Software Suite" />
         <MetricCard label="Audience" value={stats.subscribers} helper="Subscribers" />
         <MetricCard label="Messages" value={stats.messages} helper="Inquiries" />
         <MetricCard label="Drafts" value={stats.drafts} helper="Pending" />
@@ -86,6 +92,7 @@ export default async function AdminDashboardPage() {
           <div className="grid grid-cols-2 gap-3">
             {[
               { label: "New Project", href: "/admin/projects", icon: Layout },
+              { label: "New Product", href: "/admin/products", icon: ShoppingBag },
               { label: "Draft Note", href: "/admin/blog", icon: FileText },
               { label: "Log Experiment", href: "/admin/experiments", icon: Beaker },
               { label: "Update Journey", href: "/admin/journey", icon: Star },

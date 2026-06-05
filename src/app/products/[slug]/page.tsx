@@ -8,9 +8,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { productsRepository } from "@/lib/repositories/products.repository";
-import { productFeaturesRepository } from "@/lib/repositories/product-features.repository";
 import { createArticleMetadata } from "@/lib/seo";
 import { Product } from "@/types/content";
+import { ProductTracker } from "@/components/analytics/ProductTracker";
 
 interface ProductDetailPageProps {
   params: Promise<{
@@ -20,7 +20,7 @@ interface ProductDetailPageProps {
 
 export async function generateMetadata({ params }: ProductDetailPageProps) {
   const { slug } = await params;
-  const product = await productsRepository.getProductBySlug(slug) as Product | null;
+  const product = await productsRepository.getProductBySlug(slug);
 
   if (!product || !product.published) {
     return { title: "Product Not Found" };
@@ -37,22 +37,24 @@ export async function generateMetadata({ params }: ProductDetailPageProps) {
 export default async function ProductDetailPage({ params }: ProductDetailPageProps) {
   const slug = (await params).slug;
   let product: Product | null = null;
-  let features = [] as Awaited<ReturnType<typeof productFeaturesRepository.getFeaturesByProductId>>;
 
   try {
-    product = await productsRepository.getProductBySlug(slug) as Product | null;
+    product = await productsRepository.getProductBySlug(slug);
     if (!product || !product.published) {
       notFound();
     }
-    features = await productFeaturesRepository.getFeaturesByProductId(product.id);
   } catch (error) {
     console.error("Error fetching product detail:", error);
     notFound();
   }
 
+  const features = product.features || [];
+  const screenshots = product.screenshots || [];
+
   return (
     <main className="bg-background text-foreground">
       <Navbar />
+      <ProductTracker slug={product.slug} />
 
       <section className="border-b border-border/70 bg-background/80 py-12 dark:border-slate-800 dark:bg-slate-950/70">
         <Container>
@@ -88,6 +90,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                         alt={product.title}
                         fill
                         className="object-cover"
+                        priority
                       />
                     </div>
                   ) : (
@@ -98,12 +101,12 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                 <div className="grid gap-6 lg:grid-cols-2">
                   <Card className="p-8">
                     <h2 className="text-2xl font-bold text-foreground">Overview</h2>
-                    <p className="mt-4 text-bodied leading-relaxed text-muted">{product.overview || product.description}</p>
+                    <p className="mt-4 text-bodied leading-relaxed text-muted whitespace-pre-wrap">{product.overview || product.description}</p>
                   </Card>
 
                   <Card className="p-8">
                     <h2 className="text-2xl font-bold text-foreground">Pricing</h2>
-                    <p className="mt-4 text-body text-muted">{product.pricing_details || "Transparent and tailored pricing for every team."}</p>
+                    <p className="mt-4 text-body text-muted whitespace-pre-wrap">{product.pricing_details || "Transparent and tailored pricing for every team."}</p>
                   </Card>
                 </div>
 
@@ -123,17 +126,17 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                   </div>
                 </Card>
 
-                {product.screenshots.length > 0 && (
+                {screenshots.length > 0 && (
                   <Card className="p-8">
                     <div className="flex items-center justify-between gap-4">
                       <h2 className="text-2xl font-bold text-foreground">Screenshots</h2>
                     </div>
                     <div className="mt-6 grid gap-4 sm:grid-cols-2">
-                      {product.screenshots.map((imageUrl, index) => (
-                        <div key={imageUrl} className="relative aspect-[4/3] overflow-hidden rounded-[1.75rem] border border-border/70 bg-surface">
+                      {screenshots.sort((a, b) => a.sort_order - b.sort_order).map((screen) => (
+                        <div key={screen.id} className="relative aspect-[4/3] overflow-hidden rounded-[1.75rem] border border-border/70 bg-surface">
                           <Image
-                            src={imageUrl}
-                            alt={`${product.title} screenshot ${index + 1}`}
+                            src={screen.image_url}
+                            alt={`${product?.title} screenshot`}
                             fill
                             className="object-cover"
                           />
@@ -182,13 +185,13 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                 <div className="mt-6 grid gap-3">
                   <Link
                     href="/products"
-                    className="rounded-2xl border border-border/70 bg-surface px-4 py-3 text-sm font-semibold text-foreground transition hover:border-primary/70"
+                    className="rounded-2xl border border-border/70 bg-surface px-4 py-3 text-sm font-semibold text-foreground transition hover:border-primary/70 text-center"
                   >
                     Back to product catalog
                   </Link>
                   <Link
                     href="/contact"
-                    className="rounded-2xl border border-border/70 bg-primary px-4 py-3 text-sm font-semibold text-white transition hover:bg-primary/90"
+                    className="rounded-2xl border border-border/70 bg-primary px-4 py-3 text-sm font-semibold text-white transition hover:bg-primary/90 text-center"
                   >
                     Contact sales
                   </Link>

@@ -14,9 +14,10 @@ import { labNotesRepository } from "@/lib/repositories/labnotes.repository";
 import { newsletterRepository } from "@/lib/repositories/newsletter.repository";
 import { productsRepository } from "@/lib/repositories/products.repository";
 import { productFeaturesRepository } from "@/lib/repositories/product-features.repository";
+import { productScreenshotsRepository } from "@/lib/repositories/product-screenshots.repository";
 import { projectsRepository } from "@/lib/repositories/projects.repository";
 import { experimentSchema, journeySchema, labNoteSchema, projectSchema } from "@/lib/validation";
-import { productSchema, productFeatureSchema } from "@/lib/validation/product.schema";
+import { productSchema, productFeatureSchema, productScreenshotSchema } from "@/lib/validation/product.schema";
 import { hackathonSchema } from "@/lib/validation/hackathon.schema";
 
 function createAuthClient() {
@@ -55,18 +56,6 @@ function asStringArray(value: FormDataEntryValue | null, separator = ",") {
     .split(separator)
     .map((item) => item.trim())
     .filter(Boolean);
-}
-
-async function maybeUpload(bucket: "projects" | "blog" | "experiments" | "uploads", folder: string, entry: FormDataEntryValue | null) {
-  if (!entry || typeof entry === "string") {
-    return undefined;
-  }
-
-  if (entry.size === 0) {
-    return undefined;
-  }
-
-  return uploadFileToBucket(bucket, folder, entry);
 }
 
 export async function adminSignIn(formData: FormData) {
@@ -145,41 +134,33 @@ export async function saveProductAction(formData: FormData) {
     title: asString(formData.get("title")),
     slug: asString(formData.get("slug")),
     description: asString(formData.get("description")),
+    overview: asOptionalString(formData.get("overview")),
     category: asString(formData.get("category")),
     pricing_type: asString(formData.get("pricing_type")),
-    overview: asOptionalString(formData.get("overview")),
     pricing_details: asOptionalString(formData.get("pricing_details")),
     demo_url: asOptionalString(formData.get("demo_url")),
     documentation_url: asOptionalString(formData.get("documentation_url")),
     cover_image: asOptionalString(formData.get("cover_image")),
-    screenshots: (() => {
-      const raw = asOptionalString(formData.get("screenshots")) || "[]";
-      try {
-        return JSON.parse(raw) as string[];
-      } catch {
-        return [];
-      }
-    })(),
     featured: asBoolean(formData.get("featured")),
     published: asBoolean(formData.get("published")),
   });
 
   const rawFeatures = asOptionalString(formData.get("features")) || "[]";
-  let features = [] as Array<{ title: string; description: string }>;
+  const features = z.array(productFeatureSchema).parse(JSON.parse(rawFeatures));
 
-  try {
-    features = JSON.parse(rawFeatures);
-  } catch {
-    features = [];
-  }
-
-  const parsedFeatures = z.array(productFeatureSchema).parse(features);
+  const rawScreenshots = asOptionalString(formData.get("screenshots")) || "[]";
+  const screenshotsUrls = JSON.parse(rawScreenshots) as string[];
+  const screenshots = screenshotsUrls.map((url, index) => ({
+    image_url: url,
+    sort_order: index
+  }));
 
   const product = id
     ? await productsRepository.updateProduct(id, payload)
     : await productsRepository.createProduct(payload);
 
-  await productFeaturesRepository.replaceFeatures(product.id, parsedFeatures);
+  await productFeaturesRepository.replaceFeatures(product.id, features);
+  await productScreenshotsRepository.replaceScreenshots(product.id, screenshots);
 
   revalidatePath("/admin/products");
   revalidatePath("/products");

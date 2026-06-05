@@ -40,7 +40,11 @@ export const productsRepository = {
   async getProductById(id: string) {
     const { data, error } = await supabaseServer
       .from("products")
-      .select("*")
+      .select(`
+        *,
+        features:product_features(*),
+        screenshots:product_screenshots(*)
+      `)
       .eq("id", id)
       .limit(1)
       .single();
@@ -50,13 +54,17 @@ export const productsRepository = {
       throw handleDatabaseError(error);
     }
 
-    return data;
+    return data as Product;
   },
 
   async getProductBySlug(slug: string) {
     const { data, error } = await supabaseServer
       .from("products")
-      .select("*")
+      .select(`
+        *,
+        features:product_features(*),
+        screenshots:product_screenshots(*)
+      `)
       .eq("slug", slug)
       .limit(1)
       .single();
@@ -66,7 +74,7 @@ export const productsRepository = {
       throw handleDatabaseError(error);
     }
 
-    return data;
+    return data as Product;
   },
 
   async createProduct(payload: ProductInput) {

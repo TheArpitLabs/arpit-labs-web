@@ -72,6 +72,18 @@ export const analytics = {
   experimentView: (experimentSlug: string) =>
     trackEvent('engagement', 'view_experiment', experimentSlug, 1),
 
+  productView: (productSlug: string) =>
+    trackEvent('engagement', 'view_product', productSlug, 1),
+
+  productClick: (productSlug: string) =>
+    trackEvent('engagement', 'click_product', productSlug, 1),
+
+  demoOpen: (productSlug: string) =>
+    trackEvent('engagement', 'open_demo', productSlug, 1),
+
+  docsOpen: (productSlug: string) =>
+    trackEvent('engagement', 'open_docs', productSlug, 1),
+
   contactSubmit: () =>
     trackEvent('conversion', 'contact_form_submit', 'contact_form', 1),
 
