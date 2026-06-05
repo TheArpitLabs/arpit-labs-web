@@ -5,7 +5,7 @@
 
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 
@@ -32,19 +32,7 @@ export function AIChat({ defaultTopic = 'general', className = '' }: AIChatProps
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Initialize conversation on mount
-  useEffect(() => {
-    initializeChat();
-  }, []);
-
-  // Scroll to bottom when new messages arrive
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  /**
-   * Initialize chat session
-   */
-  const initializeChat = async () => {
+  const initializeChat = useCallback(async () => {
     try {
       const response = await fetch('/api/ai/chat/start', {
         method: 'POST',
@@ -67,7 +55,16 @@ export function AIChat({ defaultTopic = 'general', className = '' }: AIChatProps
     } catch (error) {
       console.error('Failed to initialize chat:', error);
     }
-  };
+  }, [defaultTopic]);
+
+  useEffect(() => {
+    initializeChat();
+  }, [initializeChat]);
+
+  // Scroll to bottom when new messages arrive
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   /**
    * Send message

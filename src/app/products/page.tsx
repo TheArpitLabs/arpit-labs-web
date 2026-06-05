@@ -4,6 +4,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Product } from "@/types/content";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -13,7 +14,14 @@ export const metadata = {
 };
 
 export default async function ProductsPage() {
-  const products = await productsRepository.getProducts({ published: true });
+  let products: Product[] = [];
+
+  try {
+    products = await productsRepository.getProducts({ published: true });
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    products = [];
+  }
 
   return (
     <main className="min-h-screen bg-background text-foreground">

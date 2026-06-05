@@ -36,13 +36,19 @@ export async function generateMetadata({ params }: ProductDetailPageProps) {
 
 export default async function ProductDetailPage({ params }: ProductDetailPageProps) {
   const slug = (await params).slug;
-  const product = await productsRepository.getProductBySlug(slug) as Product | null;
+  let product: Product | null = null;
+  let features = [] as Awaited<ReturnType<typeof productFeaturesRepository.getFeaturesByProductId>>;
 
-  if (!product || !product.published) {
+  try {
+    product = await productsRepository.getProductBySlug(slug) as Product | null;
+    if (!product || !product.published) {
+      notFound();
+    }
+    features = await productFeaturesRepository.getFeaturesByProductId(product.id);
+  } catch (error) {
+    console.error("Error fetching product detail:", error);
     notFound();
   }
-
-  const features = await productFeaturesRepository.getFeaturesByProductId(product.id);
 
   return (
     <main className="bg-background text-foreground">
