@@ -3,27 +3,33 @@ import { handleDatabaseError } from "@/lib/errors";
 
 // PAYMENTS TEMPORARILY DISABLED - Payment repository functions disabled
 export const paymentRepository = {
-  async getAllPlans() {
+  async getAllPlans(): Promise<any[]> {
     return [];
   },
 
-  async getPlanBySlug(slug: string) {
+  async getPlanBySlug(slug: string): Promise<any | null> {
     return null;
   },
 
-  async getUserSubscription(userId: string) {
+  async getUserSubscription(userId: string): Promise<any | null> {
     return null;
   },
 
-  async getTransactions(userId: string) {
+  async getTransactions(userId: string): Promise<any[]> {
     return [];
   },
 
-  async getInvoices(userId: string) {
+  async getInvoices(userId: string): Promise<any[]> {
     return [];
   },
 
-  async getRevenueMetrics() {
+  async getRevenueMetrics(): Promise<{
+    totalRevenue: number;
+    subscriptionRevenue: number;
+    marketplaceRevenue: number;
+    activeSubscribers: number;
+    transactions: any[];
+  }> {
     return {
       totalRevenue: 0,
       subscriptionRevenue: 0,
