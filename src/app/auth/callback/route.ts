@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabaseServer } from "@/lib/supabase/server";
+import { createClient } from "@supabase/supabase-js";
 import { setUserSessionCookies } from "@/lib/auth";
 
 export async function GET(request: NextRequest) {
@@ -10,7 +10,19 @@ export async function GET(request: NextRequest) {
   console.log(`[OAuth Callback] Received callback for provider: ${provider}`);
 
   if (code) {
-    const supabase = supabaseServer;
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    
+    if (!supabaseUrl || !supabaseServiceKey) {
+      console.error(`[OAuth Callback] Missing Supabase environment variables`);
+      return NextResponse.redirect(`${requestUrl.origin}/login?error=config_error`);
+    }
+    
+    const supabase = createClient(supabaseUrl, supabaseServiceKey, {
+      auth: {
+        persistSession: false
+      }
+    });
     
     try {
       const { data, error } = await supabase.auth.exchangeCodeForSession(code);
