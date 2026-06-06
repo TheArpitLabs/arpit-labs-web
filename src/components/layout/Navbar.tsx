@@ -42,22 +42,47 @@ export function Navbar() {
     let mounted = true;
 
     async function init() {
-      const { data } = await supabaseClient.auth.getUser();
-      if (!mounted) return;
-      setUser(data?.user ?? null);
+      // Read from custom cookies instead of localStorage
+      const getCookie = (name: string) => {
+        const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+        return match ? decodeURIComponent(match[2]) : null;
+      };
 
-      if (data?.user) {
-        const { data: p } = await supabaseClient.from("profiles").select("full_name,avatar_url").eq("id", data.user.id).single();
-        setProfile(p ?? null);
+      const accessToken = getCookie('arpitlabs-user-access-token');
+      const refreshToken = getCookie('arpitlabs-user-refresh-token');
+
+      if (!mounted) return;
+
+      if (accessToken && refreshToken) {
+        // Set session from custom cookies
+        const { data: sessionData, error } = await supabaseClient.auth.setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken,
+        });
+
+        if (!error && sessionData.session?.user) {
+          setUser(sessionData.session.user);
+          const { data: p } = await supabaseClient.from("profiles").select("full_name,avatar_url").eq("id", sessionData.session.user.id).single();
+          if (mounted) setProfile(p ?? null);
+        } else {
+          setUser(null);
+          setProfile(null);
+        }
+      } else {
+        setUser(null);
+        setProfile(null);
       }
     }
 
     init();
 
-    const { data: listener } = supabaseClient.auth.onAuthStateChange((_event, session) => {
+    const { data: listener } = supabaseClient.auth.onAuthStateChange(async (_event, session) => {
+      if (!mounted) return;
+      
       setUser(session?.user ?? null);
       if (session?.user) {
-        supabaseClient.from("profiles").select("full_name,avatar_url").eq("id", session.user.id).single().then(({ data: p }) => setProfile(p ?? null));
+        const { data: p } = await supabaseClient.from("profiles").select("full_name,avatar_url").eq("id", session.user.id).single();
+        setProfile(p ?? null);
       } else {
         setProfile(null);
       }

@@ -1,3 +1,12 @@
+import { redirect } from "next/navigation";
+
+// PAYMENTS TEMPORARILY DISABLED - Redirect billing page to profile
+export default function BillingPage() {
+  redirect("/profile");
+}
+
+/*
+// ORIGINAL IMPLEMENTATION (Commented out - re-enable when payments are restored)
 import { Suspense } from "react";
 import { BillingClient } from "@/app/billing/BillingClient";
 
@@ -14,3 +23,4 @@ export default function BillingPage() {
     </Suspense>
   );
 }
+*/

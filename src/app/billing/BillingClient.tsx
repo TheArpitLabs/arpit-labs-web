@@ -64,6 +64,14 @@ export function BillingClient() {
     };
   }, []);
 
+  // PAYMENTS TEMPORARILY DISABLED - Checkout functionality disabled
+  const handleCheckout = async () => {
+    // Checkout is disabled - do nothing
+    return;
+  };
+
+  /*
+  // ORIGINAL IMPLEMENTATION (Commented out - re-enable when payments are restored)
   const handleCheckout = async () => {
     const { data: session } = await supabaseClient.auth.getSession();
     const accessToken = session?.session?.access_token;
@@ -118,6 +126,7 @@ export function BillingClient() {
       setSubscriptions((prev) => [payload.subscription, ...prev]);
     }
   };
+  */
 
   if (isLoading) {
     return (

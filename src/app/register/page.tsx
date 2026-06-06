@@ -18,10 +18,29 @@ export default function RegisterPage() {
     setLoading(true);
     setError(null);
 
-    const { data, error: signUpError } = await supabaseClient.auth.signUp({ email, password });
+    const { data, error: signUpError } = await supabaseClient.auth.signUp({ 
+      email, 
+      password,
+      options: {
+        emailRedirectTo: window.location.origin + '/login'
+      }
+    });
 
-    if (signUpError || !data.user || !data.session) {
-      setError(signUpError?.message ?? "Unable to register");
+    if (signUpError) {
+      setError(signUpError.message);
+      setLoading(false);
+      return;
+    }
+
+    // Handle email confirmation case
+    if (!data.session && data.user) {
+      setError("Please check your email to confirm your account.");
+      setLoading(false);
+      return;
+    }
+
+    if (!data.user || !data.session) {
+      setError("Unable to register");
       setLoading(false);
       return;
     }
