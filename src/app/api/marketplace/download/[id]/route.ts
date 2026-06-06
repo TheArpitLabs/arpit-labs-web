@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabase/server";
-import { createAuthenticatedSupabaseClient, getUserTokenFromRequest, getUserFromRequest } from "@/lib/auth";
+import { createAuthenticatedSupabaseClient, getUserTokenFromRequest, getUserFromRequest, getUserRefreshTokenFromRequest } from "@/lib/auth";
 
 export async function GET(
   request: NextRequest,
@@ -8,13 +8,14 @@ export async function GET(
 ) {
   const { id } = params;
   const token = getUserTokenFromRequest(request);
+  const refreshToken = getUserRefreshTokenFromRequest(request);
   const user = await getUserFromRequest(request);
 
   if (!token || !user) {
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
-  const supabase = await createAuthenticatedSupabaseClient(token);
+  const supabase = await createAuthenticatedSupabaseClient(token, refreshToken || undefined);
   if (!supabase) {
     return new NextResponse("Unauthorized", { status: 401 });
   }

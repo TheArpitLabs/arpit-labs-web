@@ -22,8 +22,18 @@ export function CardDescription({ className, ...props }: React.HTMLAttributes<HT
 
 export function FeatureCard({ title, description, icon, className }: { title: string; description: string; icon: React.ReactNode; className?: string }) {
   return (
-    <motion.div whileHover={{ y: -6 }} className={cn("rounded-[1.75rem] border border-border/70 bg-card p-6 shadow-sm transition duration-300 dark:border-slate-800 dark:bg-slate-950", className)}>
-      <div className="inline-flex h-14 w-14 items-center justify-center rounded-3xl bg-primary/10 text-primary">{icon}</div>
+    <motion.div
+      whileHover={{ y: -6, boxShadow: "0 20px 40px rgba(0,0,0,0.1)" }}
+      transition={{ duration: 0.3 }}
+      className={cn("rounded-[1.75rem] border border-border/70 bg-card p-6 shadow-sm transition duration-300 dark:border-slate-800 dark:bg-slate-950", className)}
+    >
+      <motion.div
+        whileHover={{ scale: 1.05 }}
+        transition={{ duration: 0.3 }}
+        className="inline-flex h-14 w-14 items-center justify-center rounded-3xl bg-primary/10 text-primary"
+      >
+        {icon}
+      </motion.div>
       <div className="mt-6 space-y-3">
         <h4 className="text-lg font-semibold text-foreground">{title}</h4>
         <p className="text-body text-muted">{description}</p>
@@ -44,12 +54,22 @@ export function InfoCard({ title, value, label, className }: { title: string; va
 
 export function BentoCard({ icon, title, content, className }: { icon: React.ReactNode; title: string; content: string; className?: string }) {
   return (
-    <div className={cn("grid gap-4 rounded-[1.75rem] border border-border/70 bg-card p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950", className)}>
+    <motion.div
+      whileHover={{ y: -6 }}
+      transition={{ duration: 0.3 }}
+      className={cn("grid gap-4 rounded-[1.75rem] border border-border/70 bg-card p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950", className)}
+    >
       <div className="flex items-center gap-4">
-        <div className="inline-flex h-12 w-12 items-center justify-center rounded-3xl bg-secondary/10 text-secondary">{icon}</div>
+        <motion.div
+          whileHover={{ scale: 1.05 }}
+          transition={{ duration: 0.3 }}
+          className="inline-flex h-12 w-12 items-center justify-center rounded-3xl bg-secondary/10 text-secondary"
+        >
+          {icon}
+        </motion.div>
         <h4 className="text-lg font-semibold text-foreground">{title}</h4>
       </div>
       <p className="text-body text-muted">{content}</p>
-    </div>
+    </motion.div>
   );
 }

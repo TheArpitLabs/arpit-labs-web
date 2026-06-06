@@ -1,3 +1,6 @@
+"use client";
+
+import { motion } from "framer-motion";
 import { Github, Linkedin, Mail } from "lucide-react";
 import { NexusLogo } from "@/components/shared/NexusLogo";
 
@@ -81,9 +84,14 @@ export function Footer() {
             placeholder="Email address"
             className="w-full max-w-sm rounded-2xl border border-border/70 bg-background px-4 py-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:border-slate-700 dark:bg-slate-900"
           />
-          <button type="submit" className="rounded-2xl bg-foreground px-5 py-3 text-sm font-semibold text-background transition hover:bg-primary">
+          <motion.button
+            type="submit"
+            className="rounded-2xl bg-foreground px-5 py-3 text-sm font-semibold text-background transition hover:bg-primary"
+            whileHover={{ scale: 1.02, boxShadow: "0 0 20px rgba(37,99,235,0.3)" }}
+            transition={{ duration: 0.2 }}
+          >
             Join
-          </button>
+          </motion.button>
         </form>
       </div>
 
@@ -91,10 +99,18 @@ export function Footer() {
         <p>© {new Date().getFullYear()} Arpit Labs. Modern engineering lab experiences.</p>
         <div className="flex items-center gap-4">
           {socialLinks.map((item) => (
-            <a key={item.label} href={item.href} target="_blank" rel="noreferrer noopener" className="inline-flex items-center gap-2 text-muted transition hover:text-foreground">
+            <motion.a
+              key={item.label}
+              href={item.href}
+              target="_blank"
+              rel="noreferrer noopener"
+              className="inline-flex items-center gap-2 text-muted transition hover:text-foreground"
+              whileHover={{ scale: 1.1, y: -2 }}
+              transition={{ duration: 0.2 }}
+            >
               <item.icon size={18} />
               {item.label}
-            </a>
+            </motion.a>
           ))}
         </div>
       </div>

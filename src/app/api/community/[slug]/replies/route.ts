@@ -2,13 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseServer } from '@/lib/supabase/server';
 import { sanitizeText } from '@/lib/sanitize';
 import { checkRateLimit } from '@/lib/rate-limit';
-import { createAuthenticatedSupabaseClient, getUserTokenFromRequest } from '@/lib/auth';
+import { createAuthenticatedSupabaseClient, getUserTokenFromRequest, getUserRefreshTokenFromRequest } from '@/lib/auth';
 
 export async function POST(request: NextRequest, { params }: any) {
   try {
     const { slug } = params;
     const token = getUserTokenFromRequest(request);
-    const supabase = token ? await createAuthenticatedSupabaseClient(token) : null;
+    const refreshToken = getUserRefreshTokenFromRequest(request);
+    const supabase = token ? await createAuthenticatedSupabaseClient(token, refreshToken || undefined) : null;
     if (!supabase) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
 
     const { data: userData } = await supabase.auth.getUser();

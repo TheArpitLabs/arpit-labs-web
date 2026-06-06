@@ -142,6 +142,10 @@ export function getUserTokenFromRequest(request: Request) {
   return getCookieValue(request.headers.get("cookie"), userAccessCookieName);
 }
 
+export function getUserRefreshTokenFromRequest(request: Request) {
+  return getCookieValue(request.headers.get("cookie"), userRefreshCookieName);
+}
+
 export async function getUserFromRequest(request: Request) {
   const token = getUserTokenFromRequest(request);
   if (!token) return null;
@@ -154,11 +158,11 @@ export async function getUserFromRequest(request: Request) {
   return userData.user;
 }
 
-export async function createAuthenticatedSupabaseClient(accessToken: string) {
+export async function createAuthenticatedSupabaseClient(accessToken: string, refreshToken?: string) {
   const authClient = createBrowserCompatibleSupabaseClient();
   const { data: sessionData, error: sessionError } = await authClient.auth.setSession({
     access_token: accessToken,
-    refresh_token: accessToken,
+    refresh_token: refreshToken || accessToken,
   });
 
   if (sessionError || !sessionData.session) {

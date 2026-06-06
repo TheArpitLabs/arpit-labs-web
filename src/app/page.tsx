@@ -8,6 +8,8 @@ import { Card, BentoCard } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Brain, Cpu, Code2, Wifi } from "lucide-react";
 import { getExperiments, getLabNotes, getJourneyTimeline } from "@/lib/actions/server-actions";
+import { HeroCards } from "@/components/shared/HeroCards";
+import { FloatingDecorations } from "@/components/animations/FloatingDecorations";
 
 export default async function HomePage() {
   const [experiments, notes, journey] = await Promise.all([
@@ -19,7 +21,8 @@ export default async function HomePage() {
   return (
     <main className="bg-background text-foreground">
 
-      <section id="home" className="border-b border-border/70 bg-background/75 py-16 dark:border-slate-800 dark:bg-slate-950/70">
+      <section id="home" className="relative border-b border-border/70 bg-background/75 py-16 dark:border-slate-800 dark:bg-slate-950/70">
+        <FloatingDecorations />
         <Container>
           <div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
             <div className="space-y-8">
@@ -52,18 +55,7 @@ export default async function HomePage() {
                 </a>
               </div>
 
-              <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-4">
-                {[
-                  "AI",
-                  "IoT",
-                  "Software",
-                  "Hardware"
-                ].map((item) => (
-                  <div key={item} className="rounded-3xl border border-border/70 bg-card/90 px-4 py-3 text-center text-sm font-semibold text-foreground shadow-sm dark:border-slate-800 dark:bg-slate-950/90">
-                    {item}
-                  </div>
-                ))}
-              </div>
+              <HeroCards />
             </div>
 
             <TechnologyEcosystem />

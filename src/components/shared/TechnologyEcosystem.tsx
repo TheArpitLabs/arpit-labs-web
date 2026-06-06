@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Brain, Cpu, Shield, Wifi, Code2 } from "lucide-react";
 import { NexusLogo } from "@/components/shared/NexusLogo";
 import { DottedPath } from "@/components/shared/DottedPath";
+import { Pulse, Orbit, OrbitNode } from "@/components/animations";
 import { cn } from "@/lib/utils";
 
 const ecosystemItems = [
@@ -12,6 +13,14 @@ const ecosystemItems = [
   { title: "Software Engineering", icon: Code2, x: "82%", y: "60%" },
   { title: "Hardware Design", icon: Cpu, x: "12%", y: "72%" },
   { title: "Cybersecurity", icon: Shield, x: "56%", y: "88%" }
+];
+
+const orbitNodes = [
+  { angle: 0, radius: 95 },
+  { angle: 72, radius: 95 },
+  { angle: 144, radius: 95 },
+  { angle: 216, radius: 95 },
+  { angle: 288, radius: 95 },
 ];
 
 export function TechnologyEcosystem() {
@@ -30,16 +39,26 @@ export function TechnologyEcosystem() {
           <DottedPath className="absolute right-14 bottom-12 h-20 w-32 -rotate-45 text-muted/60" />
         </div>
 
-        <motion.div
-          initial={{ scale: 0.92, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          className="relative z-10 flex h-40 w-40 items-center justify-center rounded-full bg-background/95 shadow-[0_24px_80px_rgba(37,99,235,0.12)] dark:bg-slate-950"
-        >
-          <div className="flex h-32 w-32 items-center justify-center rounded-full border border-border/80 bg-primary/5 text-primary dark:border-slate-700">
-            <NexusLogo className="h-16 w-16" />
-          </div>
-        </motion.div>
+        <Pulse intensity={0.03} duration={3.5}>
+          <motion.div
+            initial={{ scale: 0.92, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="relative z-10 flex h-40 w-40 items-center justify-center rounded-full bg-background/95 shadow-[0_24px_80px_rgba(37,99,235,0.12)] dark:bg-slate-950"
+          >
+            <div className="flex h-32 w-32 items-center justify-center rounded-full border border-border/80 bg-primary/5 text-primary dark:border-slate-700">
+              <NexusLogo className="h-16 w-16" />
+            </div>
+          </motion.div>
+        </Pulse>
+
+        <Orbit duration={25} radius={95} className="pointer-events-none">
+          {orbitNodes.map((node, index) => (
+            <OrbitNode key={index} angle={node.angle} radius={node.radius}>
+              <div className="h-2 w-2 rounded-full bg-primary/40" />
+            </OrbitNode>
+          ))}
+        </Orbit>
 
         {ecosystemItems.map((item, index) => {
           const Icon = item.icon;

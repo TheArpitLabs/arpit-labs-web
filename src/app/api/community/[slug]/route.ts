@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseServer } from '@/lib/supabase/server';
 import { sanitizeText } from '@/lib/sanitize';
 import { checkRateLimit } from '@/lib/rate-limit';
-import { createAuthenticatedSupabaseClient, getAdminUserFromRequest, getUserTokenFromRequest } from '@/lib/auth';
+import { createAuthenticatedSupabaseClient, getAdminUserFromRequest, getUserTokenFromRequest, getUserRefreshTokenFromRequest } from '@/lib/auth';
 
 export async function GET(request: NextRequest, { params }: any) {
   try {
@@ -34,7 +34,8 @@ export async function PUT(request: NextRequest, { params }: any) {
   try {
     const { slug } = params;
     const token = getUserTokenFromRequest(request);
-    const supabase = token ? await createAuthenticatedSupabaseClient(token) : null;
+    const refreshToken = getUserRefreshTokenFromRequest(request);
+    const supabase = token ? await createAuthenticatedSupabaseClient(token, refreshToken || undefined) : null;
     if (!supabase) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
@@ -88,7 +89,8 @@ export async function DELETE(request: NextRequest, { params }: any) {
   try {
     const { slug } = params;
     const token = getUserTokenFromRequest(request);
-    const supabase = token ? await createAuthenticatedSupabaseClient(token) : null;
+    const refreshToken = getUserRefreshTokenFromRequest(request);
+    const supabase = token ? await createAuthenticatedSupabaseClient(token, refreshToken || undefined) : null;
     if (!supabase) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
 
     const { data: userData } = await supabase.auth.getUser();
