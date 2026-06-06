@@ -119,21 +119,12 @@ export function Navbar() {
 
           <ThemeToggle />
           
-          {!user ? (
-            <Link
-              href="/login"
-              className="rounded-2xl bg-primary px-4 py-2 text-sm font-bold text-white shadow-lg shadow-primary/20 transition hover:bg-primary/90"
-            >
-              Sign In
-            </Link>
-          ) : (
-            <Link 
-              href="/dashboard" 
-              className="flex h-10 w-10 items-center justify-center rounded-2xl border border-border/70 bg-surface text-primary transition hover:bg-primary/5 dark:border-slate-700 dark:bg-slate-900"
-            >
-              <LayoutDashboard size={20} />
-            </Link>
-          )}
+          <Link
+            href="/login"
+            className="rounded-2xl bg-primary px-4 py-2 text-sm font-bold text-white shadow-lg shadow-primary/20 transition hover:bg-primary/90"
+          >
+            Sign In
+          </Link>
           
           <button
             type="button"
