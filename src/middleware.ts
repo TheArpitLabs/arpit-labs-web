@@ -1,10 +1,6 @@
-import createMiddleware from 'next-intl/middleware';
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { adminAccessCookieName } from "@/lib/auth-constants";
-import { routing } from './i18n/routing';
-
-const intlMiddleware = createMiddleware(routing);
 
 export default function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -20,20 +16,12 @@ export default function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // 2. Multi-language (i18n) Logic for public routes
-  // We exclude admin routes from i18n for simplicity in CMS
+  // 2. Skip middleware for API routes, static files, and admin routes
   if (pathname.startsWith("/admin") || pathname.startsWith("/api") || pathname.includes(".")) {
     return NextResponse.next();
   }
 
-  // Don't run the i18n middleware for the root path to avoid automatic
-  // redirects to locale-prefixed routes which aren't present in the app
-  if (pathname === '/') {
-    return NextResponse.next();
-  }
-
-  // If the app uses unprefixed routes, strip locale prefixes and redirect
-  // so requests to `/en` or `/en/...` map to the existing routes.
+  // 3. Handle locale-prefixed routes - redirect to non-prefixed (for backward compatibility)
   const localePrefixMatch = pathname.match(/^\/(en|hi)(?:\/|$)/);
   if (localePrefixMatch) {
     const newPath = pathname.replace(/^\/(en|hi)/, '') || '/';
@@ -41,8 +29,8 @@ export default function middleware(request: NextRequest) {
     return NextResponse.redirect(redirectUrl);
   }
 
-  // Note: locale routing is handled by `next-intl` middleware for other paths
-  return intlMiddleware(request);
+  // 4. Allow all other routes to pass through without locale prefixing
+  return NextResponse.next();
 }
 
 export const config = {
