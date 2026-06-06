@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabaseClient } from "@/lib/supabase/client";
+import Link from "next/link";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -52,21 +53,74 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="mx-auto max-w-md px-4 py-12">
-      <h1 className="mb-6 text-2xl font-semibold">Sign in</h1>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <input placeholder="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="rounded-md border px-3 py-2" />
-        <input placeholder="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="rounded-md border px-3 py-2" />
-        {error && <div className="text-sm text-red-600">{error}</div>}
-        <div className="flex items-center justify-between">
-          <button disabled={loading} className="rounded-md bg-primary px-4 py-2 text-white">
+    <main className="min-h-screen bg-background px-4 py-10 text-foreground sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-md rounded-[2.5rem] border border-border/70 bg-card/90 p-8 shadow-sm dark:border-slate-800 dark:bg-slate-950/90">
+        <div className="mb-8 space-y-3 text-center">
+          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-muted">Welcome Back</p>
+          <h1 className="text-3xl font-bold text-foreground">Sign in to your account</h1>
+          <p className="text-sm text-muted">Enter your credentials to access your profile and saved content.</p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="space-y-2">
+            <label htmlFor="email" className="text-sm font-medium text-foreground">Email</label>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              placeholder="you@example.com"
+              className="w-full rounded-2xl border border-border/70 bg-background px-4 py-3 text-sm outline-none transition focus:border-primary dark:border-slate-700 dark:bg-slate-900"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label htmlFor="password" className="text-sm font-medium text-foreground">Password</label>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              placeholder="••••••••"
+              className="w-full rounded-2xl border border-border/70 bg-background px-4 py-3 text-sm outline-none transition focus:border-primary dark:border-slate-700 dark:bg-slate-900"
+            />
+          </div>
+
+          {error && (
+            <div className="rounded-2xl bg-red-500/10 px-4 py-3 text-sm text-red-500">
+              {error}
+            </div>
+          )}
+
+          <div className="flex items-center justify-between">
+            <button
+              type="button"
+              onClick={handleReset}
+              className="text-sm text-muted hover:text-foreground transition"
+            >
+              Forgot password?
+            </button>
+          </div>
+
+          <button
+            disabled={loading}
+            className="w-full rounded-2xl bg-primary px-4 py-3 text-sm font-semibold text-white transition hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
             {loading ? "Signing in…" : "Sign in"}
           </button>
-          <button type="button" onClick={handleReset} className="text-sm text-muted underline">
-            Forgot?
-          </button>
+        </form>
+
+        <div className="mt-6 text-center">
+          <p className="text-sm text-muted">
+            Don't have an account?{" "}
+            <Link href="/register" className="font-medium text-primary hover:text-primary/80 transition">
+              Create account
+            </Link>
+          </p>
         </div>
-      </form>
+      </div>
     </main>
   );
 }
