@@ -84,7 +84,7 @@ export default function ProfilePage() {
       <div className="mb-6 flex items-center gap-4">
         <div className="relative h-16 w-16 overflow-hidden rounded-full bg-muted/20">
           <Image
-            src={profile?.avatar_url ?? "/avatar-placeholder.png"}
+            src={profile?.avatar_url ?? "/avatar-placeholder.svg"}
             alt="avatar"
             fill
             className="object-cover"

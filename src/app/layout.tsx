@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     images: [seoConfig.defaultImage],
   },
   icons: {
-    icon: "/favicon.ico"
+    icon: "/favicon.svg"
   }
 };
 

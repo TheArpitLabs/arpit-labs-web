@@ -25,8 +25,18 @@ export function Navbar() {
   const [langOpen, setLangOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
+  const [locale, setLocale] = useState('en');
   const [user, setUser] = useState<any | null>(null);
   const [profile, setProfile] = useState<any | null>(null);
+
+  useEffect(() => {
+    // Read locale from cookie
+    const getLocale = () => {
+      const match = document.cookie.match(/(?:^|; )NEXT_LOCALE=([^;]*)/);
+      return match ? decodeURIComponent(match[1]) : 'en';
+    };
+    setLocale(getLocale());
+  }, []);
 
   useEffect(() => {
     let mounted = true;
@@ -59,18 +69,17 @@ export function Navbar() {
     };
   }, []);
 
-  const switchLanguage = (locale: string) => {
-    const segments = pathname.split('/');
-    if (segments[1] === 'en' || segments[1] === 'hi') {
-      segments[1] = locale;
-    } else {
-      segments.splice(1, 0, locale);
-    }
-    router.push(segments.join('/') as any);
+  const switchLanguage = (newLocale: string) => {
+    // Set the locale cookie
+    document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=31536000; SameSite=Lax`;
+    // Update local state
+    setLocale(newLocale);
+    // Refresh the page to apply the new locale
+    window.location.reload();
     setLangOpen(false);
   };
 
-  const currentLang = pathname.startsWith('/hi') ? 'Hindi' : 'English';
+  const currentLang = locale === 'hi' ? 'Hindi' : 'English';
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/70 bg-background/80 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-950/80">
