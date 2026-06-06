@@ -128,12 +128,32 @@ export function Navbar() {
 
           <ThemeToggle />
           
-          <Link
-            href="/login"
-            className="rounded-2xl bg-primary px-4 py-2 text-sm font-bold text-white shadow-lg shadow-primary/20 transition hover:bg-primary/90"
-          >
-            Sign In
-          </Link>
+          {user ? (
+            <div className="flex items-center gap-3">
+              <Link
+                href="/profile"
+                className="rounded-2xl bg-primary px-4 py-2 text-sm font-bold text-white shadow-lg shadow-primary/20 transition hover:bg-primary/90"
+              >
+                {profile?.full_name || user.email?.split('@')[0]}
+              </Link>
+              <button
+                onClick={async () => {
+                  await supabaseClient.auth.signOut();
+                  router.push('/login');
+                }}
+                className="rounded-2xl border border-border/70 px-4 py-2 text-sm font-bold text-foreground transition hover:bg-surface"
+              >
+                Sign Out
+              </button>
+            </div>
+          ) : (
+            <Link
+              href="/login"
+              className="rounded-2xl bg-primary px-4 py-2 text-sm font-bold text-white shadow-lg shadow-primary/20 transition hover:bg-primary/90"
+            >
+              Sign In
+            </Link>
+          )}
           
           <button
             type="button"
