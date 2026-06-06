@@ -1,5 +1,4 @@
 import { Container } from "@/components/layout/Container";
-import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { getCurrentOrganization } from "@/lib/saas";
 import { updateOrganizationAction } from "@/lib/actions/saas-actions";
@@ -24,7 +23,6 @@ export default async function OrgSettingsPage({ params }: OrgSettingsPageProps) 
 
   return (
     <main className="min-h-screen bg-background">
-      <Navbar />
       <Container className="py-12">
         <div className="mx-auto max-w-3xl space-y-10">
           <Link

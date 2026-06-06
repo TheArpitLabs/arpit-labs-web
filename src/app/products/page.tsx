@@ -1,6 +1,5 @@
 import { productsRepository } from "@/lib/repositories/products.repository";
 import { Container } from "@/components/layout/Container";
-import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { Badge } from "@/components/ui/badge";
 import { Product } from "@/types/content";
@@ -24,7 +23,6 @@ export default async function ProductsPage() {
 
   return (
     <main className="min-h-screen bg-background text-foreground">
-      <Navbar />
 
       <section className="border-b border-border/70 bg-background/75 py-16 dark:border-slate-800 dark:bg-slate-950/70">
         <Container>

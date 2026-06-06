@@ -1,5 +1,4 @@
 import { Container } from "@/components/layout/Container";
-import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { AnimatedSection } from "@/components/animations/AnimatedSection";
 import { Card, FeatureCard } from "@/components/ui/card";
@@ -48,7 +47,6 @@ const technologies = [
 export default function AboutPage() {
   return (
     <main className="bg-background text-foreground">
-      <Navbar />
       
       <section className="relative border-b border-border/70 bg-background/75 py-24 dark:border-slate-800 dark:bg-slate-950/70">
         <Container>

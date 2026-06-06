@@ -1,5 +1,4 @@
 import { Container } from "@/components/layout/Container";
-import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { AnimatedSection } from "@/components/animations/AnimatedSection";
 import { Card } from "@/components/ui/card";
@@ -56,7 +55,6 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
 
   return (
     <main className="bg-background text-foreground">
-      <Navbar />
 
       <article className="py-12 md:py-20">
         <Container>

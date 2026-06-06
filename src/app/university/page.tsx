@@ -1,6 +1,5 @@
 import Image from "next/image";
 import { Container } from "@/components/layout/Container";
-import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { ecosystemRepository } from "@/lib/repositories/ecosystem.repository";
 import { GraduationCap, Award, CheckCircle2, ArrowRight, ShieldCheck, Zap } from "lucide-react";
@@ -21,7 +20,6 @@ export default async function UniversityPage() {
 
   return (
     <main className="min-h-screen bg-background">
-      <Navbar />
       
       <div className="relative overflow-hidden border-b border-border/70 bg-surface/30 py-24">
         <div className="absolute left-1/2 top-0 h-[500px] w-[1000px] -translate-x-1/2 rounded-[100%] bg-primary/5 blur-[120px]" />

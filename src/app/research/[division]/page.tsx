@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 import { Container } from "@/components/layout/Container";
-import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { ecosystemRepository } from "@/lib/repositories/ecosystem.repository";
 import { notFound } from "next/navigation";
@@ -29,7 +28,6 @@ export default async function DivisionPage({ params }: DivisionPageProps) {
 
   return (
     <main className="min-h-screen bg-background">
-      <Navbar />
       <div className="border-b border-border/70 bg-surface/50 py-16">
         <Container>
           <div className="flex items-center gap-6">

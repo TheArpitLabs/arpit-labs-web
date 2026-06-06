@@ -1,5 +1,4 @@
 import { Container } from "@/components/layout/Container";
-import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { getTenantContext } from "@/lib/saas";
 import { createOrganizationAction } from "@/lib/actions/saas-actions";
@@ -18,7 +17,6 @@ export default async function OrganizationsPage() {
 
   return (
     <main className="min-h-screen bg-background">
-      <Navbar />
       <Container className="py-20">
         <div className="flex flex-col gap-10 lg:flex-row">
           <div className="flex-1 space-y-8">

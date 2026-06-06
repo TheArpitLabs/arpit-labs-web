@@ -1,5 +1,4 @@
 import { Container } from "@/components/layout/Container";
-import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { ecosystemRepository } from "@/lib/repositories/ecosystem.repository";
 import { Microscope, Brain, Shield, Wifi, FileText, Database } from "lucide-react";
@@ -19,7 +18,6 @@ export default async function ResearchPage() {
 
   return (
     <main className="min-h-screen bg-background">
-      <Navbar />
       <div className="border-b border-border/70 bg-surface/50 py-16">
         <Container>
           <div className="max-w-3xl space-y-4">

@@ -1,5 +1,4 @@
 import { Container } from "@/components/layout/Container";
-import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { getCurrentOrganization } from "@/lib/saas";
 import { createWorkspaceAction, inviteMemberAction, removeMemberAction } from "@/lib/actions/saas-actions";
@@ -25,7 +24,6 @@ export default async function OrganizationDetailPage({ params }: OrganizationDet
 
   return (
     <main className="min-h-screen bg-background">
-      <Navbar />
       
       <section className="border-b border-border/70 bg-card/30 py-12">
         <Container>

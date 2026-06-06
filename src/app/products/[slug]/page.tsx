@@ -1,5 +1,4 @@
 import { Container } from "@/components/layout/Container";
-import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -53,7 +52,6 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
 
   return (
     <main className="bg-background text-foreground">
-      <Navbar />
       <ProductTracker slug={product.slug} />
 
       <section className="border-b border-border/70 bg-background/80 py-12 dark:border-slate-800 dark:bg-slate-950/70">

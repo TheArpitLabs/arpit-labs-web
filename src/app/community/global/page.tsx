@@ -1,5 +1,4 @@
 import { Container } from "@/components/layout/Container";
-import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { ecosystemRepository } from "@/lib/repositories/ecosystem.repository";
 import { Globe, Users, MessageSquare, MapPin, Search } from "lucide-react";
@@ -19,7 +18,6 @@ export default async function GlobalCommunityPage() {
 
   return (
     <main className="min-h-screen bg-background">
-      <Navbar />
       
       <div className="relative border-b border-border/70 bg-slate-950 py-24 text-white">
         <div className="absolute inset-0 z-0 opacity-20" 

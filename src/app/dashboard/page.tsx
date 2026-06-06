@@ -1,5 +1,4 @@
 import { Container } from "@/components/layout/Container";
-import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { getTenantContext } from "@/lib/saas";
 import Link from "next/link";
@@ -17,7 +16,6 @@ export default async function UserDashboardPage() {
 
   return (
     <main className="min-h-screen bg-background">
-      <Navbar />
       
       <section className="bg-surface/30 border-b border-border/70 py-16">
         <Container>

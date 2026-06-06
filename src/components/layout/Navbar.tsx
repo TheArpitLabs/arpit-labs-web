@@ -124,7 +124,7 @@ export function Navbar() {
               href="/login"
               className="rounded-2xl bg-primary px-4 py-2 text-sm font-bold text-white shadow-lg shadow-primary/20 transition hover:bg-primary/90"
             >
-              Join
+              Sign In
             </Link>
           ) : (
             <Link 

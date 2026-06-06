@@ -1,6 +1,5 @@
 import Image from "next/image";
 import { Container } from "@/components/layout/Container";
-import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { ecosystemRepository } from "@/lib/repositories/ecosystem.repository";
 import { Lightbulb, Rocket, Users, Target, Zap, Globe } from "lucide-react";
@@ -11,7 +10,6 @@ export default async function InnovationHubPage() {
 
   return (
     <main className="min-h-screen bg-background">
-      <Navbar />
       
       <div className="border-b border-border/70 bg-gradient-to-b from-surface/50 to-background py-24">
         <Container>

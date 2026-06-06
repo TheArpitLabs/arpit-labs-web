@@ -1,5 +1,4 @@
 import { Container } from "@/components/layout/Container";
-import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { AnimatedSection } from "@/components/animations/AnimatedSection";
 import { TimelineExplorer } from "@/components/shared/TimelineExplorer";
@@ -20,7 +19,6 @@ export default async function JourneyPage() {
 
   return (
     <main className="bg-background text-foreground">
-      <Navbar />
 
       <section className="border-b border-border/70 bg-background/75 py-20 dark:border-slate-800 dark:bg-slate-950/70">
         <Container>

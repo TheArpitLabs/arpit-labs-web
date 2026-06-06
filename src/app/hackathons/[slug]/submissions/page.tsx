@@ -1,6 +1,5 @@
 import { Container } from "@/components/layout/Container";
 import { Footer } from "@/components/layout/Footer";
-import { Navbar } from "@/components/layout/Navbar";
 import HackathonSubmissionsClient from "@/components/hackathons/HackathonSubmissionsClient";
 import { getHackathonBySlug } from "@/lib/actions/server-actions";
 import { createPageMetadata } from "@/lib/seo";
@@ -33,7 +32,6 @@ export default async function HackathonSubmissionsPage({ params }: HackathonSubm
 
   return (
     <main className="bg-background text-foreground">
-      <Navbar />
       <section className="border-b border-border/70 bg-background/75 py-20 dark:border-slate-800 dark:bg-slate-950/70">
         <Container>
           <div className="max-w-3xl">

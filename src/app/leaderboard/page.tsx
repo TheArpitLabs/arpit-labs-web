@@ -2,7 +2,6 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Container } from "@/components/layout/Container";
 import { Footer } from "@/components/layout/Footer";
-import { Navbar } from "@/components/layout/Navbar";
 import { getLeaderboard } from "@/lib/actions/server-actions";
 import { createPageMetadata } from "@/lib/seo";
 import Link from "next/link";
@@ -20,7 +19,6 @@ export default async function LeaderboardPage() {
 
   return (
     <main className="bg-background text-foreground">
-      <Navbar />
 
       <section className="border-b border-border/70 bg-background/75 py-20 dark:border-slate-800 dark:bg-slate-950/70">
         <Container>

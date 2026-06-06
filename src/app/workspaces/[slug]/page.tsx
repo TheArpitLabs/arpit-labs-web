@@ -1,5 +1,4 @@
 import { Container } from "@/components/layout/Container";
-import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { getCurrentWorkspace } from "@/lib/saas";
 import { Badge } from "@/components/ui/badge";
@@ -26,7 +25,6 @@ export default async function WorkspaceDetailPage({ params }: WorkspaceDetailPag
 
   return (
     <main className="min-h-screen bg-background text-foreground">
-      <Navbar />
       
       <section className="border-b border-border/70 bg-card/30 py-8">
         <Container>
