@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, LayoutDashboard, Globe, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/shared/ThemeToggle";
@@ -103,15 +104,23 @@ export function Navbar() {
 
         <nav className="hidden items-center gap-6 lg:gap-8 md:flex">
           {navItems.map((item) => (
-            <Link 
-              key={item.href} 
-                href={item.href} 
-                className={cn(
-                  "text-sm font-medium transition hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70",
-                  pathname === item.href ? "text-primary" : "text-muted"
+            <Link
+              key={item.href}
+              href={item.href}
+              className={cn(
+                "relative text-sm font-medium transition hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70",
+                pathname === item.href ? "text-primary" : "text-muted"
               )}
             >
               {item.label}
+              {pathname === item.href && (
+                <motion.div
+                  className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary"
+                  layoutId="navbar-underline"
+                  initial={false}
+                  transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                />
+              )}
             </Link>
           ))}
         </nav>
@@ -119,7 +128,7 @@ export function Navbar() {
         <div className="flex items-center gap-3">
           {/* Language Switcher */}
           <div className="relative">
-            <button 
+            <button
               onClick={() => setLangOpen(!langOpen)}
               className="flex items-center gap-1.5 rounded-xl border border-border/70 bg-surface px-3 py-1.5 text-xs font-bold text-foreground transition hover:border-primary"
             >
@@ -127,12 +136,20 @@ export function Navbar() {
               <span className="hidden sm:inline">{currentLang}</span>
               <ChevronDown size={12} className={cn("transition", langOpen && "rotate-180")} />
             </button>
-            {langOpen && (
-              <div className="absolute right-0 mt-2 w-32 overflow-hidden rounded-2xl border border-border/70 bg-card p-1 shadow-xl">
-                <button onClick={() => switchLanguage('en')} className="w-full rounded-xl px-4 py-2 text-left text-xs font-medium hover:bg-surface">English</button>
-                <button onClick={() => switchLanguage('hi')} className="w-full rounded-xl px-4 py-2 text-left text-xs font-medium hover:bg-surface">हिन्दी</button>
-              </div>
-            )}
+            <AnimatePresence>
+              {langOpen && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                  className="absolute right-0 mt-2 w-32 overflow-hidden rounded-2xl border border-border/70 bg-card/95 backdrop-blur-sm p-1 shadow-xl"
+                >
+                  <button onClick={() => switchLanguage('en')} className="w-full rounded-xl px-4 py-2 text-left text-xs font-medium hover:bg-surface transition-colors">English</button>
+                  <button onClick={() => switchLanguage('hi')} className="w-full rounded-xl px-4 py-2 text-left text-xs font-medium hover:bg-surface transition-colors">हिन्दी</button>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           <ThemeToggle />

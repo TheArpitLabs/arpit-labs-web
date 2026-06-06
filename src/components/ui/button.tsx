@@ -3,6 +3,7 @@
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
+import { motion, HTMLMotionProps } from "framer-motion";
 
 const buttonVariants = cva(
   "inline-flex items-center justify-center rounded-2xl border px-4 py-3 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 disabled:pointer-events-none disabled:opacity-50",
@@ -34,8 +35,15 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 
 export function Button({ className, variant, size, isLoading, children, ...props }: ButtonProps) {
   return (
-    <button className={cn(buttonVariants({ variant, size }), className)} disabled={isLoading || props.disabled} {...props}>
+    <motion.button
+      whileHover={{ scale: 1.02, boxShadow: variant === "primary" ? "0 0 20px rgba(37,99,235,0.3)" : "0 4px 12px rgba(0,0,0,0.1)" }}
+      whileTap={{ scale: 0.98 }}
+      transition={{ duration: 0.2 }}
+      className={cn(buttonVariants({ variant, size }), className)}
+      disabled={isLoading || props.disabled}
+      {...(props as HTMLMotionProps<"button">)}
+    >
       {isLoading ? <span className="animate-pulse">Loading...</span> : children}
-    </button>
+    </motion.button>
   );
 }

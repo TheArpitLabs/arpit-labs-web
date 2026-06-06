@@ -1,5 +1,6 @@
 import { Container } from "@/components/layout/Container";
 import { Footer } from "@/components/layout/Footer";
+import { FloatingDecorations } from "@/components/animations/FloatingDecorations";
 import { ecosystemRepository } from "@/lib/repositories/ecosystem.repository";
 import { Microscope, Brain, Shield, Wifi, FileText, Database } from "lucide-react";
 import Link from "next/link";
@@ -18,7 +19,8 @@ export default async function ResearchPage() {
 
   return (
     <main className="min-h-screen bg-background">
-      <div className="border-b border-border/70 bg-surface/50 py-16">
+      <div className="relative border-b border-border/70 bg-surface/50 py-16">
+        <FloatingDecorations />
         <Container>
           <div className="max-w-3xl space-y-4">
             <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-primary">

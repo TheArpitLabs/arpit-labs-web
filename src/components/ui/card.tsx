@@ -2,10 +2,17 @@
 
 import * as React from "react";
 import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
+import { motion, HTMLMotionProps } from "framer-motion";
 
 export function Card({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("rounded-[1.75rem] border border-border/70 bg-card p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-glow dark:border-slate-800 dark:bg-slate-950", className)} {...props} />;
+  return (
+    <motion.div
+      whileHover={{ y: -6, boxShadow: "0 20px 40px rgba(0,0,0,0.1)" }}
+      transition={{ duration: 0.25 }}
+      className={cn("rounded-[1.75rem] border border-border/70 bg-card p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950", className)}
+      {...(props as HTMLMotionProps<"div">)}
+    />
+  );
 }
 
 export function CardHeader({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {

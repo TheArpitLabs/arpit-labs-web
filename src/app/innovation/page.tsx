@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Container } from "@/components/layout/Container";
 import { Footer } from "@/components/layout/Footer";
+import { FloatingDecorations } from "@/components/animations/FloatingDecorations";
 import { ecosystemRepository } from "@/lib/repositories/ecosystem.repository";
 import { Lightbulb, Rocket, Users, Target, Zap, Globe } from "lucide-react";
 import Link from "next/link";
@@ -11,7 +12,8 @@ export default async function InnovationHubPage() {
   return (
     <main className="min-h-screen bg-background">
       
-      <div className="border-b border-border/70 bg-gradient-to-b from-surface/50 to-background py-24">
+      <div className="relative border-b border-border/70 bg-gradient-to-b from-surface/50 to-background py-24">
+        <FloatingDecorations />
         <Container>
           <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
             <div className="space-y-8">
