@@ -40,26 +40,6 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <script
-          type="application/ld+json"
-          suppressHydrationWarning
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "ProfessionalService",
-              "name": "Arpit Labs",
-              "description": "Digital engineering lab for AI, IoT, and high-performance software.",
-              "url": seoConfig.siteUrl,
-              "founder": {
-                "@type": "Person",
-                "name": "Arpit"
-              },
-              "knowsAbout": ["AI", "IoT", "Software Engineering", "Hardware Design", "Cybersecurity"]
-            })
-          }}
-        />
-      </head>
       <body>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           {children}
