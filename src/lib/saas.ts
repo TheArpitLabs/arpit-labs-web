@@ -30,12 +30,24 @@ export async function hasOrganizationPermission(
 }
 
 export async function getTenantContext() {
+  console.log('[getTenantContext] Starting...');
   const user = await getCurrentUser();
+  console.log('[getTenantContext] getCurrentUser result:', {
+    hasUser: !!user,
+    userId: user?.id,
+    userEmail: user?.email,
+  });
+  
   if (!user) {
+    console.log('[getTenantContext] No user found, returning null');
     return null;
   }
 
   const organizations = await saasRepository.getOrganizationsForUser(user.id);
+  console.log('[getTenantContext] Organizations fetched:', {
+    count: organizations.length,
+  });
+  
   return {
     user,
     organizations,

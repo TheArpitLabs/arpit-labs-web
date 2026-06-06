@@ -6,13 +6,20 @@ import { Building2, Layout, ArrowRight, Plus } from "lucide-react";
 import { redirect } from "next/navigation";
 
 export default async function UserDashboardPage() {
+  console.log('[Dashboard page] Starting...');
   const context = await getTenantContext();
   
+  console.log('[Dashboard page] Context result:', {
+    hasContext: !!context,
+  });
+  
   if (!context) {
+    console.log('[Dashboard page] No context, redirecting to /login');
     redirect("/login");
   }
 
   const { user, organizations } = context;
+  console.log('[Dashboard page] Rendering with user:', user.email);
 
   return (
     <main className="min-h-screen bg-background">

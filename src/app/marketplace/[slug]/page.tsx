@@ -97,10 +97,6 @@ export default async function MarketplaceItemPage({ params }: { params: Promise<
 
               <div className="mt-6 space-y-4">
                 <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                  <ShieldCheck className="h-4 w-4 text-green-500" />
-                  <span>Secure payment & instant access</span>
-                </div>
-                <div className="flex items-center gap-3 text-sm text-muted-foreground">
                   <Zap className="h-4 w-4 text-yellow-500" />
                   <span>Lifetime updates included</span>
                 </div>

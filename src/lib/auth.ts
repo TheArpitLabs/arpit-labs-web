@@ -47,7 +47,14 @@ async function clearSessionCookies(accessCookie: string, refreshCookie: string) 
 }
 
 export async function setUserSessionCookies(accessToken: string, refreshToken: string) {
+  console.log('[setUserSessionCookies] Setting cookies:', {
+    hasAccessToken: !!accessToken,
+    hasRefreshToken: !!refreshToken,
+    accessCookieName: userAccessCookieName,
+    refreshCookieName: userRefreshCookieName,
+  });
   await setSessionCookies(accessToken, refreshToken, userAccessCookieName, userRefreshCookieName);
+  console.log('[setUserSessionCookies] Cookies set successfully');
 }
 
 export async function clearUserSessionCookies() {
@@ -59,7 +66,15 @@ export async function getUserSession() {
   const accessToken = cookieStore.get(userAccessCookieName)?.value;
   const refreshToken = cookieStore.get(userRefreshCookieName)?.value;
 
+  console.log('[getUserSession] Cookies check:', {
+    hasAccessToken: !!accessToken,
+    hasRefreshToken: !!refreshToken,
+    accessCookieName: userAccessCookieName,
+    refreshCookieName: userRefreshCookieName,
+  });
+
   if (!accessToken || !refreshToken) {
+    console.log('[getUserSession] Missing tokens, returning null');
     return null;
   }
 
@@ -69,17 +84,33 @@ export async function getUserSession() {
     refresh_token: refreshToken,
   });
 
+  console.log('[getUserSession] setSession result:', {
+    hasSessionError: !!sessionError,
+    sessionErrorMessage: sessionError?.message,
+    hasSession: !!sessionData.session,
+  });
+
   if (sessionError || !sessionData.session) {
+    console.log('[getUserSession] Session error or no session, returning null');
     return null;
   }
 
   const currentAccessToken = sessionData.session.access_token;
   const { data: userData, error: userError } = await supabaseServer.auth.getUser(currentAccessToken);
 
+  console.log('[getUserSession] getUser result:', {
+    hasUserError: !!userError,
+    userErrorMessage: userError?.message,
+    hasUser: !!userData.user,
+    userId: userData.user?.id,
+  });
+
   if (userError || !userData.user) {
+    console.log('[getUserSession] User error or no user, returning null');
     return null;
   }
 
+  console.log('[getUserSession] Success, returning session with user:', userData.user.email);
   return {
     accessToken: currentAccessToken,
     refreshToken: sessionData.session.refresh_token,

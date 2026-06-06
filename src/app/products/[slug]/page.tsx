@@ -96,17 +96,10 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                   )}
                 </Card>
 
-                <div className="grid gap-6 lg:grid-cols-2">
-                  <Card className="p-8">
-                    <h2 className="text-2xl font-bold text-foreground">Overview</h2>
-                    <p className="mt-4 text-bodied leading-relaxed text-muted whitespace-pre-wrap">{product.overview || product.description}</p>
-                  </Card>
-
-                  <Card className="p-8">
-                    <h2 className="text-2xl font-bold text-foreground">Pricing</h2>
-                    <p className="mt-4 text-body text-muted whitespace-pre-wrap">{product.pricing_details || "Transparent and tailored pricing for every team."}</p>
-                  </Card>
-                </div>
+                <Card className="p-8">
+                  <h2 className="text-2xl font-bold text-foreground">Overview</h2>
+                  <p className="mt-4 text-body leading-relaxed text-muted whitespace-pre-wrap">{product.overview || product.description}</p>
+                </Card>
 
                 <Card className="p-8">
                   <h2 className="text-2xl font-bold text-foreground">Features</h2>

@@ -7,6 +7,7 @@ import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Footer } from "@/components/layout/Footer";
 import { User, Mail, Calendar, FolderOpen, Search, MessageSquare, Bookmark, Award, Code2, TrendingUp, Users, Activity } from "lucide-react";
 
 export default function ProfilePage() {
@@ -249,6 +250,7 @@ export default function ProfilePage() {
           />
         </Card>
       </section>
+      <Footer />
     </main>
   );
 }
