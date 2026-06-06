@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { supabaseServer } from "@/lib/supabase/server";
 import { setUserSessionCookies } from "@/lib/auth";
 
 export async function GET(request: NextRequest) {
@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
   console.log(`[OAuth Callback] Received callback for provider: ${provider}`);
 
   if (code) {
-    const supabase = await createClient();
+    const supabase = supabaseServer;
     
     try {
       const { data, error } = await supabase.auth.exchangeCodeForSession(code);
