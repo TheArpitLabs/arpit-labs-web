@@ -2,12 +2,15 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseServer } from '@/lib/supabase/server';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { sanitizeText } from '@/lib/sanitize';
+import { createAuthenticatedSupabaseClient, getUserTokenFromRequest } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
   try {
-    const auth = request.headers.get('authorization') || '';
-    const token = auth.replace('Bearer ', '').trim();
-    const { data: userData } = await supabaseServer.auth.getUser(token);
+    const token = getUserTokenFromRequest(request);
+    const supabase = token ? await createAuthenticatedSupabaseClient(token) : null;
+    if (!supabase) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+
+    const { data: userData } = await supabase.auth.getUser();
     const userId = userData?.user?.id;
     if (!userId) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
 
@@ -20,14 +23,16 @@ export async function POST(request: NextRequest) {
     const voteType = sanitizeText(body.voteType || 'upvote');
     if (!postId) return NextResponse.json({ success: false, error: 'Missing postId' }, { status: 400 });
 
-    // Check existing vote
-    const { data: existing } = await supabaseServer.from('community_votes').select('*').eq('post_id', postId).eq('user_id', userId).single();
+    const { data: existing } = await supabase
+      .from('community_votes')
+      .select('*')
+      .eq('post_id', postId)
+      .eq('user_id', userId)
+      .single();
 
     if (existing) {
-      // toggle or update
       if (existing.vote_type === voteType) {
-        // remove vote
-        await supabaseServer.from('community_votes').delete().eq('id', existing.id);
+        await supabase.from('community_votes').delete().eq('id', existing.id);
         try {
           await supabaseServer.rpc('decrement_post_upvote_count', { p_id: postId });
         } catch (e) {
@@ -35,19 +40,21 @@ export async function POST(request: NextRequest) {
         }
         return NextResponse.json({ success: true, action: 'removed' }, { status: 200 });
       }
-      // update
-      await supabaseServer.from('community_votes').update({ vote_type: voteType }).eq('id', existing.id);
+
+      await supabase.from('community_votes').update({ vote_type: voteType }).eq('id', existing.id);
       return NextResponse.json({ success: true, action: 'updated' }, { status: 200 });
     }
 
-    // insert new vote
-    const { data, error } = await supabaseServer.from('community_votes').insert([{ post_id: postId, user_id: userId, vote_type: voteType }]).select().single();
+    const { data, error } = await supabase
+      .from('community_votes')
+      .insert([{ post_id: postId, user_id: userId, vote_type: voteType }])
+      .select()
+      .single();
     if (error) {
       console.error('Failed to insert vote', error);
       return NextResponse.json({ success: false, error: 'Failed to vote' }, { status: 500 });
     }
 
-    // increment post upvotes
     try {
       await supabaseServer.rpc('increment_post_upvote_count', { p_id: postId });
     } catch (e) {

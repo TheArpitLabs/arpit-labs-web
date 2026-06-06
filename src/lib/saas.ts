@@ -1,18 +1,28 @@
-import { supabaseServer } from "@/lib/supabase/server";
 import { saasRepository } from "@/lib/repositories/saas.repository";
+import { getCurrentUser } from "@/lib/auth";
 import { OrganizationRole } from "@/types/saas";
 
 export async function getCurrentOrganization(slug: string) {
-  return saasRepository.getOrganizationBySlug(slug);
+  const user = await getCurrentUser();
+  if (!user) {
+    return null;
+  }
+
+  return saasRepository.getOrganizationBySlugForUser(slug, user.id);
 }
 
 export async function getCurrentWorkspace(workspaceSlug: string) {
-  return saasRepository.getWorkspaceBySlug(workspaceSlug);
+  const user = await getCurrentUser();
+  if (!user) {
+    return null;
+  }
+
+  return saasRepository.getWorkspaceBySlugForUser(workspaceSlug, user.id);
 }
 
 export async function hasOrganizationPermission(
-  organizationId: string, 
-  userId: string, 
+  organizationId: string,
+  userId: string,
   requiredRoles: OrganizationRole[]
 ) {
   const role = await saasRepository.getOrganizationRole(organizationId, userId);
@@ -20,12 +30,14 @@ export async function hasOrganizationPermission(
 }
 
 export async function getTenantContext() {
-  const { data: { user } } = await supabaseServer.auth.getUser();
-  if (!user) return null;
+  const user = await getCurrentUser();
+  if (!user) {
+    return null;
+  }
 
-  const organizations = await saasRepository.getOrganizations();
+  const organizations = await saasRepository.getOrganizationsForUser(user.id);
   return {
     user,
-    organizations
+    organizations,
   };
 }

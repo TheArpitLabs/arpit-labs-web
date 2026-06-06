@@ -1,10 +1,9 @@
 import { Container } from "@/components/layout/Container";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
-import { saasRepository } from "@/lib/repositories/saas.repository";
 import { getTenantContext } from "@/lib/saas";
 import Link from "next/link";
-import { Building2, Layout, Users, ArrowRight, Plus } from "lucide-react";
+import { Building2, Layout, ArrowRight, Plus } from "lucide-react";
 import { redirect } from "next/navigation";
 
 export default async function UserDashboardPage() {

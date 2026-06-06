@@ -1,7 +1,7 @@
 import { Container } from "@/components/layout/Container";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
-import { saasRepository } from "@/lib/repositories/saas.repository";
+import { getCurrentOrganization } from "@/lib/saas";
 import { updateOrganizationAction } from "@/lib/actions/saas-actions";
 import { AdminSubmitButton } from "@/components/admin/AdminSubmitButton";
 import { ArrowLeft, Shield, Trash2, Building2 } from "lucide-react";
@@ -16,7 +16,7 @@ interface OrgSettingsPageProps {
 
 export default async function OrgSettingsPage({ params }: OrgSettingsPageProps) {
   const { slug } = await params;
-  const organization = await saasRepository.getOrganizationBySlug(slug).catch(() => null);
+  const organization = await getCurrentOrganization(slug);
 
   if (!organization) {
     notFound();

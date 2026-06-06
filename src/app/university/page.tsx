@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Container } from "@/components/layout/Container";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
@@ -63,9 +64,15 @@ export default async function UniversityPage() {
             <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
               {certifications.map((cert) => (
                 <div key={cert.id} className="group relative flex flex-col rounded-[2.5rem] border border-border/70 bg-card p-2 transition hover:border-primary/50 hover:shadow-2xl dark:bg-slate-950/50">
-                  <div className="aspect-[16/10] overflow-hidden rounded-[2rem] bg-surface">
+                  <div className="relative aspect-[16/10] overflow-hidden rounded-[2rem] bg-surface">
                     {cert.image_url ? (
-                      <img src={cert.image_url} alt={cert.title} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+                      <Image
+                        src={cert.image_url}
+                        alt={cert.title}
+                        fill
+                        className="object-cover transition duration-500 group-hover:scale-105"
+                        unoptimized
+                      />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center bg-primary/5 text-primary">
                         <Award size={48} strokeWidth={1.5} />

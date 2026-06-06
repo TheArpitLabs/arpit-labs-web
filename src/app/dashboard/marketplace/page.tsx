@@ -1,6 +1,7 @@
 import React from "react";
+import Image from "next/image";
 import { marketplaceRepository } from "@/lib/repositories/marketplace.repository";
-import { supabaseServer } from "@/lib/supabase/server";
+import { requireUser } from "@/lib/auth";
 import { Container } from "@/components/layout/Container";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -23,12 +24,7 @@ export default async function MarketplaceDashboard({
 }: {
   searchParams: Promise<{ tab?: string }>;
 }) {
-  const supabase = supabaseServer;
-  const { data: { user } } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect("/login?returnUrl=/dashboard/marketplace");
-  }
+  const user = await requireUser();
 
   const resolvedSearchParams = await searchParams;
   const activeTab = resolvedSearchParams.tab || "purchases";
@@ -87,12 +83,14 @@ export default async function MarketplaceDashboard({
                 {orders.map((order: any) => (
                   <Card key={order.id} className="p-6">
                     <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
-                      <div className="h-24 w-24 shrink-0 overflow-hidden rounded-xl border bg-muted">
+                      <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-xl border bg-muted">
                         {order.item.preview_image && (
-                          <img
+                          <Image
                             src={order.item.preview_image}
-                            alt=""
-                            className="h-full w-full object-cover"
+                            alt={order.item.title || "Purchased marketplace item"}
+                            fill
+                            className="object-cover"
+                            unoptimized
                           />
                         )}
                       </div>
@@ -176,8 +174,16 @@ export default async function MarketplaceDashboard({
                     <Card key={item.id} className="p-4">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
-                          <div className="h-12 w-12 overflow-hidden rounded-lg border bg-muted">
-                            {item.preview_image && <img src={item.preview_image} className="h-full w-full object-cover" />}
+                          <div className="relative h-12 w-12 overflow-hidden rounded-lg border bg-muted">
+                            {item.preview_image && (
+                              <Image
+                                src={item.preview_image}
+                                alt={item.title || "Marketplace item preview"}
+                                fill
+                                className="object-cover"
+                                unoptimized
+                              />
+                            )}
                           </div>
                           <div>
                             <h4 className="font-semibold">{item.title}</h4>

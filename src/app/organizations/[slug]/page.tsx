@@ -1,7 +1,7 @@
 import { Container } from "@/components/layout/Container";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
-import { saasRepository } from "@/lib/repositories/saas.repository";
+import { getCurrentOrganization } from "@/lib/saas";
 import { createWorkspaceAction, inviteMemberAction, removeMemberAction } from "@/lib/actions/saas-actions";
 import { AdminSubmitButton } from "@/components/admin/AdminSubmitButton";
 import { Badge } from "@/components/ui/badge";
@@ -17,7 +17,7 @@ interface OrganizationDetailPageProps {
 
 export default async function OrganizationDetailPage({ params }: OrganizationDetailPageProps) {
   const { slug } = await params;
-  const organization = await saasRepository.getOrganizationBySlug(slug).catch(() => null);
+  const organization = await getCurrentOrganization(slug);
 
   if (!organization) {
     notFound();

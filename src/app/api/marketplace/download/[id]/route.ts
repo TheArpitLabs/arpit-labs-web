@@ -1,15 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabase/server";
+import { createAuthenticatedSupabaseClient, getUserTokenFromRequest, getUserFromRequest } from "@/lib/auth";
 
 export async function GET(
   request: NextRequest,
   { params }: any
 ) {
   const { id } = params;
-  const supabase = supabaseServer;
-  const { data: { user } } = await supabase.auth.getUser();
+  const token = getUserTokenFromRequest(request);
+  const user = await getUserFromRequest(request);
 
-  if (!user) {
+  if (!token || !user) {
+    return new NextResponse("Unauthorized", { status: 401 });
+  }
+
+  const supabase = await createAuthenticatedSupabaseClient(token);
+  if (!supabase) {
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
@@ -26,10 +32,10 @@ export async function GET(
     return new NextResponse("Forbidden: Purchase required", { status: 403 });
   }
 
-  // Get download URL
+  // Get download URL and current count
   const { data: item, error: itemError } = await supabase
     .from("marketplace_items")
-    .select("download_url, title")
+    .select("download_url, title, downloads_count")
     .eq("id", id)
     .single();
 
@@ -37,10 +43,9 @@ export async function GET(
     return new NextResponse("File not found", { status: 404 });
   }
 
-  // Increment download count
-  await supabase
+  await supabaseServer
     .from("marketplace_items")
-    .update({ downloads_count: (item as any).downloads_count + 1 })
+    .update({ downloads_count: (item.downloads_count ?? 0) + 1 })
     .eq("id", id);
 
   return NextResponse.redirect(item.download_url);

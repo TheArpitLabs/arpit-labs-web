@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { supabaseServer } from "@/lib/supabase/server";
 import { saasRepository } from "@/lib/repositories/saas.repository";
+import { getUserSession } from "@/lib/auth";
+import { OrganizationRole } from "@/types/saas";
 import { z } from "zod";
 
 const organizationSchema = z.object({
@@ -28,9 +30,28 @@ function asString(value: FormDataEntryValue | null) {
   return typeof value === "string" ? value.trim() : "";
 }
 
+async function getAuthenticatedUser() {
+  const session = await getUserSession();
+  if (!session?.user) {
+    throw new Error("Unauthorized");
+  }
+  return session.user;
+}
+
+async function requireOrganizationRole(
+  organizationId: string,
+  userId: string,
+  allowedRoles: OrganizationRole[] = ["owner", "admin"]
+) {
+  const role = await saasRepository.getOrganizationRole(organizationId, userId);
+  if (!role || !allowedRoles.includes(role as OrganizationRole)) {
+    throw new Error("Insufficient permissions");
+  }
+  return role as OrganizationRole;
+}
+
 export async function createOrganizationAction(formData: FormData) {
-  const { data: { user } } = await supabaseServer.auth.getUser();
-  if (!user) throw new Error("Unauthorized");
+  const user = await getAuthenticatedUser();
 
   const payload = organizationSchema.parse({
     name: asString(formData.get("name")),
@@ -44,7 +65,7 @@ export async function createOrganizationAction(formData: FormData) {
   await saasRepository.addOrganizationMember({
     organization_id: org.id,
     user_id: user.id,
-    role: 'owner'
+    role: "owner",
   });
 
   revalidatePath("/organizations");
@@ -52,14 +73,15 @@ export async function createOrganizationAction(formData: FormData) {
 }
 
 export async function createWorkspaceAction(formData: FormData) {
-  const { data: { user } } = await supabaseServer.auth.getUser();
-  if (!user) throw new Error("Unauthorized");
+  const user = await getAuthenticatedUser();
 
   const payload = workspaceSchema.parse({
     organization_id: asString(formData.get("organization_id")),
     name: asString(formData.get("name")),
     slug: asString(formData.get("slug")),
   });
+
+  await requireOrganizationRole(payload.organization_id, user.id, ["owner", "admin"]);
 
   const workspace = await saasRepository.createWorkspace(payload);
 
@@ -68,27 +90,30 @@ export async function createWorkspaceAction(formData: FormData) {
 }
 
 export async function updateOrganizationAction(formData: FormData) {
+  const user = await getAuthenticatedUser();
   const id = asString(formData.get("id"));
   const payload = organizationSchema.partial().parse({
     name: asString(formData.get("name")),
     billing_email: asString(formData.get("billing_email")),
   });
 
+  await requireOrganizationRole(id, user.id, ["owner", "admin"]);
   await saasRepository.updateOrganization(id, payload);
   revalidatePath(`/organizations`);
 }
 
 export async function inviteMemberAction(formData: FormData) {
+  const user = await getAuthenticatedUser();
   const payload = inviteMemberSchema.parse({
     organization_id: asString(formData.get("organization_id")),
     email: asString(formData.get("email")),
     role: asString(formData.get("role")),
   });
 
-  // In a real app, you'd look up the user by email or send an email invitation.
-  // For this implementation, we assume the user exists and we just add them.
+  await requireOrganizationRole(payload.organization_id, user.id, ["owner", "admin"]);
+
   const { data: userData, error: userError } = await supabaseServer
-    .from("profiles") // Assuming profiles table exists or use auth logic
+    .from("profiles")
     .select("id")
     .eq("email", payload.email)
     .single();
@@ -100,16 +125,18 @@ export async function inviteMemberAction(formData: FormData) {
   await saasRepository.addOrganizationMember({
     organization_id: payload.organization_id,
     user_id: userData.id,
-    role: payload.role
+    role: payload.role,
   });
 
   revalidatePath(`/organizations`);
 }
 
 export async function removeMemberAction(formData: FormData) {
+  const user = await getAuthenticatedUser();
   const organizationId = asString(formData.get("organization_id"));
   const userId = asString(formData.get("user_id"));
 
+  await requireOrganizationRole(organizationId, user.id, ["owner", "admin"]);
   await saasRepository.removeOrganizationMember(organizationId, userId);
   revalidatePath(`/organizations`);
 }

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseServer } from '@/lib/supabase/server';
 import { sanitizeText } from '@/lib/sanitize';
 import { checkRateLimit } from '@/lib/rate-limit';
+import { createAuthenticatedSupabaseClient, getAdminUserFromRequest, getUserTokenFromRequest } from '@/lib/auth';
 
 export async function GET(request: NextRequest, { params }: any) {
   try {
@@ -32,11 +33,18 @@ export async function GET(request: NextRequest, { params }: any) {
 export async function PUT(request: NextRequest, { params }: any) {
   try {
     const { slug } = params;
-    const auth = request.headers.get('authorization') || '';
-    const token = auth.replace('Bearer ', '').trim();
-    const { data: userData } = await supabaseServer.auth.getUser(token);
+    const token = getUserTokenFromRequest(request);
+    const supabase = token ? await createAuthenticatedSupabaseClient(token) : null;
+    if (!supabase) {
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { data: userData } = await supabase.auth.getUser();
     const userId = userData?.user?.id;
-    if (!userId) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+
+    if (!userId) {
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    }
 
     const body = await request.json();
     const title = sanitizeText(body.title);
@@ -47,10 +55,8 @@ export async function PUT(request: NextRequest, { params }: any) {
     if (!existing) return NextResponse.json({ success: false, error: 'Not found' }, { status: 404 });
 
     if (existing.user_id !== userId) {
-      // check admin
-      const { data: userInfo } = await supabaseServer.auth.getUser(token);
-      const isAdmin = Boolean(userInfo?.user?.app_metadata?.role === 'admin');
-      if (!isAdmin) return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
+      const admin = await getAdminUserFromRequest(request);
+      if (!admin) return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
     }
 
     const updates: any = {};
@@ -59,7 +65,13 @@ export async function PUT(request: NextRequest, { params }: any) {
     if (tags) updates.tags = tags;
     updates.updated_at = new Date().toISOString();
 
-    const { data, error } = await supabaseServer.from('community_posts').update(updates).eq('slug', slug).select().single();
+    const { data, error } = await supabase
+      .from('community_posts')
+      .update(updates)
+      .eq('slug', slug)
+      .select()
+      .single();
+
     if (error) {
       console.error('Failed to update post:', error);
       return NextResponse.json({ success: false, error: 'Failed to update' }, { status: 500 });
@@ -75,9 +87,11 @@ export async function PUT(request: NextRequest, { params }: any) {
 export async function DELETE(request: NextRequest, { params }: any) {
   try {
     const { slug } = params;
-    const auth = request.headers.get('authorization') || '';
-    const token = auth.replace('Bearer ', '').trim();
-    const { data: userData } = await supabaseServer.auth.getUser(token);
+    const token = getUserTokenFromRequest(request);
+    const supabase = token ? await createAuthenticatedSupabaseClient(token) : null;
+    if (!supabase) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+
+    const { data: userData } = await supabase.auth.getUser();
     const userId = userData?.user?.id;
     if (!userId) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
 
@@ -85,12 +99,14 @@ export async function DELETE(request: NextRequest, { params }: any) {
     if (!existing) return NextResponse.json({ success: false, error: 'Not found' }, { status: 404 });
 
     if (existing.user_id !== userId) {
-      const { data: userInfo } = await supabaseServer.auth.getUser(token);
-      const isAdmin = Boolean(userInfo?.user?.app_metadata?.role === 'admin');
-      if (!isAdmin) return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
+      const admin = await getAdminUserFromRequest(request);
+      if (!admin) return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
     }
 
-    const { error } = await supabaseServer.from('community_posts').delete().eq('slug', slug);
+    const { error } = await supabase
+      .from('community_posts')
+      .delete()
+      .eq('slug', slug);
     if (error) {
       console.error('Failed to delete post', error);
       return NextResponse.json({ success: false, error: 'Failed to delete' }, { status: 500 });

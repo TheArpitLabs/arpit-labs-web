@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 import { marketplaceRepository } from "@/lib/repositories/marketplace.repository";
 import { AdminSection } from "@/components/admin/AdminSection";
 import { AdminTable } from "@/components/admin/AdminTable";
@@ -41,12 +42,14 @@ export default async function AdminMarketplacePage() {
             <tr key={item.id} className="border-b border-border/50 last:border-0">
               <td className="px-4 py-4">
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 overflow-hidden rounded-lg border bg-muted">
+                  <div className="relative h-10 w-10 overflow-hidden rounded-lg border bg-muted">
                     {item.preview_image && (
-                      <img
+                      <Image
                         src={item.preview_image}
-                        alt=""
-                        className="h-full w-full object-cover"
+                        alt={item.title || "Marketplace item preview"}
+                        fill
+                        className="object-cover"
+                        unoptimized
                       />
                     )}
                   </div>

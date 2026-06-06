@@ -18,8 +18,23 @@ export default function LoginPage() {
 
     const { data, error: signInError } = await supabaseClient.auth.signInWithPassword({ email, password });
 
-    if (signInError || !data.user) {
+    if (signInError || !data.user || !data.session) {
       setError(signInError?.message ?? "Invalid credentials");
+      setLoading(false);
+      return;
+    }
+
+    const response = await fetch("/api/auth/session", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        access_token: data.session.access_token,
+        refresh_token: data.session.refresh_token,
+      }),
+    });
+
+    if (!response.ok) {
+      setError("Unable to create authenticated session.");
       setLoading(false);
       return;
     }

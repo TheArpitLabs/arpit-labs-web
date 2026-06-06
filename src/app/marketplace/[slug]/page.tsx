@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 import { marketplaceRepository } from "@/lib/repositories/marketplace.repository";
 import { Container } from "@/components/layout/Container";
 import { Badge } from "@/components/ui/badge";
@@ -33,12 +34,14 @@ export default async function MarketplaceItemPage({ params }: { params: Promise<
 
         <div className="grid gap-12 lg:grid-cols-3">
           <div className="lg:col-span-2">
-            <div className="aspect-video overflow-hidden rounded-3xl bg-muted border">
+            <div className="relative aspect-video overflow-hidden rounded-3xl bg-muted border">
               {item.preview_image ? (
-                <img
+                <Image
                   src={item.preview_image}
                   alt={item.title}
-                  className="h-full w-full object-cover"
+                  fill
+                  className="object-cover"
+                  unoptimized
                 />
               ) : (
                 <div className="flex h-full items-center justify-center">

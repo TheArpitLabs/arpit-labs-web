@@ -2,12 +2,47 @@ import { supabaseServer } from "@/lib/supabase/server";
 import { Organization, Workspace, OrganizationMember, SaaSStats } from "@/types/saas";
 import { handleDatabaseError } from "@/lib/errors";
 
+function hydrateOrganizationMembers(members: any[]) {
+  return members.map((member) => ({
+    ...member,
+    user: member.user,
+  }));
+}
+
 export const saasRepository = {
   // Organizations
   async getOrganizations() {
     const { data, error } = await supabaseServer
       .from("organizations")
       .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) throw handleDatabaseError(error);
+    return data as Organization[];
+  },
+
+  async getOrganizationsForUser(userId: string) {
+    if (!userId) {
+      return [] as Organization[];
+    }
+
+    const { data: memberships, error: membershipError } = await supabaseServer
+      .from("organization_members")
+      .select("organization_id")
+      .eq("user_id", userId);
+
+    if (membershipError) throw handleDatabaseError(membershipError);
+
+    const organizationIds = memberships?.map((item: any) => item.organization_id) ?? [];
+
+    if (organizationIds.length === 0) {
+      return [] as Organization[];
+    }
+
+    const { data, error } = await supabaseServer
+      .from("organizations")
+      .select("*")
+      .in("id", organizationIds)
       .order("created_at", { ascending: false });
 
     if (error) throw handleDatabaseError(error);
@@ -27,7 +62,6 @@ export const saasRepository = {
 
     if (error) throw handleDatabaseError(error);
 
-    // Manually fetch profile info for members to avoid join complexity with auth.users/profiles
     if (data?.members) {
       const userIds = data.members.map((m: any) => m.user_id);
       const { data: profiles } = await supabaseServer
@@ -37,11 +71,29 @@ export const saasRepository = {
       
       data.members = data.members.map((m: any) => ({
         ...m,
-        user: profiles?.find(p => p.id === m.user_id)
+        user: profiles?.find((p: any) => p.id === m.user_id)
       }));
     }
 
     return data;
+  },
+
+  async getOrganizationBySlugForUser(slug: string, userId: string) {
+    if (!userId) {
+      return null;
+    }
+
+    const organization = await this.getOrganizationBySlug(slug);
+    if (!organization) {
+      return null;
+    }
+
+    const role = await this.getOrganizationRole(organization.id, userId);
+    if (!role) {
+      return null;
+    }
+
+    return organization;
   },
 
   async createOrganization(payload: { name: string; slug: string; billing_email?: string }) {
@@ -88,6 +140,24 @@ export const saasRepository = {
 
     if (error) throw handleDatabaseError(error);
     return data;
+  },
+
+  async getWorkspaceBySlugForUser(workspaceSlug: string, userId: string) {
+    if (!userId) {
+      return null;
+    }
+
+    const workspace = await this.getWorkspaceBySlug(workspaceSlug);
+    if (!workspace) {
+      return null;
+    }
+
+    const role = await this.getOrganizationRole(workspace.organization_id, userId);
+    if (!role) {
+      return null;
+    }
+
+    return workspace;
   },
 
   async createWorkspace(payload: { organization_id: string; name: string; slug: string }) {

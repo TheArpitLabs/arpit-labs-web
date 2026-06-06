@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 import { marketplaceRepository } from "@/lib/repositories/marketplace.repository";
 import { Container } from "@/components/layout/Container";
 import { Badge } from "@/components/ui/badge";
@@ -74,10 +75,12 @@ export default async function MarketplacePage({
               <Card className="group h-full overflow-hidden transition-all hover:border-primary/50">
                 <div className="aspect-video relative overflow-hidden bg-muted">
                   {item.preview_image ? (
-                    <img
+                    <Image
                       src={item.preview_image}
                       alt={item.title}
-                      className="h-full w-full object-cover transition-transform group-hover:scale-105"
+                      fill
+                      className="object-cover transition-transform group-hover:scale-105"
+                      unoptimized
                     />
                   ) : (
                     <div className="flex h-full items-center justify-center">

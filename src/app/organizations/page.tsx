@@ -1,14 +1,20 @@
 import { Container } from "@/components/layout/Container";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
-import { saasRepository } from "@/lib/repositories/saas.repository";
+import { getTenantContext } from "@/lib/saas";
 import { createOrganizationAction } from "@/lib/actions/saas-actions";
 import { AdminSubmitButton } from "@/components/admin/AdminSubmitButton";
 import Link from "next/link";
 import { Plus, Building2, ChevronRight } from "lucide-react";
+import { redirect } from "next/navigation";
 
 export default async function OrganizationsPage() {
-  const organizations = await saasRepository.getOrganizations();
+  const context = await getTenantContext();
+  if (!context) {
+    redirect("/login");
+  }
+
+  const organizations = context.organizations;
 
   return (
     <main className="min-h-screen bg-background">

@@ -2,13 +2,16 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseServer } from '@/lib/supabase/server';
 import { sanitizeText } from '@/lib/sanitize';
 import { checkRateLimit } from '@/lib/rate-limit';
+import { createAuthenticatedSupabaseClient, getUserTokenFromRequest } from '@/lib/auth';
 
 export async function POST(request: NextRequest, { params }: any) {
   try {
     const { slug } = params;
-    const auth = request.headers.get('authorization') || '';
-    const token = auth.replace('Bearer ', '').trim();
-    const { data: userData } = await supabaseServer.auth.getUser(token);
+    const token = getUserTokenFromRequest(request);
+    const supabase = token ? await createAuthenticatedSupabaseClient(token) : null;
+    if (!supabase) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+
+    const { data: userData } = await supabase.auth.getUser();
     const userId = userData?.user?.id;
     if (!userId) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
 
@@ -23,7 +26,11 @@ export async function POST(request: NextRequest, { params }: any) {
     const content = sanitizeText(body.content);
     if (!content) return NextResponse.json({ success: false, error: 'Missing content' }, { status: 400 });
 
-    const { data, error } = await supabaseServer.from('community_replies').insert([{ post_id: post.id, user_id: userId, content }]).select().single();
+    const { data, error } = await supabase
+      .from('community_replies')
+      .insert([{ post_id: post.id, user_id: userId, content }])
+      .select()
+      .single();
     if (error) {
       console.error('Failed to insert reply', error);
       return NextResponse.json({ success: false, error: 'Failed to add reply' }, { status: 500 });

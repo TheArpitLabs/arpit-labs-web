@@ -46,7 +46,7 @@ $$;
 alter table if exists public.projects enable row level security;
 alter table if exists public.lab_notes enable row level security;
 alter table if exists public.experiments enable row level security;
-alter table if exists public.journey_entries enable row level security;
+alter table if exists public.journey enable row level security;
 alter table if exists public.contact_messages enable row level security;
 alter table if exists public.newsletter_subscribers enable row level security;
 
@@ -89,15 +89,15 @@ for all
 using (public.is_admin())
 with check (public.is_admin());
 
-drop policy if exists "public can read journey entries" on public.journey_entries;
+drop policy if exists "public can read journey entries" on public.journey;
 create policy "public can read journey entries"
-on public.journey_entries
+on public.journey
 for select
 using (true);
 
-drop policy if exists "admins manage journey entries" on public.journey_entries;
+drop policy if exists "admins manage journey entries" on public.journey;
 create policy "admins manage journey entries"
-on public.journey_entries
+on public.journey
 for all
 using (public.is_admin())
 with check (public.is_admin());

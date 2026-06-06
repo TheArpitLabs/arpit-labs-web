@@ -1,7 +1,7 @@
 import { Container } from "@/components/layout/Container";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
-import { saasRepository } from "@/lib/repositories/saas.repository";
+import { getCurrentWorkspace } from "@/lib/saas";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -16,7 +16,7 @@ interface WorkspaceDetailPageProps {
 export default async function WorkspaceDetailPage({ params }: WorkspaceDetailPageProps) {
   const { slug } = await params;
   
-  const workspace = await saasRepository.getWorkspaceBySlug(slug).catch(() => null);
+  const workspace = await getCurrentWorkspace(slug);
 
   if (!workspace) {
     notFound();

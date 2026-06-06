@@ -26,6 +26,22 @@ export default function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // Don't run the i18n middleware for the root path to avoid automatic
+  // redirects to locale-prefixed routes which aren't present in the app
+  if (pathname === '/') {
+    return NextResponse.next();
+  }
+
+  // If the app uses unprefixed routes, strip locale prefixes and redirect
+  // so requests to `/en` or `/en/...` map to the existing routes.
+  const localePrefixMatch = pathname.match(/^\/(en|hi)(?:\/|$)/);
+  if (localePrefixMatch) {
+    const newPath = pathname.replace(/^\/(en|hi)/, '') || '/';
+    const redirectUrl = new URL(newPath, request.url);
+    return NextResponse.redirect(redirectUrl);
+  }
+
+  // Note: locale routing is handled by `next-intl` middleware for other paths
   return intlMiddleware(request);
 }
 

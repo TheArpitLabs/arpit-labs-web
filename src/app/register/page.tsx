@@ -19,13 +19,27 @@ export default function RegisterPage() {
 
     const { data, error: signUpError } = await supabaseClient.auth.signUp({ email, password });
 
-    if (signUpError || !data.user) {
+    if (signUpError || !data.user || !data.session) {
       setError(signUpError?.message ?? "Unable to register");
       setLoading(false);
       return;
     }
 
-    // Create profile record using the authenticated user's id
+    const response = await fetch("/api/auth/session", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        access_token: data.session.access_token,
+        refresh_token: data.session.refresh_token,
+      }),
+    });
+
+    if (!response.ok) {
+      setError("Unable to create authenticated session.");
+      setLoading(false);
+      return;
+    }
+
     try {
       await supabaseClient.from("profiles").insert({ id: data.user.id, email: data.user.email, full_name: fullName });
     } catch (err) {

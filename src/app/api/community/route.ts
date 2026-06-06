@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseServer } from '@/lib/supabase/server';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { sanitizeText } from '@/lib/sanitize';
+import { createAuthenticatedSupabaseClient, getUserTokenFromRequest } from '@/lib/auth';
 
 export async function GET(request: NextRequest) {
   try {
@@ -39,9 +40,13 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const auth = request.headers.get('authorization') || '';
-    const token = auth.replace('Bearer ', '').trim();
-    const { data: userData } = await supabaseServer.auth.getUser(token);
+    const token = getUserTokenFromRequest(request);
+    const supabase = token ? await createAuthenticatedSupabaseClient(token) : null;
+    if (!supabase) {
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { data: userData } = await supabase.auth.getUser();
     const userId = userData?.user?.id;
 
     if (!userId) {
@@ -67,7 +72,11 @@ export async function POST(request: NextRequest) {
     const slugBase = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '').slice(0, 160);
     const slug = `${slugBase}-${Date.now().toString(36).slice(-6)}`;
 
-    const { data, error } = await supabaseServer.from('community_posts').insert([{ user_id: userId, title, slug, content, category, tags }]).select().single();
+    const { data, error } = await supabase
+      .from('community_posts')
+      .insert([{ user_id: userId, title, slug, content, category, tags }])
+      .select()
+      .single();
 
     if (error || !data) {
       console.error('Failed to create community post:', error);

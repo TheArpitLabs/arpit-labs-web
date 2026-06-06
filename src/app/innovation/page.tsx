@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Container } from "@/components/layout/Container";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
@@ -75,9 +76,15 @@ export default async function InnovationHubPage() {
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {startups.map((startup) => (
               <div key={startup.id} className="group relative flex flex-col rounded-[2.5rem] border border-border/70 bg-card p-8 transition hover:border-primary">
-                <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-surface">
+                <div className="relative mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-surface">
                   {startup.logo_url ? (
-                    <img src={startup.logo_url} alt={startup.name} className="h-10 w-10 object-contain" />
+                    <Image
+                      src={startup.logo_url}
+                      alt={startup.name}
+                      fill
+                      className="object-contain"
+                      unoptimized
+                    />
                   ) : (
                     <Rocket className="text-primary" size={32} />
                   )}
