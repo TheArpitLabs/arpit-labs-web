@@ -68,10 +68,11 @@ export function MembershipGate({ requiredPlan, title, description, children }: M
         <p className="text-sm uppercase tracking-[0.24em] text-muted">Access required</p>
         <h2 className="mt-4 text-3xl font-semibold text-foreground">{title}</h2>
         <p className="mt-3 text-sm text-muted max-w-2xl mx-auto">{description}</p>
+        {/* PAYMENTS TEMPORARILY DISABLED - Replace with Coming Soon */}
         <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-          <Link href="/pricing" className="inline-flex items-center justify-center rounded-2xl bg-primary px-5 py-3 text-sm font-semibold text-white transition hover:bg-primary/90">
-            Upgrade to access
-          </Link>
+          <button disabled className="inline-flex items-center justify-center rounded-2xl bg-primary px-5 py-3 text-sm font-semibold text-white opacity-50 cursor-not-allowed">
+            Coming Soon
+          </button>
           {!user && (
             <Link href="/login" className="inline-flex items-center justify-center rounded-2xl border border-border/70 bg-background px-5 py-3 text-sm font-semibold text-foreground transition hover:bg-surface">
               Sign in to continue

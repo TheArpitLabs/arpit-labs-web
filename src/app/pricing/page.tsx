@@ -89,10 +89,11 @@ export default function PricingPage() {
                 ))}
               </ul>
 
+              {/* PAYMENTS TEMPORARILY DISABLED - Replace with Coming Soon */}
               <div className="mt-8">
-                <Link href={`/billing?plan=${plan.slug}`} className="inline-flex w-full items-center justify-center rounded-2xl bg-primary px-5 py-3 text-sm font-semibold text-white transition hover:bg-primary/90">
-                  {isCurrent ? "Manage plan" : plan.monthly_price === 0 ? "Choose Free" : "Upgrade"}
-                </Link>
+                <button disabled className="inline-flex w-full items-center justify-center rounded-2xl bg-primary px-5 py-3 text-sm font-semibold text-white opacity-50 cursor-not-allowed">
+                  {isCurrent ? "Current plan" : "Coming Soon"}
+                </button>
               </div>
             </div>
           );

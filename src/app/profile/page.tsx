@@ -103,12 +103,13 @@ export default function ProfilePage() {
             <h2 className="mt-2 text-2xl font-semibold">{activePlan.name}</h2>
             <p className="mt-2 text-sm text-muted">{activePlan.description}</p>
           </div>
-          <Link
-            href={activePlan.slug === "premium" ? "/account/subscription" : "/pricing"}
-            className="inline-flex items-center justify-center rounded-2xl bg-primary px-4 py-3 text-sm font-semibold text-white transition hover:bg-primary/90"
+          {/* PAYMENTS TEMPORARILY DISABLED - Replace with Coming Soon */}
+          <button
+            disabled
+            className="inline-flex items-center justify-center rounded-2xl bg-primary px-4 py-3 text-sm font-semibold text-white opacity-50 cursor-not-allowed"
           >
-            {activePlan.slug === "premium" ? "Manage subscription" : "Upgrade membership"}
-          </Link>
+            Coming Soon
+          </button>
         </div>
 
         <div className="mt-6 grid gap-3 sm:grid-cols-3">

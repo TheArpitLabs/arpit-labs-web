@@ -1,4 +1,21 @@
 import { NextResponse } from "next/server";
+
+// PAYMENTS TEMPORARILY DISABLED
+// Membership purchases are temporarily unavailable during product validation phase.
+// To re-enable: Uncomment the original implementation below and remove this 501 response.
+
+export async function POST(request: Request) {
+  return NextResponse.json(
+    {
+      success: false,
+      message: "Membership purchases are temporarily unavailable.",
+    },
+    { status: 501 }
+  );
+}
+
+/*
+// ORIGINAL IMPLEMENTATION (Commented out - re-enable when payments are restored)
 import { supabaseServer } from "@/lib/supabase/server";
 import { getPaymentProvider } from "@/lib/payments/payment-provider";
 import { membershipRepository } from "@/lib/repositories/membership.repository";
@@ -88,3 +105,4 @@ export async function POST(request: Request) {
     paymentRequired: false,
   });
 }
+*/

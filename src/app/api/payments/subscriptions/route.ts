@@ -1,4 +1,31 @@
 import { NextResponse } from "next/server";
+
+// PAYMENTS TEMPORARILY DISABLED
+// Subscription management is temporarily unavailable during product validation phase.
+// To re-enable: Uncomment the original implementation below and remove this 501 response.
+
+export async function GET(request: Request) {
+  return NextResponse.json(
+    {
+      success: false,
+      message: "Subscription management is temporarily unavailable.",
+    },
+    { status: 501 }
+  );
+}
+
+export async function POST(request: Request) {
+  return NextResponse.json(
+    {
+      success: false,
+      message: "Subscription management is temporarily unavailable.",
+    },
+    { status: 501 }
+  );
+}
+
+/*
+// ORIGINAL IMPLEMENTATION (Commented out - re-enable when payments are restored)
 import { supabaseServer } from "@/lib/supabase/server";
 import { paymentRepository } from "@/lib/repositories/payment.repository";
 
@@ -49,3 +76,4 @@ export async function POST(request: Request) {
 
   return NextResponse.json({ success: false, error: "Invalid action" }, { status: 400 });
 }
+*/

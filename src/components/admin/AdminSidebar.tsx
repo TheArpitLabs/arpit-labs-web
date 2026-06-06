@@ -39,8 +39,9 @@ const navigationItems: Array<{
   { href: "/admin/experiments", label: "Experiments", icon: <FlaskConical size={18} /> },
   { href: "/admin/blog", label: "Blog", icon: <FileText size={18} /> },
   { href: "/admin/hackathons", label: "Hackathons", icon: <Sparkles size={18} /> },
-  { href: "/admin/memberships", label: "Memberships", icon: <CreditCard size={18} /> },
-  { href: "/admin/payments" as Route, label: "Payments", icon: <Receipt size={18} /> },
+  // PAYMENTS TEMPORARILY DISABLED - Hide Memberships and Payments navigation
+  // { href: "/admin/memberships", label: "Memberships", icon: <CreditCard size={18} /> },
+  // { href: "/admin/payments" as Route, label: "Payments", icon: <Receipt size={18} /> },
   { href: "/admin/journey", label: "Journey", icon: <Milestone size={18} /> },
   { href: "/admin/newsletter", label: "Newsletter", icon: <Users size={18} /> },
   { href: "/admin/community" as Route, label: "Community", icon: <Users size={18} /> },

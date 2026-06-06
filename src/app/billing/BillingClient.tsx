@@ -188,8 +188,9 @@ export function BillingClient() {
                 Yearly
               </button>
             </div>
-            <Button onClick={handleCheckout} className="w-full">
-              Confirm upgrade
+            {/* PAYMENTS TEMPORARILY DISABLED - Replace with Coming Soon */}
+            <Button disabled className="w-full opacity-50 cursor-not-allowed">
+              Coming Soon
             </Button>
             {checkoutMessage && <p className="text-sm text-muted">{checkoutMessage}</p>}
             {checkoutUrl && (

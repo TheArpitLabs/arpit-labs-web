@@ -89,10 +89,11 @@ export default function AccountSubscriptionPage() {
             </div>
           </div>
 
+          {/* PAYMENTS TEMPORARILY DISABLED - Replace with Coming Soon */}
           <div className="mt-8">
-            <Link href="/billing" className="inline-flex items-center justify-center rounded-2xl bg-primary px-5 py-3 text-sm font-semibold text-white transition hover:bg-primary/90">
-              Manage billing
-            </Link>
+            <button disabled className="inline-flex items-center justify-center rounded-2xl bg-primary px-5 py-3 text-sm font-semibold text-white opacity-50 cursor-not-allowed">
+              Coming Soon
+            </button>
           </div>
         </div>
 
@@ -119,12 +120,13 @@ export default function AccountSubscriptionPage() {
               <p className="text-sm uppercase tracking-[0.24em] text-muted">{plan.name}</p>
               <p className="mt-3 text-lg font-semibold text-foreground">{formatPrice(plan.monthly_price)} / month</p>
               <p className="mt-2 text-sm text-muted">{plan.description}</p>
-              <Link
-                href={`/billing?plan=${plan.slug}`}
-                className="mt-4 inline-flex w-full items-center justify-center rounded-2xl border border-transparent bg-primary px-4 py-3 text-center text-sm font-semibold text-white shadow-lg shadow-primary/10 transition hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+              {/* PAYMENTS TEMPORARILY DISABLED - Replace with Coming Soon */}
+              <button
+                disabled
+                className="mt-4 inline-flex w-full items-center justify-center rounded-2xl border border-transparent bg-primary px-4 py-3 text-center text-sm font-semibold text-white shadow-lg shadow-primary/10 opacity-50 cursor-not-allowed"
               >
-                {plan.slug === activePlan.slug ? "Current plan" : "Select"}
-              </Link>
+                {plan.slug === activePlan.slug ? "Current plan" : "Coming Soon"}
+              </button>
             </div>
           ))}
         </div>
