@@ -1,6 +1,27 @@
 import React from "react";
 import { AdminSection } from "@/components/admin/AdminSection";
 import { AdminTopbar } from "@/components/admin/AdminTopbar";
+
+// PAYMENTS TEMPORARILY DISABLED - Payments page disabled
+export default async function AdminPaymentsPage() {
+  return (
+    <div className="space-y-6">
+      <AdminTopbar
+        title="Payment Transactions"
+        subtitle="Payment management is temporarily unavailable during product validation phase."
+      />
+
+      <AdminSection title="Disabled" description="Transaction tracking and payment management are temporarily disabled.">
+        <div className="rounded-3xl border border-border/70 bg-background/70 p-8 text-center">
+          <p className="text-muted">This section is currently unavailable.</p>
+        </div>
+      </AdminSection>
+    </div>
+  );
+}
+
+/*
+// ORIGINAL IMPLEMENTATION (Commented out - re-enable when payments are restored)
 import { AdminTable } from "@/components/admin/AdminTable";
 import { paymentRepository } from "@/lib/repositories/payment.repository";
 import { CreditCard, Download, Search } from "lucide-react";
@@ -67,3 +88,4 @@ export default async function AdminPaymentsPage() {
     </div>
   );
 }
+*/

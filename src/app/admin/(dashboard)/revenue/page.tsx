@@ -1,5 +1,21 @@
 import React from "react";
 import { AdminSection } from "@/components/admin/AdminSection";
+
+// PAYMENTS TEMPORARILY DISABLED - Revenue dashboard disabled
+export default async function RevenueDashboardPage() {
+  return (
+    <div className="space-y-8">
+      <AdminSection title="Revenue Overview" description="Revenue tracking is temporarily unavailable during product validation phase.">
+        <div className="rounded-3xl border border-border/70 bg-background/70 p-8 text-center">
+          <p className="text-muted">This section is currently unavailable.</p>
+        </div>
+      </AdminSection>
+    </div>
+  );
+}
+
+/*
+// ORIGINAL IMPLEMENTATION (Commented out - re-enable when payments are restored)
 import { MetricCard } from "@/components/admin/MetricCard";
 import { AdminTable } from "@/components/admin/AdminTable";
 import { paymentRepository } from "@/lib/repositories/payment.repository";
@@ -73,3 +89,4 @@ export default async function RevenueDashboardPage() {
     </div>
   );
 }
+*/

@@ -1,6 +1,41 @@
 import { supabaseServer } from "@/lib/supabase/server";
 import { handleDatabaseError } from "@/lib/errors";
 
+// PAYMENTS TEMPORARILY DISABLED - Payment repository functions disabled
+export const paymentRepository = {
+  async getAllPlans() {
+    return [];
+  },
+
+  async getPlanBySlug(slug: string) {
+    return null;
+  },
+
+  async getUserSubscription(userId: string) {
+    return null;
+  },
+
+  async getTransactions(userId: string) {
+    return [];
+  },
+
+  async getInvoices(userId: string) {
+    return [];
+  },
+
+  async getRevenueMetrics() {
+    return {
+      totalRevenue: 0,
+      subscriptionRevenue: 0,
+      marketplaceRevenue: 0,
+      activeSubscribers: 0,
+      transactions: []
+    };
+  }
+};
+
+/*
+// ORIGINAL IMPLEMENTATION (Commented out - re-enable when payments are restored)
 export const paymentRepository = {
   async getAllPlans() {
     const { data, error } = await supabaseServer
@@ -85,3 +120,4 @@ export const paymentRepository = {
     };
   }
 };
+*/

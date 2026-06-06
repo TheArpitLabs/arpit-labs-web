@@ -1,8 +1,83 @@
 import type { MembershipFeatureKey, MembershipPlan, UserSubscription } from "@/types/membership";
 
-export const membershipPlanSlugs = ["free", "student", "premium"] as const;
+// PAYMENTS TEMPORARILY DISABLED - All users now have free access
+export const membershipPlanSlugs = ["free"] as const;
 export type MembershipPlanSlug = (typeof membershipPlanSlugs)[number];
 
+export const membershipPlans: MembershipPlan[] = [
+  {
+    id: "free",
+    name: "Free",
+    slug: "free",
+    description: "Access the community, public learning resources, and essential AI support.",
+    monthly_price: 0,
+    yearly_price: 0,
+    features: [
+      "community_access",
+      "public_projects",
+      "public_blog",
+      "limited_ai",
+      "public_courses",
+    ],
+    active: true,
+    created_at: new Date().toISOString(),
+  },
+];
+
+export const featureLabels: Record<MembershipFeatureKey, string> = {
+  community_access: "Community Access",
+  public_projects: "Public Projects",
+  public_blog: "Public Blog",
+  limited_ai: "Limited AI Assistant Usage",
+  public_courses: "Public Courses",
+  premium_courses: "Premium Courses",
+  learning_roadmaps: "Learning Roadmaps",
+  hackathon_resources: "Hackathon Resources",
+  higher_ai_limits: "Higher AI Limits",
+  saved_learning_progress: "Saved Learning Progress",
+  unlimited_ai: "Unlimited AI Assistant",
+  recruiter_assistant: "Recruiter Assistant",
+  ai_project_generator: "AI Project Generator",
+  premium_labs: "Premium Labs",
+  exclusive_content: "Exclusive Content",
+  advanced_analytics: "Advanced Analytics",
+};
+
+export function getPlanBySlug(slug: string | undefined): MembershipPlan {
+  return membershipPlans[0]; // Always return free plan
+}
+
+export function getPlanById(planId: string | undefined): MembershipPlan {
+  return membershipPlans[0]; // Always return free plan
+}
+
+export function getUserPlan(subscription: UserSubscription | null | undefined): MembershipPlan {
+  return membershipPlans[0]; // Always return free plan
+}
+
+export function isAtLeastPlan(subscription: UserSubscription | null | undefined, required: MembershipPlanSlug) {
+  return true; // All users have at least free access
+}
+
+export function canAccessFeature(featureKey: MembershipFeatureKey, subscription: UserSubscription | null | undefined) {
+  return true; // All features accessible in free mode
+}
+
+export function hasPremiumAccess(subscription: UserSubscription | null | undefined) {
+  return true; // All users have premium access temporarily
+}
+
+export function hasStudentAccess(subscription: UserSubscription | null | undefined) {
+  return true; // All users have student access temporarily
+}
+
+export function formatPrice(amount: number) {
+  return amount === 0 ? "Free" : `$${amount.toFixed(0)}`;
+}
+
+/*
+// ORIGINAL IMPLEMENTATION (Commented out - re-enable when payments are restored)
+export const membershipPlanSlugs = ["free", "student", "premium"] as const;
 export const membershipPlans: MembershipPlan[] = [
   {
     id: "free",
@@ -73,33 +148,6 @@ export const membershipPlans: MembershipPlan[] = [
   },
 ];
 
-export const featureLabels: Record<MembershipFeatureKey, string> = {
-  community_access: "Community Access",
-  public_projects: "Public Projects",
-  public_blog: "Public Blog",
-  limited_ai: "Limited AI Assistant Usage",
-  public_courses: "Public Courses",
-  premium_courses: "Premium Courses",
-  learning_roadmaps: "Learning Roadmaps",
-  hackathon_resources: "Hackathon Resources",
-  higher_ai_limits: "Higher AI Limits",
-  saved_learning_progress: "Saved Learning Progress",
-  unlimited_ai: "Unlimited AI Assistant",
-  recruiter_assistant: "Recruiter Assistant",
-  ai_project_generator: "AI Project Generator",
-  premium_labs: "Premium Labs",
-  exclusive_content: "Exclusive Content",
-  advanced_analytics: "Advanced Analytics",
-};
-
-export function getPlanBySlug(slug: string | undefined): MembershipPlan {
-  return membershipPlans.find((plan) => plan.slug === slug) ?? membershipPlans[0];
-}
-
-export function getPlanById(planId: string | undefined): MembershipPlan {
-  return membershipPlans.find((plan) => plan.id === planId || plan.slug === planId) ?? membershipPlans[0];
-}
-
 export function getUserPlan(subscription: UserSubscription | null | undefined): MembershipPlan {
   if (!subscription || !subscription.membership_plans) {
     return membershipPlans[0];
@@ -124,7 +172,4 @@ export function hasPremiumAccess(subscription: UserSubscription | null | undefin
 export function hasStudentAccess(subscription: UserSubscription | null | undefined) {
   return isAtLeastPlan(subscription, "student");
 }
-
-export function formatPrice(amount: number) {
-  return amount === 0 ? "Free" : `$${amount.toFixed(0)}`;
-}
+*/

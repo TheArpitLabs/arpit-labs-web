@@ -1,5 +1,26 @@
 import { AdminSection } from "@/components/admin/AdminSection";
 import { AdminTopbar } from "@/components/admin/AdminTopbar";
+
+// PAYMENTS TEMPORARILY DISABLED - Admin memberships page disabled
+export default async function AdminMembershipsPage() {
+  return (
+    <div className="space-y-6">
+      <AdminTopbar
+        title="Memberships"
+        subtitle="Membership management is temporarily unavailable."
+      />
+
+      <AdminSection title="Disabled" description="Membership plans and subscription management are temporarily disabled during product validation phase.">
+        <div className="rounded-3xl border border-border/70 bg-background/70 p-8 text-center">
+          <p className="text-muted">This section is currently unavailable.</p>
+        </div>
+      </AdminSection>
+    </div>
+  );
+}
+
+/*
+// ORIGINAL IMPLEMENTATION (Commented out - re-enable when payments are restored)
 import { AdminTable } from "@/components/admin/AdminTable";
 import { MetricCard } from "@/components/admin/MetricCard";
 import { membershipRepository } from "@/lib/repositories/membership.repository";
@@ -69,3 +90,4 @@ export default async function AdminMembershipsPage() {
     </div>
   );
 }
+*/

@@ -223,8 +223,8 @@ export function BillingClient() {
             <h2 className="text-2xl font-semibold text-foreground">Billing history</h2>
             <p className="mt-2 text-sm text-muted">Review your recent subscription activity.</p>
           </div>
-          <Link href="/account/subscription" className="text-sm font-semibold text-primary hover:underline">
-            View subscription details
+          <Link href="/profile" className="text-sm font-semibold text-primary hover:underline">
+            View profile
           </Link>
         </div>
 

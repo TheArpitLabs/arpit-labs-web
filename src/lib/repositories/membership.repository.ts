@@ -7,6 +7,83 @@ function getBearerToken(request: Request) {
   return request.headers.get("authorization")?.replace("Bearer ", "") ?? "";
 }
 
+// PAYMENTS TEMPORARILY DISABLED - Membership repository functions disabled or modified for free access
+export const membershipRepository = {
+  async getAllPlans(): Promise<MembershipPlan[]> {
+    // Return empty array - plans not available
+    return [];
+  },
+
+  async getPlanBySlug(slug: string): Promise<MembershipPlan | null> {
+    // Return null - plans not available
+    return null;
+  },
+
+  async getPlanById(planId: string): Promise<MembershipPlan | null> {
+    // Return null - plans not available
+    return null;
+  },
+
+  async getActiveSubscriptionByUser(userId: string): Promise<(UserSubscription & { membership_plans?: MembershipPlan }) | null> {
+    // Return null - subscriptions not available
+    return null;
+  },
+
+  async getSubscriptionsByUser(userId: string): Promise<(UserSubscription & { membership_plans?: MembershipPlan })[]> {
+    // Return empty array - subscriptions not available
+    return [];
+  },
+
+  async getAllSubscriptions(): Promise<(UserSubscription & { membership_plans?: MembershipPlan })[]> {
+    // Return empty array - subscriptions not available
+    return [];
+  },
+
+  async getFeatureAccess(planId: string): Promise<FeatureAccess[]> {
+    // Return empty array - feature access not available
+    return [];
+  },
+
+  async updatePlan(planId: string, updates: Partial<Omit<MembershipPlan, "id" | "created_at" | "slug">>): Promise<MembershipPlan> {
+    // Throw error - plan updates disabled
+    throw new Error("Membership plan updates are temporarily disabled.");
+  },
+
+  async getSubscriptionMetrics(): Promise<{ activeCount: number; totalCount: number; revenueEstimate: number; byPlan: Record<string, number> }> {
+    // Return empty metrics - subscriptions not available
+    return {
+      activeCount: 0,
+      totalCount: 0,
+      revenueEstimate: 0,
+      byPlan: {},
+    };
+  },
+
+  async validateFeatureAccessFromRequest(request: Request, featureKey: MembershipFeatureKey) {
+    const token = getBearerToken(request);
+
+    if (!token) {
+      return { allowed: false, status: 401, error: "Authentication required." };
+    }
+
+    const { data: currentUser, error: userError } = await supabaseServer.auth.getUser(token);
+
+    if (userError || !currentUser?.user) {
+      return { allowed: false, status: 401, error: "Authentication required." };
+    }
+
+    // Always allow access in free mode
+    return {
+      allowed: true,
+      status: 200,
+      user: currentUser.user,
+      subscription: null,
+    };
+  },
+};
+
+/*
+// ORIGINAL IMPLEMENTATION (Commented out - re-enable when payments are restored)
 export const membershipRepository = {
   async getAllPlans(): Promise<MembershipPlan[]> {
     const { data, error } = await supabaseServer.from("membership_plans").select("*").order("created_at", { ascending: true });
@@ -157,3 +234,4 @@ export const membershipRepository = {
     };
   },
 };
+*/

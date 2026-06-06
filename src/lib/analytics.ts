@@ -90,17 +90,20 @@ export const analytics = {
   newsletterSignup: () =>
     trackEvent('conversion', 'newsletter_signup', 'newsletter', 1),
 
-  planUpgrade: (planSlug: string) =>
-    trackEvent('membership', 'plan_upgrade', planSlug, 1),
+  // PAYMENTS TEMPORARILY DISABLED - Membership tracking disabled
+  planUpgrade: (planSlug: string) => {
+    // No-op - membership tracking disabled
+  },
 
-  planDowngrade: (planSlug: string) =>
-    trackEvent('membership', 'plan_downgrade', planSlug, 1),
+  planDowngrade: (planSlug: string) => {
+    // No-op - membership tracking disabled
+  },
 
   featureUsage: (featureKey: string, planSlug?: string) =>
-    trackEvent('membership', 'feature_usage', planSlug ? `${featureKey}:${planSlug}` : featureKey, 1),
+    trackEvent('engagement', 'feature_usage', featureKey, 1),
 
   aiUsageByPlan: (featureKey: string, planSlug: string) =>
-    trackEvent('ai', 'ai_usage_by_plan', `${featureKey}:${planSlug}`, 1),
+    trackEvent('ai', 'ai_usage', featureKey, 1),
 
   downloadResume: () =>
     trackEvent('conversion', 'download_resume', 'resume', 1),
