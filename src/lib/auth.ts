@@ -62,15 +62,19 @@ export async function clearUserSessionCookies() {
 }
 
 export async function getUserSession() {
+  console.log('[getUserSession] === START ===');
   const cookieStore = await cookies();
   const accessToken = cookieStore.get(userAccessCookieName)?.value;
   const refreshToken = cookieStore.get(userRefreshCookieName)?.value;
 
   console.log('[getUserSession] Cookies check:', {
     hasAccessToken: !!accessToken,
+    accessTokenLength: accessToken?.length,
     hasRefreshToken: !!refreshToken,
+    refreshTokenLength: refreshToken?.length,
     accessCookieName: userAccessCookieName,
     refreshCookieName: userRefreshCookieName,
+    allCookies: Array.from(cookieStore.getAll()).map(c => c.name),
   });
 
   if (!accessToken || !refreshToken) {
@@ -88,6 +92,7 @@ export async function getUserSession() {
     hasSessionError: !!sessionError,
     sessionErrorMessage: sessionError?.message,
     hasSession: !!sessionData.session,
+    sessionUserId: sessionData.session?.user?.id,
   });
 
   if (sessionError || !sessionData.session) {
@@ -103,6 +108,7 @@ export async function getUserSession() {
     userErrorMessage: userError?.message,
     hasUser: !!userData.user,
     userId: userData.user?.id,
+    userEmail: userData.user?.email,
   });
 
   if (userError || !userData.user) {
@@ -110,7 +116,7 @@ export async function getUserSession() {
     return null;
   }
 
-  console.log('[getUserSession] Success, returning session with user:', userData.user.email);
+  console.log('[getUserSession] === SUCCESS === Returning session with user:', userData.user.email);
   return {
     accessToken: currentAccessToken,
     refreshToken: sessionData.session.refresh_token,
@@ -119,7 +125,14 @@ export async function getUserSession() {
 }
 
 export async function getCurrentUser() {
+  console.log('[getCurrentUser] === START ===');
   const session = await getUserSession();
+  console.log('[getCurrentUser] Result:', {
+    hasSession: !!session,
+    hasUser: !!session?.user,
+    userId: session?.user?.id,
+    userEmail: session?.user?.email,
+  });
   return session?.user ?? null;
 }
 
