@@ -20,7 +20,7 @@ export function ProjectsExplorer({ projects }: ProjectsExplorerProps) {
   const [query, setQuery] = useState("");
   const deferredQuery = useDeferredValue(query);
 
-  const categories = ["All", ...new Set(projects.map((project) => project.category).filter(Boolean))];
+  const categories = ["All", ...new Set(projects.map((project) => project.category).filter((c): c is string => Boolean(c)))];
   const normalizedQuery = deferredQuery.trim().toLowerCase();
 
   const filteredProjects = projects.filter((project) => {
@@ -110,7 +110,7 @@ export function ProjectsExplorer({ projects }: ProjectsExplorerProps) {
                     </p>
 
                     <div className="mt-6 flex flex-wrap gap-2">
-                      {project.tags.slice(0, 4).map((tag) => (
+                      {(project.tags ?? []).slice(0, 4).map((tag) => (
                         <Badge key={tag} variant="outline" className="px-2 py-1 text-[10px] tracking-[0.18em]">
                           {tag}
                         </Badge>
