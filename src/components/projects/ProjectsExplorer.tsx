@@ -29,7 +29,7 @@ export function ProjectsExplorer({ projects }: ProjectsExplorerProps) {
       project.title,
       project.description,
       project.category,
-      ...project.tags,
+      ...(project.tags ?? []),
       ...(project.tech_stack ?? []),
     ]
       .join(" ")
