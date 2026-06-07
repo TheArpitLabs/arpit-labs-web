@@ -6,6 +6,7 @@ import { supabaseClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Footer } from "@/components/layout/Footer";
 import { User, Mail, Calendar, FolderOpen, Search, MessageSquare, Bookmark, Award, Code2, TrendingUp, Users, Activity } from "lucide-react";
@@ -14,6 +15,7 @@ export default function ProfilePage() {
   const [user, setUser] = useState<any | null>(null);
   const [profile, setProfile] = useState<any | null>(null);
   const [saved, setSaved] = useState<any[]>([]);
+  const [projects, setProjects] = useState<any[]>([]);
 
   useEffect(() => {
     let mounted = true;
@@ -24,12 +26,14 @@ export default function ProfilePage() {
       setUser(data?.user ?? null);
 
       if (data?.user) {
-        const [{ data: p }, { data: s }] = await Promise.all([
+        const [{ data: p }, { data: s }, { data: proj }] = await Promise.all([
           supabaseClient.from("profiles").select("*").eq("id", data.user.id).single(),
           supabaseClient.from("saved_content").select("*").eq("user_id", data.user.id).order("created_at", { ascending: false }),
+          supabaseClient.from("projects").select("*").eq("owner_id", data.user.id).order("created_at", { ascending: false }),
         ]);
         setProfile(p ?? null);
         setSaved(s ?? []);
+        setProjects(proj ?? []);
       }
     }
 
@@ -39,9 +43,11 @@ export default function ProfilePage() {
       if (session?.user) {
         supabaseClient.from("profiles").select("*").eq("id", session.user.id).single().then(({ data: p }) => setProfile(p ?? null));
         supabaseClient.from("saved_content").select("*").eq("user_id", session.user.id).order("created_at", { ascending: false }).then(({ data: s }) => setSaved(s ?? []));
+        supabaseClient.from("projects").select("*").eq("owner_id", session.user.id).order("created_at", { ascending: false }).then(({ data: proj }) => setProjects(proj ?? []));
       } else {
         setProfile(null);
         setSaved([]);
+        setProjects([]);
       }
     });
 
@@ -66,6 +72,11 @@ export default function ProfilePage() {
   }
 
   const joinDate = user?.created_at ? new Date(user.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'Unknown';
+  const totalProjects = projects.length;
+  const publishedProjects = projects.filter(p => p.status === 'published').length;
+  const draftProjects = projects.filter(p => p.status === 'draft').length;
+  const featuredProject = projects.find(p => p.featured && p.status === 'published');
+  const recentProjects = projects.slice(0, 3);
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-12">
@@ -106,7 +117,7 @@ export default function ProfilePage() {
             </div>
             <div>
               <p className="text-sm text-muted-foreground">My Projects</p>
-              <p className="text-2xl font-semibold">0</p>
+              <p className="text-2xl font-semibold">{totalProjects}</p>
             </div>
           </div>
         </Card>
@@ -147,18 +158,72 @@ export default function ProfilePage() {
 
       {/* My Projects */}
       <section className="mb-8">
-        <div className="mb-4 flex items-center gap-2">
-          <Code2 className="h-5 w-5 text-primary" />
-          <h2 className="text-xl font-semibold">My Projects</h2>
+        <div className="mb-4 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Code2 className="h-5 w-5 text-primary" />
+            <h2 className="text-xl font-semibold">My Projects</h2>
+          </div>
+          <Link href="/profile/projects" as="/profile/projects" className="text-sm text-primary hover:underline">
+            View All
+          </Link>
         </div>
-        <Card className="border-border/70 bg-card p-8">
-          <EmptyState
-            icon={FolderOpen}
-            title="No projects yet"
-            description="Start creating and track your engineering projects here."
-            actionLabel="Create Project"
-            actionHref="/dashboard"
-          />
+        
+        {featuredProject && (
+          <Card className="mb-4 border-primary/50 bg-card p-6">
+            <div className="flex items-start gap-4">
+              <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <Award className="h-8 w-8" />
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center gap-2">
+                  <h3 className="font-semibold text-foreground">{featuredProject.title}</h3>
+                  <Badge className="bg-primary text-primary-foreground">Featured</Badge>
+                </div>
+                <p className="mt-1 text-sm text-muted-foreground line-clamp-2">{featuredProject.description}</p>
+                <div className="mt-2 flex items-center gap-4 text-xs text-muted-foreground">
+                  <span>{featuredProject.project_type}</span>
+                  <span>•</span>
+                  <span>{featuredProject.views_count || 0} views</span>
+                </div>
+              </div>
+              <Link href={`/projects/${featuredProject.slug}`} as={`/projects/${featuredProject.slug}`}>
+                <Button variant="outline" size="sm">View</Button>
+              </Link>
+            </div>
+          </Card>
+        )}
+
+        <Card className="border-border/70 bg-card p-6">
+          {recentProjects.length > 0 ? (
+            <div className="space-y-4">
+              {recentProjects.map((project) => (
+                <Link key={project.id} href={`/projects/${project.slug}`} as={`/projects/${project.slug}`} className="block">
+                  <div className="flex items-center gap-4 rounded-xl border border-border/70 bg-background p-4 transition hover:border-primary">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-muted/20">
+                      <FolderOpen className="h-6 w-6 text-muted-foreground" />
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-medium text-foreground">{project.title}</h4>
+                      <div className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
+                        <Badge variant="outline" className="text-xs">{project.status}</Badge>
+                        <span>•</span>
+                        <span>{new Date(project.created_at).toLocaleDateString()}</span>
+                      </div>
+                    </div>
+                    <Activity className="h-4 w-4 text-muted-foreground" />
+                  </div>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <EmptyState
+              icon={FolderOpen}
+              title="No projects yet"
+              description="Start creating and track your engineering projects here."
+              actionLabel="Create Project"
+              actionHref="/creator/projects/new"
+            />
+          )}
         </Card>
       </section>
 

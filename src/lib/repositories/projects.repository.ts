@@ -4,15 +4,15 @@ import { ProjectInput } from "@/lib/validation/project.schema";
 import { handleDatabaseError } from "@/lib/errors";
 
 export const projectsRepository = {
-  async getProjects(filters?: { published?: boolean; featured?: boolean; search?: string; category?: string }) {
+  async getProjects(filters?: { status?: 'draft' | 'published' | 'archived'; featured?: boolean; search?: string; category?: string; owner_id?: string }) {
     let query = supabaseServer
       .from("projects")
       .select("*")
       .order("featured", { ascending: false })
       .order("created_at", { ascending: false });
 
-    if (filters?.published !== undefined) {
-      query = query.eq("published", filters.published);
+    if (filters?.status !== undefined) {
+      query = query.eq("status", filters.status);
     }
     if (filters?.featured !== undefined) {
       query = query.eq("featured", filters.featured);
@@ -21,7 +21,10 @@ export const projectsRepository = {
       query = query.eq("category", filters.category);
     }
     if (filters?.search) {
-      query = query.ilike("title", `%${filters.search}%`);
+      query = query.or(`title.ilike.%${filters.search}%,description.ilike.%${filters.search}%`);
+    }
+    if (filters?.owner_id) {
+      query = query.eq("owner_id", filters.owner_id);
     }
 
     const { data, error } = await query;

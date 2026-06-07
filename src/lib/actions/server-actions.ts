@@ -67,8 +67,8 @@ export async function getJourneyTimeline(): Promise<JourneyItem[]> {
 
 export async function getProjects(): Promise<Project[]> {
   try {
-    const projects = await projectsRepository.getProjects() as Project[];
-    return projects.filter((project) => project.published ?? true);
+    const projects = await projectsRepository.getProjects({ status: 'published' }) as Project[];
+    return projects;
   } catch {
     return [];
   }
@@ -77,7 +77,7 @@ export async function getProjects(): Promise<Project[]> {
 export async function getProjectBySlug(slug: string): Promise<Project | null> {
   try {
     const project = await projectsRepository.getProjectBySlug(slug) as Project | null;
-    return project && (project.published ?? true) ? project : null;
+    return project && project.status === 'published' ? project : null;
   } catch {
     return null;
   }

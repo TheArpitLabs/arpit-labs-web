@@ -3,8 +3,8 @@ import { Footer } from "@/components/layout/Footer";
 import { AnimatedSection } from "@/components/animations/AnimatedSection";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { getProjectBySlug } from "@/lib/actions/server-actions";
-import { Github, ExternalLink, Calendar, Tag, ArrowLeft } from "lucide-react";
+import { supabaseServer } from "@/lib/supabase/server";
+import { Github, ExternalLink, Calendar, Tag, ArrowLeft, Eye, Heart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -20,20 +20,31 @@ interface ProjectPageProps {
 
 export async function generateMetadata({ params }: ProjectPageProps) {
   const { slug } = await params;
-  const project = await getProjectBySlug(slug) as Project | null;
+  const { data: project } = await supabaseServer
+    .from('projects')
+    .select('*')
+    .eq('slug', slug)
+    .eq('status', 'published')
+    .single();
+  
   if (!project) return { title: "Project Not Found" };
 
   return createArticleMetadata({
     title: `${project.title} | Arpit Labs`,
     description: project.description,
     path: `/projects/${slug}`,
-    keywords: [project.category, ...project.tags],
+    keywords: [project.category || '', ...(project.tags || [])],
   });
 }
 
 export default async function ProjectDetailPage({ params }: ProjectPageProps) {
   const { slug } = await params;
-  const project = await getProjectBySlug(slug) as Project | null;
+  const { data: project } = await supabaseServer
+    .from('projects')
+    .select('*')
+    .eq('slug', slug)
+    .eq('status', 'published')
+    .single();
 
   if (!project) {
     notFound();
@@ -91,9 +102,17 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
                   })}
                 </div>
                 <div className="flex items-center gap-2 text-sm text-muted">
+                  <Eye size={18} className="text-secondary" />
+                  {project.views_count || 0} views
+                </div>
+                <div className="flex items-center gap-2 text-sm text-muted">
+                  <Heart size={18} className="text-red-500" />
+                  {project.likes_count || 0} likes
+                </div>
+                <div className="flex items-center gap-2 text-sm text-muted">
                   <Tag size={18} className="text-secondary" />
                   <div className="flex gap-2">
-                    {project.tags.map((tag: string) => (
+                    {project.tags?.map((tag: string) => (
                       <span key={tag}>#{tag}</span>
                     ))}
                   </div>
@@ -161,7 +180,7 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
                 <h2 className="text-2xl font-bold text-foreground">Lessons Learned</h2>
                 {project.lessons_learned && project.lessons_learned.length > 0 ? (
                   <ul className="mt-4 space-y-3">
-                    {project.lessons_learned.map((lesson) => (
+                    {project.lessons_learned?.map((lesson: string) => (
                       <li key={lesson} className="flex gap-3 text-lg text-muted">
                         <span className="mt-2 h-2 w-2 rounded-full bg-primary/60" />
                         <span>{lesson}</span>
@@ -180,7 +199,7 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
               <Card className="p-8">
                 <h2 className="text-2xl font-bold text-foreground">Tech Stack</h2>
                 <div className="mt-6 flex flex-wrap gap-2">
-                  {(project.tech_stack && project.tech_stack.length > 0 ? project.tech_stack : project.tags).map((item) => (
+                  {(project.tech_stack && project.tech_stack.length > 0 ? project.tech_stack : project.tags)?.map((item: string) => (
                     <Badge key={item} variant="outline" className="px-3 py-1">
                       {item}
                     </Badge>
@@ -192,7 +211,7 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
                 <h2 className="text-2xl font-bold text-foreground">Screenshots</h2>
                 {project.screenshots && project.screenshots.length > 0 ? (
                   <div className="mt-6 grid gap-4">
-                    {project.screenshots.map((image, index) => (
+                    {project.screenshots?.map((image: string, index: number) => (
                       <div key={image} className="relative overflow-hidden rounded-[1.5rem] border border-border/70 dark:border-slate-800 aspect-[16/9]">
                         <Image
                           src={image}

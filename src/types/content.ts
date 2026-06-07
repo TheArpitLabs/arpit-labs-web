@@ -1,26 +1,42 @@
 export type JourneyEntryType = 'work' | 'education' | 'achievement' | 'milestone' | 'competition' | 'hackathon' | 'certification';
 
+export type ProjectType = 'software' | 'hardware' | 'research' | 'opensource' | 'hackathon' | 'hybrid';
+export type ProjectStatus = 'draft' | 'published' | 'archived';
+
 export interface Project {
   id: string;
   title: string;
   slug: string;
   description: string;
-  category: string;
+  project_type: ProjectType;
+  branch?: string | null;
+  domain?: string | null;
+  category?: string | null;
+  technologies: Record<string, string[]>;
+  languages: string[];
+  frameworks: string[];
+  tools: Record<string, string[]>;
+  github_url?: string | null;
+  demo_url?: string | null;
+  cover_image?: string | null;
+  owner_id?: string | null;
+  organization_id?: string | null;
+  status: ProjectStatus;
+  featured: boolean;
+  views_count: number;
+  likes_count: number;
+  created_at: string;
+  updated_at: string;
+  // Legacy fields for backward compatibility
   content?: string | null;
   overview?: string | null;
   problem_statement?: string | null;
   architecture?: string | null;
-  tech_stack: string[];
-  github_url?: string | null;
-  demo_url?: string | null;
-  cover_image?: string | null;
-  screenshots: string[];
+  tech_stack?: string[];
+  screenshots?: string[];
   lessons_learned?: string[] | null;
-  tags: string[];
-  featured: boolean;
-  published: boolean;
-  created_at: string;
-  updated_at: string;
+  tags?: string[];
+  published?: boolean;
 }
 
 export interface ProductFeature {
