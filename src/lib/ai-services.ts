@@ -583,7 +583,7 @@ export class KnowledgeBaseService {
       project.problem_statement,
       project.architecture,
       project.lessons_learned?.join(' '),
-      `Tech stack: ${project.tech_stack.join(', ')}`,
+      `Tech stack: ${project.tech_stack?.join(', ')}`,
       project.github_url,
       project.demo_url,
     ]
