@@ -28,16 +28,73 @@ export default function ProfilePage() {
       if (!mounted) return;
       setUser(data?.user ?? null);
 
+      console.log("========== AUTH DEBUG ==========");
+      console.log("Current User:", data?.user);
+      console.log("Current User ID:", data?.user?.id);
+
+      const {
+        data: { session }
+      } = await supabaseClient.auth.getSession();
+
+      console.log("Current Session:", session);
+      console.log("Session User ID:", session?.user?.id);
+
       if (data?.user) {
-        const [{ data: p }, { data: s }, { data: proj }] = await Promise.all([
+        console.log("Query Owner ID:", data.user?.id);
+
+        const [{ data: p, error: pError }, { data: s, error: sError }, { data: proj, error: projError }] = await Promise.all([
           supabaseClient.from("profiles").select("*").eq("id", data.user.id).single(),
           supabaseClient.from("saved_content").select("*").eq("user_id", data.user.id).order("created_at", { ascending: false }),
           supabaseClient.from("projects").select("*").eq("owner_id", data.user.id).order("created_at", { ascending: false }),
         ]);
+
+        console.log("Projects Returned:", proj);
+        console.log("Projects Error:", projError);
+        console.log("Projects Count:", proj?.length);
+
+        // STEP 3: Test without filter
+        const { data: allProjects, error: allError } = await supabaseClient
+          .from("projects")
+          .select("*");
+
+        console.log("ALL PROJECTS:", allProjects);
+        console.log("ALL PROJECTS COUNT:", allProjects?.length);
+        console.log("ALL PROJECTS ERROR:", allError);
+
+        // STEP 4: Call debug-auth endpoint
+        const debugResponse = await fetch("/api/debug-auth");
+        const debugData = await debugResponse.json();
+        console.log("API Debug User ID:", debugData.userId);
+        console.log("API Debug Email:", debugData.email);
+
+        // STEP 5: Verify session synchronization
+        console.log("========== SESSION SYNCHRONIZATION ==========");
+        console.log("auth.getUser() User ID:", data.user?.id);
+        console.log("auth.getSession() User ID:", session?.user?.id);
+        console.log("API Debug User ID:", debugData.userId);
+        console.log("Expected User ID: 4b45bed4-7b73-4044-a845-f1952b59904f");
+        console.log("getUser() matches expected:", data.user?.id === "4b45bed4-7b73-4044-a845-f1952b59904f");
+        console.log("getSession() matches expected:", session?.user?.id === "4b45bed4-7b73-4044-a845-f1952b59904f");
+        console.log("API matches expected:", debugData.userId === "4b45bed4-7b73-4044-a845-f1952b59904f");
+        console.log("getUser() === getSession():", data.user?.id === session?.user?.id);
+        console.log("=================================================");
+
+        // STEP 6: Final Output
+        console.log("========== FINAL DEBUG OUTPUT ==========");
+        console.log("1. Current User ID:", data.user?.id);
+        console.log("2. Session User ID:", session?.user?.id);
+        console.log("3. Query Result Count:", proj?.length);
+        console.log("4. Query Error:", projError);
+        console.log("5. All Projects Count:", allProjects?.length);
+        console.log("6. API Debug User ID:", debugData.userId);
+        console.log("7. Root Cause: ", data.user?.id !== session?.user?.id ? "SESSION MISMATCH DETECTED" : projError ? "QUERY ERROR" : proj?.length === 0 ? "NO PROJECTS RETURNED" : "UNKNOWN");
+        console.log("==========================================");
+
         if (mounted) {
           setProfile(p ?? null);
           setSaved(s ?? []);
           setProjects(proj ?? []);
+          console.log("Projects State after setProjects call:", proj ?? []);
         }
       }
       if (mounted) setLoading(false);
@@ -45,11 +102,18 @@ export default function ProfilePage() {
 
     init();
     const { data: listener } = supabaseClient.auth.onAuthStateChange((_e, session) => {
+      console.log("Auth State Change - Session:", session?.user);
+      console.log("Auth State Change - User ID:", session?.user?.id);
       setUser(session?.user ?? null);
       if (session?.user) {
         supabaseClient.from("profiles").select("*").eq("id", session.user.id).single().then(({ data: p }) => setProfile(p ?? null));
         supabaseClient.from("saved_content").select("*").eq("user_id", session.user.id).order("created_at", { ascending: false }).then(({ data: s }) => setSaved(s ?? []));
-        supabaseClient.from("projects").select("*").eq("owner_id", session.user.id).order("created_at", { ascending: false }).then(({ data: proj }) => setProjects(proj ?? []));
+        supabaseClient.from("projects").select("*").eq("owner_id", session.user.id).order("created_at", { ascending: false }).then(({ data: proj, error: projError }) => {
+          console.log("Auth State Change - Projects Data:", proj);
+          console.log("Auth State Change - Projects Error:", projError);
+          console.log("Auth State Change - Projects Count:", proj?.length);
+          setProjects(proj ?? []);
+        });
       } else {
         setProfile(null);
         setSaved([]);
@@ -111,6 +175,17 @@ export default function ProfilePage() {
   const totalLikes = projects.reduce((sum, p) => sum + (p.likes_count || 0), 0);
   const featuredProject = projects.find(p => p.featured && p.status === 'published');
   const recentProjects = projects.slice(0, 3);
+
+  console.log("=== RENDER STATS ===");
+  console.log("Total Projects:", totalProjects);
+  console.log("Published Projects:", publishedProjects);
+  console.log("Draft Projects:", draftProjects);
+  console.log("Total Views:", totalViews);
+  console.log("Total Likes:", totalLikes);
+  console.log("Featured Project:", featuredProject);
+  console.log("Recent Projects:", recentProjects);
+  console.log("Recent Projects Length:", recentProjects.length);
+  console.log("===================");
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-12">
