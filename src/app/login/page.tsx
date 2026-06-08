@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import { supabaseClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import { Footer } from "@/components/layout/Footer";
-import { Chrome, Github } from "lucide-react";
+import { Navbar } from "@/components/layout/Navbar";
+import { Chrome, Github, Eye, EyeOff, Loader2 } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -14,6 +15,8 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [oauthLoading, setOAuthLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [success, setSuccess] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,9 +53,14 @@ export default function LoginPage() {
   const handleReset = async () => {
     if (!email) return setError("Provide your email to reset password");
     setLoading(true);
+    setError(null);
     const { error: resetError } = await supabaseClient.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + "/login" });
     setLoading(false);
-    setError(resetError?.message ?? "Check your email for reset instructions");
+    if (resetError) {
+      setError(resetError.message);
+    } else {
+      setSuccess("Password reset email sent. Check your inbox.");
+    }
   };
 
   const createProfileIfNotExists = async (userId: string, email: string, fullName?: string, avatarUrl?: string) => {
@@ -147,8 +155,10 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="min-h-screen bg-background px-4 py-10 text-foreground sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-md rounded-[2.5rem] border border-border/70 bg-card/90 p-8 shadow-sm dark:border-slate-800 dark:bg-slate-950/90">
+    <main className="min-h-screen bg-background">
+      <Navbar />
+      <div className="px-4 py-10 text-foreground sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-md rounded-[2.5rem] border border-border/70 bg-card/90 p-8 shadow-sm dark:border-slate-800 dark:bg-slate-950/90">
         <div className="mb-8 space-y-3 text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.28em] text-muted">Welcome Back</p>
           <h1 className="text-3xl font-bold text-foreground">Sign in to your account</h1>
@@ -171,20 +181,35 @@ export default function LoginPage() {
 
           <div className="space-y-2">
             <label htmlFor="password" className="text-sm font-medium text-foreground">Password</label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              placeholder="••••••••"
-              className="w-full rounded-2xl border border-border/70 bg-background px-4 py-3 text-sm outline-none transition focus:border-primary dark:border-slate-700 dark:bg-slate-900"
-            />
+            <div className="relative">
+              <input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                placeholder="••••••••"
+                className="w-full rounded-2xl border border-border/70 bg-background px-4 py-3 pr-12 text-sm outline-none transition focus:border-primary dark:border-slate-700 dark:bg-slate-900"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition hover:text-foreground"
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+              </button>
+            </div>
           </div>
 
           {error && (
-            <div className="rounded-2xl bg-red-500/10 px-4 py-3 text-sm text-red-500">
+            <div className="rounded-2xl bg-red-500/10 px-4 py-3 text-sm text-red-500" role="alert">
               {error}
+            </div>
+          )}
+          {success && (
+            <div className="rounded-2xl bg-green-500/10 px-4 py-3 text-sm text-green-500" role="status">
+              {success}
             </div>
           )}
 
@@ -200,9 +225,16 @@ export default function LoginPage() {
 
           <button
             disabled={loading}
-            className="w-full rounded-2xl bg-primary px-4 py-3 text-sm font-semibold text-white transition hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-primary px-4 py-3 text-sm font-semibold text-white transition hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? "Signing in…" : "Sign in"}
+            {loading ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Signing in…
+              </>
+            ) : (
+              "Sign in"
+            )}
           </button>
         </form>
 
@@ -221,8 +253,17 @@ export default function LoginPage() {
             disabled={oauthLoading !== null}
             className="flex w-full items-center justify-center gap-3 rounded-2xl border border-border/70 bg-background px-4 py-3 text-sm font-medium text-foreground transition hover:bg-muted/50 disabled:opacity-50 disabled:cursor-not-allowed dark:border-slate-700 dark:bg-slate-900 dark:hover:bg-slate-800"
           >
-            <Chrome className="h-5 w-5" />
-            {oauthLoading === "google" ? "Connecting…" : "Continue with Google"}
+            {oauthLoading === "google" ? (
+              <>
+                <Loader2 className="h-5 w-5 animate-spin" />
+                Connecting…
+              </>
+            ) : (
+              <>
+                <Chrome className="h-5 w-5" />
+                Continue with Google
+              </>
+            )}
           </button>
 
           <button
@@ -230,8 +271,17 @@ export default function LoginPage() {
             disabled={oauthLoading !== null}
             className="flex w-full items-center justify-center gap-3 rounded-2xl border border-border/70 bg-background px-4 py-3 text-sm font-medium text-foreground transition hover:bg-muted/50 disabled:opacity-50 disabled:cursor-not-allowed dark:border-slate-700 dark:bg-slate-900 dark:hover:bg-slate-800"
           >
-            <Github className="h-5 w-5" />
-            {oauthLoading === "github" ? "Connecting…" : "Continue with GitHub"}
+            {oauthLoading === "github" ? (
+              <>
+                <Loader2 className="h-5 w-5 animate-spin" />
+                Connecting…
+              </>
+            ) : (
+              <>
+                <Github className="h-5 w-5" />
+                Continue with GitHub
+              </>
+            )}
           </button>
         </div>
 
@@ -243,6 +293,7 @@ export default function LoginPage() {
             </Link>
           </p>
         </div>
+      </div>
       </div>
       <Footer />
     </main>

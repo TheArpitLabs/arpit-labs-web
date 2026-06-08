@@ -30,6 +30,7 @@ export default function EditProjectPage() {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any | null>(null);
   const [coverImage, setCoverImage] = useState<string>("");
+  const [galleryImages, setGalleryImages] = useState<string[]>([]);
   const [technologies, setTechnologies] = useState<Record<string, string[]>>({});
   const [languages, setLanguages] = useState<string[]>([]);
   const [frameworks, setFrameworks] = useState<string[]>([]);
@@ -70,6 +71,8 @@ export default function EditProjectPage() {
             category: project.category,
             github_url: project.github_url,
             demo_url: project.demo_url,
+            documentation_url: project.documentation_url,
+            video_url: project.video_url,
             status: project.status,
             featured: project.featured,
           });
@@ -78,6 +81,18 @@ export default function EditProjectPage() {
           setLanguages(project.languages || []);
           setFrameworks(project.frameworks || []);
           setTools(project.tools || {});
+          
+          // Load gallery images from project_media table
+          const { data: mediaData } = await supabaseClient
+            .from('project_media')
+            .select('file_url')
+            .eq('project_id', project.id)
+            .eq('media_type', 'image')
+            .order('order_index');
+          
+          if (mediaData) {
+            setGalleryImages(mediaData.map(m => m.file_url));
+          }
         }
       }
       setLoading(false);
@@ -141,12 +156,38 @@ export default function EditProjectPage() {
         tools: tools,
       };
 
-      const { error } = await supabaseClient
+      const { data: projectData, error } = await supabaseClient
         .from('projects')
         .update(payload)
-        .eq('slug', projectSlug);
+        .eq('slug', projectSlug)
+        .select()
+        .single();
 
       if (error) throw error;
+
+      // Update gallery images in project_media table
+      // First, delete existing media
+      await supabaseClient
+        .from('project_media')
+        .delete()
+        .eq('project_id', projectData.id)
+        .eq('media_type', 'image');
+
+      // Then insert new media
+      if (galleryImages.length > 0) {
+        const mediaInserts = galleryImages.map((url, index) => ({
+          project_id: projectData.id,
+          media_type: 'image',
+          file_url: url,
+          order_index: index,
+        }));
+
+        const { error: mediaError } = await supabaseClient
+          .from('project_media')
+          .insert(mediaInserts);
+
+        if (mediaError) console.error('Error saving gallery images:', mediaError);
+      }
 
       router.push('/profile/projects');
     } catch (error) {

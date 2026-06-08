@@ -3,9 +3,11 @@ import Image from "next/image";
 import { marketplaceRepository } from "@/lib/repositories/marketplace.repository";
 import { Container } from "@/components/layout/Container";
 import { Footer } from "@/components/layout/Footer";
+import { Navbar } from "@/components/layout/Navbar";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
+import { CardSkeleton } from "@/components/ui/card-skeleton";
 import Link from "next/link";
 import { Search, Filter, ShoppingBag, Package, TrendingUp, Clock, Sparkles, Star } from "lucide-react";
 
@@ -14,62 +16,98 @@ const placeholderProducts = [
   {
     id: "placeholder-1",
     title: "AI Starter Kit",
-    description: "Complete toolkit for building AI-powered applications with pre-trained models and templates.",
+    description: "Complete toolkit for building AI-powered applications with pre-trained models and templates. Includes TensorFlow, PyTorch integrations.",
     price: 0,
     category: { name: "AI Tools", slug: "ai-tools" },
     preview_image: null,
     featured: true,
     slug: "ai-starter-kit",
+    downloads: 1240,
+    rating: 4.8,
   },
   {
     id: "placeholder-2",
     title: "IoT Dashboard Template",
-    description: "Modern dashboard template for IoT device monitoring and management.",
+    description: "Modern dashboard template for IoT device monitoring and management. Real-time data visualization and alert system.",
     price: 29,
     category: { name: "IoT Systems", slug: "iot-systems" },
     preview_image: null,
     featured: true,
     slug: "iot-dashboard-template",
+    downloads: 856,
+    rating: 4.6,
   },
   {
     id: "placeholder-3",
     title: "API Integration Kit",
-    description: "Streamlined API integration components and utilities for rapid development.",
+    description: "Streamlined API integration components and utilities for rapid development. REST, GraphQL, and WebSocket support.",
     price: 0,
     category: { name: "Software", slug: "software" },
     preview_image: null,
     featured: false,
     slug: "api-integration-kit",
+    downloads: 2103,
+    rating: 4.9,
   },
   {
     id: "placeholder-4",
     title: "Hardware Design Library",
-    description: "Collection of hardware design patterns and schematics for common projects.",
+    description: "Collection of hardware design patterns and schematics for common projects. PCB layouts and circuit diagrams included.",
     price: 49,
     category: { name: "Hardware", slug: "hardware" },
     preview_image: null,
     featured: false,
     slug: "hardware-design-library",
+    downloads: 432,
+    rating: 4.5,
   },
   {
     id: "placeholder-5",
     title: "Security Audit Checklist",
-    description: "Comprehensive security audit checklist for web applications and APIs.",
+    description: "Comprehensive security audit checklist for web applications and APIs. OWASP compliance and best practices.",
     price: 0,
     category: { name: "Security", slug: "security" },
     preview_image: null,
     featured: false,
     slug: "security-audit-checklist",
+    downloads: 1876,
+    rating: 4.7,
   },
   {
     id: "placeholder-6",
     title: "Performance Optimization Guide",
-    description: "In-depth guide for optimizing application performance and scalability.",
+    description: "In-depth guide for optimizing application performance and scalability. Database queries, caching strategies, and more.",
     price: 19,
     category: { name: "Software", slug: "software" },
     preview_image: null,
     featured: false,
     slug: "performance-optimization-guide",
+    downloads: 921,
+    rating: 4.4,
+  },
+  {
+    id: "placeholder-7",
+    title: "Machine Learning Pipeline",
+    description: "End-to-end ML pipeline template with data preprocessing, model training, and deployment automation.",
+    price: 39,
+    category: { name: "AI Tools", slug: "ai-tools" },
+    preview_image: null,
+    featured: false,
+    slug: "ml-pipeline",
+    downloads: 654,
+    rating: 4.8,
+  },
+  {
+    id: "placeholder-8",
+    title: "Smart Home Controller",
+    description: "IoT controller firmware for smart home devices. Supports MQTT, Home Assistant, and custom integrations.",
+    price: 0,
+    category: { name: "IoT Systems", slug: "iot-systems" },
+    preview_image: null,
+    featured: false,
+    slug: "smart-home-controller",
+    downloads: 1432,
+    rating: 4.9,
   },
 ];
 
@@ -102,8 +140,10 @@ export default async function MarketplacePage({
   const comingSoon = placeholderProducts.slice(0, 3);
 
   return (
-    <div className="py-20">
-      <Container>
+    <div className="min-h-screen">
+      <Navbar />
+      <div className="py-20">
+        <Container>
         <div className="mb-12 text-center">
           <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">Marketplace</h1>
           <p className="mt-4 text-lg text-muted-foreground">
@@ -174,18 +214,27 @@ export default async function MarketplacePage({
                       </Badge>
                     </div>
                     <div className="p-5">
-                      <div className="mb-1 flex items-center justify-between">
+                      <div className="mb-2 flex items-center justify-between">
                         <span className="text-xs font-medium text-primary">
                           {item.category?.name}
                         </span>
-                        <span className="text-sm font-bold">
-                          {item.price === 0 ? "Free" : `$${item.price}`}
-                        </span>
+                        <div className="flex items-center gap-1">
+                          <Star className="h-3 w-3 fill-primary text-primary" />
+                          <span className="text-xs font-medium">{(item as any).rating || '4.5'}</span>
+                        </div>
                       </div>
                       <h3 className="line-clamp-1 font-semibold">{item.title}</h3>
                       <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">
                         {item.description}
                       </p>
+                      <div className="mt-3 flex items-center justify-between">
+                        <span className="text-sm font-bold">
+                          {item.price === 0 ? "Free" : `$${item.price}`}
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          {(item as any).downloads || '0'} downloads
+                        </span>
+                      </div>
                     </div>
                   </Card>
                 </Link>
@@ -228,14 +277,13 @@ export default async function MarketplacePage({
                       {item.preview_image ? (
                         <Image
                           src={item.preview_image}
-                          alt={item.title}
+                          alt={`${item.title} - ${item.category?.name || 'Product'} preview`}
                           fill
                           className="object-cover transition-transform group-hover:scale-105"
-                          unoptimized
                         />
                       ) : (
-                        <div className="flex h-full items-center justify-center">
-                          <ShoppingBag className="h-12 w-12 text-muted/20" />
+                        <div className="flex h-full items-center justify-center bg-gradient-to-br from-muted/20 to-muted/5">
+                          <ShoppingBag className="h-12 w-12 text-muted/30" />
                         </div>
                       )}
                     </div>
@@ -244,11 +292,20 @@ export default async function MarketplacePage({
                         <span className="text-xs font-medium text-primary">
                           {item.category?.name}
                         </span>
+                        <div className="flex items-center gap-1">
+                          <Star className="h-3 w-3 fill-primary text-primary" />
+                          <span className="text-xs font-medium">{(item as any).rating || '4.5'}</span>
+                        </div>
+                      </div>
+                      <h3 className="line-clamp-1 font-semibold text-sm">{item.title}</h3>
+                      <div className="mt-2 flex items-center justify-between">
                         <span className="text-sm font-bold">
                           {item.price === 0 ? "Free" : `$${item.price}`}
                         </span>
+                        <span className="text-xs text-muted-foreground">
+                          {(item as any).downloads || '0'} downloads
+                        </span>
                       </div>
-                      <h3 className="line-clamp-1 font-semibold text-sm">{item.title}</h3>
                     </div>
                   </Card>
                 </Link>
@@ -272,14 +329,13 @@ export default async function MarketplacePage({
                       {item.preview_image ? (
                         <Image
                           src={item.preview_image}
-                          alt={item.title}
+                          alt={`${item.title} - ${item.category?.name || 'Product'} preview`}
                           fill
                           className="object-cover transition-transform group-hover:scale-105"
-                          unoptimized
                         />
                       ) : (
-                        <div className="flex h-full items-center justify-center">
-                          <ShoppingBag className="h-12 w-12 text-muted/20" />
+                        <div className="flex h-full items-center justify-center bg-gradient-to-br from-muted/20 to-muted/5">
+                          <ShoppingBag className="h-12 w-12 text-muted/30" />
                         </div>
                       )}
                     </div>
@@ -288,11 +344,20 @@ export default async function MarketplacePage({
                         <span className="text-xs font-medium text-primary">
                           {item.category?.name}
                         </span>
+                        <div className="flex items-center gap-1">
+                          <Star className="h-3 w-3 fill-primary text-primary" />
+                          <span className="text-xs font-medium">{(item as any).rating || '4.5'}</span>
+                        </div>
+                      </div>
+                      <h3 className="line-clamp-1 font-semibold text-sm">{item.title}</h3>
+                      <div className="mt-2 flex items-center justify-between">
                         <span className="text-sm font-bold">
                           {item.price === 0 ? "Free" : `$${item.price}`}
                         </span>
+                        <span className="text-xs text-muted-foreground">
+                          {(item as any).downloads || '0'} downloads
+                        </span>
                       </div>
-                      <h3 className="line-clamp-1 font-semibold text-sm">{item.title}</h3>
                     </div>
                   </Card>
                 </Link>
@@ -338,14 +403,13 @@ export default async function MarketplacePage({
                     {item.preview_image ? (
                       <Image
                         src={item.preview_image}
-                        alt={item.title}
+                        alt={`${item.title} - ${item.category?.name || 'Product'} preview`}
                         fill
                         className="object-cover transition-transform group-hover:scale-105"
-                        unoptimized
                       />
                     ) : (
-                      <div className="flex h-full items-center justify-center">
-                        <ShoppingBag className="h-12 w-12 text-muted/20" />
+                      <div className="flex h-full items-center justify-center bg-gradient-to-br from-muted/20 to-muted/5">
+                        <ShoppingBag className="h-12 w-12 text-muted/30" />
                       </div>
                     )}
                     {item.featured && (
@@ -355,18 +419,27 @@ export default async function MarketplacePage({
                     )}
                   </div>
                   <div className="p-5">
-                    <div className="mb-1 flex items-center justify-between">
+                    <div className="mb-2 flex items-center justify-between">
                       <span className="text-xs font-medium text-primary">
                         {item.category?.name}
                       </span>
-                      <span className="text-sm font-bold">
-                        {item.price === 0 ? "Free" : `$${item.price}`}
-                      </span>
+                      <div className="flex items-center gap-1">
+                        <Star className="h-3 w-3 fill-primary text-primary" />
+                        <span className="text-xs font-medium">{(item as any).rating || '4.5'}</span>
+                      </div>
                     </div>
                     <h3 className="line-clamp-1 font-semibold">{item.title}</h3>
                     <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">
                       {item.description}
                     </p>
+                    <div className="mt-3 flex items-center justify-between">
+                      <span className="text-sm font-bold">
+                        {item.price === 0 ? "Free" : `$${item.price}`}
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        {(item as any).downloads || '0'} downloads
+                      </span>
+                    </div>
                   </div>
                 </Card>
               </Link>
@@ -384,6 +457,7 @@ export default async function MarketplacePage({
           />
         )}
       </Container>
+      </div>
       <Footer />
     </div>
   );

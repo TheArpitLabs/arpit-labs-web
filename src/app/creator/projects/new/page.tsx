@@ -128,6 +128,22 @@ export default function CreateProjectPage() {
 
       if (error) throw error;
 
+      // Save gallery images to project_media table
+      if (galleryImages.length > 0) {
+        const mediaInserts = galleryImages.map((url, index) => ({
+          project_id: project.id,
+          media_type: 'image',
+          file_url: url,
+          order_index: index,
+        }));
+
+        const { error: mediaError } = await supabaseClient
+          .from('project_media')
+          .insert(mediaInserts);
+
+        if (mediaError) console.error('Error saving gallery images:', mediaError);
+      }
+
       router.push('/profile/projects' as any);
     } catch (error) {
       console.error('Error creating project:', error);
@@ -293,6 +309,40 @@ export default function CreateProjectPage() {
                 />
               </div>
             </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Technologies (JSON)</label>
+              <textarea
+                value={JSON.stringify(technologies, null, 2)}
+                onChange={(e) => {
+                  try {
+                    setTechnologies(JSON.parse(e.target.value));
+                  } catch {
+                    // Invalid JSON, ignore
+                  }
+                }}
+                rows={3}
+                placeholder='{"frontend": ["React"], "backend": ["Node.js"]}'
+                className="w-full rounded-xl border border-border/70 bg-background px-4 py-3 text-sm outline-none focus:border-primary font-mono"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Tools (JSON)</label>
+              <textarea
+                value={JSON.stringify(tools, null, 2)}
+                onChange={(e) => {
+                  try {
+                    setTools(JSON.parse(e.target.value));
+                  } catch {
+                    // Invalid JSON, ignore
+                  }
+                }}
+                rows={3}
+                placeholder='{"devops": ["Docker"], "testing": ["Jest"]}'
+                className="w-full rounded-xl border border-border/70 bg-background px-4 py-3 text-sm outline-none focus:border-primary font-mono"
+              />
+            </div>
           </div>
         </Card>
 
@@ -315,6 +365,24 @@ export default function CreateProjectPage() {
               <input
                 {...register('demo_url')}
                 placeholder="https://demo.example.com"
+                className="w-full rounded-xl border border-border/70 bg-background px-4 py-3 text-sm outline-none focus:border-primary"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Documentation URL</label>
+              <input
+                {...register('documentation_url')}
+                placeholder="https://docs.example.com"
+                className="w-full rounded-xl border border-border/70 bg-background px-4 py-3 text-sm outline-none focus:border-primary"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Video URL</label>
+              <input
+                {...register('video_url')}
+                placeholder="https://youtube.com/watch?v=..."
                 className="w-full rounded-xl border border-border/70 bg-background px-4 py-3 text-sm outline-none focus:border-primary"
               />
             </div>
@@ -359,6 +427,49 @@ export default function CreateProjectPage() {
                 className="mt-2 text-sm"
               />
             </div>
+          </div>
+        </Card>
+
+        {/* Gallery Images */}
+        <Card className="border-border/70 bg-card p-6">
+          <h2 className="mb-4 text-xl font-semibold">Gallery Images</h2>
+          
+          <div className="space-y-4">
+            <div className="grid grid-cols-4 gap-4">
+              {galleryImages.map((url, i) => (
+                <div key={i} className="relative aspect-square overflow-hidden rounded-xl border border-border/70">
+                  <img src={url} alt={`Gallery ${i}`} className="h-full w-full object-cover" />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setGalleryImages(galleryImages.filter((_, idx) => idx !== i));
+                    }}
+                    className="absolute right-2 top-2 rounded-full bg-red-500 p-1 text-white"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+              ))}
+              <div className="flex aspect-square items-center justify-center rounded-xl border-2 border-dashed border-border/70">
+                <label className="cursor-pointer">
+                  <Upload className="h-8 w-8 text-muted-foreground" />
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        const url = await handleImageUpload(file);
+                        if (url) setGalleryImages([...galleryImages, url]);
+                      }
+                    }}
+                    disabled={uploading}
+                  />
+                </label>
+              </div>
+            </div>
+            <p className="text-xs text-muted-foreground">Upload additional images to showcase your project.</p>
           </div>
         </Card>
 

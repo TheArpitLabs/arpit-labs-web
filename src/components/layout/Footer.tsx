@@ -3,13 +3,14 @@
 import { motion } from "framer-motion";
 import { Github, Linkedin, Mail } from "lucide-react";
 import { NexusLogo } from "@/components/shared/NexusLogo";
+import Link from "next/link";
 
 const navLinks = [
-  { label: "About", href: "#about" },
-  { label: "Experiments", href: "#experiments" },
-  { label: "Lab Notes", href: "#lab-notes" },
-  { label: "Journey", href: "#journey" },
-  { label: "Contact", href: "#contact" }
+  { label: "About", href: "/about" },
+  { label: "Research", href: "/research" },
+  { label: "University", href: "/university" },
+  { label: "Innovation", href: "/innovation" },
+  { label: "Contact", href: "mailto:hello@arpitlabs.example" }
 ];
 
 const categories = [
@@ -21,8 +22,8 @@ const categories = [
 ];
 
 const socialLinks = [
-  { label: "GitHub", href: "https://github.com/", icon: Github },
-  { label: "LinkedIn", href: "https://linkedin.com/", icon: Linkedin },
+  { label: "GitHub", href: "https://github.com/arpit-labs", icon: Github },
+  { label: "LinkedIn", href: "https://linkedin.com/in/arpit-labs", icon: Linkedin },
   { label: "Email", href: "mailto:hello@arpitlabs.example", icon: Mail }
 ];
 
@@ -48,9 +49,15 @@ export function Footer() {
           <h3 className="mb-3 text-sm font-semibold uppercase tracking-[0.24em] text-muted">Explore</h3>
           <div className="flex flex-col gap-2 text-body">
             {navLinks.map((link) => (
-              <a key={link.href} href={link.href} className="transition hover:text-foreground">
-                {link.label}
-              </a>
+              link.href.startsWith('mailto') ? (
+                <a key={link.href} href={link.href} className="transition hover:text-foreground">
+                  {link.label}
+                </a>
+              ) : (
+                <Link key={link.href} href={link.href} className="transition hover:text-foreground">
+                  {link.label}
+                </Link>
+              )
             ))}
           </div>
         </div>
@@ -74,7 +81,7 @@ export function Footer() {
             Get short notes on systems thinking, lab experiments, and engineering stories.
           </p>
         </div>
-        <form className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <form className="flex flex-col gap-3 sm:flex-row sm:items-center" onSubmit={(e) => { e.preventDefault(); }}>
           <label htmlFor="footer-newsletter" className="sr-only">
             Subscribe to updates
           </label>
@@ -83,11 +90,13 @@ export function Footer() {
             type="email"
             placeholder="Email address"
             className="w-full max-w-sm rounded-2xl border border-border/70 bg-background px-4 py-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:border-slate-700 dark:bg-slate-900"
+            required
           />
           <motion.button
             type="submit"
-            className="rounded-2xl bg-foreground px-5 py-3 text-sm font-semibold text-background transition hover:bg-primary"
+            className="rounded-2xl bg-foreground px-5 py-3 text-sm font-semibold text-background transition hover:bg-primary disabled:opacity-50"
             whileHover={{ scale: 1.02, boxShadow: "0 0 20px rgba(37,99,235,0.3)" }}
+            whileTap={{ scale: 0.98 }}
             transition={{ duration: 0.2 }}
           >
             Join

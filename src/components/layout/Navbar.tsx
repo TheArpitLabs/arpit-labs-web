@@ -45,9 +45,9 @@ export function Navbar() {
     // Get initial session from Supabase
     async function init() {
       const { data: { session } } = await supabaseClient.auth.getSession();
-      
+
       if (!mounted) return;
-      
+
       if (session?.user) {
         setUser(session.user);
         const { data: p } = await supabaseClient.from("profiles").select("full_name,avatar_url").eq("id", session.user.id).single();
@@ -63,7 +63,7 @@ export function Navbar() {
     // Listen for auth state changes
     const { data: listener } = supabaseClient.auth.onAuthStateChange(async (_event, session) => {
       if (!mounted) return;
-      
+
       setUser(session?.user ?? null);
       if (session?.user) {
         const { data: p } = await supabaseClient.from("profiles").select("full_name,avatar_url").eq("id", session.user.id).single();
@@ -78,6 +78,11 @@ export function Navbar() {
       listener?.subscription.unsubscribe();
     };
   }, []);
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
 
   const switchLanguage = (newLocale: string) => {
     // Set the locale cookie
@@ -130,7 +135,9 @@ export function Navbar() {
           <div className="relative">
             <button
               onClick={() => setLangOpen(!langOpen)}
-              className="flex items-center gap-1.5 rounded-xl border border-border/70 bg-surface px-3 py-1.5 text-xs font-bold text-foreground transition hover:border-primary"
+              className="flex items-center gap-1.5 rounded-xl border border-border/70 bg-surface px-3 py-1.5 text-xs font-bold text-foreground transition hover:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70"
+              aria-expanded={langOpen}
+              aria-haspopup="true"
             >
               <Globe size={14} />
               <span className="hidden sm:inline">{currentLang}</span>
@@ -144,9 +151,10 @@ export function Navbar() {
                   exit={{ opacity: 0, scale: 0.95, y: -10 }}
                   transition={{ duration: 0.2 }}
                   className="absolute right-0 mt-2 w-32 overflow-hidden rounded-2xl border border-border/70 bg-card/95 backdrop-blur-sm p-1 shadow-xl"
+                  role="menu"
                 >
-                  <button onClick={() => switchLanguage('en')} className="w-full rounded-xl px-4 py-2 text-left text-xs font-medium hover:bg-surface transition-colors">English</button>
-                  <button onClick={() => switchLanguage('hi')} className="w-full rounded-xl px-4 py-2 text-left text-xs font-medium hover:bg-surface transition-colors">हिन्दी</button>
+                  <button onClick={() => switchLanguage('en')} className="w-full rounded-xl px-4 py-2 text-left text-xs font-medium hover:bg-surface transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70" role="menuitem">English</button>
+                  <button onClick={() => switchLanguage('hi')} className="w-full rounded-xl px-4 py-2 text-left text-xs font-medium hover:bg-surface transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70" role="menuitem">हिन्दी</button>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -183,26 +191,29 @@ export function Navbar() {
           
           <button
             type="button"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-border/70 bg-surface text-foreground md:hidden"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-border/70 bg-surface text-foreground md:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70"
             onClick={() => setOpen((prev) => !prev)}
+            aria-expanded={open}
+            aria-label={open ? "Close menu" : "Open menu"}
           >
             {open ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
       </div>
 
-      <div className={cn("md:hidden", open ? "block" : "hidden")}> 
-        <div className="border-t border-border/70 bg-background/95 px-4 pb-6 pt-4 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-950/95">
+      <div className={cn("md:hidden", open ? "block" : "hidden")}>
+        <div className="border-t border-border/70 bg-background/95 px-4 pb-6 pt-4 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-950/95" role="navigation" aria-label="Mobile navigation">
           <div className="flex flex-col gap-3">
             {navItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "rounded-2xl px-4 py-3 text-base font-medium transition hover:bg-surface",
+                  "rounded-2xl px-4 py-3 text-base font-medium transition hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70",
                   pathname === item.href ? "bg-primary/5 text-primary" : "text-foreground"
                 )}
                 onClick={() => setOpen(false)}
+                aria-current={pathname === item.href ? "page" : undefined}
               >
                 {item.label}
               </Link>

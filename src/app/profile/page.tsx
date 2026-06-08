@@ -8,19 +8,22 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
+import { StatCardSkeleton } from "@/components/ui/card-skeleton";
 import { Footer } from "@/components/layout/Footer";
-import { User, Mail, Calendar, FolderOpen, Search, MessageSquare, Bookmark, Award, Code2, TrendingUp, Users, Activity } from "lucide-react";
+import { User, Mail, Calendar, FolderOpen, Search, MessageSquare, Bookmark, Award, Code2, TrendingUp, Users, Activity, Loader2 } from "lucide-react";
 
 export default function ProfilePage() {
   const [user, setUser] = useState<any | null>(null);
   const [profile, setProfile] = useState<any | null>(null);
   const [saved, setSaved] = useState<any[]>([]);
   const [projects, setProjects] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let mounted = true;
 
     async function init() {
+      setLoading(true);
       const { data } = await supabaseClient.auth.getUser();
       if (!mounted) return;
       setUser(data?.user ?? null);
@@ -31,10 +34,13 @@ export default function ProfilePage() {
           supabaseClient.from("saved_content").select("*").eq("user_id", data.user.id).order("created_at", { ascending: false }),
           supabaseClient.from("projects").select("*").eq("owner_id", data.user.id).order("created_at", { ascending: false }),
         ]);
-        setProfile(p ?? null);
-        setSaved(s ?? []);
-        setProjects(proj ?? []);
+        if (mounted) {
+          setProfile(p ?? null);
+          setSaved(s ?? []);
+          setProjects(proj ?? []);
+        }
       }
+      if (mounted) setLoading(false);
     }
 
     init();
@@ -57,6 +63,32 @@ export default function ProfilePage() {
     };
   }, []);
 
+  if (loading) {
+    return (
+      <main className="mx-auto max-w-5xl px-4 py-12">
+        <div className="mb-8 rounded-2xl border border-border/70 bg-card p-8">
+          <div className="flex flex-col gap-6 md:flex-row md:items-start">
+            <div className="h-24 w-24 animate-pulse rounded-full bg-muted/30 md:h-32 md:w-32" />
+            <div className="flex-1 space-y-3">
+              <div className="h-8 w-1/3 animate-pulse rounded-xl bg-muted/30" />
+              <div className="h-4 w-1/2 animate-pulse rounded-xl bg-muted/30" />
+              <div className="flex gap-4">
+                <div className="h-4 w-32 animate-pulse rounded-xl bg-muted/30" />
+                <div className="h-4 w-32 animate-pulse rounded-xl bg-muted/30" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <StatCardSkeleton />
+          <StatCardSkeleton />
+          <StatCardSkeleton />
+          <StatCardSkeleton />
+        </div>
+      </main>
+    );
+  }
+
   if (!user) {
     return (
       <main className="mx-auto max-w-5xl px-4 py-12">
@@ -75,6 +107,8 @@ export default function ProfilePage() {
   const totalProjects = projects.length;
   const publishedProjects = projects.filter(p => p.status === 'published').length;
   const draftProjects = projects.filter(p => p.status === 'draft').length;
+  const totalViews = projects.reduce((sum, p) => sum + (p.views_count || 0), 0);
+  const totalLikes = projects.reduce((sum, p) => sum + (p.likes_count || 0), 0);
   const featuredProject = projects.find(p => p.featured && p.status === 'published');
   const recentProjects = projects.slice(0, 3);
 
@@ -110,7 +144,7 @@ export default function ProfilePage() {
 
       {/* Dashboard Stats */}
       <section className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className="border-border/70 bg-card p-6">
+        <Card className="border-border/70 bg-card p-6 transition-all hover:border-primary/30 hover:shadow-lg">
           <div className="flex items-center gap-3">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
               <FolderOpen className="h-6 w-6" />
@@ -121,29 +155,29 @@ export default function ProfilePage() {
             </div>
           </div>
         </Card>
-        <Card className="border-border/70 bg-card p-6">
+        <Card className="border-border/70 bg-card p-6 transition-all hover:border-primary/30 hover:shadow-lg">
           <div className="flex items-center gap-3">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-secondary/10 text-secondary">
-              <Search className="h-6 w-6" />
+              <TrendingUp className="h-6 w-6" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Research</p>
-              <p className="text-2xl font-semibold">0</p>
+              <p className="text-sm text-muted-foreground">Total Views</p>
+              <p className="text-2xl font-semibold">{totalViews}</p>
             </div>
           </div>
         </Card>
-        <Card className="border-border/70 bg-card p-6">
+        <Card className="border-border/70 bg-card p-6 transition-all hover:border-primary/30 hover:shadow-lg">
           <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent/10 text-accent">
-              <Users className="h-6 w-6" />
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-red-10 text-red-500">
+              <Heart className="h-6 w-6" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Community</p>
-              <p className="text-2xl font-semibold">0</p>
+              <p className="text-sm text-muted-foreground">Total Likes</p>
+              <p className="text-2xl font-semibold">{totalLikes}</p>
             </div>
           </div>
         </Card>
-        <Card className="border-border/70 bg-card p-6">
+        <Card className="border-border/70 bg-card p-6 transition-all hover:border-primary/30 hover:shadow-lg">
           <div className="flex items-center gap-3">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-muted/10 text-muted-foreground">
               <Bookmark className="h-6 w-6" />
@@ -273,15 +307,17 @@ export default function ProfilePage() {
               icon={Bookmark}
               title="No saved items"
               description="Save articles, resources, and content to access them later."
+              actionLabel="Browse Content"
+              actionHref="/"
             />
           ) : (
             <ul className="space-y-3">
               {saved.map((s) => (
-                <li key={s.id} className="rounded-xl border border-border/70 bg-background p-4">
+                <li key={s.id} className="rounded-xl border border-border/70 bg-background p-4 transition-all hover:border-primary/50">
                   <div className="flex items-center justify-between">
                     <div>
                       <div className="flex items-center gap-2">
-                        <Badge variant="outline" className="text-xs">
+                        <Badge variant="outline" className="text-xs capitalize">
                           {s.content_type}
                         </Badge>
                       </div>
@@ -312,6 +348,8 @@ export default function ProfilePage() {
             icon={Award}
             title="No achievements yet"
             description="Complete activities and contribute to earn achievements."
+            actionLabel="Explore Activities"
+            actionHref="/"
           />
         </Card>
       </section>
