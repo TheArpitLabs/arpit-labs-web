@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatCardSkeleton } from "@/components/ui/card-skeleton";
 import { Footer } from "@/components/layout/Footer";
-import { User, Mail, Calendar, FolderOpen, Search, MessageSquare, Bookmark, Award, Code2, TrendingUp, Users, Activity, Loader2 } from "lucide-react";
+import { User, Mail, Calendar, FolderOpen, Search, MessageSquare, Bookmark, Award, Code2, TrendingUp, Users, Activity, Loader2, Heart } from "lucide-react";
 
 export default function ProfilePage() {
   const [user, setUser] = useState<any | null>(null);
