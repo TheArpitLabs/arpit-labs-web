@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseServer } from '@/lib/supabase/server';
-import { cookies } from 'next/headers';
 
 export async function POST(
   request: NextRequest,
@@ -10,8 +9,7 @@ export async function POST(
     const { slug } = await params;
     
     // First get the project ID from the slug
-    const cookieStore = await cookies();
-    const supabase = await supabaseServer({ cookieStore });
+    const supabase = supabaseServer;
     
     const { data: project } = await supabase
       .from('projects')
@@ -100,8 +98,7 @@ export async function GET(
 ) {
   try {
     const { slug } = await params;
-    const cookieStore = await cookies();
-    const supabase = await supabaseServer({ cookieStore });
+    const supabase = supabaseServer;
     
     // First get the project ID from the slug
     const { data: project } = await supabase
