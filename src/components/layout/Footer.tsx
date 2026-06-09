@@ -4,8 +4,14 @@ import { motion } from "framer-motion";
 import { Github, Linkedin, Mail } from "lucide-react";
 import { NexusLogo } from "@/components/shared/NexusLogo";
 import Link from "next/link";
+import type { Route } from "next";
 
-const navLinks = [
+type NavLink = {
+  label: string;
+  href: string;
+};
+
+const navLinks: NavLink[] = [
   { label: "About", href: "/about" },
   { label: "Research", href: "/research" },
   { label: "University", href: "/university" },
@@ -54,7 +60,7 @@ export function Footer() {
                   {link.label}
                 </a>
               ) : (
-                <Link key={link.href} href={link.href} className="transition hover:text-foreground">
+              <Link key={link.href} href={link.href as Route} className="transition hover:text-foreground">
                   {link.label}
                 </Link>
               )
