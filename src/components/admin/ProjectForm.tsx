@@ -160,6 +160,16 @@ export function ProjectForm({ project }: ProjectFormProps) {
         </div>
 
         <div className="space-y-1">
+          <label className="text-sm font-medium">Overview</label>
+          <textarea
+            {...register("overview")}
+            rows={3}
+            className="w-full rounded-xl border border-border/70 bg-background px-4 py-2 text-sm outline-none focus:border-primary"
+            placeholder="Brief overview of the project..."
+          />
+        </div>
+
+        <div className="space-y-1">
           <label className="text-sm font-medium">Problem Statement</label>
           <textarea
             {...register("problem_statement")}
@@ -174,6 +184,16 @@ export function ProjectForm({ project }: ProjectFormProps) {
             {...register("architecture")}
             rows={3}
             className="w-full rounded-xl border border-border/70 bg-background px-4 py-2 text-sm outline-none focus:border-primary"
+          />
+        </div>
+
+        <div className="space-y-1">
+          <label className="text-sm font-medium">Content</label>
+          <textarea
+            {...register("content")}
+            rows={5}
+            className="w-full rounded-xl border border-border/70 bg-background px-4 py-2 text-sm outline-none focus:border-primary"
+            placeholder="Detailed project content..."
           />
         </div>
 
@@ -201,6 +221,52 @@ export function ProjectForm({ project }: ProjectFormProps) {
             >
               <Plus className="h-4 w-4" /> Add Lesson
             </button>
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Screenshots</label>
+          <div className="flex flex-wrap gap-2">
+            {screenshots.map((screenshot, i) => (
+              <span key={i} className="flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+                {screenshot}
+                <button type="button" onClick={() => removeItem(screenshots, setScreenshots, i)}><X className="h-3 w-3" /></button>
+              </span>
+            ))}
+            <input
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  addItem(screenshots, setScreenshots, e.currentTarget.value);
+                  e.currentTarget.value = "";
+                }
+              }}
+              placeholder="Add screenshot URL..."
+              className="rounded-full border border-border/70 bg-transparent px-3 py-1 text-xs outline-none focus:border-primary"
+            />
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Tags</label>
+          <div className="flex flex-wrap gap-2">
+            {tags.map((tag, i) => (
+              <span key={i} className="flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+                {tag}
+                <button type="button" onClick={() => removeItem(tags, setTags, i)}><X className="h-3 w-3" /></button>
+              </span>
+            ))}
+            <input
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  addItem(tags, setTags, e.currentTarget.value);
+                  e.currentTarget.value = "";
+                }
+              }}
+              placeholder="Add tag..."
+              className="rounded-full border border-border/70 bg-transparent px-3 py-1 text-xs outline-none focus:border-primary"
+            />
           </div>
         </div>
 

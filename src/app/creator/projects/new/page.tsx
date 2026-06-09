@@ -6,10 +6,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { projectSchema } from "@/lib/validation/project.schema";
 import { supabaseClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { X, Plus, Upload, Save, Eye, ArrowLeft } from "lucide-react";
+import { X, Plus, Upload, Save, Eye, ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 
 const PROJECT_TYPES = [
@@ -66,6 +67,18 @@ export default function CreateProjectPage() {
 
   const removeFromArray = (list: string[], setList: React.Dispatch<React.SetStateAction<string[]>>, index: number) => {
     setList(list.filter((_, i) => i !== index));
+  };
+
+  const moveImage = (list: string[], setList: React.Dispatch<React.SetStateAction<string[]>>, index: number, direction: 'left' | 'right') => {
+    if (direction === 'left' && index > 0) {
+      const newList = [...list];
+      [newList[index - 1], newList[index]] = [newList[index], newList[index - 1]];
+      setList(newList);
+    } else if (direction === 'right' && index < list.length - 1) {
+      const newList = [...list];
+      [newList[index], newList[index + 1]] = [newList[index + 1], newList[index]];
+      setList(newList);
+    }
   };
 
   const addToObject = (obj: Record<string, string[]>, setObj: React.Dispatch<React.SetStateAction<Record<string, string[]>>>, key: string, value: string) => {
@@ -158,6 +171,19 @@ export default function CreateProjectPage() {
   };
 
   const handlePublish = async (data: any) => {
+    // Validate required fields for publishing
+    if (!data.title || !data.title.trim()) {
+      alert('Title is required to publish');
+      return;
+    }
+    if (!data.description || !data.description.trim()) {
+      alert('Description is required to publish');
+      return;
+    }
+    if (!coverImage) {
+      alert('Cover image is required to publish');
+      return;
+    }
     await onSubmit({ ...data, status: 'published' });
   };
 
@@ -346,6 +372,61 @@ export default function CreateProjectPage() {
           </div>
         </Card>
 
+        {/* Project Details */}
+        <Card className="border-border/70 bg-card p-6">
+          <h2 className="mb-4 text-xl font-semibold">Project Details</h2>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Overview</label>
+            <textarea
+              {...register('overview')}
+              rows={3}
+              placeholder="Brief overview of your project..."
+              className="w-full rounded-xl border border-border/70 bg-background px-4 py-3 text-sm outline-none focus:border-primary"
+            />
+          </div>
+
+          <div className="mt-6 space-y-2">
+            <label className="text-sm font-medium">Problem Statement</label>
+            <textarea
+              {...register('problem_statement')}
+              rows={3}
+              placeholder="What problem does this project solve?"
+              className="w-full rounded-xl border border-border/70 bg-background px-4 py-3 text-sm outline-none focus:border-primary"
+            />
+          </div>
+
+          <div className="mt-6 space-y-2">
+            <label className="text-sm font-medium">Architecture</label>
+            <textarea
+              {...register('architecture')}
+              rows={3}
+              placeholder="Describe the architecture and design decisions..."
+              className="w-full rounded-xl border border-border/70 bg-background px-4 py-3 text-sm outline-none focus:border-primary"
+            />
+          </div>
+
+          <div className="mt-6 space-y-2">
+            <label className="text-sm font-medium">Lessons Learned</label>
+            <textarea
+              {...register('lessons_learned')}
+              rows={3}
+              placeholder="Key lessons and takeaways from this project..."
+              className="w-full rounded-xl border border-border/70 bg-background px-4 py-3 text-sm outline-none focus:border-primary"
+            />
+          </div>
+
+          <div className="mt-6 space-y-2">
+            <label className="text-sm font-medium">Tags</label>
+            <textarea
+              {...register('tags')}
+              rows={2}
+              placeholder="Comma-separated tags (e.g., react, typescript, api)"
+              className="w-full rounded-xl border border-border/70 bg-background px-4 py-3 text-sm outline-none focus:border-primary"
+            />
+          </div>
+        </Card>
+
         {/* Links */}
         <Card className="border-border/70 bg-card p-6">
           <h2 className="mb-4 text-xl font-semibold">Links</h2>
@@ -396,7 +477,7 @@ export default function CreateProjectPage() {
           <div className="flex items-center gap-4">
             {coverImage ? (
               <div className="relative h-32 w-32 overflow-hidden rounded-xl border border-border/70">
-                <img src={coverImage} alt="Cover" className="h-full w-full object-cover" />
+                <Image src={coverImage} alt="Cover" width={128} height={128} className="h-full w-full object-cover" />
                 <button
                   type="button"
                   onClick={() => setCoverImage("")}
@@ -438,16 +519,34 @@ export default function CreateProjectPage() {
             <div className="grid grid-cols-4 gap-4">
               {galleryImages.map((url, i) => (
                 <div key={i} className="relative aspect-square overflow-hidden rounded-xl border border-border/70">
-                  <img src={url} alt={`Gallery ${i}`} className="h-full w-full object-cover" />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setGalleryImages(galleryImages.filter((_, idx) => idx !== i));
-                    }}
-                    className="absolute right-2 top-2 rounded-full bg-red-500 p-1 text-white"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
+                  <Image src={url} alt={`Gallery ${i}`} width={128} height={128} className="h-full w-full object-cover" />
+                  <div className="absolute right-2 top-2 flex gap-1">
+                    <button
+                      type="button"
+                      onClick={() => moveImage(galleryImages, setGalleryImages, i, 'left')}
+                      disabled={i === 0}
+                      className="rounded-full bg-black/50 p-1 text-white hover:bg-black/70 disabled:opacity-30"
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => moveImage(galleryImages, setGalleryImages, i, 'right')}
+                      disabled={i === galleryImages.length - 1}
+                      className="rounded-full bg-black/50 p-1 text-white hover:bg-black/70 disabled:opacity-30"
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setGalleryImages(galleryImages.filter((_, idx) => idx !== i));
+                      }}
+                      className="rounded-full bg-red-500 p-1 text-white hover:bg-red-600"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
                 </div>
               ))}
               <div className="flex aspect-square items-center justify-center rounded-xl border-2 border-dashed border-border/70">

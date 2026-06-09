@@ -77,9 +77,15 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const validatedData = projectSchema.parse(body);
 
+    // Set owner_id to authenticated user
+    const payload = {
+      ...validatedData,
+      owner_id: user.id,
+    };
+
     const { data, error } = await supabaseServer
       .from('projects')
-      .insert(validatedData)
+      .insert(payload)
       .select()
       .single();
 

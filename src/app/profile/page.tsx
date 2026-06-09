@@ -28,37 +28,21 @@ export default function ProfilePage() {
       if (!mounted) return;
       setUser(data?.user ?? null);
 
-      console.log("========== AUTH DEBUG ==========");
-      console.log("Current User:", data?.user);
-      console.log("Current User ID:", data?.user?.id);
-
       const {
         data: { session }
       } = await supabaseClient.auth.getSession();
 
-      console.log("Current Session:", session);
-      console.log("Session User ID:", session?.user?.id);
-
       if (data?.user) {
-        console.log("Query Owner ID:", data.user?.id);
-
         const [{ data: p, error: pError }, { data: s, error: sError }, { data: proj, error: projError }] = await Promise.all([
           supabaseClient.from("profiles").select("*").eq("id", data.user.id).single(),
           supabaseClient.from("saved_content").select("*").eq("user_id", data.user.id).order("created_at", { ascending: false }),
           supabaseClient.from("projects").select("*").eq("owner_id", data.user.id).order("created_at", { ascending: false }),
         ]);
 
-        console.log("Projects Returned:", proj);
-        console.log("Projects Count:", proj?.length);
-        console.log("Projects Error:", projError);
-
         if (mounted) {
-          console.log("State Before Update:", projects);
-          console.log("Setting Projects:", proj);
           setProfile(p ?? null);
           setSaved(s ?? []);
           setProjects(proj ?? []);
-          console.log("Projects State Updated");
         }
       }
       if (mounted) setLoading(false);
@@ -66,16 +50,11 @@ export default function ProfilePage() {
 
     init();
     const { data: listener } = supabaseClient.auth.onAuthStateChange((_e, session) => {
-      console.log("Auth State Change - Session:", session?.user);
-      console.log("Auth State Change - User ID:", session?.user?.id);
       setUser(session?.user ?? null);
       if (session?.user) {
         supabaseClient.from("profiles").select("*").eq("id", session.user.id).single().then(({ data: p }) => setProfile(p ?? null));
         supabaseClient.from("saved_content").select("*").eq("user_id", session.user.id).order("created_at", { ascending: false }).then(({ data: s }) => setSaved(s ?? []));
-        supabaseClient.from("projects").select("*").eq("owner_id", session.user.id).order("created_at", { ascending: false }).then(({ data: proj, error: projError }) => {
-          console.log("Auth State Change - Projects Data:", proj);
-          console.log("Auth State Change - Projects Error:", projError);
-          console.log("Auth State Change - Projects Count:", proj?.length);
+        supabaseClient.from("projects").select("*").eq("owner_id", session.user.id).order("created_at", { ascending: false }).then(({ data: proj }) => {
           setProjects(proj ?? []);
         });
       } else {
@@ -140,29 +119,8 @@ export default function ProfilePage() {
   const featuredProject = projects.find(p => p.featured && p.status === 'published');
   const recentProjects = projects.slice(0, 3);
 
-  console.log("===== PROFILE TRACE =====");
-  console.log("projects =", projects);
-  console.log("projects.length =", projects.length);
-  console.log("totalProjects =", totalProjects);
-  console.log("publishedProjects =", publishedProjects);
-  console.log("draftProjects =", draftProjects);
-  console.log("recentProjects =", recentProjects);
-  console.log("recentProjects.length =", recentProjects.length);
-
   return (
     <main className="mx-auto max-w-5xl px-4 py-12">
-      {/* Debug Panel */}
-      <section className="mb-8 rounded-2xl border-2 border-red-500 bg-red-50 p-4">
-        <h3 className="mb-2 font-bold text-red-900">DEBUG PANEL - PROJECT VISIBILITY ISSUE</h3>
-        <div className="space-y-1 text-sm text-red-800">
-          <p><strong>User ID:</strong> {user?.id || 'NULL'}</p>
-          <p><strong>User Email:</strong> {user?.email || 'NULL'}</p>
-          <p><strong>Projects Count:</strong> {projects.length}</p>
-          <p><strong>Expected Owner ID:</strong> 4b45bed4-7b73-4044-a845-f1952b59904f</p>
-          <p><strong>User Matches Expected:</strong> {user?.id === '4b45bed4-7b73-4044-a845-f1952b59904f' ? 'YES' : 'NO'}</p>
-          <p><strong>Sample Project Owner ID:</strong> {projects[0]?.owner_id || 'NO PROJECTS'}</p>
-        </div>
-      </section>
 
       {/* Profile Overview */}
       <section className="mb-8 rounded-2xl border border-border/70 bg-card p-8">

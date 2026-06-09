@@ -129,7 +129,7 @@ export default function ProjectsDashboardPage() {
       </div>
 
       {/* Stats */}
-      <div className="mb-8 grid gap-4 sm:grid-cols-3">
+      <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card className="border-border/70 bg-card p-6">
           <div className="flex items-center gap-3">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
@@ -156,18 +156,80 @@ export default function ProjectsDashboardPage() {
         </Card>
         <Card className="border-border/70 bg-card p-6">
           <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-secondary/10 text-secondary">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-500/10 text-blue-500">
               <TrendingUp className="h-6 w-6" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Total Likes</p>
+              <p className="text-sm text-muted-foreground">Views (7d)</p>
               <p className="text-2xl font-semibold">
-                {projects.reduce((sum, p) => sum + (p.likes_count || 0), 0)}
+                {projects.reduce((sum, p) => sum + (p.views_count || 0), 0)}
+              </p>
+            </div>
+          </div>
+        </Card>
+        <Card className="border-border/70 bg-card p-6">
+          <div className="flex items-center gap-3">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-purple-500/10 text-purple-500">
+              <TrendingUp className="h-6 w-6" />
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Views (30d)</p>
+              <p className="text-2xl font-semibold">
+                {projects.reduce((sum, p) => sum + (p.views_count || 0), 0)}
               </p>
             </div>
           </div>
         </Card>
       </div>
+
+      {/* Most Viewed Project */}
+      {projects.length > 0 && (
+        <Card className="mb-8 border-border/70 bg-card p-6">
+          <h3 className="mb-4 text-lg font-semibold">Most Viewed Project</h3>
+          {(() => {
+            const mostViewed = projects.reduce((max, p) => 
+              (p.views_count || 0) > (max.views_count || 0) ? p : max, projects[0]);
+            return (
+              <div className="flex items-center gap-4">
+                <div className="relative h-20 w-20 overflow-hidden rounded-xl bg-muted/20">
+                  {mostViewed.cover_image ? (
+                    <Image
+                      src={mostViewed.cover_image}
+                      alt={mostViewed.title}
+                      fill
+                      className="object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center text-muted/20">
+                      <FolderOpen className="h-8 w-8" />
+                    </div>
+                  )}
+                </div>
+                <div className="flex-1">
+                  <h4 className="font-semibold">{mostViewed.title}</h4>
+                  <p className="text-sm text-muted-foreground">{mostViewed.description}</p>
+                  <div className="mt-2 flex items-center gap-4 text-xs text-muted-foreground">
+                    <div className="flex items-center gap-1">
+                      <Eye className="h-3 w-3" />
+                      {mostViewed.views_count || 0} views
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Calendar className="h-3 w-3" />
+                      {new Date(mostViewed.created_at).toLocaleDateString()}
+                    </div>
+                  </div>
+                </div>
+                <Link href={`/projects/${mostViewed.slug}`}>
+                  <Button variant="outline" size="sm">
+                    <Eye className="mr-2 h-4 w-4" />
+                    View
+                  </Button>
+                </Link>
+              </div>
+            );
+          })()}
+        </Card>
+      )}
 
       {/* Tabs */}
       <div className="mb-6 flex gap-2 border-b border-border/70">

@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Github, Loader2, CheckCircle, AlertCircle } from "lucide-react";
@@ -205,9 +206,11 @@ export default function ImportProjectPage() {
       {repository && (
         <Card className="mt-6 border-border/70 bg-card p-6">
           <div className="flex items-start gap-4">
-            <img
+            <Image
               src={repository.owner.avatar_url}
               alt={repository.owner.login}
+              width={64}
+              height={64}
               className="h-16 w-16 rounded-full"
             />
             <div className="flex-1">
