@@ -49,52 +49,16 @@ export default function ProfilePage() {
         ]);
 
         console.log("Projects Returned:", proj);
-        console.log("Projects Error:", projError);
         console.log("Projects Count:", proj?.length);
-
-        // STEP 3: Test without filter
-        const { data: allProjects, error: allError } = await supabaseClient
-          .from("projects")
-          .select("*");
-
-        console.log("ALL PROJECTS:", allProjects);
-        console.log("ALL PROJECTS COUNT:", allProjects?.length);
-        console.log("ALL PROJECTS ERROR:", allError);
-
-        // STEP 4: Call debug-auth endpoint
-        const debugResponse = await fetch("/api/debug-auth");
-        const debugData = await debugResponse.json();
-        console.log("API Debug User ID:", debugData.userId);
-        console.log("API Debug Email:", debugData.email);
-
-        // STEP 5: Verify session synchronization
-        console.log("========== SESSION SYNCHRONIZATION ==========");
-        console.log("auth.getUser() User ID:", data.user?.id);
-        console.log("auth.getSession() User ID:", session?.user?.id);
-        console.log("API Debug User ID:", debugData.userId);
-        console.log("Expected User ID: 4b45bed4-7b73-4044-a845-f1952b59904f");
-        console.log("getUser() matches expected:", data.user?.id === "4b45bed4-7b73-4044-a845-f1952b59904f");
-        console.log("getSession() matches expected:", session?.user?.id === "4b45bed4-7b73-4044-a845-f1952b59904f");
-        console.log("API matches expected:", debugData.userId === "4b45bed4-7b73-4044-a845-f1952b59904f");
-        console.log("getUser() === getSession():", data.user?.id === session?.user?.id);
-        console.log("=================================================");
-
-        // STEP 6: Final Output
-        console.log("========== FINAL DEBUG OUTPUT ==========");
-        console.log("1. Current User ID:", data.user?.id);
-        console.log("2. Session User ID:", session?.user?.id);
-        console.log("3. Query Result Count:", proj?.length);
-        console.log("4. Query Error:", projError);
-        console.log("5. All Projects Count:", allProjects?.length);
-        console.log("6. API Debug User ID:", debugData.userId);
-        console.log("7. Root Cause: ", data.user?.id !== session?.user?.id ? "SESSION MISMATCH DETECTED" : projError ? "QUERY ERROR" : proj?.length === 0 ? "NO PROJECTS RETURNED" : "UNKNOWN");
-        console.log("==========================================");
+        console.log("Projects Error:", projError);
 
         if (mounted) {
+          console.log("State Before Update:", projects);
+          console.log("Setting Projects:", proj);
           setProfile(p ?? null);
           setSaved(s ?? []);
           setProjects(proj ?? []);
-          console.log("Projects State after setProjects call:", proj ?? []);
+          console.log("Projects State Updated");
         }
       }
       if (mounted) setLoading(false);
@@ -176,19 +140,30 @@ export default function ProfilePage() {
   const featuredProject = projects.find(p => p.featured && p.status === 'published');
   const recentProjects = projects.slice(0, 3);
 
-  console.log("=== RENDER STATS ===");
-  console.log("Total Projects:", totalProjects);
-  console.log("Published Projects:", publishedProjects);
-  console.log("Draft Projects:", draftProjects);
-  console.log("Total Views:", totalViews);
-  console.log("Total Likes:", totalLikes);
-  console.log("Featured Project:", featuredProject);
-  console.log("Recent Projects:", recentProjects);
-  console.log("Recent Projects Length:", recentProjects.length);
-  console.log("===================");
+  console.log("===== PROFILE TRACE =====");
+  console.log("projects =", projects);
+  console.log("projects.length =", projects.length);
+  console.log("totalProjects =", totalProjects);
+  console.log("publishedProjects =", publishedProjects);
+  console.log("draftProjects =", draftProjects);
+  console.log("recentProjects =", recentProjects);
+  console.log("recentProjects.length =", recentProjects.length);
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-12">
+      {/* Debug Panel */}
+      <section className="mb-8 rounded-2xl border-2 border-red-500 bg-red-50 p-4">
+        <h3 className="mb-2 font-bold text-red-900">DEBUG PANEL - PROJECT VISIBILITY ISSUE</h3>
+        <div className="space-y-1 text-sm text-red-800">
+          <p><strong>User ID:</strong> {user?.id || 'NULL'}</p>
+          <p><strong>User Email:</strong> {user?.email || 'NULL'}</p>
+          <p><strong>Projects Count:</strong> {projects.length}</p>
+          <p><strong>Expected Owner ID:</strong> 4b45bed4-7b73-4044-a845-f1952b59904f</p>
+          <p><strong>User Matches Expected:</strong> {user?.id === '4b45bed4-7b73-4044-a845-f1952b59904f' ? 'YES' : 'NO'}</p>
+          <p><strong>Sample Project Owner ID:</strong> {projects[0]?.owner_id || 'NO PROJECTS'}</p>
+        </div>
+      </section>
+
       {/* Profile Overview */}
       <section className="mb-8 rounded-2xl border border-border/70 bg-card p-8">
         <div className="flex flex-col gap-6 md:flex-row md:items-start">

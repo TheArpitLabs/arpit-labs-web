@@ -1,8 +1,17 @@
 import { NextResponse } from 'next/server';
 import { knowledgeBaseService } from '@/lib/ai-services';
+import { getAdminUserFromRequest } from '@/lib/auth';
 
-export async function POST() {
+export async function POST(request: Request) {
   try {
+    const adminUser = await getAdminUserFromRequest(request);
+    if (!adminUser) {
+      return NextResponse.json(
+        { success: false, error: 'Admin access required' },
+        { status: 401 }
+      );
+    }
+
     const result = await knowledgeBaseService.refreshKnowledgeBase();
 
     return NextResponse.json(

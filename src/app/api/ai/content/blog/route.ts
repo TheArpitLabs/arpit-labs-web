@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { contentGenerationService } from '@/lib/ai-services';
+import { getUserFromRequest } from '@/lib/auth';
 
 const blogSchema = z.object({
   topic: z.string().min(1),
@@ -10,6 +11,14 @@ const blogSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
+    const user = await getUserFromRequest(request);
+    if (!user) {
+      return NextResponse.json(
+        { success: false, error: 'Authentication required' },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
     const { topic, category, difficulty } = blogSchema.parse(body);
 

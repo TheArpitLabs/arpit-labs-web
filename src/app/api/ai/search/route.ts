@@ -6,9 +6,18 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { semanticSearchService } from '@/lib/ai-services';
+import { getUserFromRequest } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
   try {
+    const user = await getUserFromRequest(request);
+    if (!user) {
+      return NextResponse.json(
+        { success: false, error: 'Authentication required' },
+        { status: 401 }
+      );
+    }
+
     const { query, limit = 5 } = await request.json();
 
     if (!query) {

@@ -2,10 +2,19 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabase/server";
 import { projectSchema } from "@/lib/validation/project.schema";
 import { handleDatabaseError } from "@/lib/errors";
+import { getUserFromRequest } from "@/lib/auth";
 
 // GET /api/projects - List all projects with filters
 export async function GET(request: NextRequest) {
   try {
+    const user = await getUserFromRequest(request);
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401 }
+      );
+    }
+
     const searchParams = request.nextUrl.searchParams;
     const status = searchParams.get('status') as 'draft' | 'published' | 'archived' | null;
     const project_type = searchParams.get('project_type');
@@ -57,6 +66,14 @@ export async function GET(request: NextRequest) {
 // POST /api/projects - Create a new project
 export async function POST(request: NextRequest) {
   try {
+    const user = await getUserFromRequest(request);
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
     const validatedData = projectSchema.parse(body);
 

@@ -1,8 +1,17 @@
 import { NextResponse } from 'next/server';
 import { contentGenerationService } from '@/lib/ai-services';
+import { getUserFromRequest } from '@/lib/auth';
 
-export async function POST() {
+export async function POST(request: Request) {
   try {
+    const user = await getUserFromRequest(request);
+    if (!user) {
+      return NextResponse.json(
+        { success: false, error: 'Authentication required' },
+        { status: 401 }
+      );
+    }
+
     const weeklyReport = await contentGenerationService.generateWeeklyReport();
 
     return NextResponse.json({ success: true, weeklyReport }, { status: 200 });
