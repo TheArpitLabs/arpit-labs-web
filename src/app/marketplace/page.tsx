@@ -145,8 +145,8 @@ export default async function MarketplacePage({
       <div className="py-20">
         <Container>
         <div className="mb-12 text-center">
-          <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">Marketplace</h1>
-          <p className="mt-4 text-lg text-muted-foreground">
+          <h1 className="text-hero text-gradient">Marketplace</h1>
+          <p className="mt-4 text-lg text-muted">
             Premium assets, templates, and tools to accelerate your development.
           </p>
         </div>
@@ -178,7 +178,7 @@ export default async function MarketplacePage({
                 name="q"
                 defaultValue={resolvedSearchParams.q}
                 placeholder="Search assets..."
-                className="w-full rounded-full border border-border/70 bg-background pl-10 pr-4 py-2 text-sm outline-none focus:border-primary"
+                className="w-full rounded-full glass pl-10 pr-4 py-2 text-sm outline-none focus:border-primary"
               />
             </form>
           </div>
@@ -189,13 +189,13 @@ export default async function MarketplacePage({
           <section className="mb-16">
             <div className="mb-6 flex items-center gap-2">
               <Sparkles className="h-5 w-5 text-primary" />
-              <h2 className="text-2xl font-semibold">Featured Products</h2>
+              <h2 className="text-2xl font-semibold text-foreground">Featured Products</h2>
             </div>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {featuredItems.map((item) => (
                 <Link key={item.id} href={`/marketplace/${item.slug}`}>
-                  <Card className="group h-full overflow-hidden transition-all hover:border-primary/50 hover:shadow-lg">
-                    <div className="aspect-video relative overflow-hidden bg-muted">
+                  <Card className="group h-full overflow-hidden">
+                    <div className="aspect-video relative overflow-hidden bg-surface">
                       {item.preview_image ? (
                         <Image
                           src={item.preview_image}
@@ -224,14 +224,14 @@ export default async function MarketplacePage({
                         </div>
                       </div>
                       <h3 className="line-clamp-1 font-semibold">{item.title}</h3>
-                      <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">
+                      <p className="mt-2 line-clamp-2 text-sm text-muted">
                         {item.description}
                       </p>
                       <div className="mt-3 flex items-center justify-between">
                         <span className="text-sm font-bold">
                           {item.price === 0 ? "Free" : `$${item.price}`}
                         </span>
-                        <span className="text-xs text-muted-foreground">
+                        <span className="text-xs text-muted">
                           {(item as any).downloads || '0'} downloads
                         </span>
                       </div>
@@ -248,7 +248,7 @@ export default async function MarketplacePage({
           <section className="mb-16">
             <div className="mb-6 flex items-center gap-2">
               <Package className="h-5 w-5 text-primary" />
-              <h2 className="text-2xl font-semibold">Popular Categories</h2>
+              <h2 className="text-2xl font-semibold text-foreground">Popular Categories</h2>
             </div>
             <div className="flex flex-wrap gap-3">
               {categories.slice(0, 8).map((cat) => (
@@ -267,13 +267,13 @@ export default async function MarketplacePage({
           <section className="mb-16">
             <div className="mb-6 flex items-center gap-2">
               <TrendingUp className="h-5 w-5 text-primary" />
-              <h2 className="text-2xl font-semibold">Trending</h2>
+              <h2 className="text-2xl font-semibold text-foreground">Trending</h2>
             </div>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {trendingItems.map((item) => (
                 <Link key={item.id} href={`/marketplace/${item.slug}`}>
-                  <Card className="group h-full overflow-hidden transition-all hover:border-primary/50 hover:shadow-lg">
-                    <div className="aspect-video relative overflow-hidden bg-muted">
+                  <Card className="group h-full overflow-hidden">
+                    <div className="aspect-video relative overflow-hidden bg-surface">
                       {item.preview_image ? (
                         <Image
                           src={item.preview_image}
@@ -302,7 +302,7 @@ export default async function MarketplacePage({
                         <span className="text-sm font-bold">
                           {item.price === 0 ? "Free" : `$${item.price}`}
                         </span>
-                        <span className="text-xs text-muted-foreground">
+                        <span className="text-xs text-muted">
                           {(item as any).downloads || '0'} downloads
                         </span>
                       </div>
@@ -319,13 +319,13 @@ export default async function MarketplacePage({
           <section className="mb-16">
             <div className="mb-6 flex items-center gap-2">
               <Clock className="h-5 w-5 text-primary" />
-              <h2 className="text-2xl font-semibold">Recently Added</h2>
+              <h2 className="text-2xl font-semibold text-foreground">Recently Added</h2>
             </div>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {recentlyAdded.map((item) => (
                 <Link key={item.id} href={`/marketplace/${item.slug}`}>
-                  <Card className="group h-full overflow-hidden transition-all hover:border-primary/50 hover:shadow-lg">
-                    <div className="aspect-video relative overflow-hidden bg-muted">
+                  <Card className="group h-full overflow-hidden">
+                    <div className="aspect-video relative overflow-hidden bg-surface">
                       {item.preview_image ? (
                         <Image
                           src={item.preview_image}
@@ -354,7 +354,7 @@ export default async function MarketplacePage({
                         <span className="text-sm font-bold">
                           {item.price === 0 ? "Free" : `$${item.price}`}
                         </span>
-                        <span className="text-xs text-muted-foreground">
+                        <span className="text-xs text-muted">
                           {(item as any).downloads || '0'} downloads
                         </span>
                       </div>
@@ -371,16 +371,16 @@ export default async function MarketplacePage({
           <section className="mb-16">
             <div className="mb-6 flex items-center gap-2">
               <Star className="h-5 w-5 text-primary" />
-              <h2 className="text-2xl font-semibold">Coming Soon</h2>
+              <h2 className="text-2xl font-semibold text-foreground">Coming Soon</h2>
             </div>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {comingSoon.map((item) => (
-                <Card key={item.id} className="border-dashed border-border/70 bg-muted/30 p-6">
+                <Card key={item.id} className="border-dashed border-border/70 glass p-6">
                   <div className="mb-4 flex h-32 items-center justify-center rounded-lg bg-muted/50">
                     <Package className="h-12 w-12 text-muted/30" />
                   </div>
                   <h3 className="font-semibold">{item.title}</h3>
-                  <p className="mt-2 text-sm text-muted-foreground">{item.description}</p>
+                  <p className="mt-2 text-sm text-muted">{item.description}</p>
                   <Badge variant="outline" className="mt-4 w-fit">
                     Coming Soon
                   </Badge>
@@ -392,14 +392,14 @@ export default async function MarketplacePage({
 
         {/* All Products Grid */}
         <section>
-          <h2 className="mb-6 text-2xl font-semibold">
+          <h2 className="mb-6 text-2xl font-semibold text-foreground">
             {resolvedSearchParams.q ? "Search Results" : resolvedSearchParams.category ? "Category Results" : "All Products"}
           </h2>
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {filteredItems.map((item) => (
               <Link key={item.id} href={`/marketplace/${item.slug}`}>
-                <Card className="group h-full overflow-hidden transition-all hover:border-primary/50 hover:shadow-lg">
-                  <div className="aspect-video relative overflow-hidden bg-muted">
+                <Card className="group h-full overflow-hidden">
+                  <div className="aspect-video relative overflow-hidden bg-surface">
                     {item.preview_image ? (
                       <Image
                         src={item.preview_image}
@@ -429,14 +429,14 @@ export default async function MarketplacePage({
                       </div>
                     </div>
                     <h3 className="line-clamp-1 font-semibold">{item.title}</h3>
-                    <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">
+                    <p className="mt-2 line-clamp-2 text-sm text-muted">
                       {item.description}
                     </p>
                     <div className="mt-3 flex items-center justify-between">
                       <span className="text-sm font-bold">
                         {item.price === 0 ? "Free" : `$${item.price}`}
                       </span>
-                      <span className="text-xs text-muted-foreground">
+                      <span className="text-xs text-muted">
                         {(item as any).downloads || '0'} downloads
                       </span>
                     </div>

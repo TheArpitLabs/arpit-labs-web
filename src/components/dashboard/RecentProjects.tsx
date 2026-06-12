@@ -3,9 +3,12 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { FolderKanban, Eye, Heart, Calendar } from "lucide-react";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Button } from "@/components/ui/button";
+import { FolderKanban, Eye, Heart, Calendar, ArrowRight } from "lucide-react";
 
 interface RecentProjectsProps {
   projects: any[];
@@ -16,105 +19,100 @@ export function RecentProjects({ projects }: RecentProjectsProps) {
 
   if (recentProjects.length === 0) {
     return (
-      <Card className="p-8">
-        <div className="flex flex-col items-center justify-center py-12 text-center">
-          <FolderKanban className="h-12 w-12 text-muted/50" />
-          <h3 className="mt-4 text-lg font-semibold text-foreground">No projects yet</h3>
-          <p className="mt-2 text-sm text-muted">
-            Start creating and track your engineering projects here.
-          </p>
-          <Link
-            href="/creator/projects/new"
-            className="premium-button mt-4 inline-flex items-center justify-center"
-          >
-            Create Project
-          </Link>
-        </div>
+      <Card variant="glass" className="p-8">
+        <EmptyState
+          icon={FolderKanban}
+          title="No projects yet"
+          description="Start creating and track your engineering projects here."
+          actionLabel="Create Project"
+          actionHref="/creator/projects/new"
+          variant="minimal"
+        />
       </Card>
     );
   }
 
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {recentProjects.map((project) => (
-        <Link
+      {recentProjects.map((project, index) => (
+        <motion.div
           key={project.id}
-          href={`/projects/${project.slug}`}
-          className="group"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: index * 0.1 }}
         >
-          <Card className="overflow-hidden">
-            {/* Thumbnail */}
-            <div className="relative aspect-video w-full bg-surface">
-              {project.cover_image ? (
-                <Image
-                  src={project.cover_image}
-                  alt={project.title}
-                  fill
-                  className="object-cover"
-                />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center text-muted/20">
-                  <FolderKanban className="h-12 w-12" />
+          <Link href={`/projects/${project.slug}`} className="group block">
+            <Card variant="elevated" className="overflow-hidden transition-all duration-300 hover:shadow-xl">
+              {/* Thumbnail */}
+              <div className="relative aspect-video w-full overflow-hidden bg-surface">
+                {project.cover_image ? (
+                  <Image
+                    src={project.cover_image}
+                    alt={project.title}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/10 to-secondary/10">
+                    <FolderKanban className="h-12 w-12 text-primary/40" />
+                  </div>
+                )}
+                <div className="absolute left-3 top-3">
+                  <Badge variant="outline" className="border-none glass text-foreground">
+                    {project.project_type}
+                  </Badge>
                 </div>
-              )}
-              <div className="absolute left-3 top-3">
-                <Badge
-                  variant="outline"
-                  className="border-none glass text-foreground"
-                >
-                  {project.project_type}
-                </Badge>
-              </div>
-              {project.featured && (
-                <div className="absolute right-3 top-3">
-                  <Badge className="bg-primary text-primary-foreground">Featured</Badge>
-                </div>
-              )}
-            </div>
-
-            {/* Content */}
-            <div className="p-4">
-              <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">
-                {project.title}
-              </h3>
-              <p className="mt-2 line-clamp-2 text-sm text-muted">
-                {project.description}
-              </p>
-
-              {/* Stats */}
-              <div className="mt-4 flex items-center gap-4 text-xs text-muted">
-                <div className="flex items-center gap-1">
-                  <Eye className="h-3 w-3" />
-                  {project.views_count || 0}
-                </div>
-                <div className="flex items-center gap-1">
-                  <Heart className="h-3 w-3" />
-                  {project.likes_count || 0}
-                </div>
-                <div className="flex items-center gap-1">
-                  <Calendar className="h-3 w-3" />
-                  {new Date(project.created_at).toLocaleDateString()}
-                </div>
+                {project.featured && (
+                  <div className="absolute right-3 top-3">
+                    <Badge variant="glow" className="bg-primary text-primary-foreground">
+                      Featured
+                    </Badge>
+                  </div>
+                )}
               </div>
 
-              {/* Status */}
-              <div className="mt-3">
-                <Badge
-                  variant="outline"
-                  className={`text-xs ${
-                    project.status === "published"
-                      ? "border-green-500/50 text-green-500"
-                      : project.status === "draft"
-                      ? "border-yellow-500/50 text-yellow-500"
-                      : "border-gray-500/50 text-gray-500"
-                  }`}
-                >
-                  {project.status}
-                </Badge>
+              {/* Content */}
+              <div className="p-5">
+                <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-1">
+                  {project.title}
+                </h3>
+                <p className="mt-2 line-clamp-2 text-sm text-muted">
+                  {project.description}
+                </p>
+
+                {/* Stats */}
+                <div className="mt-4 flex items-center gap-4 text-xs text-muted">
+                  <div className="flex items-center gap-1.5">
+                    <Eye className="h-3.5 w-3.5" />
+                    <span>{(project.views_count || 0).toLocaleString()}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Heart className="h-3.5 w-3.5" />
+                    <span>{(project.likes_count || 0).toLocaleString()}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Calendar className="h-3.5 w-3.5" />
+                    <span>{new Date(project.created_at).toLocaleDateString()}</span>
+                  </div>
+                </div>
+
+                {/* Status & View */}
+                <div className="mt-4 flex items-center justify-between">
+                  <Badge
+                    variant={project.status === "published" ? "success" : project.status === "draft" ? "warning" : "secondary"}
+                    size="sm"
+                  >
+                    {project.status}
+                  </Badge>
+                  <div className="flex items-center gap-1 text-sm font-semibold text-primary opacity-0 transition-opacity group-hover:opacity-100">
+                    View
+                    <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
+                  </div>
+                </div>
               </div>
-            </div>
-          </Card>
-        </Link>
+            </Card>
+          </Link>
+        </motion.div>
       ))}
     </div>
   );

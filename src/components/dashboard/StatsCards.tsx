@@ -1,8 +1,9 @@
 "use client";
 
 import React from "react";
-import { Card } from "@/components/ui/card";
-import { FolderKanban, TrendingUp, Heart, FileCheck } from "lucide-react";
+import { motion } from "framer-motion";
+import { Card, InfoCard } from "@/components/ui/card";
+import { FolderKanban, TrendingUp, Heart, FileCheck, ArrowUpRight } from "lucide-react";
 
 interface StatsCardsProps {
   totalProjects: number;
@@ -20,47 +21,50 @@ export function StatsCards({
   const stats = [
     {
       name: "My Projects",
-      value: totalProjects,
+      value: totalProjects.toString(),
+      label: "Total projects",
+      trend: "+12%",
       icon: FolderKanban,
-      color: "bg-primary/10 text-primary",
     },
     {
       name: "Total Views",
-      value: totalViews,
+      value: totalViews.toString(),
+      label: "Project views",
+      trend: "+24%",
       icon: TrendingUp,
-      color: "bg-secondary/10 text-secondary",
     },
     {
       name: "Total Likes",
-      value: totalLikes,
+      value: totalLikes.toString(),
+      label: "Community likes",
+      trend: "+18%",
       icon: Heart,
-      color: "bg-red-500/10 text-red-500",
     },
     {
       name: "Published",
-      value: publishedProjects,
+      value: publishedProjects.toString(),
+      label: "Live projects",
+      trend: "+8%",
       icon: FileCheck,
-      color: "bg-green-500/10 text-green-500",
     },
   ];
 
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      {stats.map((stat) => (
-        <Card
+      {stats.map((stat, index) => (
+        <motion.div
           key={stat.name}
-          className="p-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: index * 0.1 }}
         >
-          <div className="flex items-center gap-3">
-            <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${stat.color}`}>
-              <stat.icon className="h-6 w-6" />
-            </div>
-            <div>
-              <p className="text-sm text-muted">{stat.name}</p>
-              <p className="text-2xl font-semibold text-foreground">{stat.value}</p>
-            </div>
-          </div>
-        </Card>
+          <InfoCard
+            title={stat.name}
+            value={stat.value}
+            label={stat.label}
+            trend={stat.trend}
+          />
+        </motion.div>
       ))}
     </div>
   );
