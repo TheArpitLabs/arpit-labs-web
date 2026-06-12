@@ -70,14 +70,15 @@ export default function ContactPage() {
                 <h3 className="text-lg font-bold text-foreground">Follow the Lab</h3>
                 <div className="flex gap-4">
                   {[
-                    { icon: <Github size={20} />, href: "#", label: "GitHub" },
-                    { icon: <Linkedin size={20} />, href: "#", label: "LinkedIn" },
-                    { icon: <Twitter size={20} />, href: "#", label: "Twitter" },
-                    { icon: <Globe size={20} />, href: "#", label: "Website" },
+                    { icon: <Github size={20} />, href: "https://github.com/arpit-labs", label: "GitHub" },
+                    { icon: <Linkedin size={20} />, href: "https://linkedin.com/in/arpit-labs", label: "LinkedIn" },
+                    { icon: <Globe size={20} />, href: "https://arpit-labs.com", label: "Website" },
                   ].map((social, i) => (
                     <a
                       key={i}
                       href={social.href}
+                      target="_blank"
+                      rel="noreferrer noopener"
                       className="flex h-12 w-12 items-center justify-center rounded-2xl border border-border/70 bg-background text-muted transition hover:border-primary hover:text-primary dark:border-slate-800"
                       aria-label={social.label}
                     >

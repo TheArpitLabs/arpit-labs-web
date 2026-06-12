@@ -5,10 +5,10 @@ import { Target, Rocket, Lightbulb, Code2, Cpu, Shield, ArrowRight } from "lucid
 import Link from "next/link";
 
 const journeyMilestones = [
-  { year: "2020", title: "The Beginning", description: "Started as a personal experiment in AI and IoT systems", icon: Lightbulb },
-  { year: "2022", title: "First Projects", description: "Published initial open-source projects and research papers", icon: Code2 },
-  { year: "2024", title: "Platform Launch", description: "Launched Arpit Labs as a comprehensive engineering platform", icon: Rocket },
-  { year: "2026", title: "Global Impact", description: "Reached 1,200+ engineers worldwide with industry-grade projects", icon: Target },
+  { year: "2020", title: "Engineering Foundation", description: "Began exploration of embedded systems and IoT protocols while building hardware prototypes", icon: Lightbulb },
+  { year: "2022", title: "Software Integration", description: "Expanded into full-stack development and AI/ML research, publishing initial open-source projects", icon: Code2 },
+  { year: "2024", title: "Platform Launch", description: "Founded Arpit Labs as a unified platform for hardware, software, and AI engineering projects", icon: Rocket },
+  { year: "2026", title: "Ecosystem Growth", description: "Building comprehensive engineering resources and community for hands-on learning", icon: Target },
 ];
 
 const coreValues = [
@@ -35,7 +35,7 @@ export function FounderStory() {
             Building the Future of Engineering
           </h2>
           <p className="mx-auto max-w-3xl text-lg text-muted">
-            From a personal experiment to a global platform, discover the journey behind Arpit Labs and the vision driving engineering innovation.
+            From hardware prototypes to AI-powered systems, follow Arpit Kumar's journey in creating a platform that bridges the gap between academic learning and industry-ready engineering.
           </p>
         </motion.div>
 

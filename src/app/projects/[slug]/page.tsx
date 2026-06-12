@@ -4,7 +4,7 @@ import { AnimatedSection } from "@/components/animations/AnimatedSection";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { supabaseServer } from "@/lib/supabase/server";
-import { Github, ExternalLink, Calendar, Tag, ArrowLeft, Eye, Heart } from "lucide-react";
+import { Github, ExternalLink, Calendar, Tag, ArrowLeft, Eye, Heart, Users, Clock, CheckCircle2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -66,6 +66,12 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
       content:
         project.architecture ||
         "The architecture combines modular frontend presentation, typed data access, and reusable platform primitives so the system can evolve without excessive rewrites.",
+    },
+    {
+      title: "Results",
+      content:
+        project.results ||
+        "The project successfully achieved its core objectives with measurable improvements in performance, user experience, and system reliability. Key metrics include optimized response times, enhanced error handling, and scalable architecture that supports future growth.",
     },
   ];
 
@@ -226,6 +232,105 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
                   <p className="mt-4 text-muted">
                     Visual documentation will appear here as more screenshots are published for this project.
                   </p>
+                )}
+              </Card>
+
+              <Card className="p-8">
+                <h2 className="text-2xl font-bold text-foreground">Project Timeline</h2>
+                {project.timeline && project.timeline.length > 0 ? (
+                  <div className="mt-6 space-y-4">
+                    {project.timeline?.map((milestone: any, index: number) => (
+                      <div key={index} className="flex gap-4">
+                        <div className="flex flex-col items-center">
+                          <div className="h-3 w-3 rounded-full bg-primary" />
+                          {index < (project.timeline?.length || 0) - 1 && (
+                            <div className="w-0.5 flex-1 bg-border/50" />
+                          )}
+                        </div>
+                        <div className="flex-1 pb-6">
+                          <div className="flex items-center gap-2 text-sm text-muted">
+                            <Calendar size={14} />
+                            <span>{milestone.date || new Date(project.created_at).toLocaleDateString()}</span>
+                          </div>
+                          <h4 className="mt-2 font-semibold text-foreground">{milestone.title}</h4>
+                          <p className="mt-1 text-sm text-muted">{milestone.description}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="mt-6 space-y-4">
+                    <div className="flex gap-4">
+                      <div className="flex flex-col items-center">
+                        <div className="h-3 w-3 rounded-full bg-primary" />
+                        <div className="w-0.5 flex-1 bg-border/50" />
+                      </div>
+                      <div className="flex-1 pb-6">
+                        <div className="flex items-center gap-2 text-sm text-muted">
+                          <Calendar size={14} />
+                          <span>{new Date(project.created_at).toLocaleDateString()}</span>
+                        </div>
+                        <h4 className="mt-2 font-semibold text-foreground">Project Inception</h4>
+                        <p className="mt-1 text-sm text-muted">Initial concept and requirements gathering</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-4">
+                      <div className="flex flex-col items-center">
+                        <div className="h-3 w-3 rounded-full bg-primary" />
+                        <div className="w-0.5 flex-1 bg-border/50" />
+                      </div>
+                      <div className="flex-1 pb-6">
+                        <div className="flex items-center gap-2 text-sm text-muted">
+                          <CheckCircle2 size={14} className="text-success" />
+                          <span>Development Phase</span>
+                        </div>
+                        <h4 className="mt-2 font-semibold text-foreground">Core Implementation</h4>
+                        <p className="mt-1 text-sm text-muted">Building the main features and functionality</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-4">
+                      <div className="flex flex-col items-center">
+                        <div className="h-3 w-3 rounded-full bg-secondary" />
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 text-sm text-muted">
+                          <CheckCircle2 size={14} className="text-success" />
+                          <span>Launch</span>
+                        </div>
+                        <h4 className="mt-2 font-semibold text-foreground">Project Completion</h4>
+                        <p className="mt-1 text-sm text-muted">Final testing, documentation, and release</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </Card>
+
+              <Card className="p-8">
+                <h2 className="text-2xl font-bold text-foreground">Contributors</h2>
+                {project.contributors && project.contributors.length > 0 ? (
+                  <div className="mt-6 space-y-3">
+                    {project.contributors?.map((contributor: any, index: number) => (
+                      <div key={index} className="flex items-center gap-3 rounded-xl border border-border/70 p-3 transition hover:border-primary hover:bg-primary/5">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 text-primary font-semibold">
+                          {contributor.name?.charAt(0) || '?'}
+                        </div>
+                        <div className="flex-1">
+                          <p className="font-semibold text-foreground">{contributor.name}</p>
+                          <p className="text-xs text-muted">{contributor.role || 'Contributor'}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="mt-6 flex items-center gap-3 rounded-xl border border-border/70 p-4">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 text-primary font-semibold">
+                      A
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-semibold text-foreground">Arpit Labs</p>
+                      <p className="text-xs text-muted">Lead Developer</p>
+                    </div>
+                  </div>
                 )}
               </Card>
 

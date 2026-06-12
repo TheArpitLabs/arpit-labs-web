@@ -5,6 +5,7 @@ import { Card, FeatureCard } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Brain, Code2, Microscope, Zap } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { createPageMetadata } from "@/lib/seo";
 
 export const metadata = createPageMetadata({
@@ -71,25 +72,34 @@ export default function AboutPage() {
               <div className="space-y-4">
                 <h2 className="text-3xl font-bold text-foreground">The Founder</h2>
                 <p className="text-lg text-muted">
-                  I&apos;m Arpit, an engineer driven by the curiosity of how things work—from the silicon in a microcontroller to the distributed systems in the cloud.
+                  I&apos;m Arpit Kumar, an engineer driven by the curiosity of how things work—from the silicon in a microcontroller to the distributed systems in the cloud. My journey began with a fascination for embedded systems and has evolved into building comprehensive AI-powered solutions.
                 </p>
                 <p className="text-lg text-muted">
-                  With a background in both hardware and software, I founded Arpit Labs to serve as a digital sandbox for experiments that push the boundaries of what&apos;s possible when these worlds collide.
+                  With a background in both hardware and software engineering, I founded Arpit Labs to serve as a digital sandbox for experiments that push the boundaries of what&apos;s possible when these worlds collide. I believe in learning by building, failing fast, and sharing knowledge openly.
+                </p>
+                <p className="text-lg text-muted">
+                  My mission is to democratize access to industry-grade engineering education by providing real-world projects, comprehensive documentation, and AI-powered learning tools that bridge the gap between academic knowledge and professional excellence.
                 </p>
               </div>
               <div className="flex flex-wrap gap-4">
                 <Badge variant="secondary" className="px-4 py-1 text-sm">Hardware Architect</Badge>
                 <Badge variant="secondary" className="px-4 py-1 text-sm">Full-stack Developer</Badge>
-                <Badge variant="secondary" className="px-4 py-1 text-sm">AI Researcher</Badge>
+                <Badge variant="secondary" className="px-4 py-1 text-sm">AI/ML Engineer</Badge>
+                <Badge variant="secondary" className="px-4 py-1 text-sm">IoT Specialist</Badge>
+                <Badge variant="secondary" className="px-4 py-1 text-sm">Open Source Contributor</Badge>
               </div>
             </div>
-            <div className="relative aspect-square overflow-hidden rounded-[2.5rem] border border-border/70 bg-surface/50 dark:border-slate-800 dark:bg-slate-900/50">
-               {/* Placeholder for founder image */}
-               <div className="flex h-full w-full items-center justify-center text-muted">
-                 <div className="text-center">
-                   <Code2 size={64} className="mx-auto mb-4 opacity-20" />
-                   <p className="text-sm font-medium uppercase tracking-widest opacity-40">Engineering the Future</p>
-                 </div>
+            <div className="relative aspect-square overflow-hidden rounded-[2.5rem] border border-border/70 bg-gradient-to-br from-primary/10 to-secondary/10 dark:border-slate-800 dark:bg-slate-900/50">
+               <Image 
+                 src="/avatar-placeholder.svg" 
+                 alt="Arpit Kumar - Founder & Engineer"
+                 fill
+                 className="object-cover"
+                 priority
+               />
+               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-6">
+                 <p className="text-sm font-medium uppercase tracking-widest text-white">Arpit Kumar</p>
+                 <p className="mt-1 text-xs font-medium uppercase tracking-widest text-white/80">Founder & Engineer</p>
                </div>
             </div>
           </div>

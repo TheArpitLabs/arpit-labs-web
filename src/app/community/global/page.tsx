@@ -28,16 +28,16 @@ export default async function GlobalCommunityPage() {
               A Global Network of <span className="text-primary">Innovators.</span>
             </h1>
             <p className="text-xl text-slate-400">
-              Join thousands of engineers, researchers, and creators across 50+ countries. Together, we are building the future of AI and IoT.
+              Join engineers, researchers, and creators in building the future of AI and IoT. Connect, collaborate, and grow together.
             </p>
             <div className="flex flex-wrap gap-4 pt-4">
               <div className="flex items-center gap-2 rounded-2xl bg-white/5 px-4 py-2 backdrop-blur-md">
                 <Users size={20} className="text-primary" />
-                <span className="font-bold">10k+ Members</span>
+                <span className="font-bold">Growing Community</span>
               </div>
               <div className="flex items-center gap-2 rounded-2xl bg-white/5 px-4 py-2 backdrop-blur-md">
                 <Globe size={20} className="text-secondary" />
-                <span className="font-bold">25 Chapters</span>
+                <span className="font-bold">Global Network</span>
               </div>
             </div>
           </div>
@@ -93,19 +93,19 @@ export default async function GlobalCommunityPage() {
 
           <aside className="space-y-8">
             <div className="rounded-3xl border border-border/70 bg-card p-6">
-              <h3 className="mb-4 font-bold">Community Stats</h3>
+              <h3 className="mb-4 font-bold">Community Features</h3>
               <div className="space-y-4">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted">Countries</span>
-                  <span className="font-bold">52</span>
+                  <span className="text-muted">Regional Chapters</span>
+                  <span className="font-bold">Coming Soon</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted">Weekly Events</span>
-                  <span className="font-bold">12</span>
+                  <span className="text-muted">Local Events</span>
+                  <span className="font-bold">Coming Soon</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted">Open Projects</span>
-                  <span className="font-bold">140+</span>
+                  <span className="text-muted">Project Collaboration</span>
+                  <span className="font-bold">Available</span>
                 </div>
               </div>
             </div>

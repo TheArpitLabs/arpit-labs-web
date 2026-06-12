@@ -104,9 +104,9 @@ export default async function WorkspaceDetailPage({ params }: WorkspaceDetailPag
               <h3 className="text-lg font-bold">AI Infrastructure</h3>
               <p className="text-sm text-muted">Manage dedicated AI nodes and model deployments.</p>
             </div>
-            <Link href="#" className="mt-4 inline-flex text-xs font-bold text-primary uppercase tracking-widest">
-              Manage Nodes →
-            </Link>
+            <div className="mt-4 inline-flex text-xs font-bold text-muted uppercase tracking-widest">
+              Coming Soon
+            </div>
           </div>
         </div>
 

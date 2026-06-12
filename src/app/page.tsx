@@ -97,7 +97,7 @@ export default async function HomePage() {
               <AnimatedCounter value={projects.length} label="Projects Published" icon="FolderOpen" />
               <AnimatedCounter value={experiments.length} label="Research Initiatives" icon="FlaskConical" />
               <AnimatedCounter value={projects.reduce((sum, p) => sum + (p.views_count || 0), 0)} label="Total Views" icon="Eye" />
-              <AnimatedCounter value={1200} label="Community Members" icon="Users" suffix="+" />
+              <AnimatedCounter value={projects.length + experiments.length} label="Engineering Resources" icon="Users" />
             </div>
           </section>
         </AnimatedSection>

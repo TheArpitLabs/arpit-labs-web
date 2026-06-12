@@ -70,7 +70,7 @@ export default async function JourneyPage() {
                     </div>
                     <div>
                       <p className="text-sm font-medium text-foreground">Projects</p>
-                      <p className="text-xs text-muted">50+ Hardware & Software</p>
+                      <p className="text-xs text-muted">AI, IoT & Embedded Systems</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-4 rounded-2xl border border-border/70 bg-surface/50 p-4 dark:border-slate-800 dark:bg-slate-900/50">

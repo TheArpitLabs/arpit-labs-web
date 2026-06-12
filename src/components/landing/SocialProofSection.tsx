@@ -4,10 +4,10 @@ import { motion } from "framer-motion";
 import { Award, Trophy, Target, Zap, Star } from "lucide-react";
 
 const achievements = [
-  { icon: Award, label: "Industry Recognition", value: "5+", description: "Major awards" },
-  { icon: Trophy, label: "Projects Completed", value: "48+", description: "Delivered systems" },
-  { icon: Target, label: "Research Impact", value: "12K+", description: "Citations" },
-  { icon: Zap, label: "Community Growth", value: "1200+", description: "Active members" },
+  { icon: Award, label: "Engineering Focus", value: "AI + IoT", description: "Core domains" },
+  { icon: Trophy, label: "Projects Published", value: "5+", description: "Production systems" },
+  { icon: Target, label: "Research Papers", value: "6+", description: "Technical publications" },
+  { icon: Zap, label: "Resources Available", value: "20+", description: "Engineering assets" },
 ];
 
 const testimonials = [
