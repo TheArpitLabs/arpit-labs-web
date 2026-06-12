@@ -1,0 +1,15 @@
+# robots.txt for Arpit Labs
+# Allow all crawlers to access the site
+
+User-agent: *
+Allow: /
+
+# Disallow admin and private areas
+Disallow: /admin/
+Disallow: /account/
+Disallow: /api/
+Disallow: /login
+Disallow: /register
+
+# Sitemap location
+Sitemap: https://arpit-labs.com/sitemap.xml

@@ -16,7 +16,7 @@ const navLinks: NavLink[] = [
   { label: "Research", href: "/research" },
   { label: "University", href: "/university" },
   { label: "Innovation", href: "/innovation" },
-  { label: "Contact", href: "mailto:hello@arpitlabs.example" }
+  { label: "Contact", href: "mailto:contact@arpitlabs.com" }
 ];
 
 const categories = [
@@ -30,7 +30,7 @@ const categories = [
 const socialLinks = [
   { label: "GitHub", href: "https://github.com/arpit-labs", icon: Github },
   { label: "LinkedIn", href: "https://linkedin.com/in/arpit-labs", icon: Linkedin },
-  { label: "Email", href: "mailto:hello@arpitlabs.example", icon: Mail }
+  { label: "Email", href: "mailto:contact@arpitlabs.com", icon: Mail }
 ];
 
 export function Footer() {

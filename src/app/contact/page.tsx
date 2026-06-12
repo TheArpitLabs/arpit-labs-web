@@ -45,13 +45,13 @@ export default function ContactPage() {
               </div>
 
               <div className="grid gap-4">
-                <a href="mailto:hello@arpitlabs.example" className="group flex items-center gap-4 rounded-[1.75rem] border border-border/70 bg-surface/50 p-5 transition hover:border-primary/50 dark:border-slate-800 dark:bg-slate-900/50">
+                <a href="mailto:contact@arpitlabs.com" className="group flex items-center gap-4 rounded-[1.75rem] border border-border/70 bg-surface/50 p-5 transition hover:border-primary/50 dark:border-slate-800 dark:bg-slate-900/50">
                   <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary transition group-hover:bg-primary group-hover:text-white">
                     <Mail size={20} />
                   </div>
                   <div>
                     <p className="text-xs font-bold uppercase tracking-widest text-muted">Email</p>
-                    <p className="text-foreground">hello@arpitlabs.example</p>
+                    <p className="text-foreground">contact@arpitlabs.com</p>
                   </div>
                 </a>
 

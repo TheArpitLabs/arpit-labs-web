@@ -13,12 +13,13 @@ import { supabaseClient } from "@/lib/supabase/client";
 
 const navItems = [
   { href: "/", label: "Home" },
+  { href: "/projects", label: "Projects" },
+  { href: "/marketplace", label: "Marketplace" },
   { href: "/research", label: "Research" },
-  { href: "/university", label: "University" },
   { href: "/innovation", label: "Innovation" },
   { href: "/community/global", label: "Community" },
-  { href: "/products", label: "Products" },
-  { href: "/marketplace", label: "Marketplace" },
+  { href: "/about", label: "About" },
+  { href: "/contact", label: "Contact" },
 ] as const satisfies ReadonlyArray<{ href: Route; label: string }>;
 
 export function Navbar() {
@@ -100,7 +101,7 @@ export function Navbar() {
     <header className="sticky top-0 z-50 border-b border-border/70 bg-background/80 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-950/80">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-4 py-4 sm:px-6 lg:px-8">
         <Link href="/" className="group inline-flex items-center gap-3 text-lg font-semibold text-foreground transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70">
-          <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-border/80 bg-surface text-primary shadow-sm dark:border-slate-700 dark:bg-slate-900">
+          <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-secondary text-white shadow-lg">
             <NexusLogo className="h-5 w-5" />
           </span>
           <span className="sr-only">Arpit Labs</span>
@@ -166,7 +167,7 @@ export function Navbar() {
             <div className="flex items-center gap-3">
               <Link
                 href="/profile"
-                className="rounded-2xl bg-primary px-4 py-2 text-sm font-bold text-white shadow-lg shadow-primary/20 transition hover:bg-primary/90"
+                className="rounded-xl bg-gradient-to-r from-primary to-secondary px-4 py-2 text-sm font-bold text-white shadow-lg transition hover:opacity-90"
               >
                 {profile?.full_name || user.email?.split('@')[0]}
               </Link>
@@ -175,18 +176,26 @@ export function Navbar() {
                   await supabaseClient.auth.signOut();
                   router.push('/login');
                 }}
-                className="rounded-2xl border border-border/70 px-4 py-2 text-sm font-bold text-foreground transition hover:bg-surface"
+                className="rounded-xl border border-border/70 px-4 py-2 text-sm font-bold text-foreground transition hover:bg-surface"
               >
                 Sign Out
               </button>
             </div>
           ) : (
-            <Link
-              href="/login"
-              className="rounded-2xl bg-primary px-4 py-2 text-sm font-bold text-white shadow-lg shadow-primary/20 transition hover:bg-primary/90"
-            >
-              Sign In
-            </Link>
+            <div className="flex items-center gap-3">
+              <Link
+                href="/login"
+                className="rounded-xl border border-border/70 px-4 py-2 text-sm font-bold text-foreground transition hover:bg-surface"
+              >
+                Login
+              </Link>
+              <Link
+                href="/register"
+                className="rounded-xl bg-gradient-to-r from-primary to-secondary px-4 py-2 text-sm font-bold text-white shadow-lg transition hover:opacity-90"
+              >
+                Get Started
+              </Link>
+            </div>
           )}
           
           <button

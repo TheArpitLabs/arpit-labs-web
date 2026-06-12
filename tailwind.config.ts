@@ -40,7 +40,9 @@ const config: Config = {
         glow: "0 24px 80px rgba(37, 99, 235, 0.12)"
       },
       borderRadius: {
-        xl: "1rem"
+        xl: "1rem",
+        "2xl": "1.5rem",
+        "3xl": "2rem"
       }
     }
   },

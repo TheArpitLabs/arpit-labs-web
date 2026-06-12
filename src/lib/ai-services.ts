@@ -1003,7 +1003,7 @@ export class ContentGenerationService {
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
       console.log('OpenAI key missing');
-      return 'Generated content placeholder';
+      throw new Error('OpenAI API key is not configured');
     }
 
     try {
@@ -1031,19 +1031,19 @@ export class ContentGenerationService {
 
       if (!response.ok) {
         console.error('OpenAI API error:', response.status, text);
-        return 'Generated content placeholder';
+        throw new Error(`OpenAI API error: ${response.status}`);
       }
 
       try {
         const data = JSON.parse(text);
-        return data?.choices?.[0]?.message?.content?.trim() ?? 'Generated content placeholder';
+        return data?.choices?.[0]?.message?.content?.trim() ?? '';
       } catch (error) {
         console.error('Failed to parse OpenAI response:', error);
-        return 'Generated content placeholder';
+        throw new Error('Failed to parse OpenAI response');
       }
     } catch (error) {
       console.error('OpenAI call failed:', error);
-      return 'Generated content placeholder';
+      throw error;
     }
   }
 

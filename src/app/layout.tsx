@@ -39,12 +39,44 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Arpit Labs",
+    "url": seoConfig.siteUrl,
+    "logo": `${seoConfig.siteUrl}/favicon.svg`,
+    "description": "A digital engineering lab exploring AI, IoT, Software, and Hardware. Building resilient systems through systems thinking.",
+    "sameAs": [
+      "https://github.com/arpit-labs",
+      "https://linkedin.com/in/arpit-labs"
+    ],
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "email": "contact@arpitlabs.com",
+      "contactType": "customer service"
+    }
+  };
+
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <a
+            href="#main-content"
+            className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2 focus:text-white focus:outline-none"
+          >
+            Skip to main content
+          </a>
           <Navbar />
-          {children}
+          <main id="main-content">
+            {children}
+          </main>
         </ThemeProvider>
       </body>
     </html>

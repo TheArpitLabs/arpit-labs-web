@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { supabaseClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import { Footer } from "@/components/layout/Footer";
-import { Navbar } from "@/components/layout/Navbar";
 import { Chrome, Github, Eye, EyeOff, Loader2 } from "lucide-react";
 
 export default function LoginPage() {
@@ -156,7 +155,6 @@ export default function LoginPage() {
 
   return (
     <main className="min-h-screen bg-background">
-      <Navbar />
       <div className="px-4 py-10 text-foreground sm:px-6 lg:px-8">
         <div className="mx-auto max-w-md rounded-[2.5rem] border border-border/70 bg-card/90 p-8 shadow-sm dark:border-slate-800 dark:bg-slate-950/90">
         <div className="mb-8 space-y-3 text-center">
