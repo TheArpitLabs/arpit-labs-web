@@ -2,21 +2,22 @@
 
 import { motion, useInView, useAnimation } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import { LucideIcon } from "lucide-react";
+import * as LucideIcons from "lucide-react";
 
 interface AnimatedCounterProps {
   value: number;
   label: string;
-  icon: LucideIcon;
+  icon: keyof typeof LucideIcons;
   suffix?: string;
   duration?: number;
 }
 
-export function AnimatedCounter({ value, label, icon: Icon, suffix = "", duration = 2 }: AnimatedCounterProps) {
+export function AnimatedCounter({ value, label, icon, suffix = "", duration = 2 }: AnimatedCounterProps) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
   const controls = useAnimation();
   const [displayValue, setDisplayValue] = useState(0);
+  const Icon = LucideIcons[icon] as LucideIcons.LucideIcon;
 
   useEffect(() => {
     if (isInView) {

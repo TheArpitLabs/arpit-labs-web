@@ -24,7 +24,7 @@ const activityItems = [
 
 export function PremiumHero() {
   return (
-    <section className="relative min-h-screen overflow-hidden bg-gradient-to-b from-background via-background to-background/95">
+    <section className="relative h-screen overflow-hidden bg-gradient-to-b from-background via-background to-background/95">
       {/* Background gradients */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute left-0 top-0 h-[600px] w-[600px] rounded-full bg-primary/5 blur-3xl" />
@@ -32,8 +32,8 @@ export function PremiumHero() {
         <div className="absolute bottom-0 left-1/2 h-[400px] w-[400px] -translate-x-1/2 rounded-full bg-primary/5 blur-3xl" />
       </div>
 
-      <div className="relative z-10 mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-        <div className="grid gap-12 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
+      <div className="relative z-10 flex h-full items-center px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto grid w-full max-w-7xl gap-12 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
           {/* Left Column */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}

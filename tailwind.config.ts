@@ -37,12 +37,18 @@ const config: Config = {
         small: ["0.875rem", { lineHeight: "1.5" }]
       },
       boxShadow: {
-        glow: "0 24px 80px rgba(37, 99, 235, 0.12)"
+        glow: "0 24px 80px rgba(37, 99, 235, 0.12)",
+        "glow-lg": "0 32px 100px rgba(37, 99, 235, 0.15)",
+        "glass": "0 8px 32px rgba(0, 0, 0, 0.1)"
       },
       borderRadius: {
         xl: "1rem",
         "2xl": "1.5rem",
         "3xl": "2rem"
+      },
+      backgroundImage: {
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+        'gradient-border': 'linear-gradient(135deg, rgba(99, 102, 241, 0.5) 0%, rgba(139, 92, 246, 0.5) 100%)',
       }
     }
   },

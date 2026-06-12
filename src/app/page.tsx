@@ -6,11 +6,10 @@ import { NexusLogo } from "@/components/shared/NexusLogo";
 import { Timeline } from "@/components/shared/Timeline";
 import { Card, BentoCard } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Brain, Cpu, Code2, Wifi, FolderOpen, FlaskConical, ArrowRight } from "lucide-react";
+import { Brain, Cpu, Code2, Wifi, FolderOpen, FlaskConical, ArrowRight, Eye, Users } from "lucide-react";
 import { getExperiments, getLabNotes, getJourneyTimeline, getProjects } from "@/lib/actions/server-actions";
 import Image from "next/image";
 import Link from "next/link";
-import { FolderOpen as FolderIcon, Users as UsersIcon, Eye as EyeIcon, FlaskConical as FlaskIcon } from "lucide-react";
 
 const PremiumHero = dynamic(() => import("@/components/landing/PremiumHero").then(mod => ({ default: mod.PremiumHero })), {
   loading: () => <div className="h-screen animate-pulse bg-surface" />
@@ -23,6 +22,12 @@ const PremiumPlatformGrid = dynamic(() => import("@/components/landing/PremiumPl
 const PremiumProjectCard = dynamic(() => import("@/components/landing/PremiumProjectCard").then(mod => ({ default: mod.PremiumProjectCard })));
 
 const SocialProofSection = dynamic(() => import("@/components/landing/SocialProofSection").then(mod => ({ default: mod.SocialProofSection })));
+
+const FounderStory = dynamic(() => import("@/components/landing/FounderStory").then(mod => ({ default: mod.FounderStory })));
+
+const CommunitySection = dynamic(() => import("@/components/landing/CommunitySection").then(mod => ({ default: mod.CommunitySection })));
+
+const LaunchCTA = dynamic(() => import("@/components/landing/LaunchCTA").then(mod => ({ default: mod.LaunchCTA })));
 
 export default async function HomePage() {
   const [experiments, notes, journey, projects] = await Promise.all([
@@ -89,10 +94,10 @@ export default async function HomePage() {
             </div>
 
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              <AnimatedCounter value={projects.length} label="Projects Published" icon={FolderIcon} />
-              <AnimatedCounter value={experiments.length} label="Research Initiatives" icon={FlaskIcon} />
-              <AnimatedCounter value={projects.reduce((sum, p) => sum + (p.views_count || 0), 0)} label="Total Views" icon={EyeIcon} />
-              <AnimatedCounter value={1200} label="Community Members" icon={UsersIcon} suffix="+" />
+              <AnimatedCounter value={projects.length} label="Projects Published" icon="FolderOpen" />
+              <AnimatedCounter value={experiments.length} label="Research Initiatives" icon="FlaskConical" />
+              <AnimatedCounter value={projects.reduce((sum, p) => sum + (p.views_count || 0), 0)} label="Total Views" icon="Eye" />
+              <AnimatedCounter value={1200} label="Community Members" icon="Users" suffix="+" />
             </div>
           </section>
         </AnimatedSection>
@@ -101,6 +106,12 @@ export default async function HomePage() {
         <PremiumPlatformGrid />
 
         <SocialProofSection />
+
+        <FounderStory />
+
+        <CommunitySection />
+
+        <LaunchCTA />
 
         <AnimatedSection>
           <section id="about" className="py-20">
