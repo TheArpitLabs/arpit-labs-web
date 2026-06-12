@@ -72,7 +72,7 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
   return (
     <main className="bg-background text-foreground">
 
-      <section className="border-b border-border/70 bg-background/75 py-12 dark:border-slate-800 dark:bg-slate-950/70">
+      <section className="border-b border-border/70 glass py-12">
         <Container>
           <Link 
             href="/projects" 
@@ -87,7 +87,7 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
               <Badge variant="outline" className="px-4 py-1 text-primary">
                 {project.category}
               </Badge>
-              <h1 className="text-4xl font-bold tracking-tight text-foreground md:text-5xl">
+              <h1 className="text-hero text-gradient">
                 {project.title}
               </h1>
               <p className="text-xl leading-relaxed text-muted">
@@ -125,7 +125,7 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
                     href={project.github_url} 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-2 rounded-2xl bg-foreground text-background px-6 py-3 text-sm font-semibold transition hover:opacity-90"
+                    className="premium-button inline-flex items-center justify-center gap-2"
                   >
                     <Github size={18} />
                     View Source
@@ -136,7 +136,7 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
                     href={project.demo_url} 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-2 rounded-2xl border border-border/70 bg-surface px-6 py-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary/5 dark:border-slate-700 dark:bg-slate-900"
+                    className="premium-button-secondary inline-flex items-center justify-center gap-2"
                   >
                     <ExternalLink size={18} />
                     Live Demo
@@ -145,7 +145,7 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
               </div>
             </div>
 
-            <div className="relative aspect-video overflow-hidden rounded-[2.5rem] border border-border/70 bg-surface/50 dark:border-slate-800 dark:bg-slate-900/50 shadow-2xl">
+            <div className="relative aspect-video overflow-hidden rounded-[2.5rem] border border-border/70 glass shadow-2xl">
               {project.cover_image ? (
                 <Image
                   src={project.cover_image}
@@ -212,7 +212,7 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
                 {project.screenshots && project.screenshots.length > 0 ? (
                   <div className="mt-6 grid gap-4">
                     {project.screenshots?.map((image: string, index: number) => (
-                      <div key={image} className="relative overflow-hidden rounded-[1.5rem] border border-border/70 dark:border-slate-800 aspect-[16/9]">
+                      <div key={image} className="relative overflow-hidden rounded-[1.5rem] border border-border/70 glass aspect-[16/9]">
                         <Image
                           src={image}
                           alt={`${project.title} screenshot ${index + 1}`}
@@ -237,7 +237,7 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
                       href={project.github_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center justify-between rounded-2xl border border-border/70 bg-surface px-4 py-4 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary/5 dark:border-slate-700 dark:bg-slate-900"
+                      className="flex items-center justify-between rounded-2xl border border-border/70 glass px-4 py-4 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary/5"
                     >
                       <span>Repository</span>
                       <Github size={18} />
@@ -251,7 +251,7 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
                       href={project.demo_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center justify-between rounded-2xl border border-border/70 bg-surface px-4 py-4 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary/5 dark:border-slate-700 dark:bg-slate-900"
+                      className="flex items-center justify-between rounded-2xl border border-border/70 glass px-4 py-4 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary/5"
                     >
                       <span>Live Demo</span>
                       <ExternalLink size={18} />
@@ -266,7 +266,7 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
 
       <Container className="pb-20">
         <AnimatedSection>
-          <div className="rounded-[2.5rem] border border-border/70 bg-card/90 p-10 text-center shadow-sm dark:border-slate-800 dark:bg-slate-950/90">
+          <div className="rounded-[2.5rem] glass p-10 text-center">
             <h2 className="text-2xl font-bold text-foreground">Want to discuss this build?</h2>
             <p className="mx-auto mt-4 max-w-2xl text-muted">
               I’m always happy to talk through system design decisions, architecture tradeoffs, and engineering lessons from projects like this one.
@@ -274,13 +274,13 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
             <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Link
                 href="/contact"
-                className="inline-flex items-center justify-center rounded-2xl bg-primary px-6 py-3 text-sm font-semibold text-white transition hover:bg-primary/90"
+                className="premium-button inline-flex items-center justify-center"
               >
                 Start a Conversation
               </Link>
               <Link
                 href="/projects"
-                className="inline-flex items-center justify-center rounded-2xl border border-border/70 bg-surface px-6 py-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary/5 dark:border-slate-700 dark:bg-slate-900"
+                className="premium-button-secondary inline-flex items-center justify-center"
               >
                 Browse More Projects
               </Link>
