@@ -11,17 +11,17 @@ interface DashboardHeaderProps {
 
 export function DashboardHeader({ user, profile, onMenuClick }: DashboardHeaderProps) {
   return (
-    <header className="flex items-center justify-between border-b border-border/70 bg-card px-4 py-4 lg:px-8">
+    <header className="flex items-center justify-between border-b border-border/70 glass px-4 py-4 lg:px-8">
       <div className="flex items-center gap-4">
         <button
           onClick={onMenuClick}
-          className="lg:hidden rounded-lg p-2 hover:bg-muted"
+          className="lg:hidden rounded-lg p-2 hover:bg-surface"
         >
           <Menu className="h-5 w-5" />
         </button>
         <div>
-          <h1 className="text-xl font-semibold">Dashboard</h1>
-          <p className="text-sm text-muted-foreground">
+          <h1 className="text-xl font-semibold text-foreground">Dashboard</h1>
+          <p className="text-sm text-muted">
             Welcome back, {profile?.full_name?.split(" ")[0] ?? "User"}
           </p>
         </div>
@@ -29,17 +29,17 @@ export function DashboardHeader({ user, profile, onMenuClick }: DashboardHeaderP
 
       <div className="flex items-center gap-4">
         {/* Search */}
-        <div className="hidden md:flex items-center gap-2 rounded-lg border border-border/70 bg-muted/50 px-3 py-2">
-          <Search className="h-4 w-4 text-muted-foreground" />
+        <div className="hidden md:flex items-center gap-2 rounded-lg border border-border/70 glass px-3 py-2">
+          <Search className="h-4 w-4 text-muted" />
           <input
             type="text"
             placeholder="Search..."
-            className="bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+            className="bg-transparent text-sm outline-none placeholder:text-muted"
           />
         </div>
 
         {/* Notifications */}
-        <button className="relative rounded-lg p-2 hover:bg-muted">
+        <button className="relative rounded-lg p-2 hover:bg-surface">
           <Bell className="h-5 w-5" />
           <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-primary" />
         </button>

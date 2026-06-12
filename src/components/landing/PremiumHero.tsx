@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowRight, Eye, Heart, TrendingUp, Users, Zap, Clock, CheckCircle2, Sparkles } from "lucide-react";
+import { ArrowRight, Eye, Heart, TrendingUp, Users, Zap, Clock, CheckCircle2, Sparkles, Code2, Cpu, Brain, Globe, Award } from "lucide-react";
 import { NexusLogo } from "@/components/shared/NexusLogo";
 
 const floatingCards = [
@@ -22,6 +22,13 @@ const activityItems = [
   { text: "Research paper added", time: "1h ago", icon: CheckCircle2 },
 ];
 
+const techStack = [
+  { icon: Brain, name: "AI & ML", color: "from-purple-500 to-pink-500" },
+  { icon: Cpu, name: "IoT", color: "from-blue-500 to-cyan-500" },
+  { icon: Code2, name: "Software", color: "from-green-500 to-emerald-500" },
+  { icon: Globe, name: "Cloud", color: "from-orange-500 to-red-500" },
+];
+
 export function PremiumHero() {
   return (
     <section className="relative min-h-screen overflow-hidden bg-gradient-to-b from-background via-background to-background/95">
@@ -30,6 +37,8 @@ export function PremiumHero() {
         <div className="absolute left-0 top-0 h-[600px] w-[600px] rounded-full bg-primary/5 blur-3xl" />
         <div className="absolute right-0 top-0 h-[500px] w-[500px] rounded-full bg-secondary/5 blur-3xl" />
         <div className="absolute bottom-0 left-1/2 h-[400px] w-[400px] -translate-x-1/2 rounded-full bg-primary/5 blur-3xl" />
+        {/* Animated grid pattern */}
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(94,92,230,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(94,92,230,0.03)_1px,transparent_1px)] bg-[size:64px_64px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_50%,black,transparent)]" />
       </div>
 
       <div className="relative z-10 flex min-h-screen items-center px-4 py-20 sm:px-6 lg:px-8">
@@ -61,11 +70,32 @@ export function PremiumHero() {
               className="space-y-6"
             >
               <h1 className="max-w-3xl bg-gradient-to-r from-foreground via-foreground to-muted bg-clip-text text-hero font-bold leading-tight tracking-tight">
-                Build Your Engineering Career with Real-World Projects
+                Build the Future of Engineering with Real-World Projects
               </h1>
               <p className="max-w-2xl text-lg text-muted sm:text-xl">
                 Master AI, IoT, software, and hardware through industry-grade projects with complete documentation, AI explanations, and a thriving engineering ecosystem.
               </p>
+            </motion.div>
+
+            {/* Tech Stack */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.25 }}
+              className="flex flex-wrap gap-3"
+            >
+              {techStack.map((tech, index) => (
+                <motion.div
+                  key={tech.name}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.3, delay: 0.3 + index * 0.1 }}
+                  className="flex items-center gap-2 rounded-full border border-border/80 bg-surface/80 px-4 py-2 text-sm font-medium text-foreground backdrop-blur-sm"
+                >
+                  <tech.icon className={`h-4 w-4 bg-gradient-to-br ${tech.color} bg-clip-text text-transparent`} />
+                  {tech.name}
+                </motion.div>
+              ))}
             </motion.div>
 
             {/* CTAs */}
@@ -115,6 +145,10 @@ export function PremiumHero() {
               <div className="flex items-center gap-2 text-sm text-muted">
                 <CheckCircle2 className="h-4 w-4 text-success" />
                 <span>AI-Powered Learning</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-muted">
+                <Award className="h-4 w-4 text-primary" />
+                <span>Research Excellence</span>
               </div>
             </motion.div>
           </motion.div>

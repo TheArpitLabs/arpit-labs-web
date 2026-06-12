@@ -63,19 +63,19 @@ export function ActivityChart({ projects }: ActivityChartProps) {
   const data = generateActivityData();
 
   return (
-    <Card className="border-border/70 bg-card p-6">
-      <h3 className="mb-6 text-lg font-semibold">Activity Overview</h3>
+    <Card className="p-6">
+      <h3 className="mb-6 text-lg font-semibold text-foreground">Activity Overview</h3>
       <div className="h-64">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data}>
             <CartesianGrid strokeDasharray="3 3" className="stroke-border/50" />
             <XAxis
               dataKey="date"
-              className="text-xs text-muted-foreground"
+              className="text-xs text-muted"
               stroke="currentColor"
             />
             <YAxis
-              className="text-xs text-muted-foreground"
+              className="text-xs text-muted"
               stroke="currentColor"
             />
             <Tooltip

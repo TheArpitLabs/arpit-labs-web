@@ -49,15 +49,15 @@ export function StatsCards({
       {stats.map((stat) => (
         <Card
           key={stat.name}
-          className="border-border/70 bg-card p-6 transition-all hover:border-primary/30 hover:shadow-lg"
+          className="p-6"
         >
           <div className="flex items-center gap-3">
             <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${stat.color}`}>
               <stat.icon className="h-6 w-6" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">{stat.name}</p>
-              <p className="text-2xl font-semibold">{stat.value}</p>
+              <p className="text-sm text-muted">{stat.name}</p>
+              <p className="text-2xl font-semibold text-foreground">{stat.value}</p>
             </div>
           </div>
         </Card>

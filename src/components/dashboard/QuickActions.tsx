@@ -26,20 +26,20 @@ export function QuickActions() {
       description: "Manage your profile settings",
       icon: User,
       href: "/profile" as const,
-      color: "bg-muted/10 text-muted-foreground hover:bg-muted/20",
+      color: "bg-muted/10 text-muted hover:bg-muted/20",
     },
     {
       name: "Explore Projects",
       description: "Discover community projects",
       icon: Compass,
       href: "/projects" as const,
-      color: "bg-accent/10 text-accent-foreground hover:bg-accent/20",
+      color: "bg-accent/10 text-accent hover:bg-accent/20",
     },
   ];
 
   return (
-    <Card className="border-border/70 bg-card p-6">
-      <h3 className="mb-6 text-lg font-semibold">Quick Actions</h3>
+    <Card className="p-6">
+      <h3 className="mb-6 text-lg font-semibold text-foreground">Quick Actions</h3>
       <div className="grid gap-4 sm:grid-cols-2">
         {actions.map((action) => (
           <Link
@@ -47,7 +47,7 @@ export function QuickActions() {
             href={action.href}
             className="group"
           >
-            <div className="flex items-start gap-4 rounded-lg border border-border/70 bg-background p-4 transition-all hover:border-primary/50 hover:shadow-md">
+            <div className="flex items-start gap-4 rounded-lg border border-border/70 glass p-4 transition-all hover:border-primary/50 hover:shadow-md">
               <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${action.color} transition-colors`}>
                 <action.icon className="h-5 w-5" />
               </div>
@@ -55,7 +55,7 @@ export function QuickActions() {
                 <h4 className="font-semibold text-foreground group-hover:text-primary transition-colors">
                   {action.name}
                 </h4>
-                <p className="mt-1 text-sm text-muted-foreground">
+                <p className="mt-1 text-sm text-muted">
                   {action.description}
                 </p>
               </div>

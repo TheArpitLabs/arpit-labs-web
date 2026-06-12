@@ -37,19 +37,19 @@ export function DashboardSidebar({ user, profile, onClose }: DashboardSidebarPro
   };
 
   return (
-    <div className="flex h-full flex-col border-r border-border/70 bg-card">
+    <div className="flex h-full flex-col border-r border-border/70 glass">
       {/* Logo Section */}
       <div className="flex items-center justify-between border-b border-border/70 p-6">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
             <span className="text-lg font-bold">AL</span>
           </div>
-          <span className="text-lg font-semibold">Arpit Labs</span>
+          <span className="text-lg font-semibold text-foreground">Arpit Labs</span>
         </div>
         {onClose && (
           <button
             onClick={onClose}
-            className="lg:hidden rounded-lg p-2 hover:bg-muted"
+            className="lg:hidden rounded-lg p-2 hover:bg-surface"
           >
             <X className="h-5 w-5" />
           </button>
@@ -59,7 +59,7 @@ export function DashboardSidebar({ user, profile, onClose }: DashboardSidebarPro
       {/* User Profile */}
       <div className="border-b border-border/70 p-6">
         <div className="flex items-center gap-3">
-          <div className="relative h-12 w-12 overflow-hidden rounded-full bg-muted/20">
+          <div className="relative h-12 w-12 overflow-hidden rounded-full bg-surface">
             <Image
               src={profile?.avatar_url ?? "/avatar-placeholder.svg"}
               alt="avatar"
@@ -68,8 +68,8 @@ export function DashboardSidebar({ user, profile, onClose }: DashboardSidebarPro
             />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="truncate text-sm font-medium">{profile?.full_name ?? user?.email}</p>
-            <p className="truncate text-xs text-muted-foreground">{user?.email}</p>
+            <p className="truncate text-sm font-medium text-foreground">{profile?.full_name ?? user?.email}</p>
+            <p className="truncate text-xs text-muted">{user?.email}</p>
           </div>
         </div>
       </div>
@@ -86,7 +86,7 @@ export function DashboardSidebar({ user, profile, onClose }: DashboardSidebarPro
               className={`flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition ${
                 isActive
                   ? "bg-primary/10 text-primary"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                  : "text-muted hover:bg-surface hover:text-foreground"
               }`}
             >
               <item.icon className="h-5 w-5" />
@@ -100,7 +100,7 @@ export function DashboardSidebar({ user, profile, onClose }: DashboardSidebarPro
       <div className="border-t border-border/70 p-4">
         <button
           onClick={handleSignOut}
-          className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground"
+          className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-muted transition hover:bg-surface hover:text-foreground"
         >
           <LogOut className="h-5 w-5" />
           Sign Out

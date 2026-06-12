@@ -16,16 +16,16 @@ export function RecentProjects({ projects }: RecentProjectsProps) {
 
   if (recentProjects.length === 0) {
     return (
-      <Card className="border-border/70 bg-card p-8">
+      <Card className="p-8">
         <div className="flex flex-col items-center justify-center py-12 text-center">
-          <FolderKanban className="h-12 w-12 text-muted-foreground/50" />
-          <h3 className="mt-4 text-lg font-semibold">No projects yet</h3>
-          <p className="mt-2 text-sm text-muted-foreground">
+          <FolderKanban className="h-12 w-12 text-muted/50" />
+          <h3 className="mt-4 text-lg font-semibold text-foreground">No projects yet</h3>
+          <p className="mt-2 text-sm text-muted">
             Start creating and track your engineering projects here.
           </p>
           <Link
             href="/creator/projects/new"
-            className="mt-4 inline-flex items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary/90"
+            className="premium-button mt-4 inline-flex items-center justify-center"
           >
             Create Project
           </Link>
@@ -42,9 +42,9 @@ export function RecentProjects({ projects }: RecentProjectsProps) {
           href={`/projects/${project.slug}`}
           className="group"
         >
-          <Card className="border-border/70 bg-card overflow-hidden transition-all hover:border-primary/50 hover:shadow-lg">
+          <Card className="overflow-hidden">
             {/* Thumbnail */}
-            <div className="relative aspect-video w-full bg-muted/20">
+            <div className="relative aspect-video w-full bg-surface">
               {project.cover_image ? (
                 <Image
                   src={project.cover_image}
@@ -60,7 +60,7 @@ export function RecentProjects({ projects }: RecentProjectsProps) {
               <div className="absolute left-3 top-3">
                 <Badge
                   variant="outline"
-                  className="border-none bg-background/80 text-foreground backdrop-blur-md"
+                  className="border-none glass text-foreground"
                 >
                   {project.project_type}
                 </Badge>
@@ -77,12 +77,12 @@ export function RecentProjects({ projects }: RecentProjectsProps) {
               <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">
                 {project.title}
               </h3>
-              <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">
+              <p className="mt-2 line-clamp-2 text-sm text-muted">
                 {project.description}
               </p>
 
               {/* Stats */}
-              <div className="mt-4 flex items-center gap-4 text-xs text-muted-foreground">
+              <div className="mt-4 flex items-center gap-4 text-xs text-muted">
                 <div className="flex items-center gap-1">
                   <Eye className="h-3 w-3" />
                   {project.views_count || 0}

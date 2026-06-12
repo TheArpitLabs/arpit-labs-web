@@ -53,9 +53,9 @@ export function TechStackChart({ projects }: TechStackChartProps) {
 
   if (data.length === 0) {
     return (
-      <Card className="border-border/70 bg-card p-6">
-        <h3 className="mb-6 text-lg font-semibold">Tech Stack Distribution</h3>
-        <div className="flex h-64 items-center justify-center text-muted-foreground">
+      <Card className="p-6">
+        <h3 className="mb-6 text-lg font-semibold text-foreground">Tech Stack Distribution</h3>
+        <div className="flex h-64 items-center justify-center text-muted">
           <p className="text-sm">No tech stack data available</p>
         </div>
       </Card>
@@ -63,8 +63,8 @@ export function TechStackChart({ projects }: TechStackChartProps) {
   }
 
   return (
-    <Card className="border-border/70 bg-card p-6">
-      <h3 className="mb-6 text-lg font-semibold">Tech Stack Distribution</h3>
+    <Card className="p-6">
+      <h3 className="mb-6 text-lg font-semibold text-foreground">Tech Stack Distribution</h3>
       <div className="h-64">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
