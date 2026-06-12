@@ -6,22 +6,25 @@ import { NexusLogo } from "@/components/shared/NexusLogo";
 import { Timeline } from "@/components/shared/Timeline";
 import { Card, BentoCard } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Brain, Cpu, Code2, Wifi } from "lucide-react";
-import { getExperiments, getLabNotes, getJourneyTimeline } from "@/lib/actions/server-actions";
+import { Brain, Cpu, Code2, Wifi, Eye, Heart } from "lucide-react";
+import { getExperiments, getLabNotes, getJourneyTimeline, getProjects } from "@/lib/actions/server-actions";
 import { HeroCards } from "@/components/shared/HeroCards";
 import { FloatingDecorations } from "@/components/animations/FloatingDecorations";
+import Image from "next/image";
+import Link from "next/link";
 
 export default async function HomePage() {
-  const [experiments, notes, journey] = await Promise.all([
+  const [experiments, notes, journey, projects] = await Promise.all([
     getExperiments(),
     getLabNotes(),
-    getJourneyTimeline()
+    getJourneyTimeline(),
+    getProjects()
   ]);
 
   return (
     <main className="bg-background text-foreground">
 
-      <section id="home" className="relative border-b border-border/70 bg-background/75 py-16 dark:border-slate-800 dark:bg-slate-950/70">
+      <section id="home" className="relative border-b border-border/70 bg-background/75 py-20 dark:border-slate-800 dark:bg-slate-950/70">
         <FloatingDecorations />
         <Container>
           <div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
@@ -33,25 +36,25 @@ export default async function HomePage() {
               </div>
               <div className="space-y-6">
                 <h1 className="max-w-3xl text-section-title leading-tight tracking-[-0.03em] text-foreground">
-                  Engineering the future through AI, IoT, Software & Hardware.
+                  Build the Future. Ship with Confidence.
                 </h1>
                 <p className="max-w-2xl text-body text-muted">
-                  Arpit Labs is a digital engineering lab where ideas are designed, built, and transformed into impactful systems.
+                  A premium engineering lab where AI, IoT, software, and hardware converge. Transform ideas into production-ready systems with modern workflows.
                 </p>
               </div>
 
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
                 <a
-                  href="#experiments"
-                  className="inline-flex items-center justify-center rounded-2xl bg-primary px-6 py-3 text-sm font-semibold text-white transition hover:bg-primary/90"
+                  href="#featured-projects"
+                  className="inline-flex items-center justify-center rounded-2xl bg-primary px-6 py-3 text-sm font-semibold text-white transition hover:bg-primary/90 shadow-lg shadow-primary/20"
                 >
-                  Explore the Lab
+                  Explore Projects
                 </a>
                 <a
                   href="#journey"
                   className="inline-flex items-center justify-center rounded-2xl border border-border/70 bg-surface px-6 py-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary/5 dark:border-slate-700 dark:bg-slate-900"
                 >
-                  View My Journey
+                  View Journey
                 </a>
               </div>
 
@@ -64,6 +67,78 @@ export default async function HomePage() {
       </section>
 
       <Container>
+        <AnimatedSection>
+          <section id="featured-projects" className="py-20">
+            <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+              <div>
+                <p className="text-sm uppercase tracking-[0.28em] text-muted">Featured Projects</p>
+                <h2 className="text-section-title">Production-ready systems built here.</h2>
+              </div>
+              <p className="max-w-xl text-body text-muted">
+                Explore AI, IoT, software, and hardware projects engineered with modern workflows.
+              </p>
+            </div>
+
+            <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {projects.slice(0, 6).map((project) => (
+                <Link
+                  key={project.id}
+                  href={`/projects/${project.slug}`}
+                  className="group"
+                >
+                  <Card className="overflow-hidden border-border/70 transition hover:border-primary dark:border-slate-800">
+                    <div className="relative aspect-video overflow-hidden bg-surface">
+                      {project.cover_image ? (
+                        <Image
+                          src={project.cover_image}
+                          alt={project.title}
+                          fill
+                          className="object-cover transition group-hover:scale-105"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        />
+                      ) : (
+                        <div className="flex h-full items-center justify-center bg-gradient-to-br from-primary/10 to-secondary/10">
+                          <NexusLogo className="h-16 w-16 text-primary/40" />
+                        </div>
+                      )}
+                    </div>
+                    <div className="p-6">
+                      <div className="mb-3 flex flex-wrap gap-2">
+                        {project.tags?.slice(0, 3).map((tag) => (
+                          <Badge key={tag} variant="outline" className="text-xs">
+                            {tag}
+                          </Badge>
+                        ))}
+                      </div>
+                      <h3 className="mb-2 text-xl font-semibold text-foreground group-hover:text-primary transition">
+                        {project.title}
+                      </h3>
+                      <p className="mb-4 line-clamp-2 text-body text-muted">
+                        {project.description}
+                      </p>
+                      <div className="flex items-center gap-4 text-sm text-muted">
+                        <div className="flex items-center gap-1.5">
+                          <Eye size={14} />
+                          <span>{project.views_count || 0}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <Heart size={14} />
+                          <span>{project.likes_count || 0}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+
+            {projects.length === 0 && (
+              <div className="py-12 text-center text-muted">
+                No projects published yet. Check back soon!
+              </div>
+            )}
+          </section>
+        </AnimatedSection>
         <AnimatedSection>
           <section id="about" className="py-20">
             <div className="space-y-6">

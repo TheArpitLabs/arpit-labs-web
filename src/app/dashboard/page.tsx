@@ -1,100 +1,120 @@
-import { Container } from "@/components/layout/Container";
-import { Footer } from "@/components/layout/Footer";
-import { getTenantContext } from "@/lib/saas";
-import Link from "next/link";
-import { Building2, Layout, ArrowRight, Plus } from "lucide-react";
-import { redirect } from "next/navigation";
+"use client";
 
-export default async function UserDashboardPage() {
-  console.log('[Dashboard page] Starting...');
-  const context = await getTenantContext();
-  
-  console.log('[Dashboard page] Context result:', {
-    hasContext: !!context,
-  });
-  
-  if (!context) {
-    console.log('[Dashboard page] No context, redirecting to /login');
-    redirect("/login");
+import React, { useEffect, useState } from "react";
+import { supabaseClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
+import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
+import { StatsCards } from "@/components/dashboard/StatsCards";
+import { RecentProjects } from "@/components/dashboard/RecentProjects";
+import { ActivityChart } from "@/components/dashboard/ActivityChart";
+import { TechStackChart } from "@/components/dashboard/TechStackChart";
+import { QuickActions } from "@/components/dashboard/QuickActions";
+import { Card } from "@/components/ui/card";
+import { FolderKanban } from "lucide-react";
+
+export default function DashboardPage() {
+  const router = useRouter();
+  const [user, setUser] = useState<any | null>(null);
+  const [profile, setProfile] = useState<any | null>(null);
+  const [projects, setProjects] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function init() {
+      setLoading(true);
+      const { data } = await supabaseClient.auth.getUser();
+      if (!mounted) return;
+      
+      if (!data?.user) {
+        router.push("/login");
+        return;
+      }
+      
+      setUser(data.user);
+
+      const [{ data: p }, { data: proj }] = await Promise.all([
+        supabaseClient.from("profiles").select("*").eq("id", data.user.id).single(),
+        supabaseClient.from("projects").select("*").eq("owner_id", data.user.id).order("created_at", { ascending: false }),
+      ]);
+
+      if (mounted) {
+        setProfile(p ?? null);
+        setProjects(proj ?? []);
+      }
+      setLoading(false);
+    }
+
+    init();
+
+    const { data: listener } = supabaseClient.auth.onAuthStateChange((_e, session) => {
+      if (!session?.user) {
+        router.push("/login");
+      } else {
+        setUser(session.user);
+        supabaseClient.from("profiles").select("*").eq("id", session.user.id).single().then(({ data: p }) => setProfile(p ?? null));
+        supabaseClient.from("projects").select("*").eq("owner_id", session.user.id).order("created_at", { ascending: false }).then(({ data: proj }) => {
+          setProjects(proj ?? []);
+        });
+      }
+    });
+
+    return () => {
+      mounted = false;
+      listener?.subscription.unsubscribe();
+    };
+  }, [router]);
+
+  if (loading) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="text-center">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent mx-auto" />
+          <p className="mt-4 text-sm text-muted-foreground">Loading dashboard...</p>
+        </div>
+      </div>
+    );
   }
 
-  const { user, organizations } = context;
-  console.log('[Dashboard page] Rendering with user:', user.email);
+  if (!user) {
+    return null;
+  }
+
+  const totalProjects = projects.length;
+  const totalViews = projects.reduce((sum, p) => sum + (p.views_count || 0), 0);
+  const totalLikes = projects.reduce((sum, p) => sum + (p.likes_count || 0), 0);
+  const publishedProjects = projects.filter(p => p.status === 'published').length;
 
   return (
-    <main className="min-h-screen bg-background">
-      
-      <section className="bg-surface/30 border-b border-border/70 py-16">
-        <Container>
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight">Welcome back, {user.email?.split('@')[0]}</h1>
-              <p className="text-muted">Overview of your organizations and active workspaces.</p>
-            </div>
-            <Link 
-              href="/organizations"
-              className="inline-flex items-center gap-2 rounded-2xl bg-primary px-6 py-3 text-sm font-bold text-white transition hover:bg-primary/90"
-            >
-              <Plus size={18} />
-              Create Organization
-            </Link>
-          </div>
-        </Container>
-      </section>
+    <DashboardLayout user={user} profile={profile}>
+      <div className="space-y-6">
+        {/* Stats Cards */}
+        <StatsCards
+          totalProjects={totalProjects}
+          totalViews={totalViews}
+          totalLikes={totalLikes}
+          publishedProjects={publishedProjects}
+        />
 
-      <Container className="py-12">
-        <div className="grid gap-8 lg:grid-cols-2">
-          {/* Organizations Overview */}
-          <div className="space-y-6">
-            <h2 className="flex items-center gap-2 text-xl font-bold">
-              <Building2 size={20} className="text-primary" />
-              Your Organizations
-            </h2>
-            
-            <div className="grid gap-4">
-              {organizations.length === 0 ? (
-                <div className="rounded-[2rem] border border-dashed border-border/70 p-10 text-center">
-                  <p className="text-sm text-muted">You are not part of any organization yet.</p>
-                  <Link href="/organizations" className="mt-4 inline-block text-sm font-semibold text-primary">Get started →</Link>
-                </div>
-              ) : (
-                organizations.map((org) => (
-                  <Link
-                    key={org.id}
-                    href={`/organizations/${org.slug}`}
-                    className="flex items-center justify-between rounded-3xl border border-border/70 bg-card/50 p-6 transition hover:border-primary"
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                        {org.name[0]}
-                      </div>
-                      <span className="font-bold">{org.name}</span>
-                    </div>
-                    <ArrowRight size={18} className="text-muted" />
-                  </Link>
-                ))
-              )}
-            </div>
-          </div>
-
-          {/* Quick Stats/Activity Placeholder for SaaS */}
-          <div className="space-y-6">
-            <h2 className="flex items-center gap-2 text-xl font-bold">
-              <Layout size={20} className="text-primary" />
-              Recent Workspaces
-            </h2>
-            <div className="rounded-[2.5rem] border border-border/70 bg-card/50 p-10 flex flex-col items-center justify-center text-center">
-              <div className="h-12 w-12 rounded-full bg-surface flex items-center justify-center text-muted mb-4">
-                <Layout size={24} />
-              </div>
-              <h3 className="font-bold">Select an organization</h3>
-              <p className="text-xs text-muted mt-2">Workspaces are nested within organizations. Choose an org to see active projects.</p>
-            </div>
-          </div>
+        {/* Charts Row */}
+        <div className="grid gap-6 lg:grid-cols-2">
+          <ActivityChart projects={projects} />
+          <TechStackChart projects={projects} />
         </div>
-      </Container>
-      
-      <Footer />
-    </main>
+
+        {/* Recent Projects */}
+        <div>
+          <div className="mb-4 flex items-center gap-2">
+            <FolderKanban className="h-5 w-5 text-primary" />
+            <h2 className="text-xl font-semibold">Recent Projects</h2>
+          </div>
+          <RecentProjects projects={projects} />
+        </div>
+
+        {/* Quick Actions */}
+        <QuickActions />
+      </div>
+    </DashboardLayout>
   );
 }
