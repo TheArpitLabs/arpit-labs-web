@@ -12,13 +12,13 @@ interface PremiumProjectCardProps {
     id: string;
     title: string;
     description: string;
-    cover_image?: string;
+    cover_image?: string | null;
     tags?: string[];
     views_count?: number;
     likes_count?: number;
     slug: string;
     author?: string;
-    category?: string;
+    category?: string | null;
     status?: string;
   };
   index: number;

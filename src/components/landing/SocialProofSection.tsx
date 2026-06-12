@@ -118,7 +118,7 @@ export function SocialProofSection() {
                     ))}
                   </div>
                   <p className="mb-6 text-base text-muted leading-relaxed">
-                    "{testimonial.content}"
+                    &ldquo;{testimonial.content}&rdquo;
                   </p>
                   <div className="flex items-center gap-4">
                     <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-secondary/20">
