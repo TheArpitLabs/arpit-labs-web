@@ -67,7 +67,7 @@ export function PremiumPlatformGrid() {
           className="mb-16 text-center"
         >
           <p className="mb-4 text-sm uppercase tracking-[0.28em] text-muted">Platform</p>
-          <h2 className="mb-6 bg-gradient-to-r from-foreground via-foreground to-muted bg-clip-text text-4xl font-bold sm:text-5xl">
+          <h2 className="mb-6 text-section-title">
             Explore the Ecosystem
           </h2>
           <p className="mx-auto max-w-3xl text-lg text-muted">
@@ -84,7 +84,7 @@ export function PremiumPlatformGrid() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 whileHover={{ y: -8, scale: 1.02 }}
-                className="group relative h-full rounded-3xl border border-border/80 bg-gradient-to-br from-surface/90 to-background/90 p-8 backdrop-blur-xl shadow-xl transition-all duration-300 hover:shadow-2xl dark:border-slate-800 dark:from-slate-950/90 dark:to-slate-900/90"
+                className="group relative h-full rounded-3xl glass p-8 transition-all duration-300 hover:shadow-2xl"
               >
                 {/* Gradient overlay on hover */}
                 <div className={`absolute inset-0 rounded-3xl bg-gradient-to-br ${feature.gradient} opacity-0 transition-opacity duration-300 group-hover:opacity-100`} />

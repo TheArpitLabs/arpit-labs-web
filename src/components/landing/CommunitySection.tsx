@@ -80,7 +80,7 @@ export function CommunitySection() {
           className="mb-16 text-center"
         >
           <p className="mb-4 text-sm uppercase tracking-[0.28em] text-muted">Community</p>
-          <h2 className="mb-6 bg-gradient-to-r from-foreground via-foreground to-muted bg-clip-text text-4xl font-bold sm:text-5xl">
+          <h2 className="mb-6 text-section-title">
             Join a Global Engineering Network
           </h2>
           <p className="mx-auto max-w-3xl text-lg text-muted">
@@ -104,7 +104,7 @@ export function CommunitySection() {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               whileHover={{ y: -8 }}
-              className="relative overflow-hidden rounded-3xl border border-border/80 bg-gradient-to-br from-surface/90 to-background/90 p-6 text-center backdrop-blur-xl shadow-lg transition-all duration-300 hover:shadow-2xl dark:border-slate-800 dark:from-slate-950/90 dark:to-slate-900/90"
+              className="relative overflow-hidden rounded-3xl glass p-6 text-center transition-all duration-300 hover:shadow-2xl"
             >
               <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5 opacity-0 transition-opacity duration-300 hover:opacity-100" />
               <div className="relative">
@@ -142,7 +142,7 @@ export function CommunitySection() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 whileHover={{ y: -8, scale: 1.02 }}
-                className="group relative overflow-hidden rounded-3xl border border-border/80 bg-gradient-to-br from-surface/90 to-background/90 p-8 backdrop-blur-xl shadow-lg transition-all duration-300 hover:shadow-2xl dark:border-slate-800 dark:from-slate-950/90 dark:to-slate-900/90"
+                className="group relative overflow-hidden rounded-3xl glass p-8 transition-all duration-300 hover:shadow-2xl"
               >
                 <div className={`absolute inset-0 bg-gradient-to-br ${type.color} opacity-0 transition-opacity duration-300 group-hover:opacity-100`} />
                 <div className="relative">
@@ -197,7 +197,7 @@ export function CommunitySection() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 whileHover={{ y: -8 }}
-                className="relative overflow-hidden rounded-3xl border border-border/80 bg-gradient-to-br from-surface/90 to-background/90 p-8 backdrop-blur-xl shadow-lg transition-all duration-300 hover:shadow-2xl dark:border-slate-800 dark:from-slate-950/90 dark:to-slate-900/90"
+                className="relative overflow-hidden rounded-3xl glass p-8 transition-all duration-300 hover:shadow-2xl"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5 opacity-0 transition-opacity duration-300 hover:opacity-100" />
                 <div className="relative">
@@ -227,7 +227,7 @@ export function CommunitySection() {
           transition={{ duration: 0.6 }}
           className="mt-20"
         >
-          <div className="relative overflow-hidden rounded-3xl border border-border/80 bg-gradient-to-br from-primary/10 via-secondary/10 to-primary/10 p-12 text-center backdrop-blur-xl dark:border-slate-800">
+          <div className="relative overflow-hidden rounded-3xl glass p-12 text-center">
             <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-secondary/5" />
             <div className="relative">
               <h3 className="mb-4 text-3xl font-bold text-foreground">Ready to Join?</h3>
@@ -237,14 +237,14 @@ export function CommunitySection() {
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-center">
                 <Link
                   href="/register"
-                  className="group inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-primary to-secondary px-8 py-4 text-sm font-bold text-white transition-all hover:scale-105 hover:shadow-lg hover:shadow-primary/30"
+                  className="premium-button group inline-flex items-center justify-center"
                 >
                   Join Community
                   <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Link>
                 <Link
                   href="/community/global"
-                  className="inline-flex items-center justify-center rounded-2xl border-2 border-border/70 bg-surface/80 px-8 py-4 text-sm font-bold text-foreground transition-all hover:border-primary hover:bg-primary/5 backdrop-blur-sm dark:border-slate-800 dark:bg-slate-950/80"
+                  className="premium-button-secondary inline-flex items-center justify-center"
                 >
                   Explore Community
                 </Link>

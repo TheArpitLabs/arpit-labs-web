@@ -39,7 +39,7 @@ export function LaunchCTA() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="mb-6 bg-gradient-to-r from-foreground via-foreground to-muted bg-clip-text text-5xl font-bold leading-tight tracking-tight sm:text-6xl lg:text-7xl"
+            className="mb-6 text-hero text-gradient"
           >
             Build The Future With Arpit Labs
           </motion.h1>
@@ -65,7 +65,7 @@ export function LaunchCTA() {
           >
             <Link
               href="/projects"
-              className="group inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-primary to-secondary px-10 py-5 text-base font-bold text-white transition-all hover:scale-105 hover:shadow-2xl hover:shadow-primary/30"
+              className="premium-button group inline-flex items-center justify-center"
             >
               <Sparkles className="mr-2 h-5 w-5" />
               Explore Projects
@@ -73,7 +73,7 @@ export function LaunchCTA() {
             </Link>
             <Link
               href="/community/global"
-              className="group inline-flex items-center justify-center rounded-2xl border-2 border-border/80 bg-surface/80 px-10 py-5 text-base font-bold text-foreground transition-all hover:border-primary hover:bg-primary/5 hover:scale-105 backdrop-blur-sm dark:border-slate-800 dark:bg-slate-950/80"
+              className="premium-button-secondary group inline-flex items-center justify-center"
             >
               <Zap className="mr-2 h-5 w-5" />
               Join Community
@@ -109,7 +109,7 @@ export function LaunchCTA() {
           transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
           className="absolute left-10 top-20 hidden lg:block"
         >
-          <div className="rounded-2xl border border-border/80 bg-gradient-to-br from-primary/20 to-secondary/20 p-4 backdrop-blur-xl dark:border-slate-800">
+          <div className="rounded-2xl glass p-4">
             <Sparkles className="h-6 w-6 text-primary" />
           </div>
         </motion.div>
@@ -119,7 +119,7 @@ export function LaunchCTA() {
           transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
           className="absolute right-10 bottom-20 hidden lg:block"
         >
-          <div className="rounded-2xl border border-border/80 bg-gradient-to-br from-secondary/20 to-primary/20 p-4 backdrop-blur-xl dark:border-slate-800">
+          <div className="rounded-2xl glass p-4">
             <Zap className="h-6 w-6 text-secondary" />
           </div>
         </motion.div>

@@ -52,7 +52,7 @@ export function SocialProofSection() {
         >
           <div className="mb-12 text-center">
             <p className="mb-4 text-sm uppercase tracking-[0.28em] text-muted">Achievements</p>
-            <h2 className="mb-6 bg-gradient-to-r from-foreground via-foreground to-muted bg-clip-text text-4xl font-bold sm:text-5xl">
+            <h2 className="mb-6 text-section-title">
               Building Systems That Matter
             </h2>
           </div>
@@ -66,7 +66,7 @@ export function SocialProofSection() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 whileHover={{ y: -8 }}
-                className="relative overflow-hidden rounded-3xl border border-border/80 bg-gradient-to-br from-surface/90 to-background/90 p-8 text-center backdrop-blur-xl shadow-xl transition-all duration-300 hover:shadow-2xl dark:border-slate-800 dark:from-slate-950/90 dark:to-slate-900/90"
+                className="relative overflow-hidden rounded-3xl glass p-8 text-center transition-all duration-300 hover:shadow-2xl"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5 opacity-0 transition-opacity duration-300 hover:opacity-100" />
                 <div className="relative">
@@ -94,7 +94,7 @@ export function SocialProofSection() {
         >
           <div className="mb-12 text-center">
             <p className="mb-4 text-sm uppercase tracking-[0.28em] text-muted">Community Love</p>
-            <h2 className="mb-6 bg-gradient-to-r from-foreground via-foreground to-muted bg-clip-text text-4xl font-bold sm:text-5xl">
+            <h2 className="mb-6 text-section-title">
               Engineers Building Their Future Here
             </h2>
           </div>
@@ -108,7 +108,7 @@ export function SocialProofSection() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 whileHover={{ y: -8 }}
-                className="relative overflow-hidden rounded-3xl border border-border/80 bg-gradient-to-br from-surface/90 to-background/90 p-8 backdrop-blur-xl shadow-xl transition-all duration-300 hover:shadow-2xl dark:border-slate-800 dark:from-slate-950/90 dark:to-slate-900/90"
+                className="relative overflow-hidden rounded-3xl glass p-8 transition-all duration-300 hover:shadow-2xl"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5 opacity-0 transition-opacity duration-300 hover:opacity-100" />
                 <div className="relative">
@@ -146,7 +146,7 @@ export function SocialProofSection() {
         >
           <div className="mb-12 text-center">
             <p className="mb-4 text-sm uppercase tracking-[0.28em] text-muted">Journey</p>
-            <h2 className="mb-6 bg-gradient-to-r from-foreground via-foreground to-muted bg-clip-text text-4xl font-bold sm:text-5xl">
+            <h2 className="mb-6 text-section-title">
               Our Evolution
             </h2>
           </div>
@@ -166,7 +166,7 @@ export function SocialProofSection() {
                   className={`relative flex items-center ${index % 2 === 0 ? 'justify-start' : 'justify-end'}`}
                 >
                   <div className={`w-5/12 ${index % 2 === 0 ? 'text-right pr-8' : 'text-left pl-8'}`}>
-                    <div className="rounded-2xl border border-border/80 bg-gradient-to-br from-surface/90 to-background/90 p-6 backdrop-blur-xl shadow-lg dark:border-slate-800 dark:from-slate-950/90 dark:to-slate-900/90">
+                    <div className="rounded-2xl glass p-6">
                       <span className="mb-2 inline-block rounded-full bg-gradient-to-r from-primary/10 to-secondary/10 px-3 py-1 text-sm font-semibold text-primary">
                         {milestone.year}
                       </span>

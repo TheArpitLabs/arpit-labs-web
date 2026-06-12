@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowRight, Eye, Heart, TrendingUp, Users, Zap, Clock, CheckCircle2 } from "lucide-react";
+import { ArrowRight, Eye, Heart, TrendingUp, Users, Zap, Clock, CheckCircle2, Sparkles } from "lucide-react";
 import { NexusLogo } from "@/components/shared/NexusLogo";
 
 const floatingCards = [
@@ -24,7 +24,7 @@ const activityItems = [
 
 export function PremiumHero() {
   return (
-    <section className="relative h-screen overflow-hidden bg-gradient-to-b from-background via-background to-background/95">
+    <section className="relative min-h-screen overflow-hidden bg-gradient-to-b from-background via-background to-background/95">
       {/* Background gradients */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute left-0 top-0 h-[600px] w-[600px] rounded-full bg-primary/5 blur-3xl" />
@@ -32,7 +32,7 @@ export function PremiumHero() {
         <div className="absolute bottom-0 left-1/2 h-[400px] w-[400px] -translate-x-1/2 rounded-full bg-primary/5 blur-3xl" />
       </div>
 
-      <div className="relative z-10 flex h-full items-center px-4 sm:px-6 lg:px-8">
+      <div className="relative z-10 flex min-h-screen items-center px-4 py-20 sm:px-6 lg:px-8">
         <div className="mx-auto grid w-full max-w-7xl gap-12 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
           {/* Left Column */}
           <motion.div
@@ -46,11 +46,11 @@ export function PremiumHero() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="inline-flex items-center gap-3 rounded-full border border-border/80 bg-gradient-to-r from-primary/10 to-secondary/10 px-4 py-2 text-sm backdrop-blur-sm"
+              className="inline-flex items-center gap-3 rounded-full border border-border/80 glass px-4 py-2 text-sm"
             >
+              <Sparkles className="h-4 w-4 text-primary" />
               <span className="font-semibold text-primary">Engineering Innovation Platform</span>
               <span className="text-muted">Build, Learn & Grow</span>
-              <span className="text-secondary">✧</span>
             </motion.div>
 
             {/* Headline */}
@@ -60,7 +60,7 @@ export function PremiumHero() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="space-y-6"
             >
-              <h1 className="max-w-3xl bg-gradient-to-r from-foreground via-foreground to-muted bg-clip-text text-5xl font-bold leading-tight tracking-tight sm:text-6xl lg:text-7xl">
+              <h1 className="max-w-3xl bg-gradient-to-r from-foreground via-foreground to-muted bg-clip-text text-hero font-bold leading-tight tracking-tight">
                 Build Your Engineering Career with Real-World Projects
               </h1>
               <p className="max-w-2xl text-lg text-muted sm:text-xl">
@@ -77,14 +77,14 @@ export function PremiumHero() {
             >
               <a
                 href="#featured-projects"
-                className="group inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-primary to-secondary px-8 py-4 text-sm font-bold text-white transition-all hover:scale-105 hover:shadow-lg hover:shadow-primary/30"
+                className="premium-button group inline-flex items-center justify-center"
               >
                 Browse Projects
                 <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </a>
               <a
                 href="#about"
-                className="inline-flex items-center justify-center rounded-2xl border-2 border-border/70 bg-surface/80 px-8 py-4 text-sm font-bold text-foreground transition-all hover:border-primary hover:bg-primary/5 backdrop-blur-sm"
+                className="premium-button-secondary inline-flex items-center justify-center"
               >
                 Learn More
               </a>
@@ -124,10 +124,10 @@ export function PremiumHero() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="relative"
+            className="relative hidden lg:block"
           >
             {/* Main Dashboard Card */}
-            <div className="relative rounded-3xl border border-border/80 bg-gradient-to-br from-surface/90 to-background/90 p-6 shadow-2xl backdrop-blur-xl dark:border-slate-800 dark:from-slate-950/90 dark:to-slate-900/90">
+            <div className="relative rounded-3xl glass-heavy p-6 shadow-2xl">
               {/* Header */}
               <div className="mb-6 flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -153,7 +153,7 @@ export function PremiumHero() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4, delay: 0.3 + index * 0.1 }}
-                    className="rounded-2xl border border-border/70 bg-surface/80 p-4 backdrop-blur-sm dark:border-slate-800 dark:bg-slate-950/80"
+                    className="rounded-2xl glass p-4"
                   >
                     <div className="flex items-center justify-between">
                       <item.icon className="h-4 w-4 text-primary" />
@@ -173,7 +173,7 @@ export function PremiumHero() {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.4, delay: 0.4 + card.delay }}
-                    className="flex items-center justify-between rounded-2xl border border-border/70 bg-surface/80 p-4 backdrop-blur-sm dark:border-slate-800 dark:bg-slate-950/80"
+                    className="flex items-center justify-between rounded-2xl glass p-4"
                   >
                     <div className="flex items-center gap-3">
                       <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary/10 to-secondary/10">
@@ -201,7 +201,7 @@ export function PremiumHero() {
               </div>
 
               {/* Activity Feed */}
-              <div className="rounded-2xl border border-border/70 bg-surface/80 p-4 backdrop-blur-sm dark:border-slate-800 dark:bg-slate-950/80">
+              <div className="rounded-2xl glass p-4">
                 <h4 className="mb-3 text-sm font-semibold text-foreground">Recent Activity</h4>
                 <div className="space-y-3">
                   {activityItems.map((item, index) => (
@@ -225,7 +225,7 @@ export function PremiumHero() {
             <motion.div
               animate={{ y: [0, -10, 0] }}
               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute -right-4 top-20 rounded-2xl border border-border/80 bg-gradient-to-br from-primary/20 to-secondary/20 p-4 shadow-xl backdrop-blur-xl dark:border-slate-800"
+              className="absolute -right-4 top-20 rounded-2xl glass p-4 shadow-xl"
             >
               <TrendingUp className="h-6 w-6 text-primary" />
               <p className="mt-2 text-sm font-semibold text-foreground">+24%</p>
@@ -235,7 +235,7 @@ export function PremiumHero() {
             <motion.div
               animate={{ y: [0, 10, 0] }}
               transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute -left-4 bottom-20 rounded-2xl border border-border/80 bg-gradient-to-br from-secondary/20 to-primary/20 p-4 shadow-xl backdrop-blur-xl dark:border-slate-800"
+              className="absolute -left-4 bottom-20 rounded-2xl glass p-4 shadow-xl"
             >
               <Clock className="h-6 w-6 text-secondary" />
               <p className="mt-2 text-sm font-semibold text-foreground">24/7</p>

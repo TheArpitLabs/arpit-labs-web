@@ -46,7 +46,7 @@ export function AnimatedCounter({ value, label, icon, suffix = "", duration = 2 
         visible: { opacity: 1, y: 0 }
       }}
       transition={{ duration: 0.6 }}
-      className="relative overflow-hidden rounded-3xl border border-border/80 bg-gradient-to-br from-surface/90 to-background/90 p-8 backdrop-blur-xl shadow-xl dark:border-slate-800 dark:from-slate-950/90 dark:to-slate-900/90"
+      className="relative overflow-hidden rounded-3xl glass p-8"
     >
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5 opacity-0 transition-opacity duration-300 hover:opacity-100" />
       <div className="relative">

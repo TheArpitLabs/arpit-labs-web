@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Eye, Heart, ArrowRight, Clock, User } from "lucide-react";
+import { Eye, Heart, ArrowRight, Clock, User, Sparkles } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
@@ -33,10 +33,10 @@ export function PremiumProjectCard({ project, index }: PremiumProjectCardProps) 
         viewport={{ once: true }}
         transition={{ duration: 0.5, delay: index * 0.1 }}
         whileHover={{ y: -8 }}
-        className="group relative h-full overflow-hidden rounded-3xl border border-border/80 bg-gradient-to-br from-surface/90 to-background/90 backdrop-blur-xl shadow-xl transition-all duration-300 hover:shadow-2xl dark:border-slate-800 dark:from-slate-950/90 dark:to-slate-900/90"
+        className="group relative h-full overflow-hidden rounded-3xl glass p-1 transition-all duration-300 hover:shadow-2xl"
       >
         {/* Cover Image */}
-        <div className="relative aspect-video overflow-hidden">
+        <div className="relative aspect-video overflow-hidden rounded-2xl bg-surface">
           {project.cover_image ? (
             <Image
               src={project.cover_image}
@@ -63,7 +63,7 @@ export function PremiumProjectCard({ project, index }: PremiumProjectCardProps) 
           {/* Category Badge */}
           {project.category && (
             <div className="absolute right-4 top-4">
-              <span className="rounded-full bg-background/90 px-3 py-1 text-xs font-semibold text-foreground backdrop-blur-sm dark:bg-slate-950/90">
+              <span className="rounded-full glass px-3 py-1 text-xs font-semibold text-foreground">
                 {project.category}
               </span>
             </div>
@@ -71,7 +71,7 @@ export function PremiumProjectCard({ project, index }: PremiumProjectCardProps) 
         </div>
 
         {/* Content */}
-        <div className="p-6">
+        <div className="p-5">
           {/* Tags */}
           <div className="mb-4 flex flex-wrap gap-2">
             {project.tags?.slice(0, 3).map((tag) => (
@@ -100,7 +100,7 @@ export function PremiumProjectCard({ project, index }: PremiumProjectCardProps) 
           )}
 
           {/* Stats */}
-          <div className="flex items-center justify-between border-t border-border/70 pt-4 dark:border-slate-800">
+          <div className="flex items-center justify-between border-t border-border/70 pt-4">
             <div className="flex items-center gap-4 text-sm text-muted">
               <div className="flex items-center gap-1.5">
                 <Eye size={14} />
