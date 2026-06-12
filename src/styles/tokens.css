@@ -1,47 +1,146 @@
 :root {
-  --background: #FFFFFF;
-  --foreground: #0F172A;
-  --primary: #6366F1;
-  --secondary: #8B5CF6;
-  --success: #10B981;
-  --warning: #F59E0B;
-  --border: #E2E8F0;
-  --muted: #64748B;
+  /* Premium Color Palette */
+  --background: #FAFAFA;
+  --foreground: #0A0A0A;
+  --primary: #5E5CE6;
+  --primary-light: #7B79EB;
+  --primary-dark: #4644C5;
+  --secondary: #BF5AF2;
+  --secondary-light: #D279EE;
+  --secondary-dark: #A33DD1;
+  --accent: #0A84FF;
+  --success: #30D158;
+  --warning: #FFD60A;
+  --error: #FF453A;
+  
+  /* Neutral Colors */
+  --border: #E5E5E5;
+  --border-light: #F0F0F0;
+  --border-dark: #D1D1D1;
+  --muted: #8E8E93;
+  --muted-light: #AEAEB2;
+  --muted-dark: #636366;
+  
+  /* Surface Colors */
   --card: #FFFFFF;
-  --surface: #F8FAFC;
-  --shadow: rgba(15, 23, 42, 0.08);
-  --radius: 0.75rem;
-  --radius-lg: 1rem;
-  --radius-xl: 1.5rem;
-  --radius-2xl: 2rem;
-  --space-xs: 0.25rem;
-  --space-sm: 0.5rem;
-  --space-md: 1rem;
-  --space-lg: 1.5rem;
-  --space-xl: 2rem;
-  --space-2xl: 2.5rem;
-  --space-3xl: 4rem;
-  --glass-bg: rgba(255, 255, 255, 0.7);
-  --glass-border: rgba(255, 255, 255, 0.2);
-  --gradient-1: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
-  --gradient-2: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
-  --gradient-3: linear-gradient(135deg, #6366F1 0%, #3B82F6 100%);
-  --gradient-border: linear-gradient(135deg, rgba(99, 102, 241, 0.5) 0%, rgba(139, 92, 246, 0.5) 100%);
+  --card-hover: #F9F9F9;
+  --surface: #F5F5F7;
+  --surface-elevated: #FFFFFF;
+  --surface-overlay: rgba(255, 255, 255, 0.8);
+  
+  /* Typography */
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", "Inter", "Roboto", sans-serif;
+  --font-mono: "SF Mono", "JetBrains Mono", "Fira Code", monospace;
+  
+  /* Spacing Scale */
+  --space-0: 0;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+  --space-32: 8rem;
+  
+  /* Border Radius */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-3xl: 2rem;
+  --radius-full: 9999px;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+  --shadow-glow: 0 0 40px rgba(94, 92, 230, 0.15);
+  --shadow-glow-lg: 0 0 60px rgba(94, 92, 230, 0.2);
+  
+  /* Glassmorphism */
+  --glass-bg: rgba(255, 255, 255, 0.72);
+  --glass-bg-heavy: rgba(255, 255, 255, 0.85);
+  --glass-bg-light: rgba(255, 255, 255, 0.5);
+  --glass-border: rgba(255, 255, 255, 0.18);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, #5E5CE6 0%, #BF5AF2 100%);
+  --gradient-secondary: linear-gradient(135deg, #BF5AF2 0%, #FF453A 100%);
+  --gradient-accent: linear-gradient(135deg, #0A84FF 0%, #5E5CE6 100%);
+  --gradient-success: linear-gradient(135deg, #30D158 0%, #34C759 100%);
+  --gradient-subtle: linear-gradient(135deg, rgba(94, 92, 230, 0.08) 0%, rgba(191, 90, 242, 0.08) 100%);
+  --gradient-border: linear-gradient(135deg, rgba(94, 92, 230, 0.4) 0%, rgba(191, 90, 242, 0.4) 100%);
+  --gradient-mesh: radial-gradient(at 40% 20%, rgba(94, 92, 230, 0.08) 0px, transparent 50%),
+                   radial-gradient(at 80% 0%, rgba(191, 90, 242, 0.06) 0px, transparent 50%),
+                   radial-gradient(at 0% 50%, rgba(10, 132, 255, 0.06) 0px, transparent 50%),
+                   radial-gradient(at 80% 50%, rgba(94, 92, 230, 0.04) 0px, transparent 50%),
+                   radial-gradient(at 0% 100%, rgba(191, 90, 242, 0.06) 0px, transparent 50%),
+                   radial-gradient(at 80% 100%, rgba(10, 132, 255, 0.04) 0px, transparent 50%);
+  
+  /* Animation */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-spring: 500ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .dark {
-  --background: #0F172A;
-  --foreground: #F8FAFC;
-  --primary: #818CF8;
-  --secondary: #A78BFA;
-  --success: #34D399;
-  --warning: #FBBF24;
-  --border: #1E293B;
-  --muted: #94A3B8;
-  --card: #1E293B;
-  --surface: #0F172A;
-  --shadow: rgba(15, 23, 42, 0.24);
-  --glass-bg: rgba(30, 41, 59, 0.7);
+  /* Premium Dark Mode Colors */
+  --background: #000000;
+  --foreground: #FAFAFA;
+  --primary: #7B79EB;
+  --primary-light: #9D9BF0;
+  --primary-dark: #5E5CE6;
+  --secondary: #D279EE;
+  --secondary-light: #E49BF1;
+  --secondary-dark: #BF5AF2;
+  --accent: #409CFF;
+  --success: #34C759;
+  --warning: #FFD60A;
+  --error: #FF453A;
+  
+  /* Neutral Colors */
+  --border: #1C1C1E;
+  --border-light: #2C2C2E;
+  --border-dark: #3A3A3C;
+  --muted: #8E8E93;
+  --muted-light: #AEAEB2;
+  --muted-dark: #636366;
+  
+  /* Surface Colors */
+  --card: #1C1C1E;
+  --card-hover: #2C2C2E;
+  --surface: #0D0D0D;
+  --surface-elevated: #1C1C1E;
+  --surface-overlay: rgba(28, 28, 30, 0.8);
+  
+  /* Glassmorphism Dark */
+  --glass-bg: rgba(28, 28, 30, 0.72);
+  --glass-bg-heavy: rgba(28, 28, 30, 0.85);
+  --glass-bg-light: rgba(28, 28, 30, 0.5);
   --glass-border: rgba(255, 255, 255, 0.1);
-  --gradient-border: linear-gradient(135deg, rgba(129, 140, 248, 0.5) 0%, rgba(167, 139, 250, 0.5) 100%);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  
+  /* Gradients Dark */
+  --gradient-primary: linear-gradient(135deg, #7B79EB 0%, #D279EE 100%);
+  --gradient-secondary: linear-gradient(135deg, #D279EE 0%, #FF453A 100%);
+  --gradient-accent: linear-gradient(135deg, #409CFF 0%, #7B79EB 100%);
+  --gradient-subtle: linear-gradient(135deg, rgba(123, 121, 235, 0.12) 0%, rgba(210, 121, 238, 0.12) 100%);
+  --gradient-border: linear-gradient(135deg, rgba(123, 121, 235, 0.5) 0%, rgba(210, 121, 238, 0.5) 100%);
+  --gradient-mesh: radial-gradient(at 40% 20%, rgba(123, 121, 235, 0.12) 0px, transparent 50%),
+                   radial-gradient(at 80% 0%, rgba(210, 121, 238, 0.1) 0px, transparent 50%),
+                   radial-gradient(at 0% 50%, rgba(64, 156, 255, 0.1) 0px, transparent 50%),
+                   radial-gradient(at 80% 50%, rgba(123, 121, 235, 0.08) 0px, transparent 50%),
+                   radial-gradient(at 0% 100%, rgba(210, 121, 238, 0.1) 0px, transparent 50%),
+                   radial-gradient(at 80% 100%, rgba(64, 156, 255, 0.08) 0px, transparent 50%);
 }

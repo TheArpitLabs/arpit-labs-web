@@ -7,9 +7,9 @@ import { motion, HTMLMotionProps } from "framer-motion";
 export function Card({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <motion.div
-      whileHover={{ y: -4, boxShadow: "0 12px 24px rgba(0,0,0,0.08)" }}
+      whileHover={{ y: -4, boxShadow: "var(--shadow-xl)" }}
       transition={{ duration: 0.2 }}
-      className={cn("rounded-xl border border-border/70 bg-card p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950", className)}
+      className={cn("premium-card", className)}
       {...(props as HTMLMotionProps<"div">)}
     />
   );
@@ -30,9 +30,9 @@ export function CardDescription({ className, ...props }: React.HTMLAttributes<HT
 export function FeatureCard({ title, description, icon, className }: { title: string; description: string; icon: React.ReactNode; className?: string }) {
   return (
     <motion.div
-      whileHover={{ y: -4, boxShadow: "0 12px 24px rgba(0,0,0,0.08)" }}
+      whileHover={{ y: -4 }}
       transition={{ duration: 0.2 }}
-      className={cn("rounded-xl border border-border/70 bg-card p-6 shadow-sm transition duration-200 dark:border-slate-800 dark:bg-slate-950", className)}
+      className={cn("premium-card p-6", className)}
     >
       <motion.div
         whileHover={{ scale: 1.05 }}
@@ -51,7 +51,7 @@ export function FeatureCard({ title, description, icon, className }: { title: st
 
 export function InfoCard({ title, value, label, className }: { title: string; value: string; label: string; className?: string }) {
   return (
-    <div className={cn("rounded-xl border border-border/70 bg-surface p-6 text-left shadow-sm dark:border-slate-800 dark:bg-slate-900", className)}>
+    <div className={cn("premium-card bg-surface p-6", className)}>
       <p className="text-sm uppercase tracking-[0.2em] text-muted">{label}</p>
       <h4 className="mt-3 text-2xl font-semibold text-foreground">{value}</h4>
       <p className="mt-2 text-body text-muted">{title}</p>
@@ -64,7 +64,7 @@ export function BentoCard({ icon, title, content, className }: { icon: React.Rea
     <motion.div
       whileHover={{ y: -4 }}
       transition={{ duration: 0.2 }}
-      className={cn("grid gap-4 rounded-xl border border-border/70 bg-card p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950", className)}
+      className={cn("premium-card p-6", className)}
     >
       <div className="flex items-center gap-4">
         <motion.div
