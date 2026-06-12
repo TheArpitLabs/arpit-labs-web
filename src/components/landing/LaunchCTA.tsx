@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { ArrowRight, Rocket, Sparkles, Zap } from "lucide-react";
+import Link from "next/link";
 
 export function LaunchCTA() {
   return (
@@ -62,21 +63,21 @@ export function LaunchCTA() {
             transition={{ duration: 0.6, delay: 0.5 }}
             className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-center"
           >
-            <a
+            <Link
               href="/projects"
               className="group inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-primary to-secondary px-10 py-5 text-base font-bold text-white transition-all hover:scale-105 hover:shadow-2xl hover:shadow-primary/30"
             >
               <Sparkles className="mr-2 h-5 w-5" />
               Explore Projects
               <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-            </a>
-            <a
+            </Link>
+            <Link
               href="/community/global"
               className="group inline-flex items-center justify-center rounded-2xl border-2 border-border/80 bg-surface/80 px-10 py-5 text-base font-bold text-foreground transition-all hover:border-primary hover:bg-primary/5 hover:scale-105 backdrop-blur-sm dark:border-slate-800 dark:bg-slate-950/80"
             >
               <Zap className="mr-2 h-5 w-5" />
               Join Community
-            </a>
+            </Link>
           </motion.div>
 
           {/* Trust indicators */}

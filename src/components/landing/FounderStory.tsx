@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Target, Rocket, Lightbulb, Code2, Cpu, Shield, ArrowRight } from "lucide-react";
+import Link from "next/link";
 
 const journeyMilestones = [
   { year: "2020", title: "The Beginning", description: "Started as a personal experiment in AI and IoT systems", icon: Lightbulb },
@@ -186,19 +187,19 @@ export function FounderStory() {
                 Be part of the next generation of engineering excellence. Explore projects, contribute to research, and build the future with Arpit Labs.
               </p>
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-center">
-                <a
+                <Link
                   href="/projects"
                   className="group inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-primary to-secondary px-8 py-4 text-sm font-bold text-white transition-all hover:scale-105 hover:shadow-lg hover:shadow-primary/30"
                 >
                   Explore Projects
                   <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                </a>
-                <a
+                </Link>
+                <Link
                   href="/research"
                   className="inline-flex items-center justify-center rounded-2xl border-2 border-border/70 bg-surface/80 px-8 py-4 text-sm font-bold text-foreground transition-all hover:border-primary hover:bg-primary/5 backdrop-blur-sm dark:border-slate-800 dark:bg-slate-950/80"
                 >
                   View Research
-                </a>
+                </Link>
               </div>
             </div>
           </div>
