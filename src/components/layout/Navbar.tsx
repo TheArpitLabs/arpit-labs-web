@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/shared/ThemeToggle";
 import { NexusLogo } from "@/components/shared/NexusLogo";
 import Link from "next/link";
+import Image from "next/image";
 import type { Route } from "next";
 import { usePathname, useRouter } from "next/navigation";
 import { supabaseClient } from "@/lib/supabase/client";
@@ -178,9 +179,11 @@ export function Navbar() {
                 className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-purple-500 to-purple-700 px-4 py-2 text-sm font-bold text-white shadow-lg transition hover:opacity-90"
               >
                 {profile?.avatar_url ? (
-                  <img
+                  <Image
                     src={profile.avatar_url}
                     alt="Avatar"
+                    width={24}
+                    height={24}
                     className="h-6 w-6 rounded-full object-cover"
                   />
                 ) : (

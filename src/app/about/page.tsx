@@ -285,7 +285,7 @@ export default function AboutPage() {
           <div className="rounded-[2.5rem] border border-border/70 bg-surface/50 p-12 dark:border-slate-800 dark:bg-slate-900/50">
             <div className="text-center">
               <h2 className="text-3xl font-bold text-foreground">Connect With Me</h2>
-              <p className="mt-4 text-muted">Let's collaborate on engineering challenges and build something amazing together.</p>
+              <p className="mt-4 text-muted">Let&apos;s collaborate on engineering challenges and build something amazing together.</p>
             </div>
             <div className="mt-12 flex flex-wrap justify-center gap-6">
               <a

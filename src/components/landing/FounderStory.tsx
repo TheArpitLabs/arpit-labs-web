@@ -34,7 +34,7 @@ export function FounderStory() {
             Building the Future of Engineering
           </h2>
           <p className="mx-auto max-w-3xl text-lg text-muted">
-            From hardware prototypes to AI-powered systems, follow Arpit Kumar's journey in creating a platform that bridges the gap between academic learning and industry-ready engineering.
+            From hardware prototypes to AI-powered systems, follow Arpit Kumar&apos;s journey in creating a platform that bridges the gap between academic learning and industry-ready engineering.
           </p>
         </motion.div>
 
