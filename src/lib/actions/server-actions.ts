@@ -11,7 +11,6 @@ import { hackathonsRepository } from "@/lib/repositories/hackathons.repository";
 import { contactFormSchema, newsletterSchema } from "@/lib/validation";
 import { handleValidationError } from "@/lib/errors";
 import { Experiment, Hackathon, HackathonSubmission, HackathonTeam, HackathonTeamMember, LabNote, JourneyItem, Product, Project } from "@/types/content";
-import { contentGenerationService } from "@/lib/ai-services";
 
 export async function submitContactMessage(formData: unknown) {
   try {
@@ -143,6 +142,7 @@ export async function getLeaderboard(hackathonId?: string): Promise<HackathonSub
 
 export async function generateHackathonSuggestions(hackathonTitle: string): Promise<string[]> {
   try {
+    const { contentGenerationService } = await import("@/lib/ai-services");
     return await contentGenerationService.generateProjectIdeas(hackathonTitle, 4);
   } catch {
     return [];

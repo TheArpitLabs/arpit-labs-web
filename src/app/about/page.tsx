@@ -3,7 +3,7 @@ import { Footer } from "@/components/layout/Footer";
 import { AnimatedSection } from "@/components/animations/AnimatedSection";
 import { Card, FeatureCard } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Brain, Code2, Microscope, Zap } from "lucide-react";
+import { Brain, Code2, Microscope, Zap, Github, Linkedin, Twitter, Mail, Target, BookOpen, Award, TrendingUp } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { createPageMetadata } from "@/lib/seo";
@@ -36,6 +36,27 @@ const coreValues = [
     description: "Sharing insights and lab notes to contribute back to the engineering community.",
     icon: <Code2 size={24} />
   }
+];
+
+const skills = [
+  { category: "Hardware Engineering", level: 95, items: ["PCB Design", "Embedded Systems", "IoT Architecture", "Sensor Integration", "Firmware Development"] },
+  { category: "Software Development", level: 90, items: ["Full-Stack Development", "System Architecture", "API Design", "Database Design", "Cloud Infrastructure"] },
+  { category: "AI/ML Engineering", level: 85, items: ["Computer Vision", "Edge AI", "Model Optimization", "TensorFlow/PyTorch", "MLOps"] },
+  { category: "Cybersecurity", level: 80, items: ["IoT Security", "Network Security", "Secure Architecture", "Penetration Testing", "Compliance"] }
+];
+
+const researchInterests = [
+  { title: "Edge AI Optimization", description: "Developing techniques to deploy AI models on resource-constrained edge devices with minimal accuracy loss." },
+  { title: "IoT Security Frameworks", description: "Creating comprehensive security frameworks for IoT ecosystems addressing authentication, encryption, and threat detection." },
+  { title: "Smart City Architecture", description: "Designing scalable and sustainable smart city systems that integrate sensors, AI, and cloud infrastructure." },
+  { title: "Human-Robot Collaboration", description: "Exploring safe and effective collaboration between humans and autonomous systems in industrial environments." }
+];
+
+const careerGoals = [
+  { title: "Build Industry-Leading Platform", description: "Transform Arpit Labs into a premier engineering education platform serving 100,000+ engineers worldwide." },
+  { title: "Advance Open Source Ecosystem", description: "Contribute significantly to open source projects and build tools that benefit the global engineering community." },
+  { title: "Bridge Academic-Industry Gap", description: "Create educational resources that effectively bridge the gap between academic knowledge and industry requirements." },
+  { title: "Foster Engineering Community", description: "Build a vibrant community of engineers who collaborate, share knowledge, and push the boundaries of technology." }
 ];
 
 const technologies = [
@@ -182,6 +203,125 @@ export default function AboutPage() {
               >
                 Get in Touch
               </Link>
+            </div>
+          </div>
+        </AnimatedSection>
+
+        <AnimatedSection className="mt-32">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold text-foreground">Technical Skills</h2>
+            <p className="mt-4 text-muted">Expertise across hardware, software, AI, and cybersecurity domains.</p>
+          </div>
+          <div className="mt-12 grid gap-8 md:grid-cols-2">
+            {skills.map((skill) => (
+              <Card key={skill.category} className="p-6">
+                <div className="mb-4 flex items-center justify-between">
+                  <h3 className="text-lg font-bold text-foreground">{skill.category}</h3>
+                  <Badge variant="secondary">{skill.level}%</Badge>
+                </div>
+                <div className="mb-4 h-2 w-full overflow-hidden rounded-full bg-border">
+                  <div 
+                    className="h-full rounded-full bg-primary transition-all duration-500"
+                    style={{ width: `${skill.level}%` }}
+                  />
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {skill.items.map((item) => (
+                    <Badge key={item} variant="outline" className="text-xs">
+                      {item}
+                    </Badge>
+                  ))}
+                </div>
+              </Card>
+            ))}
+          </div>
+        </AnimatedSection>
+
+        <AnimatedSection className="mt-32">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold text-foreground">Research Interests</h2>
+            <p className="mt-4 text-muted">Areas of active research and exploration.</p>
+          </div>
+          <div className="mt-12 grid gap-6 md:grid-cols-2">
+            {researchInterests.map((interest, index) => (
+              <Card key={index} className="p-6">
+                <div className="flex items-start gap-4">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary/10">
+                    <BookOpen className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-foreground">{interest.title}</h3>
+                    <p className="mt-2 text-sm text-muted">{interest.description}</p>
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </AnimatedSection>
+
+        <AnimatedSection className="mt-32">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold text-foreground">Career Goals</h2>
+            <p className="mt-4 text-muted">Vision for the future of Arpit Labs and engineering education.</p>
+          </div>
+          <div className="mt-12 grid gap-6 md:grid-cols-2">
+            {careerGoals.map((goal, index) => (
+              <Card key={index} className="p-6">
+                <div className="flex items-start gap-4">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary/10">
+                    <Target className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-foreground">{goal.title}</h3>
+                    <p className="mt-2 text-sm text-muted">{goal.description}</p>
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </AnimatedSection>
+
+        <AnimatedSection className="mt-32">
+          <div className="rounded-[2.5rem] border border-border/70 bg-surface/50 p-12 dark:border-slate-800 dark:bg-slate-900/50">
+            <div className="text-center">
+              <h2 className="text-3xl font-bold text-foreground">Connect With Me</h2>
+              <p className="mt-4 text-muted">Let's collaborate on engineering challenges and build something amazing together.</p>
+            </div>
+            <div className="mt-12 flex flex-wrap justify-center gap-6">
+              <a
+                href="https://github.com/arpit-labs"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 rounded-2xl border border-border/70 bg-surface px-6 py-4 text-foreground transition hover:border-primary hover:bg-primary/5 dark:border-slate-700 dark:bg-slate-900"
+              >
+                <Github className="h-5 w-5" />
+                <span className="font-medium">GitHub</span>
+              </a>
+              <a
+                href="https://linkedin.com/in/arpit-kumar"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 rounded-2xl border border-border/70 bg-surface px-6 py-4 text-foreground transition hover:border-primary hover:bg-primary/5 dark:border-slate-700 dark:bg-slate-900"
+              >
+                <Linkedin className="h-5 w-5" />
+                <span className="font-medium">LinkedIn</span>
+              </a>
+              <a
+                href="https://twitter.com/arpit_labs"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 rounded-2xl border border-border/70 bg-surface px-6 py-4 text-foreground transition hover:border-primary hover:bg-primary/5 dark:border-slate-700 dark:bg-slate-900"
+              >
+                <Twitter className="h-5 w-5" />
+                <span className="font-medium">Twitter</span>
+              </a>
+              <a
+                href="mailto:hello@arpit-labs.com"
+                className="flex items-center gap-3 rounded-2xl border border-border/70 bg-surface px-6 py-4 text-foreground transition hover:border-primary hover:bg-primary/5 dark:border-slate-700 dark:bg-slate-900"
+              >
+                <Mail className="h-5 w-5" />
+                <span className="font-medium">Email</span>
+              </a>
             </div>
           </div>
         </AnimatedSection>

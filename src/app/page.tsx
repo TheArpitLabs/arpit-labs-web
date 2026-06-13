@@ -10,6 +10,7 @@ import { Brain, Cpu, Code2, Wifi, FolderOpen, FlaskConical, ArrowRight, Eye, Use
 import { getExperiments, getLabNotes, getJourneyTimeline, getProjects } from "@/lib/actions/server-actions";
 import Image from "next/image";
 import Link from "next/link";
+import { EngineeringDomains } from "@/components/landing/EngineeringDomains";
 
 const PremiumHero = dynamic(() => import("@/components/landing/PremiumHero").then(mod => ({ default: mod.PremiumHero })), {
   loading: () => <div className="h-screen animate-pulse bg-surface" />
@@ -28,8 +29,6 @@ const FounderStory = dynamic(() => import("@/components/landing/FounderStory").t
 const CommunitySection = dynamic(() => import("@/components/landing/CommunitySection").then(mod => ({ default: mod.CommunitySection })));
 
 const LaunchCTA = dynamic(() => import("@/components/landing/LaunchCTA").then(mod => ({ default: mod.LaunchCTA })));
-
-const EngineeringDomains = dynamic(() => import("@/components/landing/EngineeringDomains").then(mod => ({ default: mod.EngineeringDomains })));
 
 const ResearchInnovationSection = dynamic(() => import("@/components/landing/ResearchInnovationSection").then(mod => ({ default: mod.ResearchInnovationSection })));
 

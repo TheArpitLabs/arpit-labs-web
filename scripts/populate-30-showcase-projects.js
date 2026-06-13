@@ -884,37 +884,25 @@ async function populateProjects() {
         continue;
       }
 
+      // Build insert object with only essential columns
+      const insertData = {
+        title: project.title,
+        slug: project.slug,
+        description: project.description,
+        github_url: project.github_url,
+        demo_url: project.demo_url,
+        cover_image: project.cover_image,
+        tags: project.tags,
+        featured: project.featured,
+        category: project.category || 'General',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+
       // Insert project
       const { data, error } = await supabase
         .from('projects')
-        .insert([{
-          title: project.title,
-          slug: project.slug,
-          description: project.description,
-          overview: project.overview,
-          problem_statement: project.problem_statement,
-          architecture: project.architecture,
-          tech_stack: project.tech_stack,
-          github_url: project.github_url,
-          demo_url: project.demo_url,
-          cover_image: project.cover_image,
-          screenshots: project.screenshots,
-          lessons_learned: project.lessons_learned,
-          tags: project.tags,
-          project_type: project.project_type,
-          branch: project.branch,
-          domain: project.domain,
-          category: project.category,
-          technologies: project.technologies,
-          languages: project.languages,
-          frameworks: project.frameworks,
-          tools: project.tools,
-          featured: project.featured,
-          published: project.published,
-          status: project.status,
-          views_count: project.views_count,
-          likes_count: project.likes_count
-        }])
+        .insert([insertData])
         .select();
 
       if (error) {

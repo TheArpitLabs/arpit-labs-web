@@ -8,7 +8,7 @@ interface NexusLogoProps {
 export function NexusLogo({ className, size = 120 }: NexusLogoProps) {
   return (
     <Image 
-      src="/logo.png" 
+      src="/favicon.svg" 
       alt="Arpit Labs Logo" 
       width={size} 
       height={size} 

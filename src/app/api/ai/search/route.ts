@@ -5,7 +5,6 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { semanticSearchService } from '@/lib/ai-services';
 import { getUserFromRequest } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
@@ -25,6 +24,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Perform semantic search
+    const { semanticSearchService } = await import('@/lib/ai-services');
     const results = await semanticSearchService.search(query, limit);
 
     return NextResponse.json(

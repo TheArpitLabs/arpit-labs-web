@@ -19,7 +19,8 @@ import {
   Microscope,
   Lightbulb,
   Briefcase,
-  User
+  User,
+  UploadCloud
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -34,6 +35,7 @@ const navigationItems: Array<{
   { href: "/admin/university" as Route, label: "University", icon: <GraduationCap size={18} /> },
   { href: "/admin/innovation" as Route, label: "Innovation Hub", icon: <Lightbulb size={18} /> },
   { href: "/admin/venture" as Route, label: "Venture Studio", icon: <Briefcase size={18} /> },
+  { href: "/admin/acquisition" as Route, label: "Acquisition", icon: <UploadCloud size={18} /> },
   { href: "/admin/saas" as Route, label: "SaaS Infrastructure", icon: <Globe size={18} /> },
   { href: "/admin/marketplace" as Route, label: "Marketplace", icon: <ShoppingBag size={18} /> },
   { href: "/admin/projects", label: "Projects", icon: <Blocks size={18} /> },

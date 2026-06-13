@@ -5,7 +5,6 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { aiChatService } from '@/lib/ai-services';
 import { getUserFromRequest } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
@@ -28,6 +27,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Send message and get response
+    const { aiChatService } = await import('@/lib/ai-services');
     const result = await aiChatService.sendMessage(conversationId, message);
 
     return NextResponse.json(

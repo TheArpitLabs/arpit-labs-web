@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { semanticSearchService } from '@/lib/ai-services';
 
 async function callOpenAI(prompt: string) {
   const apiKey = process.env.OPENAI_API_KEY;
@@ -40,6 +39,7 @@ export async function POST(request: NextRequest) {
     if (!content) return NextResponse.json({ success: false, error: 'Missing content' }, { status: 400 });
 
     if (type === 'similar') {
+      const { semanticSearchService } = await import('@/lib/ai-services');
       const results = await semanticSearchService.search(content, 5);
       return NextResponse.json({ success: true, results }, { status: 200 });
     }
