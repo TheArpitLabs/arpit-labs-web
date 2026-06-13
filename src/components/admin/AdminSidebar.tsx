@@ -1,16 +1,16 @@
 import Link from "next/link";
 import type { Route } from "next";
-import { 
-  Blocks, 
-  CreditCard, 
-  FileText, 
-  FlaskConical, 
-  Inbox, 
-  LayoutDashboard, 
-  Milestone, 
-  Rocket, 
-  Sparkles, 
-  Users, 
+import {
+  Blocks,
+  CreditCard,
+  FileText,
+  FlaskConical,
+  Inbox,
+  LayoutDashboard,
+  Milestone,
+  Rocket,
+  Sparkles,
+  Users,
   Globe,
   ShoppingBag,
   BarChart3,
@@ -18,7 +18,8 @@ import {
   GraduationCap,
   Microscope,
   Lightbulb,
-  Briefcase
+  Briefcase,
+  User
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -46,6 +47,7 @@ const navigationItems: Array<{
   { href: "/admin/newsletter", label: "Newsletter", icon: <Users size={18} /> },
   { href: "/admin/community" as Route, label: "Community", icon: <Users size={18} /> },
   { href: "/admin/messages", label: "Messages", icon: <Inbox size={18} /> },
+  { href: "/profile", label: "Profile", icon: <User size={18} /> },
 ];
 
 interface AdminSidebarProps {

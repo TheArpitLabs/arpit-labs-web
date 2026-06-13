@@ -39,32 +39,8 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "Arpit Labs",
-    "url": seoConfig.siteUrl,
-    "logo": `${seoConfig.siteUrl}/favicon.svg`,
-    "description": "A digital engineering lab exploring AI, IoT, Software, and Hardware. Building resilient systems through systems thinking.",
-    "sameAs": [
-      "https://github.com/arpit-labs",
-      "https://linkedin.com/in/arpit-labs"
-    ],
-    "contactPoint": {
-      "@type": "ContactPoint",
-      "email": "contact@arpitlabs.com",
-      "contactType": "customer service"
-    }
-  };
-
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
-      </head>
       <body>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <a

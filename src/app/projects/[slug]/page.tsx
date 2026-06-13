@@ -4,7 +4,7 @@ import { AnimatedSection } from "@/components/animations/AnimatedSection";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { supabaseServer } from "@/lib/supabase/server";
-import { Github, ExternalLink, Calendar, Tag, ArrowLeft, Eye, Heart, Users, Clock, CheckCircle2 } from "lucide-react";
+import { Github, ExternalLink, Calendar, Tag, ArrowLeft, Eye, Heart, Users, Clock, CheckCircle2, Star, Shield, BookOpen, GitBranch, Award, Code2, Lightbulb, Zap, Globe, Lock, FolderOpen, Image as ImageIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -50,28 +50,63 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
     notFound();
   }
 
+  // Fetch related projects based on category or tags
+  const { data: relatedProjects } = await supabaseServer
+    .from('projects')
+    .select('*')
+    .eq('status', 'published')
+    .neq('id', project.id)
+    .or(`category.eq.${project.category},tags.cs.{${project.tags?.join(',')}}`)
+    .limit(4);
+
+  const isOpensourceShowcase = project.project_type === 'opensource_showcase';
+  
   const detailSections = [
     {
       title: "Overview",
       content: project.overview || project.content || project.description,
+      icon: BookOpen,
     },
     {
       title: "Problem Statement",
       content:
         project.problem_statement ||
         "This project addresses an engineering gap by turning a complex requirement into a more reliable, understandable, and maintainable system.",
+      icon: Lightbulb,
     },
     {
       title: "Architecture",
       content:
         project.architecture ||
         "The architecture combines modular frontend presentation, typed data access, and reusable platform primitives so the system can evolve without excessive rewrites.",
+      icon: Code2,
     },
+    ...(project.features ? [{
+      title: "Features",
+      content: project.features,
+      icon: Zap,
+    }] : []),
+    ...(project.industry_applications ? [{
+      title: "Industry Applications",
+      content: project.industry_applications,
+      icon: Globe,
+    }] : []),
+    ...(project.challenges_solved ? [{
+      title: "Challenges Solved",
+      content: project.challenges_solved,
+      icon: Award,
+    }] : []),
+    ...(project.future_possibilities ? [{
+      title: "Future Possibilities",
+      content: project.future_possibilities,
+      icon: GitBranch,
+    }] : []),
     {
       title: "Results",
       content:
         project.results ||
         "The project successfully achieved its core objectives with measurable improvements in performance, user experience, and system reliability. Key metrics include optimized response times, enhanced error handling, and scalable architecture that supports future growth.",
+      icon: CheckCircle2,
     },
   ];
 
@@ -107,6 +142,18 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
                     month: "long", year: "numeric" 
                   })}
                 </div>
+                {isOpensourceShowcase && project.github_stars && (
+                  <div className="flex items-center gap-2 text-sm text-muted">
+                    <Star size={18} className="text-yellow-500" />
+                    {project.github_stars.toLocaleString()} stars
+                  </div>
+                )}
+                {isOpensourceShowcase && project.verified_repository && (
+                  <div className="flex items-center gap-2 text-sm text-muted">
+                    <Shield size={18} className="text-green-500" />
+                    Verified Repository
+                  </div>
+                )}
                 <div className="flex items-center gap-2 text-sm text-muted">
                   <Eye size={18} className="text-secondary" />
                   {project.views_count || 0} views
@@ -126,7 +173,18 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
               </div>
 
               <div className="flex flex-wrap gap-4 pt-4">
-                {project.github_url && (
+                {project.repository_url && (
+                  <a 
+                    href={project.repository_url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="premium-button inline-flex items-center justify-center gap-2"
+                  >
+                    <Github size={18} />
+                    {isOpensourceShowcase ? 'View Repository' : 'View Source'}
+                  </a>
+                )}
+                {project.github_url && !project.repository_url && (
                   <a 
                     href={project.github_url} 
                     target="_blank" 
@@ -175,15 +233,33 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
             <div className="space-y-8">
               {detailSections.map((section) => (
                 <Card key={section.title} className="p-8">
-                  <h2 className="text-2xl font-bold text-foreground">{section.title}</h2>
+                  <div className="flex items-center gap-3">
+                    {section.icon && <section.icon size={24} className="text-primary" />}
+                    <h2 className="text-2xl font-bold text-foreground">{section.title}</h2>
+                  </div>
                   <div className="mt-4 whitespace-pre-wrap text-lg leading-relaxed text-muted">
                     {section.content}
                   </div>
                 </Card>
               ))}
 
+              {project.learning_outcomes && (
+                <Card className="p-8">
+                  <div className="flex items-center gap-3">
+                    <BookOpen size={24} className="text-primary" />
+                    <h2 className="text-2xl font-bold text-foreground">Learning Outcomes</h2>
+                  </div>
+                  <div className="mt-4 whitespace-pre-wrap text-lg leading-relaxed text-muted">
+                    {project.learning_outcomes}
+                  </div>
+                </Card>
+              )}
+
               <Card className="p-8">
-                <h2 className="text-2xl font-bold text-foreground">Lessons Learned</h2>
+                <div className="flex items-center gap-3">
+                  <Lightbulb size={24} className="text-primary" />
+                  <h2 className="text-2xl font-bold text-foreground">Lessons Learned</h2>
+                </div>
                 {project.lessons_learned && project.lessons_learned.length > 0 ? (
                   <ul className="mt-4 space-y-3">
                     {project.lessons_learned?.map((lesson: string) => (
@@ -202,8 +278,50 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
             </div>
 
             <div className="space-y-8">
+              {isOpensourceShowcase && project.license && (
+                <Card className="p-8">
+                  <div className="flex items-center gap-3">
+                    <Shield size={24} className="text-primary" />
+                    <h2 className="text-2xl font-bold text-foreground">License</h2>
+                  </div>
+                  <div className="mt-6 space-y-3">
+                    <div className="flex items-center justify-between rounded-xl border border-border/70 p-4">
+                      <span className="font-semibold text-foreground">License Type</span>
+                      <Badge variant="outline" className="px-3 py-1">{project.license}</Badge>
+                    </div>
+                    {project.verification_date && (
+                      <div className="flex items-center gap-2 text-sm text-muted">
+                        <CheckCircle2 size={14} className="text-green-500" />
+                        <span>Verified on {new Date(project.verification_date).toLocaleDateString()}</span>
+                      </div>
+                    )}
+                  </div>
+                </Card>
+              )}
+
+              {isOpensourceShowcase && project.original_author && (
+                <Card className="p-8">
+                  <div className="flex items-center gap-3">
+                    <Users size={24} className="text-primary" />
+                    <h2 className="text-2xl font-bold text-foreground">Original Author</h2>
+                  </div>
+                  <div className="mt-6 flex items-center gap-3 rounded-xl border border-border/70 p-4">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 text-primary font-semibold text-lg">
+                      {project.original_author.charAt(0)}
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-semibold text-foreground">{project.original_author}</p>
+                      <p className="text-sm text-muted">Original Maintainer</p>
+                    </div>
+                  </div>
+                </Card>
+              )}
+
               <Card className="p-8">
-                <h2 className="text-2xl font-bold text-foreground">Tech Stack</h2>
+                <div className="flex items-center gap-3">
+                  <Code2 size={24} className="text-primary" />
+                  <h2 className="text-2xl font-bold text-foreground">Tech Stack</h2>
+                </div>
                 <div className="mt-6 flex flex-wrap gap-2">
                   {(project.tech_stack && project.tech_stack.length > 0 ? project.tech_stack : project.tags)?.map((item: string) => (
                     <Badge key={item} variant="outline" className="px-3 py-1">
@@ -214,7 +332,10 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
               </Card>
 
               <Card className="p-8">
-                <h2 className="text-2xl font-bold text-foreground">Screenshots</h2>
+                <div className="flex items-center gap-3">
+                  <ImageIcon size={24} className="text-primary" />
+                  <h2 className="text-2xl font-bold text-foreground">Screenshots</h2>
+                </div>
                 {project.screenshots && project.screenshots.length > 0 ? (
                   <div className="mt-6 grid gap-4">
                     {project.screenshots?.map((image: string, index: number) => (
@@ -236,7 +357,10 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
               </Card>
 
               <Card className="p-8">
-                <h2 className="text-2xl font-bold text-foreground">Project Timeline</h2>
+                <div className="flex items-center gap-3">
+                  <Clock size={24} className="text-primary" />
+                  <h2 className="text-2xl font-bold text-foreground">Project Timeline</h2>
+                </div>
                 {project.timeline && project.timeline.length > 0 ? (
                   <div className="mt-6 space-y-4">
                     {project.timeline?.map((milestone: any, index: number) => (
@@ -306,7 +430,10 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
               </Card>
 
               <Card className="p-8">
-                <h2 className="text-2xl font-bold text-foreground">Contributors</h2>
+                <div className="flex items-center gap-3">
+                  <Users size={24} className="text-primary" />
+                  <h2 className="text-2xl font-bold text-foreground">Contributors</h2>
+                </div>
                 {project.contributors && project.contributors.length > 0 ? (
                   <div className="mt-6 space-y-3">
                     {project.contributors?.map((contributor: any, index: number) => (
@@ -324,20 +451,33 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
                 ) : (
                   <div className="mt-6 flex items-center gap-3 rounded-xl border border-border/70 p-4">
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 text-primary font-semibold">
-                      A
+                      {isOpensourceShowcase && project.original_author ? project.original_author.charAt(0) : 'A'}
                     </div>
                     <div className="flex-1">
-                      <p className="font-semibold text-foreground">Arpit Labs</p>
-                      <p className="text-xs text-muted">Lead Developer</p>
+                      <p className="font-semibold text-foreground">{isOpensourceShowcase && project.original_author ? project.original_author : 'Arpit Labs'}</p>
+                      <p className="text-xs text-muted">{isOpensourceShowcase ? 'Original Maintainer' : 'Lead Developer'}</p>
                     </div>
                   </div>
                 )}
               </Card>
 
               <Card className="p-8">
-                <h2 className="text-2xl font-bold text-foreground">GitHub Links</h2>
+                <div className="flex items-center gap-3">
+                  <Github size={24} className="text-primary" />
+                  <h2 className="text-2xl font-bold text-foreground">Repository Links</h2>
+                </div>
                 <div className="mt-6 space-y-4">
-                  {project.github_url ? (
+                  {project.repository_url ? (
+                    <a
+                      href={project.repository_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-between rounded-2xl border border-border/70 glass px-4 py-4 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary/5"
+                    >
+                      <span>Repository</span>
+                      <Github size={18} />
+                    </a>
+                  ) : project.github_url ? (
                     <a
                       href={project.github_url}
                       target="_blank"
@@ -351,7 +491,7 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
                     <p className="text-muted">Source repository has not been linked yet.</p>
                   )}
 
-                  {project.demo_url ? (
+                  {project.demo_url && (
                     <a
                       href={project.demo_url}
                       target="_blank"
@@ -361,11 +501,80 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
                       <span>Live Demo</span>
                       <ExternalLink size={18} />
                     </a>
-                  ) : null}
+                  )}
                 </div>
               </Card>
+
+              {isOpensourceShowcase && (
+                <Card className="p-8">
+                  <div className="flex items-center gap-3">
+                    <GitBranch size={24} className="text-primary" />
+                    <h2 className="text-2xl font-bold text-foreground">Project Type</h2>
+                  </div>
+                  <div className="mt-6">
+                    <Badge variant="outline" className="px-4 py-2 text-base">
+                      Open Source Showcase
+                    </Badge>
+                    <p className="mt-3 text-sm text-muted">
+                      This is a verified open-source project showcased for educational purposes. All credit goes to the original maintainers.
+                    </p>
+                  </div>
+                </Card>
+              )}
             </div>
           </div>
+        </AnimatedSection>
+      </Container>
+
+      <Container className="pb-20">
+        <AnimatedSection>
+          {relatedProjects && relatedProjects.length > 0 && (
+            <div className="mb-20">
+              <div className="mb-12">
+                <h2 className="text-3xl font-bold text-foreground">Related Projects</h2>
+                <p className="mt-2 text-muted">Explore similar projects in the same domain</p>
+              </div>
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                {relatedProjects.map((relatedProject) => (
+                  <Link key={relatedProject.id} href={`/projects/${relatedProject.slug}`}>
+                    <Card className="group h-full overflow-hidden transition-all hover:shadow-2xl">
+                      <div className="relative aspect-video overflow-hidden">
+                        {relatedProject.cover_image ? (
+                          <Image
+                            src={relatedProject.cover_image}
+                            alt={relatedProject.title}
+                            fill
+                            className="object-cover transition-transform group-hover:scale-105"
+                          />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center text-muted/10">
+                            <NexusLogo className="h-[60px] w-[60px]" />
+                          </div>
+                        )}
+                      </div>
+                      <div className="p-6">
+                        <h3 className="mb-2 text-lg font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-1">
+                          {relatedProject.title}
+                        </h3>
+                        <p className="mb-4 text-sm text-muted line-clamp-2">
+                          {relatedProject.description}
+                        </p>
+                        <div className="flex items-center justify-between">
+                          <Badge variant="outline" className="text-xs">
+                            {relatedProject.category}
+                          </Badge>
+                          <div className="flex items-center gap-1 text-xs text-muted">
+                            <Eye size={12} />
+                            {relatedProject.views_count || 0}
+                          </div>
+                        </div>
+                      </div>
+                    </Card>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
         </AnimatedSection>
       </Container>
 

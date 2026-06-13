@@ -70,9 +70,8 @@ const testimonials = [
 export function CommunitySection() {
   return (
     <section className="py-24">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <motion.div
+      {/* Header */}
+      <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -252,7 +251,6 @@ export function CommunitySection() {
             </div>
           </div>
         </motion.div>
-      </div>
     </section>
   );
 }

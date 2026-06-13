@@ -11,6 +11,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import { StatCardSkeleton } from "@/components/ui/card-skeleton";
 import { Footer } from "@/components/layout/Footer";
+import { Navbar } from "@/components/layout/Navbar";
 import { User, Mail, Calendar, FolderOpen, Search, MessageSquare, Bookmark, Award, Code2, TrendingUp, Users, Activity, Loader2, Heart } from "lucide-react";
 
 export default function ProfilePage() {
@@ -25,43 +26,59 @@ export default function ProfilePage() {
 
     async function init() {
       setLoading(true);
-      const { data } = await supabaseClient.auth.getUser();
-      if (!mounted) return;
-      setUser(data?.user ?? null);
+      try {
+        const { data } = await supabaseClient.auth.getUser();
+        if (!mounted) return;
+        setUser(data?.user ?? null);
 
-      const {
-        data: { session }
-      } = await supabaseClient.auth.getSession();
+        if (data?.user) {
+          const [{ data: p }, { data: s }, { data: proj }] = await Promise.all([
+            supabaseClient.from("profiles").select("*").eq("id", data.user.id).single(),
+            supabaseClient.from("saved_content").select("*").eq("user_id", data.user.id).order("created_at", { ascending: false }),
+            supabaseClient.from("projects").select("*").eq("owner_id", data.user.id).order("created_at", { ascending: false }),
+          ]);
 
-      if (data?.user) {
-        const [{ data: p, error: pError }, { data: s, error: sError }, { data: proj, error: projError }] = await Promise.all([
-          supabaseClient.from("profiles").select("*").eq("id", data.user.id).single(),
-          supabaseClient.from("saved_content").select("*").eq("user_id", data.user.id).order("created_at", { ascending: false }),
-          supabaseClient.from("projects").select("*").eq("owner_id", data.user.id).order("created_at", { ascending: false }),
-        ]);
-
-        if (mounted) {
-          setProfile(p ?? null);
-          setSaved(s ?? []);
-          setProjects(proj ?? []);
+          if (mounted) {
+            setProfile(p ?? null);
+            setSaved(s ?? []);
+            setProjects(proj ?? []);
+          }
         }
+      } catch (error) {
+        console.error("Error loading profile data:", error);
+      } finally {
+        if (mounted) setLoading(false);
       }
-      if (mounted) setLoading(false);
     }
 
     init();
-    const { data: listener } = supabaseClient.auth.onAuthStateChange((_e, session) => {
+
+    const { data: listener } = supabaseClient.auth.onAuthStateChange(async (_e, session) => {
+      if (!mounted) return;
+
       setUser(session?.user ?? null);
       if (session?.user) {
-        supabaseClient.from("profiles").select("*").eq("id", session.user.id).single().then(({ data: p }) => setProfile(p ?? null));
-        supabaseClient.from("saved_content").select("*").eq("user_id", session.user.id).order("created_at", { ascending: false }).then(({ data: s }) => setSaved(s ?? []));
-        supabaseClient.from("projects").select("*").eq("owner_id", session.user.id).order("created_at", { ascending: false }).then(({ data: proj }) => {
-          setProjects(proj ?? []);
-        });
+        try {
+          const [{ data: p }, { data: s }, { data: proj }] = await Promise.all([
+            supabaseClient.from("profiles").select("*").eq("id", session.user.id).single(),
+            supabaseClient.from("saved_content").select("*").eq("user_id", session.user.id).order("created_at", { ascending: false }),
+            supabaseClient.from("projects").select("*").eq("owner_id", session.user.id).order("created_at", { ascending: false }),
+          ]);
+
+          if (mounted) {
+            setProfile(p ?? null);
+            setSaved(s ?? []);
+            setProjects(proj ?? []);
+          }
+        } catch (error) {
+          console.error("Error loading profile data on auth change:", error);
+        }
       } else {
-        setProfile(null);
-        setSaved([]);
-        setProjects([]);
+        if (mounted) {
+          setProfile(null);
+          setSaved([]);
+          setProjects([]);
+        }
       }
     });
 
@@ -73,25 +90,28 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <main className="mx-auto max-w-5xl px-4 py-12">
-        <div className="mb-8 premium-card p-8">
-          <div className="flex flex-col gap-6 md:flex-row md:items-start">
-            <Skeleton variant="avatar" className="h-24 w-24 md:h-32 md:w-32" />
-            <div className="flex-1 space-y-3">
-              <Skeleton variant="text" className="w-1/3 h-8" />
-              <Skeleton variant="text" className="w-1/2 h-4" />
-              <div className="flex gap-4">
-                <Skeleton variant="text" className="w-32" />
-                <Skeleton variant="text" className="w-32" />
+      <main className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-950 to-slate-900">
+        <Navbar />
+        <div className="mx-auto max-w-5xl px-4 py-12">
+          <div className="mb-8 premium-card p-8">
+            <div className="flex flex-col gap-6 md:flex-row md:items-start">
+              <Skeleton variant="avatar" className="h-24 w-24 md:h-32 md:w-32" />
+              <div className="flex-1 space-y-3">
+                <Skeleton variant="text" className="w-1/3 h-8" />
+                <Skeleton variant="text" className="w-1/2 h-4" />
+                <div className="flex gap-4">
+                  <Skeleton variant="text" className="w-32" />
+                  <Skeleton variant="text" className="w-32" />
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <StatCardSkeleton />
-          <StatCardSkeleton />
-          <StatCardSkeleton />
-          <StatCardSkeleton />
+          <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <StatCardSkeleton />
+            <StatCardSkeleton />
+            <StatCardSkeleton />
+            <StatCardSkeleton />
+          </div>
         </div>
       </main>
     );
@@ -99,14 +119,17 @@ export default function ProfilePage() {
 
   if (!user) {
     return (
-      <main className="mx-auto max-w-5xl px-4 py-12">
-        <EmptyState
-          icon={User}
-          title="Not signed in"
-          description="Please sign in to view your profile and access your dashboard."
-          actionLabel="Sign In"
-          actionHref="/login"
-        />
+      <main className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-950 to-slate-900">
+        <Navbar />
+        <div className="mx-auto max-w-5xl px-4 py-12">
+          <EmptyState
+            icon={User}
+            title="Not signed in"
+            description="Please sign in to view your profile and access your dashboard."
+            actionLabel="Sign In"
+            actionHref="/login"
+          />
+        </div>
       </main>
     );
   }
@@ -121,13 +144,15 @@ export default function ProfilePage() {
   const recentProjects = projects.slice(0, 3);
 
   return (
-    <main className="mx-auto max-w-5xl px-4 py-12">
+    <main className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-950 to-slate-900">
+      <Navbar />
+      <div className="mx-auto max-w-5xl px-4 py-12">
 
       {/* Profile Overview */}
       <section className="mb-8">
-        <Card variant="gradient" className="p-8">
+        <div className="rounded-[2.5rem] border border-purple-500/30 bg-purple-950/50 p-8 shadow-sm backdrop-blur-sm">
           <div className="flex flex-col gap-6 md:flex-row md:items-start">
-            <div className="relative h-24 w-24 overflow-hidden rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 md:h-32 md:w-32 ring-4 ring-primary/20">
+            <div className="relative h-24 w-24 overflow-hidden rounded-full bg-gradient-to-br from-purple-500/20 to-purple-700/20 md:h-32 md:w-32 ring-4 ring-purple-500/30">
               <Image
                 src={profile?.avatar_url ?? "/avatar-placeholder.svg"}
                 alt="avatar"
@@ -136,21 +161,21 @@ export default function ProfilePage() {
               />
             </div>
             <div className="flex-1">
-              <h1 className="text-3xl font-bold text-foreground">{profile?.full_name ?? user.email}</h1>
-              <p className="mt-2 text-lg text-muted">{profile?.bio || "Engineering enthusiast and creator"}</p>
-              <div className="mt-4 flex flex-wrap gap-4 text-sm text-muted">
+              <h1 className="text-3xl font-bold text-white">{profile?.full_name ?? user.email}</h1>
+              <p className="mt-2 text-lg text-gray-300">{profile?.bio || "Engineering enthusiast and creator"}</p>
+              <div className="mt-4 flex flex-wrap gap-4 text-sm text-gray-400">
                 <div className="flex items-center gap-2">
-                  <Mail className="h-4 w-4 text-primary" />
+                  <Mail className="h-4 w-4 text-purple-400" />
                   <span>{user.email}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-primary" />
+                  <Calendar className="h-4 w-4 text-purple-400" />
                   <span>Joined {joinDate}</span>
                 </div>
               </div>
             </div>
           </div>
-        </Card>
+        </div>
       </section>
 
       {/* Dashboard Stats */}
@@ -185,27 +210,27 @@ export default function ProfilePage() {
       <section className="mb-8">
         <div className="mb-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Code2 className="h-5 w-5 text-primary" />
-            <h2 className="text-xl font-semibold text-foreground">My Projects</h2>
+            <Code2 className="h-5 w-5 text-purple-400" />
+            <h2 className="text-xl font-semibold text-white">My Projects</h2>
           </div>
-          <Link href="/profile/projects" as="/profile/projects" className="text-sm text-primary hover:underline">
+          <Link href="/profile/projects" as="/profile/projects" className="text-sm text-purple-400 hover:text-purple-300 transition">
             View All
           </Link>
         </div>
-        
+
         {featuredProject && (
-          <Card variant="elevated" className="mb-4 p-6">
+          <div className="mb-4 rounded-[2rem] border border-purple-500/30 bg-purple-950/50 p-6 shadow-sm backdrop-blur-sm">
             <div className="flex items-start gap-4">
-              <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-gradient-to-br from-primary/10 to-secondary/10 text-primary">
+              <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500/20 to-purple-700/20 text-purple-400">
                 <Award className="h-8 w-8" />
               </div>
               <div className="flex-1">
                 <div className="flex items-center gap-2">
-                  <h3 className="font-semibold text-foreground">{featuredProject.title}</h3>
-                  <Badge variant="glow" className="bg-primary text-primary-foreground">Featured</Badge>
+                  <h3 className="font-semibold text-white">{featuredProject.title}</h3>
+                  <Badge variant="glow" className="bg-purple-500 text-white">Featured</Badge>
                 </div>
-                <p className="mt-1 text-sm text-muted line-clamp-2">{featuredProject.description}</p>
-                <div className="mt-2 flex items-center gap-4 text-xs text-muted">
+                <p className="mt-1 text-sm text-gray-300 line-clamp-2">{featuredProject.description}</p>
+                <div className="mt-2 flex items-center gap-4 text-xs text-gray-400">
                   <span>{featuredProject.project_type}</span>
                   <span>•</span>
                   <span>{(featuredProject.views_count || 0).toLocaleString()} views</span>
@@ -215,21 +240,21 @@ export default function ProfilePage() {
                 <Button variant="primary" size="sm">View</Button>
               </Link>
             </div>
-          </Card>
+          </div>
         )}
 
-        <Card variant="glass" className="p-6">
+        <div className="rounded-[2rem] border border-purple-500/30 bg-purple-950/50 p-6 shadow-sm backdrop-blur-sm">
           {recentProjects.length > 0 ? (
             <div className="space-y-4">
               {recentProjects.map((project) => (
                 <Link key={project.id} href={`/projects/${project.slug}`} as={`/projects/${project.slug}`} className="block">
-                  <div className="flex items-center gap-4 rounded-2xl border border-border/80 bg-surface/50 p-4 transition-all hover:border-primary hover:bg-surface">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary/10 to-secondary/10">
-                      <FolderOpen className="h-6 w-6 text-primary" />
+                  <div className="flex items-center gap-4 rounded-2xl border border-purple-500/30 bg-purple-900/30 p-4 transition-all hover:border-purple-500 hover:bg-purple-900/50">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500/20 to-purple-700/20">
+                      <FolderOpen className="h-6 w-6 text-purple-400" />
                     </div>
                     <div className="flex-1">
-                      <h4 className="font-medium text-foreground">{project.title}</h4>
-                      <div className="mt-1 flex items-center gap-2 text-xs text-muted">
+                      <h4 className="font-medium text-white">{project.title}</h4>
+                      <div className="mt-1 flex items-center gap-2 text-xs text-gray-400">
                         <Badge
                           variant={project.status === "published" ? "success" : project.status === "draft" ? "warning" : "secondary"}
                           size="sm"
@@ -240,7 +265,7 @@ export default function ProfilePage() {
                         <span>{new Date(project.created_at).toLocaleDateString()}</span>
                       </div>
                     </div>
-                    <Activity className="h-4 w-4 text-muted" />
+                    <Activity className="h-4 w-4 text-gray-400" />
                   </div>
                 </Link>
               ))}
@@ -255,16 +280,16 @@ export default function ProfilePage() {
               variant="minimal"
             />
           )}
-        </Card>
+        </div>
       </section>
 
       {/* Research Activity */}
       <section className="mb-8">
         <div className="mb-4 flex items-center gap-2">
-          <Search className="h-5 w-5 text-primary" />
-          <h2 className="text-xl font-semibold text-foreground">Research Activity</h2>
+          <Search className="h-5 w-5 text-purple-400" />
+          <h2 className="text-xl font-semibold text-white">Research Activity</h2>
         </div>
-        <Card variant="glass" className="p-8">
+        <div className="rounded-[2rem] border border-purple-500/30 bg-purple-950/50 p-8 shadow-sm backdrop-blur-sm">
           <EmptyState
             icon={TrendingUp}
             title="No research activity"
@@ -273,16 +298,16 @@ export default function ProfilePage() {
             actionHref="/research"
             variant="minimal"
           />
-        </Card>
+        </div>
       </section>
 
       {/* Community Activity */}
       <section className="mb-8">
         <div className="mb-4 flex items-center gap-2">
-          <MessageSquare className="h-5 w-5 text-primary" />
-          <h2 className="text-xl font-semibold text-foreground">Community Activity</h2>
+          <MessageSquare className="h-5 w-5 text-purple-400" />
+          <h2 className="text-xl font-semibold text-white">Community Activity</h2>
         </div>
-        <Card variant="glass" className="p-8">
+        <div className="rounded-[2rem] border border-purple-500/30 bg-purple-950/50 p-8 shadow-sm backdrop-blur-sm">
           <EmptyState
             icon={Users}
             title="No community activity"
@@ -291,16 +316,16 @@ export default function ProfilePage() {
             actionHref="/community/global"
             variant="minimal"
           />
-        </Card>
+        </div>
       </section>
 
       {/* Saved Content */}
       <section className="mb-8">
         <div className="mb-4 flex items-center gap-2">
-          <Bookmark className="h-5 w-5 text-primary" />
-          <h2 className="text-xl font-semibold text-foreground">Saved Content</h2>
+          <Bookmark className="h-5 w-5 text-purple-400" />
+          <h2 className="text-xl font-semibold text-white">Saved Content</h2>
         </div>
-        <Card variant="glass" className="p-8">
+        <div className="rounded-[2rem] border border-purple-500/30 bg-purple-950/50 p-8 shadow-sm backdrop-blur-sm">
           {saved.length === 0 ? (
             <EmptyState
               icon={Bookmark}
@@ -313,7 +338,7 @@ export default function ProfilePage() {
           ) : (
             <ul className="space-y-3">
               {saved.map((s) => (
-                <li key={s.id} className="rounded-2xl border border-border/80 bg-surface/50 p-4 transition-all hover:border-primary hover:bg-surface">
+                <li key={s.id} className="rounded-2xl border border-purple-500/30 bg-purple-900/30 p-4 transition-all hover:border-purple-500 hover:bg-purple-900/50">
                   <div className="flex items-center justify-between">
                     <div>
                       <div className="flex items-center gap-2">
@@ -321,12 +346,12 @@ export default function ProfilePage() {
                           {s.content_type}
                         </Badge>
                       </div>
-                      <div className="mt-1 text-xs text-muted">ID: {s.content_id}</div>
+                      <div className="mt-1 text-xs text-gray-400">ID: {s.content_id}</div>
                     </div>
                     <div>
                       {(() => {
                         const url = `/${String(s.content_type).toLowerCase()}s/${String(s.content_id)}`;
-                        return <a href={url} className="text-primary underline text-sm font-semibold">View</a>;
+                        return <a href={url} className="text-purple-400 underline text-sm font-semibold">View</a>;
                       })()}
                     </div>
                   </div>
@@ -334,16 +359,16 @@ export default function ProfilePage() {
               ))}
             </ul>
           )}
-        </Card>
+        </div>
       </section>
 
       {/* Achievements */}
-      <section>
+      <section className="mb-8">
         <div className="mb-4 flex items-center gap-2">
-          <Award className="h-5 w-5 text-primary" />
-          <h2 className="text-xl font-semibold text-foreground">Achievements</h2>
+          <Award className="h-5 w-5 text-purple-400" />
+          <h2 className="text-xl font-semibold text-white">Achievements</h2>
         </div>
-        <Card variant="glass" className="p-8">
+        <div className="rounded-[2rem] border border-purple-500/30 bg-purple-950/50 p-8 shadow-sm backdrop-blur-sm">
           <EmptyState
             icon={Award}
             title="No achievements yet"
@@ -352,8 +377,9 @@ export default function ProfilePage() {
             actionHref="/"
             variant="minimal"
           />
-        </Card>
+        </div>
       </section>
+      </div>
       <Footer />
     </main>
   );

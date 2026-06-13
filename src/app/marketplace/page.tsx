@@ -13,7 +13,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
-import { Search, Filter, ShoppingBag, Package, TrendingUp, Clock, Sparkles, Star, ArrowRight } from "lucide-react";
+import { Search, Filter, ShoppingBag, Package, TrendingUp, Clock, Sparkles, Star, ArrowRight, BookOpen, Layout, Zap, Layers, Code2, Database } from "lucide-react";
 
 
 export default function MarketplacePage({
@@ -21,10 +21,18 @@ export default function MarketplacePage({
 }: {
   searchParams: Promise<{ category?: string; q?: string }>;
 }) {
-  const [resolvedSearchParams, setResolvedSearchParams] = React.useState<{ category?: string; q?: string }>({});
+  const [resolvedSearchParams, setResolvedSearchParams] = React.useState<{ category?: string; q?: string; type?: string }>({});
   const [categories, setCategories] = React.useState<any[]>([]);
   const [items, setItems] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
+
+  const resourceTypes = [
+    { name: "Learning Resources", icon: BookOpen, slug: "learning", count: 24, color: "from-purple-500/10 to-pink-500/10", iconColor: "from-purple-500 to-pink-500" },
+    { name: "Templates", icon: Layout, slug: "templates", count: 18, color: "from-blue-500/10 to-cyan-500/10", iconColor: "from-blue-500 to-cyan-500" },
+    { name: "Starter Kits", icon: Zap, slug: "starter-kits", count: 12, color: "from-green-500/10 to-emerald-500/10", iconColor: "from-green-500 to-emerald-500" },
+    { name: "Design Assets", icon: Layers, slug: "design-assets", count: 15, color: "from-orange-500/10 to-red-500/10", iconColor: "from-orange-500 to-red-500" },
+    { name: "Documentation", icon: Code2, slug: "documentation", count: 20, color: "from-indigo-500/10 to-violet-500/10", iconColor: "from-indigo-500 to-violet-500" },
+  ];
 
   React.useEffect(() => {
     async function loadData() {
@@ -91,10 +99,44 @@ export default function MarketplacePage({
           transition={{ duration: 0.6 }}
           className="mb-12 text-center"
         >
-          <h1 className="text-hero text-gradient">Marketplace</h1>
+          <h1 className="text-hero text-gradient">Engineering Resource Hub</h1>
           <p className="mt-4 text-lg text-muted">
-            Premium assets, templates, and tools to accelerate your development.
+            Access premium learning resources, templates, starter kits, design assets, and documentation to accelerate your engineering projects.
           </p>
+        </motion.div>
+
+        {/* Resource Types */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="mb-12"
+        >
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+            {resourceTypes.map((type) => (
+              <Link key={type.slug} href={`/marketplace?type=${type.slug}`}>
+                <motion.div
+                  whileHover={{ y: -4, scale: 1.02 }}
+                  className="group relative overflow-hidden rounded-2xl glass p-6 transition-all hover:shadow-2xl"
+                >
+                  <div className={`absolute inset-0 bg-gradient-to-br ${type.color} opacity-0 transition-opacity group-hover:opacity-100`} />
+                  <div className="relative">
+                    <motion.div
+                      whileHover={{ scale: 1.1, rotate: 5 }}
+                      transition={{ duration: 0.3 }}
+                      className={`mb-3 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${type.iconColor} text-white shadow-lg`}
+                    >
+                      <type.icon size={24} />
+                    </motion.div>
+                    <h3 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors">
+                      {type.name}
+                    </h3>
+                    <p className="text-sm text-muted">{type.count} resources</p>
+                  </div>
+                </motion.div>
+              </Link>
+            ))}
+          </div>
         </motion.div>
 
         <motion.div

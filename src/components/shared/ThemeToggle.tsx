@@ -15,11 +15,11 @@ export function ThemeToggle() {
   const mounted = useIsMounted();
 
   if (!mounted) {
-    return <div className="h-11 w-11 rounded-2xl bg-surface" aria-hidden="true" />;
+    return <div className="h-10 w-10 rounded-xl bg-purple-950/50" aria-hidden="true" />;
   }
 
   return (
-    <div className="flex items-center gap-2 rounded-2xl border border-border/70 bg-surface p-1 dark:border-slate-700 dark:bg-slate-900">
+    <div className="flex items-center gap-1 rounded-xl border border-purple-500/30 bg-purple-950/50 p-1">
       {modes.map((item) => {
         const Icon = item.icon;
         const active = theme === item.id;
@@ -29,11 +29,11 @@ export function ThemeToggle() {
             type="button"
             aria-label={`${item.label} theme`}
             onClick={() => setTheme(item.id)}
-            className={`inline-flex h-10 w-10 items-center justify-center rounded-2xl transition ${
-              active ? "bg-primary text-white" : "text-muted hover:bg-background/80 dark:hover:bg-slate-800"
+            className={`inline-flex h-8 w-8 items-center justify-center rounded-lg transition ${
+              active ? "bg-purple-500 text-white" : "text-gray-400 hover:bg-purple-900/50"
             }`}
           >
-            <Icon size={18} />
+            <Icon size={16} />
           </button>
         );
       })}

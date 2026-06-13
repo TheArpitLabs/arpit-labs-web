@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { supabaseClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import { Footer } from "@/components/layout/Footer";
+import { Navbar } from "@/components/layout/Navbar";
 import { Chrome, Github, Eye, EyeOff, Loader2 } from "lucide-react";
 
 export default function LoginPage() {
@@ -154,18 +155,19 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="min-h-screen bg-background">
-      <div className="px-4 py-10 text-foreground sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-md rounded-[2.5rem] border border-border/70 bg-card/90 p-8 shadow-sm dark:border-slate-800 dark:bg-slate-950/90">
+    <main className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-950 to-slate-900">
+      <Navbar />
+      <div className="px-4 py-10 text-white sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-md rounded-[2.5rem] border border-purple-500/30 bg-purple-950/50 p-8 shadow-sm backdrop-blur-sm">
         <div className="mb-8 space-y-3 text-center">
-          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-muted">Welcome Back</p>
-          <h1 className="text-3xl font-bold text-foreground">Sign in to your account</h1>
-          <p className="text-sm text-muted">Enter your credentials to access your profile and saved content.</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-purple-400">Welcome Back</p>
+          <h1 className="text-3xl font-bold text-white">Sign in to your account</h1>
+          <p className="text-sm text-gray-300">Enter your credentials to access your profile and saved content.</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="space-y-2">
-            <label htmlFor="email" className="text-sm font-medium text-foreground">Email</label>
+            <label htmlFor="email" className="text-sm font-medium text-white">Email</label>
             <input
               id="email"
               type="email"
@@ -173,12 +175,12 @@ export default function LoginPage() {
               onChange={(e) => setEmail(e.target.value)}
               required
               placeholder="you@example.com"
-              className="w-full rounded-2xl border border-border/70 bg-background px-4 py-3 text-sm outline-none transition focus:border-primary dark:border-slate-700 dark:bg-slate-900"
+              className="w-full rounded-2xl border border-purple-500/30 bg-purple-900/30 px-4 py-3 text-sm outline-none transition focus:border-purple-500 text-white placeholder:text-gray-500"
             />
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="password" className="text-sm font-medium text-foreground">Password</label>
+            <label htmlFor="password" className="text-sm font-medium text-white">Password</label>
             <div className="relative">
               <input
                 id="password"
@@ -187,12 +189,12 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 placeholder="••••••••"
-                className="w-full rounded-2xl border border-border/70 bg-background px-4 py-3 pr-12 text-sm outline-none transition focus:border-primary dark:border-slate-700 dark:bg-slate-900"
+                className="w-full rounded-2xl border border-purple-500/30 bg-purple-900/30 px-4 py-3 pr-12 text-sm outline-none transition focus:border-purple-500 text-white placeholder:text-gray-500"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition hover:text-foreground"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 transition hover:text-white"
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
@@ -201,12 +203,12 @@ export default function LoginPage() {
           </div>
 
           {error && (
-            <div className="rounded-2xl bg-red-500/10 px-4 py-3 text-sm text-red-500" role="alert">
+            <div className="rounded-2xl bg-red-500/20 px-4 py-3 text-sm text-red-400" role="alert">
               {error}
             </div>
           )}
           {success && (
-            <div className="rounded-2xl bg-green-500/10 px-4 py-3 text-sm text-green-500" role="status">
+            <div className="rounded-2xl bg-green-500/20 px-4 py-3 text-sm text-green-400" role="status">
               {success}
             </div>
           )}
@@ -215,7 +217,7 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={handleReset}
-              className="text-sm text-muted hover:text-foreground transition"
+              className="text-sm text-gray-300 hover:text-white transition"
             >
               Forgot password?
             </button>
@@ -223,7 +225,7 @@ export default function LoginPage() {
 
           <button
             disabled={loading}
-            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-primary px-4 py-3 text-sm font-semibold text-white transition hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-purple-500 to-purple-700 px-4 py-3 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? (
               <>
@@ -238,10 +240,10 @@ export default function LoginPage() {
 
         <div className="relative my-6">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-border/70 dark:border-slate-700"></div>
+            <div className="w-full border-t border-purple-500/30"></div>
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="bg-card/90 px-4 text-muted-foreground dark:bg-slate-950/90">OR</span>
+            <span className="bg-purple-950/50 px-4 text-gray-400">OR</span>
           </div>
         </div>
 
@@ -249,7 +251,7 @@ export default function LoginPage() {
           <button
             onClick={signInWithGoogle}
             disabled={oauthLoading !== null}
-            className="flex w-full items-center justify-center gap-3 rounded-2xl border border-border/70 bg-background px-4 py-3 text-sm font-medium text-foreground transition hover:bg-muted/50 disabled:opacity-50 disabled:cursor-not-allowed dark:border-slate-700 dark:bg-slate-900 dark:hover:bg-slate-800"
+            className="flex w-full items-center justify-center gap-3 rounded-2xl border border-purple-500/30 bg-purple-900/30 px-4 py-3 text-sm font-medium text-white transition hover:bg-purple-900/50 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {oauthLoading === "google" ? (
               <>
@@ -267,7 +269,7 @@ export default function LoginPage() {
           <button
             onClick={signInWithGitHub}
             disabled={oauthLoading !== null}
-            className="flex w-full items-center justify-center gap-3 rounded-2xl border border-border/70 bg-background px-4 py-3 text-sm font-medium text-foreground transition hover:bg-muted/50 disabled:opacity-50 disabled:cursor-not-allowed dark:border-slate-700 dark:bg-slate-900 dark:hover:bg-slate-800"
+            className="flex w-full items-center justify-center gap-3 rounded-2xl border border-purple-500/30 bg-purple-900/30 px-4 py-3 text-sm font-medium text-white transition hover:bg-purple-900/50 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {oauthLoading === "github" ? (
               <>
@@ -284,9 +286,9 @@ export default function LoginPage() {
         </div>
 
         <div className="mt-6 text-center">
-          <p className="text-sm text-muted">
+          <p className="text-sm text-gray-300">
             Don&apos;t have an account?{" "}
-            <Link href="/register" className="font-medium text-primary hover:text-primary/80 transition">
+            <Link href="/register" className="font-medium text-purple-400 hover:text-purple-300 transition">
               Create account
             </Link>
           </p>

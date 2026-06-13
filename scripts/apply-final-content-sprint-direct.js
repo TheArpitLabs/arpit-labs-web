@@ -44,86 +44,31 @@ async function insertProjects(profileId) {
       title: 'Smart Traffic Management System',
       slug: 'smart-traffic-management-system',
       description: 'A comprehensive IoT-based traffic management system that uses edge-deployed computer vision and machine learning to optimize traffic signal timing in real-time, reducing congestion and improving urban mobility.',
-      overview: 'Smart Traffic Management System leverages edge AI and computer vision to analyze traffic patterns at intersections in real-time. The system dynamically adjusts signal timing based on current traffic conditions, vehicle density, and pedestrian movement, significantly reducing wait times and improving overall traffic flow.',
-      problem_statement: 'Urban traffic congestion causes significant economic losses, environmental pollution, and reduced quality of life. Traditional fixed-time traffic signals are inefficient as they cannot adapt to changing traffic patterns. Cities need intelligent, adaptive systems that can optimize traffic flow in real-time.',
-      architecture: 'The system follows a distributed architecture with edge computing nodes at each intersection. Each node consists of a camera module, edge AI processor (ESP32 or Raspberry Pi), and traffic signal controller. Nodes communicate with a central cloud server via MQTT for data aggregation and city-wide coordination. The edge AI runs YOLO-based object detection for vehicle counting and classification.',
-      tech_stack: ['Python', 'TensorFlow', 'OpenCV', 'ESP32', 'Raspberry Pi', 'MQTT', 'Node.js', 'React', 'PostgreSQL'],
-      github_url: 'https://github.com/arpit-labs/smart-traffic-management',
-      demo_url: null,
-      cover_image: '/images/projects/traffic-management-cover.jpg',
-      screenshots: ['/images/projects/traffic-dashboard.jpg', '/images/projects/traffic-intersection.jpg', '/images/projects/traffic-ai-model.jpg'],
-      lessons_learned: 'Implementing real-time inference on edge devices required significant model optimization. We learned to balance accuracy with latency, ultimately achieving 45ms inference time on ESP32. The modular architecture allowed for easy scaling to multiple intersections.',
-      tags: ['IoT', 'Smart City', 'Computer Vision', 'Edge AI', 'Traffic Optimization'],
-      featured: true,
-      published: true
+      category: 'IoT'
     },
     {
       title: 'Hospital Attendance System',
       slug: 'hospital-attendance-system',
       description: 'An automated attendance and patient tracking system for hospitals using RFID technology and biometric authentication to streamline operations and improve patient care.',
-      overview: 'Hospital Attendance System automates the check-in/check-out process for patients and staff using RFID cards and biometric authentication. The system integrates with hospital management software to provide real-time attendance data, reduce administrative overhead, and improve patient experience through faster processing.',
-      problem_statement: 'Manual attendance tracking in hospitals is time-consuming, error-prone, and creates bottlenecks during peak hours. Staff spend significant time on administrative tasks instead of patient care. There is no real-time visibility into staff availability or patient wait times.',
-      architecture: 'The system uses RFID readers at entry/exit points connected to a central server. Biometric authentication (fingerprint) is integrated for critical areas. The backend uses Node.js with Express for API endpoints and PostgreSQL for data storage. A React-based dashboard provides real-time analytics and reporting.',
-      tech_stack: ['Node.js', 'Express', 'React', 'PostgreSQL', 'RFID', 'Biometric Authentication', 'REST APIs', 'Chart.js'],
-      github_url: 'https://github.com/arpit-labs/hospital-attendance',
-      demo_url: null,
-      cover_image: '/images/projects/hospital-attendance-cover.jpg',
-      screenshots: ['/images/projects/hospital-dashboard.jpg', '/images/projects/hospital-rfid.jpg', '/images/projects/hospital-analytics.jpg'],
-      lessons_learned: 'Integrating RFID with biometric authentication required careful timing and error handling. We implemented a fallback system that allows manual override when biometric systems fail. Real-time dashboards significantly improved hospital operations visibility.',
-      tags: ['Healthcare', 'Enterprise', 'RFID', 'Biometrics', 'Automation'],
-      featured: true,
-      published: true
+      category: 'Healthcare'
     },
     {
       title: 'NCC Buddy',
       slug: 'ncc-buddy',
       description: 'A comprehensive mobile application for National Cadet Corps (NCC) cadets that combines training schedules, attendance tracking, study materials, and community features to enhance the cadet experience.',
-      overview: 'NCC Buddy serves as a digital companion for NCC cadets, providing easy access to training schedules, educational content, and community features. The app helps cadets track their attendance, access study materials for certificate exams, connect with fellow cadets, and stay updated on camp announcements and events.',
-      problem_statement: 'NCC cadets struggle with disorganized training schedules, lack of access to study materials, and difficulty connecting with their unit. Administrative officers face challenges in maintaining attendance records and disseminating information efficiently. Existing solutions are either too generic or lack NCC-specific features.',
-      architecture: 'The mobile app follows a modular architecture with separate modules for training, attendance, study materials, and community. A backend API handles data synchronization and user management. The app works offline for core features, syncing data when connectivity is available. Admin web portal allows officers to manage schedules and track cadet progress.',
-      tech_stack: ['React Native', 'Node.js', 'MongoDB', 'Firebase', 'Redux', 'Expo', 'REST APIs', 'AWS S3', 'PDF Generation'],
-      github_url: 'https://github.com/arpit-labs/ncc-buddy',
-      demo_url: null,
-      cover_image: '/images/projects/ncc-buddy-cover.jpg',
-      screenshots: ['/images/projects/ncc-dashboard.jpg', '/images/projects/ncc-training.jpg', '/images/projects/ncc-study-material.jpg', '/images/projects/ncc-community.jpg'],
-      lessons_learned: 'Building for offline-first functionality was crucial given variable connectivity during NCC camps. We learned to implement efficient data synchronization strategies. User feedback from actual cadets helped us prioritize features that truly mattered over nice-to-have additions.',
-      tags: ['Mobile App', 'Education', 'Community', 'Training Management', 'React Native', 'Offline-First'],
-      featured: true,
-      published: true
+      category: 'Mobile App'
     },
     {
       title: 'Ship Bridge Collision Prevention',
       slug: 'ship-bridge-collision-prevention',
       description: 'An advanced maritime safety system using computer vision and IoT sensors to detect potential collisions and alert ship captains in real-time to prevent accidents at sea.',
-      overview: 'Ship Bridge Collision Prevention system uses multiple cameras and IoT sensors to monitor the surroundings of a vessel. Computer vision algorithms detect other ships, obstacles, and navigation hazards. The system provides real-time alerts and collision risk assessment to the bridge crew, enabling proactive collision avoidance.',
-      problem_statement: 'Maritime collisions result in significant loss of life, environmental damage, and economic losses. Traditional radar systems have limitations in detecting small vessels and obstacles in poor visibility conditions. Bridge crews need enhanced situational awareness and automated collision detection systems.',
-      architecture: 'The system uses multiple high-resolution cameras positioned around the vessel, connected to an onboard processing unit. Deep learning models (YOLO, Faster R-CNN) perform real-time object detection and tracking. IoT sensors (LiDAR, AIS receivers) provide additional data. A dashboard displays collision risk scores and recommended actions.',
-      tech_stack: ['Python', 'TensorFlow', 'OpenCV', 'YOLO', 'LiDAR', 'AIS', 'React', 'Node.js', 'InfluxDB'],
-      github_url: 'https://github.com/arpit-labs/ship-collision-prevention',
-      demo_url: null,
-      cover_image: '/images/projects/ship-collision-cover.jpg',
-      screenshots: ['/images/projects/ship-dashboard.jpg', '/images/projects/ship-detection.jpg', '/images/projects/ship-alerts.jpg'],
-      lessons_learned: 'Operating in harsh marine environments required robust hardware and software design. We implemented redundant systems and extensive error handling. Real-time performance was critical, leading us to optimize models for edge deployment with minimal accuracy loss.',
-      tags: ['Maritime', 'Safety', 'Computer Vision', 'IoT', 'Deep Learning', 'Collision Detection'],
-      featured: true,
-      published: true
+      category: 'Maritime'
     },
     {
       title: 'Accident Detection System',
       slug: 'accident-detection-system',
       description: 'An IoT-based accident detection and emergency response system for vehicles that automatically detects accidents using accelerometer and GPS data, and alerts emergency contacts and services.',
-      overview: 'Accident Detection System uses vehicle sensors (accelerometer, gyroscope, GPS) to detect accidents in real-time. Upon detecting a crash, the system automatically sends alerts with location coordinates to emergency contacts and emergency services. The system includes a mobile app for users to manage contacts and view incident history.',
-      problem_statement: 'Road accidents often result in delayed emergency response, especially in remote areas or when occupants are incapacitated. Golden hour response is critical for survival. Manual emergency calls are not always possible after severe accidents. There is a need for automated, reliable accident detection and alert systems.',
-      architecture: 'The system consists of an in-vehicle device with sensors (accelerometer, gyroscope, GPS) and GSM module. Machine learning algorithms analyze sensor data to distinguish between normal driving and accident events. Upon accident detection, the device sends SMS and app notifications with location. A cloud backend stores incident data and provides analytics.',
-      tech_stack: ['Arduino', 'ESP32', 'Accelerometer', 'GPS', 'GSM', 'Python', 'TensorFlow', 'Node.js', 'React Native'],
-      github_url: 'https://github.com/arpit-labs/accident-detection',
-      demo_url: null,
-      cover_image: '/images/projects/accident-detection-cover.jpg',
-      screenshots: ['/images/projects/accident-device.jpg', '/images/projects/accident-app.jpg', '/images/projects/accident-dashboard.jpg'],
-      lessons_learned: 'Distinguishing between hard braking and actual accidents was challenging. We trained models on extensive real-world driving data. False positives could cause unnecessary panic, so we implemented a confirmation mechanism before sending emergency alerts. Battery optimization was crucial for always-on operation.',
-      tags: ['Automotive', 'Safety', 'IoT', 'Machine Learning', 'Emergency Response', 'GPS'],
-      featured: true,
-      published: true
+      category: 'Automotive'
     }
   ];
 
@@ -157,12 +102,20 @@ async function insertMarketplaceItems(profileId) {
 
   const categoryMap = {};
   for (const category of categories) {
-    const { data, error } = await supabase.from('marketplace_categories').insert(category).select();
-    if (error) {
-      console.log(`  ✗ Failed to insert category ${category.name}: ${error.message}`);
+    // Check if category already exists
+    const { data: existing } = await supabase.from('marketplace_categories').select('id').eq('slug', category.slug).single();
+    
+    if (existing) {
+      console.log(`  ⊙ Category already exists: ${category.name}`);
+      categoryMap[category.slug] = existing.id;
     } else {
-      console.log(`  ✓ Inserted category: ${category.name}`);
-      categoryMap[category.slug] = data[0].id;
+      const { data, error } = await supabase.from('marketplace_categories').insert(category).select();
+      if (error) {
+        console.log(`  ✗ Failed to insert category ${category.name}: ${error.message}`);
+      } else {
+        console.log(`  ✓ Inserted category: ${category.name}`);
+        categoryMap[category.slug] = data[0].id;
+      }
     }
   }
 
@@ -176,8 +129,7 @@ async function insertMarketplaceItems(profileId) {
       currency: 'USD',
       featured: true,
       published: true,
-      download_url: 'https://github.com/arpit-labs/smart-home-template',
-      documentation_url: 'https://docs.arpit-labs.com/smart-home'
+      download_url: 'https://github.com/arpit-labs/smart-home-template'
     },
     {
       title: 'Weather Station Kit',
@@ -188,8 +140,7 @@ async function insertMarketplaceItems(profileId) {
       currency: 'USD',
       featured: true,
       published: true,
-      download_url: 'https://github.com/arpit-labs/weather-station',
-      documentation_url: 'https://docs.arpit-labs.com/weather-station'
+      download_url: 'https://github.com/arpit-labs/weather-station'
     },
     {
       title: 'Digital Circuits Notes',
@@ -200,8 +151,7 @@ async function insertMarketplaceItems(profileId) {
       currency: 'USD',
       featured: false,
       published: true,
-      download_url: 'https://docs.arpit-labs.com/digital-circuits',
-      documentation_url: null
+      download_url: 'https://docs.arpit-labs.com/digital-circuits'
     },
     {
       title: 'ESP32 Development Board PCB',
@@ -212,8 +162,7 @@ async function insertMarketplaceItems(profileId) {
       currency: 'USD',
       featured: true,
       published: true,
-      download_url: 'https://github.com/arpit-labs/esp32-pcb',
-      documentation_url: 'https://docs.arpit-labs.com/esp32-pcb'
+      download_url: 'https://github.com/arpit-labs/esp32-pcb'
     },
     {
       title: 'ML Research Dataset Collection',
@@ -224,8 +173,7 @@ async function insertMarketplaceItems(profileId) {
       currency: 'USD',
       featured: true,
       published: true,
-      download_url: 'https://github.com/arpit-labs/ml-datasets',
-      documentation_url: 'https://docs.arpit-labs.com/ml-datasets'
+      download_url: 'https://github.com/arpit-labs/ml-datasets'
     },
     {
       title: 'Computer Vision Model Templates',
@@ -236,8 +184,7 @@ async function insertMarketplaceItems(profileId) {
       currency: 'USD',
       featured: true,
       published: true,
-      download_url: 'https://github.com/arpit-labs/cv-templates',
-      documentation_url: 'https://docs.arpit-labs.com/cv-templates'
+      download_url: 'https://github.com/arpit-labs/cv-templates'
     },
     {
       title: 'IoT Hackathon Starter Pack',
@@ -248,8 +195,7 @@ async function insertMarketplaceItems(profileId) {
       currency: 'USD',
       featured: true,
       published: true,
-      download_url: 'https://github.com/arpit-labs/iot-hackathon',
-      documentation_url: 'https://docs.arpit-labs.com/iot-hackathon'
+      download_url: 'https://github.com/arpit-labs/iot-hackathon'
     }
   ];
 
@@ -337,12 +283,20 @@ async function insertResearchPapers() {
 
   let successCount = 0;
   for (const paper of papers) {
-    const { error } = await supabase.from('research_papers').insert(paper);
-    if (error) {
-      console.log(`  ✗ Failed to insert ${paper.title}: ${error.message}`);
-    } else {
-      console.log(`  ✓ Inserted: ${paper.title}`);
+    // Check if paper already exists
+    const { data: existing } = await supabase.from('research_papers').select('id').eq('slug', paper.slug).single();
+    
+    if (existing) {
+      console.log(`  ⊙ Paper already exists: ${paper.title}`);
       successCount++;
+    } else {
+      const { error } = await supabase.from('research_papers').insert(paper);
+      if (error) {
+        console.log(`  ✗ Failed to insert ${paper.title}: ${error.message}`);
+      } else {
+        console.log(`  ✓ Inserted: ${paper.title}`);
+        successCount++;
+      }
     }
   }
   
@@ -407,12 +361,20 @@ async function insertCommunityPosts(profileId) {
 
   let successCount = 0;
   for (const post of posts) {
-    const { error } = await supabase.from('community_posts').insert({ ...post, user_id: profileId });
-    if (error) {
-      console.log(`  ✗ Failed to insert ${post.title}: ${error.message}`);
-    } else {
-      console.log(`  ✓ Inserted: ${post.title}`);
+    // Check if post already exists
+    const { data: existing } = await supabase.from('community_posts').select('id').eq('slug', post.slug).single();
+    
+    if (existing) {
+      console.log(`  ⊙ Post already exists: ${post.title}`);
       successCount++;
+    } else {
+      const { error } = await supabase.from('community_posts').insert({ ...post, user_id: profileId });
+      if (error) {
+        console.log(`  ✗ Failed to insert ${post.title}: ${error.message}`);
+      } else {
+        console.log(`  ✓ Inserted: ${post.title}`);
+        successCount++;
+      }
     }
   }
   

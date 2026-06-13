@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Globe, ChevronDown } from "lucide-react";
+import { Menu, X, Globe, ChevronDown, Search, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/shared/ThemeToggle";
 import { NexusLogo } from "@/components/shared/NexusLogo";
@@ -19,7 +19,6 @@ const navItems = [
   { href: "/innovation", label: "Innovation" },
   { href: "/community/global", label: "Community" },
   { href: "/about", label: "About" },
-  { href: "/contact", label: "Contact" },
 ] as const satisfies ReadonlyArray<{ href: Route; label: string }>;
 
 export function Navbar() {
@@ -98,14 +97,14 @@ export function Navbar() {
   const currentLang = locale === 'hi' ? 'Hindi' : 'English';
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border/70 bg-background/80 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-950/80">
+    <header className="sticky top-0 z-50 border-b border-purple-900/30 bg-gradient-to-r from-slate-900 via-purple-950 to-slate-900">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-4 py-4 sm:px-6 lg:px-8">
-        <Link href="/" className="group inline-flex items-center gap-3 text-lg font-semibold text-foreground transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70">
-          <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-secondary text-white shadow-lg">
+        <Link href="/" className="group inline-flex items-center gap-3 text-lg font-semibold text-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70">
+          <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-purple-700 text-white shadow-lg">
             <NexusLogo className="h-5 w-5" />
           </span>
           <span className="sr-only">Arpit Labs</span>
-          <span className="hidden sm:inline">Arpit Labs</span>
+          <span className="hidden sm:inline text-white">Arpit Labs</span>
         </Link>
 
         <nav className="hidden items-center gap-6 lg:gap-8 md:flex">
@@ -114,14 +113,14 @@ export function Navbar() {
               key={item.href}
               href={item.href}
               className={cn(
-                "relative text-sm font-medium transition hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70",
-                pathname === item.href ? "text-primary" : "text-muted"
+                "relative text-sm font-medium transition hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70",
+                pathname === item.href ? "text-white" : "text-gray-300"
               )}
             >
               {item.label}
               {pathname === item.href && (
                 <motion.div
-                  className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary"
+                  className="absolute -bottom-1 left-0 right-0 h-0.5 bg-purple-500"
                   layoutId="navbar-underline"
                   initial={false}
                   transition={{ type: "spring", stiffness: 380, damping: 30 }}
@@ -132,11 +131,20 @@ export function Navbar() {
         </nav>
 
         <div className="flex items-center gap-3">
+          {/* Search Button */}
+          <Link
+            href="/search"
+            className="hidden sm:inline-flex items-center gap-1.5 rounded-xl border border-purple-500/30 bg-purple-950/50 px-3 py-1.5 text-xs font-bold text-white transition hover:border-purple-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70"
+          >
+            <Search size={14} />
+            <span>Search</span>
+          </Link>
+
           {/* Language Switcher */}
           <div className="relative">
             <button
               onClick={() => setLangOpen(!langOpen)}
-              className="flex items-center gap-1.5 rounded-xl border border-border/70 bg-surface px-3 py-1.5 text-xs font-bold text-foreground transition hover:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70"
+              className="flex items-center gap-1.5 rounded-xl border border-purple-500/30 bg-purple-950/50 px-3 py-1.5 text-xs font-bold text-white transition hover:border-purple-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70"
               aria-expanded={langOpen}
               aria-haspopup="true"
             >
@@ -151,11 +159,11 @@ export function Navbar() {
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95, y: -10 }}
                   transition={{ duration: 0.2 }}
-                  className="absolute right-0 mt-2 w-32 overflow-hidden rounded-2xl border border-border/70 bg-card/95 backdrop-blur-sm p-1 shadow-xl"
+                  className="absolute right-0 mt-2 w-32 overflow-hidden rounded-2xl border border-purple-500/30 bg-purple-950/95 backdrop-blur-sm p-1 shadow-xl z-50"
                   role="menu"
                 >
-                  <button onClick={() => switchLanguage('en')} className="w-full rounded-xl px-4 py-2 text-left text-xs font-medium hover:bg-surface transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70" role="menuitem">English</button>
-                  <button onClick={() => switchLanguage('hi')} className="w-full rounded-xl px-4 py-2 text-left text-xs font-medium hover:bg-surface transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70" role="menuitem">हिन्दी</button>
+                  <button onClick={() => switchLanguage('en')} className="w-full rounded-xl px-4 py-2 text-left text-xs font-medium text-white hover:bg-purple-900/50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70" role="menuitem">English</button>
+                  <button onClick={() => switchLanguage('hi')} className="w-full rounded-xl px-4 py-2 text-left text-xs font-medium text-white hover:bg-purple-900/50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70" role="menuitem">हिन्दी</button>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -167,16 +175,25 @@ export function Navbar() {
             <div className="flex items-center gap-3">
               <Link
                 href="/profile"
-                className="rounded-xl bg-gradient-to-r from-primary to-secondary px-4 py-2 text-sm font-bold text-white shadow-lg transition hover:opacity-90"
+                className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-purple-500 to-purple-700 px-4 py-2 text-sm font-bold text-white shadow-lg transition hover:opacity-90"
               >
-                {profile?.full_name || user.email?.split('@')[0]}
+                {profile?.avatar_url ? (
+                  <img
+                    src={profile.avatar_url}
+                    alt="Avatar"
+                    className="h-6 w-6 rounded-full object-cover"
+                  />
+                ) : (
+                  <User size={16} />
+                )}
+                <span className="hidden sm:inline">{profile?.full_name || user.email?.split('@')[0]}</span>
               </Link>
               <button
                 onClick={async () => {
                   await supabaseClient.auth.signOut();
                   router.push('/login');
                 }}
-                className="rounded-xl border border-border/70 px-4 py-2 text-sm font-bold text-foreground transition hover:bg-surface"
+                className="rounded-xl border border-purple-500/30 px-3 py-2 text-sm font-bold text-white transition hover:bg-purple-900/50 hidden sm:block"
               >
                 Sign Out
               </button>
@@ -185,13 +202,13 @@ export function Navbar() {
             <div className="flex items-center gap-3">
               <Link
                 href="/login"
-                className="rounded-xl border border-border/70 px-4 py-2 text-sm font-bold text-foreground transition hover:bg-surface"
+                className="rounded-xl border border-purple-500/30 bg-white px-4 py-2 text-sm font-bold text-gray-900 transition hover:bg-gray-100 cursor-pointer pointer-events-auto hidden sm:block"
               >
                 Login
               </Link>
               <Link
                 href="/register"
-                className="rounded-xl bg-gradient-to-r from-primary to-secondary px-4 py-2 text-sm font-bold text-white shadow-lg transition hover:opacity-90"
+                className="rounded-xl bg-gradient-to-r from-purple-500 to-purple-700 px-4 py-2 text-sm font-bold text-white shadow-lg transition hover:opacity-90 cursor-pointer pointer-events-auto"
               >
                 Get Started
               </Link>
@@ -200,7 +217,7 @@ export function Navbar() {
           
           <button
             type="button"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-border/70 bg-surface text-foreground md:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-purple-500/30 bg-purple-950/50 text-white md:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70"
             onClick={() => setOpen((prev) => !prev)}
             aria-expanded={open}
             aria-label={open ? "Close menu" : "Open menu"}
@@ -210,26 +227,111 @@ export function Navbar() {
         </div>
       </div>
 
-      <div className={cn("md:hidden", open ? "block" : "hidden")}>
-        <div className="border-t border-border/70 bg-background/95 px-4 pb-6 pt-4 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-950/95" role="navigation" aria-label="Mobile navigation">
-          <div className="flex flex-col gap-3">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  "rounded-2xl px-4 py-3 text-base font-medium transition hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70",
-                  pathname === item.href ? "bg-primary/5 text-primary" : "text-foreground"
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="md:hidden overflow-hidden"
+          >
+            <div className="border-t border-purple-900/30 bg-purple-950/95 px-4 pb-6 pt-4 backdrop-blur-xl" role="navigation" aria-label="Mobile navigation">
+              <div className="flex flex-col gap-3">
+                {navItems.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={cn(
+                      "rounded-2xl px-4 py-3 text-base font-medium transition hover:bg-purple-900/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70",
+                      pathname === item.href ? "bg-purple-900/50 text-white" : "text-gray-300"
+                    )}
+                    onClick={() => setOpen(false)}
+                    aria-current={pathname === item.href ? "page" : undefined}
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+                
+                <div className="h-px bg-purple-900/30 my-2" />
+                
+                <Link
+                  href="/search"
+                  className="flex items-center gap-3 rounded-2xl px-4 py-3 text-base font-medium text-gray-300 transition hover:bg-purple-900/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70"
+                  onClick={() => setOpen(false)}
+                >
+                  <Search size={18} />
+                  Search
+                </Link>
+                
+                <div className="flex items-center justify-between rounded-2xl px-4 py-3">
+                  <span className="text-sm font-medium text-gray-300">Language</span>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => switchLanguage('en')}
+                      className={cn(
+                        "rounded-lg px-3 py-1.5 text-xs font-bold transition",
+                        locale === 'en' ? "bg-purple-500 text-white" : "bg-purple-900/50 text-gray-300 hover:bg-purple-900/70"
+                      )}
+                    >
+                      English
+                    </button>
+                    <button
+                      onClick={() => switchLanguage('hi')}
+                      className={cn(
+                        "rounded-lg px-3 py-1.5 text-xs font-bold transition",
+                        locale === 'hi' ? "bg-purple-500 text-white" : "bg-purple-900/50 text-gray-300 hover:bg-purple-900/70"
+                      )}
+                    >
+                      हिन्दी
+                    </button>
+                  </div>
+                </div>
+                
+                {user ? (
+                  <>
+                    <Link
+                      href="/profile"
+                      className="flex items-center gap-3 rounded-2xl px-4 py-3 text-base font-medium text-gray-300 transition hover:bg-purple-900/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70"
+                      onClick={() => setOpen(false)}
+                    >
+                      <User size={18} />
+                      Profile
+                    </Link>
+                    <button
+                      onClick={async () => {
+                        await supabaseClient.auth.signOut();
+                        router.push('/login');
+                        setOpen(false);
+                      }}
+                      className="flex items-center gap-3 rounded-2xl px-4 py-3 text-base font-medium text-gray-300 transition hover:bg-purple-900/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70 text-left"
+                    >
+                      Sign Out
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      href="/login"
+                      className="rounded-2xl border border-purple-500/30 bg-white px-4 py-3 text-center text-base font-bold text-gray-900 transition hover:bg-gray-100"
+                      onClick={() => setOpen(false)}
+                    >
+                      Login
+                    </Link>
+                    <Link
+                      href="/register"
+                      className="rounded-2xl bg-gradient-to-r from-purple-500 to-purple-700 px-4 py-3 text-center text-base font-bold text-white shadow-lg transition hover:opacity-90"
+                      onClick={() => setOpen(false)}
+                    >
+                      Get Started
+                    </Link>
+                  </>
                 )}
-                onClick={() => setOpen(false)}
-                aria-current={pathname === item.href ? "page" : undefined}
-              >
-                {item.label}
-              </Link>
-            ))}
-          </div>
-        </div>
-      </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 }

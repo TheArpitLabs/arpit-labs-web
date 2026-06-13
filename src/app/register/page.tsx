@@ -93,19 +93,19 @@ export default function RegisterPage() {
   const strengthScore = Object.values(passwordStrength).filter(Boolean).length;
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-950 to-slate-900">
       <Navbar />
-      <div className="px-4 py-10 text-foreground sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-md rounded-[2.5rem] border border-border/70 bg-card/90 p-8 shadow-sm dark:border-slate-800 dark:bg-slate-950/90">
+      <div className="px-4 py-10 text-white sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-md rounded-[2.5rem] border border-purple-500/30 bg-purple-950/50 p-8 shadow-sm backdrop-blur-sm">
         <div className="mb-8 space-y-3 text-center">
-          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-muted">Get Started</p>
-          <h1 className="text-3xl font-bold text-foreground">Create your account</h1>
-          <p className="text-sm text-muted">Join Arpit Labs to access research, projects, and community features.</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-purple-400">Get Started</p>
+          <h1 className="text-3xl font-bold text-white">Create your account</h1>
+          <p className="text-sm text-gray-300">Join Arpit Labs to access research, projects, and community features.</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="space-y-2">
-            <label htmlFor="fullName" className="text-sm font-medium text-foreground">Full name</label>
+            <label htmlFor="fullName" className="text-sm font-medium text-white">Full name</label>
             <input
               id="fullName"
               type="text"
@@ -113,12 +113,12 @@ export default function RegisterPage() {
               onChange={(e) => setFullName(e.target.value)}
               required
               placeholder="John Doe"
-              className="w-full rounded-2xl border border-border/70 bg-background px-4 py-3 text-sm outline-none transition focus:border-primary dark:border-slate-700 dark:bg-slate-900"
+              className="w-full rounded-2xl border border-purple-500/30 bg-purple-900/30 px-4 py-3 text-sm outline-none transition focus:border-purple-500 text-white placeholder:text-gray-500"
             />
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="email" className="text-sm font-medium text-foreground">Email</label>
+            <label htmlFor="email" className="text-sm font-medium text-white">Email</label>
             <input
               id="email"
               type="email"
@@ -126,12 +126,12 @@ export default function RegisterPage() {
               onChange={(e) => setEmail(e.target.value)}
               required
               placeholder="you@example.com"
-              className="w-full rounded-2xl border border-border/70 bg-background px-4 py-3 text-sm outline-none transition focus:border-primary dark:border-slate-700 dark:bg-slate-900"
+              className="w-full rounded-2xl border border-purple-500/30 bg-purple-900/30 px-4 py-3 text-sm outline-none transition focus:border-purple-500 text-white placeholder:text-gray-500"
             />
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="password" className="text-sm font-medium text-foreground">Password</label>
+            <label htmlFor="password" className="text-sm font-medium text-white">Password</label>
             <div className="relative">
               <input
                 id="password"
@@ -140,12 +140,12 @@ export default function RegisterPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 placeholder="••••••••"
-                className="w-full rounded-2xl border border-border/70 bg-background px-4 py-3 pr-12 text-sm outline-none transition focus:border-primary dark:border-slate-700 dark:bg-slate-900"
+                className="w-full rounded-2xl border border-purple-500/30 bg-purple-900/30 px-4 py-3 pr-12 text-sm outline-none transition focus:border-purple-500 text-white placeholder:text-gray-500"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition hover:text-foreground"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 transition hover:text-white"
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
@@ -154,41 +154,41 @@ export default function RegisterPage() {
             {password && (
               <div className="space-y-1 mt-2">
                 <div className="flex items-center gap-2 text-xs">
-                  <span className={passwordStrength.length ? "text-green-500" : "text-muted-foreground"}>
+                  <span className={passwordStrength.length ? "text-green-400" : "text-gray-500"}>
                     {passwordStrength.length ? <Check className="h-3 w-3 inline" /> : <X className="h-3 w-3 inline" />}
                   </span>
-                  <span className={passwordStrength.length ? "text-green-500" : "text-muted-foreground"}>At least 8 characters</span>
+                  <span className={passwordStrength.length ? "text-green-400" : "text-gray-500"}>At least 8 characters</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs">
-                  <span className={passwordStrength.hasNumber ? "text-green-500" : "text-muted-foreground"}>
+                  <span className={passwordStrength.hasNumber ? "text-green-400" : "text-gray-500"}>
                     {passwordStrength.hasNumber ? <Check className="h-3 w-3 inline" /> : <X className="h-3 w-3 inline" />}
                   </span>
-                  <span className={passwordStrength.hasNumber ? "text-green-500" : "text-muted-foreground"}>Contains a number</span>
+                  <span className={passwordStrength.hasNumber ? "text-green-400" : "text-gray-500"}>Contains a number</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs">
-                  <span className={passwordStrength.hasUpper ? "text-green-500" : "text-muted-foreground"}>
+                  <span className={passwordStrength.hasUpper ? "text-green-400" : "text-gray-500"}>
                     {passwordStrength.hasUpper ? <Check className="h-3 w-3 inline" /> : <X className="h-3 w-3 inline" />}
                   </span>
-                  <span className={passwordStrength.hasUpper ? "text-green-500" : "text-muted-foreground"}>Contains uppercase letter</span>
+                  <span className={passwordStrength.hasUpper ? "text-green-400" : "text-gray-500"}>Contains uppercase letter</span>
                 </div>
               </div>
             )}
           </div>
 
           {error && (
-            <div className="rounded-2xl bg-red-500/10 px-4 py-3 text-sm text-red-500" role="alert">
+            <div className="rounded-2xl bg-red-500/20 px-4 py-3 text-sm text-red-400" role="alert">
               {error}
             </div>
           )}
           {success && (
-            <div className="rounded-2xl bg-green-500/10 px-4 py-3 text-sm text-green-500" role="status">
+            <div className="rounded-2xl bg-green-500/20 px-4 py-3 text-sm text-green-400" role="status">
               {success}
             </div>
           )}
 
           <button
             disabled={loading}
-            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-primary px-4 py-3 text-sm font-semibold text-white transition hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-purple-500 to-purple-700 px-4 py-3 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? (
               <>
@@ -202,9 +202,9 @@ export default function RegisterPage() {
         </form>
 
         <div className="mt-6 text-center">
-          <p className="text-sm text-muted">
+          <p className="text-sm text-gray-300">
             Already have an account?{" "}
-            <Link href="/login" className="font-medium text-primary hover:text-primary/80 transition">
+            <Link href="/login" className="font-medium text-purple-400 hover:text-purple-300 transition">
               Sign in
             </Link>
           </p>
