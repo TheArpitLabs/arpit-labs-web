@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 const siteName = "Arpit Labs";
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://arpit-labs.com";
-const defaultImage = `${siteUrl}/og-image.png`;
+const defaultImage = `${siteUrl}/logo.png`;
 const siteDescription = "Engineering platform showcasing AI, IoT, Cybersecurity, and Web Development projects.";
 
 interface CreateMetadataOptions {

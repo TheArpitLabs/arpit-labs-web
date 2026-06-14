@@ -33,7 +33,7 @@ export function RecentProjects({ projects }: RecentProjectsProps) {
   }
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {recentProjects.map((project, index) => (
         <motion.div
           key={project.id}
@@ -42,7 +42,7 @@ export function RecentProjects({ projects }: RecentProjectsProps) {
           transition={{ duration: 0.4, delay: index * 0.1 }}
         >
           <Link href={`/projects/${project.slug}`} className="group block">
-            <Card variant="elevated" className="overflow-hidden transition-all duration-300 hover:shadow-xl">
+            <Card variant="elevated" className="overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-primary/10">
               {/* Thumbnail */}
               <div className="relative aspect-video w-full overflow-hidden bg-surface">
                 {project.cover_image ? (

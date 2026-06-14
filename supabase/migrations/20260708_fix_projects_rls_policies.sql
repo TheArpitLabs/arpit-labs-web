@@ -11,11 +11,11 @@ drop policy if exists "Admins have full access to projects" on public.projects;
 
 -- Create new policies with proper owner-based access
 
--- Policy 1: Public can read published projects
+-- Policy 1: Public can read published projects (simplified without is_admin function)
 create policy "public can read published projects"
 on public.projects
 for select
-using (status = 'published' or public.is_admin());
+using (status = 'published');
 
 -- Policy 2: Users can read their own projects (regardless of status)
 create policy "users can read own projects"
@@ -42,9 +42,5 @@ on public.projects
 for delete
 using (auth.uid() = owner_id);
 
--- Policy 6: Admins have full access
-create policy "admins have full access to projects"
-on public.projects
-for all
-using (public.is_admin())
-with check (public.is_admin());
+-- Policy 6: Service role can bypass RLS (for admin operations)
+-- This is handled by the service role key itself

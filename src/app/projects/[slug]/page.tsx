@@ -583,7 +583,7 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
           <div className="rounded-[2.5rem] glass p-10 text-center">
             <h2 className="text-2xl font-bold text-foreground">Want to discuss this build?</h2>
             <p className="mx-auto mt-4 max-w-2xl text-muted">
-              I’m always happy to talk through system design decisions, architecture tradeoffs, and engineering lessons from projects like this one.
+              I&apos;m always happy to talk through system design decisions, architecture tradeoffs, and engineering lessons from projects like this one.
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Link

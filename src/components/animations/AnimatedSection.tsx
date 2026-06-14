@@ -21,13 +21,12 @@ const variants = {
 
 export function AnimatedSection({ children, className, delay = 0, variant = "fadeUp" }: AnimatedSectionProps) {
   const selectedVariant = variants[variant];
-  
+
   return (
     <motion.div
       className={cn("w-full", className)}
       initial={selectedVariant.initial}
-      whileInView={selectedVariant.animate}
-      viewport={{ once: true, amount: 0.2 }}
+      animate={selectedVariant.animate}
       transition={{ duration: 0.6, delay, ease: "easeOut" }}
     >
       {children}

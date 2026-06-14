@@ -16,18 +16,28 @@ export async function hybridKnowledgeSearch(query: string, mode: SearchMode = "h
   }
 
   const results = Array.from(merged.values()).sort((a, b) => b.score - a.score).slice(0, limit);
-  await supabaseServer.from("semantic_search_queries").insert({ query, mode, result_count: results.length }).throwOnError();
+  const { error: logError } = await supabaseServer
+    .from("semantic_search_queries")
+    .insert({ query, mode, result_count: results.length });
+  if (logError) {
+    console.warn("Semantic search query logging failed:", logError.message);
+  }
   return results;
 }
 
 async function keywordSearch(query: string, limit: number): Promise<SearchResult[]> {
   const tokens = tokenize(query);
   const pattern = tokens[0] ?? query;
-  const { data } = await supabaseServer
+  const { data, error } = await supabaseServer
     .from("projects")
     .select("id,title,slug,description")
     .or(`title.ilike.%${pattern}%,description.ilike.%${pattern}%,domain.ilike.%${pattern}%`)
     .limit(limit);
+
+  if (error) {
+    console.warn("Keyword search failed:", error.message);
+    return [];
+  }
 
   return (data ?? []).map((project: any) => ({
     entityType: "project",
@@ -41,11 +51,16 @@ async function keywordSearch(query: string, limit: number): Promise<SearchResult
 }
 
 async function localVectorSearch(query: string, limit: number): Promise<SearchResult[]> {
-  const { data } = await supabaseServer
+  const { data, error } = await supabaseServer
     .from("ai_knowledge_base")
     .select("id,source_type,source_id,source_title,source_url,content")
     .eq("is_active", true)
     .limit(80);
+
+  if (error) {
+    console.warn("Vector-compatible search failed:", error.message);
+    return [];
+  }
 
   return (data ?? [])
     .map((item: any) => ({

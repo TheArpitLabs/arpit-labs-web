@@ -132,14 +132,14 @@ export function Navbar() {
         </nav>
 
         <div className="flex items-center gap-3">
-          {/* Search Button */}
-          <Link
+          {/* Search Button - Disabled until search route exists */}
+          {/* <Link
             href="/search"
             className="hidden sm:inline-flex items-center gap-1.5 rounded-xl border border-purple-500/30 bg-purple-950/50 px-3 py-1.5 text-xs font-bold text-white transition hover:border-purple-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70"
           >
             <Search size={14} />
             <span>Search</span>
-          </Link>
+          </Link> */}
 
           {/* Language Switcher */}
           <div className="relative">
@@ -258,14 +258,15 @@ export function Navbar() {
                 
                 <div className="h-px bg-purple-900/30 my-2" />
                 
-                <Link
+                {/* Search link disabled until route exists */}
+                {/* <Link
                   href="/search"
                   className="flex items-center gap-3 rounded-2xl px-4 py-3 text-base font-medium text-gray-300 transition hover:bg-purple-900/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70"
                   onClick={() => setOpen(false)}
                 >
                   <Search size={18} />
                   Search
-                </Link>
+                </Link> */}
                 
                 <div className="flex items-center justify-between rounded-2xl px-4 py-3">
                   <span className="text-sm font-medium text-gray-300">Language</span>

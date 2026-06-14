@@ -46,11 +46,11 @@ export function QuickActions() {
             transition={{ duration: 0.3, delay: index * 0.1 }}
           >
             <Link href={action.href} className="group block">
-              <div className="flex items-start gap-4 rounded-2xl border border-border/80 bg-surface/50 p-4 transition-all duration-300 hover:border-primary/50 hover:bg-surface hover:shadow-lg">
+              <div className="flex items-start gap-4 rounded-2xl border border-border/50 bg-gradient-to-br from-surface/50 to-surface/30 p-4 transition-all duration-300 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/10">
                 <motion.div
                   whileHover={{ scale: 1.1, rotate: 5 }}
                   transition={{ duration: 0.2 }}
-                  className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary/10 to-secondary/10 text-primary"
+                  className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary/20 to-secondary/20 text-primary shadow-lg"
                 >
                   <action.icon className="h-6 w-6" />
                 </motion.div>

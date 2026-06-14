@@ -3,10 +3,8 @@
 import React from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { marketplaceRepository } from "@/lib/repositories/marketplace.repository";
 import { Container } from "@/components/layout/Container";
 import { Footer } from "@/components/layout/Footer";
-import { Navbar } from "@/components/layout/Navbar";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -39,13 +37,13 @@ export default function MarketplacePage({
       const params = await searchParams;
       setResolvedSearchParams(params);
       
-      const [cats, allItems] = await Promise.all([
-        marketplaceRepository.getCategories(),
-        marketplaceRepository.getAll({
-          category: params.category,
-          published: true,
-        }),
+      const [catsRes, itemsRes] = await Promise.all([
+        fetch("/api/marketplace/categories"),
+        fetch(`/api/marketplace/items?category=${params.category || ""}&published=true`),
       ]);
+      
+      const cats = await catsRes.json();
+      const allItems = await itemsRes.json();
       
       setCategories(cats);
       setItems(allItems);
@@ -69,7 +67,6 @@ export default function MarketplacePage({
   if (loading) {
     return (
       <div className="min-h-screen">
-        <Navbar />
         <div className="py-20">
           <Container>
             <div className="mb-12 text-center">
@@ -90,7 +87,6 @@ export default function MarketplacePage({
 
   return (
     <div className="min-h-screen">
-      <Navbar />
       <div className="py-20">
         <Container>
         <motion.div
@@ -216,8 +212,9 @@ export default function MarketplacePage({
                             unoptimized
                           />
                         ) : (
-                          <div className="flex h-full items-center justify-center bg-gradient-to-br from-primary/10 to-secondary/10">
-                            <ShoppingBag className="h-12 w-12 text-primary/40" />
+                          <div className="flex h-full flex-col items-center justify-center bg-gradient-to-br from-primary/10 to-secondary/10 p-4">
+                            <ShoppingBag className="h-12 w-12 text-primary/40 mb-2" />
+                            <span className="text-xs text-muted text-center">No preview available</span>
                           </div>
                         )}
                         <Badge variant="glow" className="absolute left-3 top-3 bg-primary text-primary-foreground">
@@ -317,8 +314,9 @@ export default function MarketplacePage({
                             className="object-cover transition-transform duration-500 group-hover:scale-105"
                           />
                         ) : (
-                          <div className="flex h-full items-center justify-center bg-gradient-to-br from-primary/10 to-secondary/10">
-                            <ShoppingBag className="h-12 w-12 text-primary/40" />
+                          <div className="flex h-full flex-col items-center justify-center bg-gradient-to-br from-primary/10 to-secondary/10 p-4">
+                            <ShoppingBag className="h-12 w-12 text-primary/40 mb-2" />
+                            <span className="text-xs text-muted text-center">No preview available</span>
                           </div>
                         )}
                       </div>
@@ -381,8 +379,9 @@ export default function MarketplacePage({
                             className="object-cover transition-transform duration-500 group-hover:scale-105"
                           />
                         ) : (
-                          <div className="flex h-full items-center justify-center bg-gradient-to-br from-primary/10 to-secondary/10">
-                            <ShoppingBag className="h-12 w-12 text-primary/40" />
+                          <div className="flex h-full flex-col items-center justify-center bg-gradient-to-br from-primary/10 to-secondary/10 p-4">
+                            <ShoppingBag className="h-12 w-12 text-primary/40 mb-2" />
+                            <span className="text-xs text-muted text-center">No preview available</span>
                           </div>
                         )}
                       </div>
@@ -442,8 +441,9 @@ export default function MarketplacePage({
                           className="object-cover transition-transform duration-500 group-hover:scale-105"
                         />
                       ) : (
-                        <div className="flex h-full items-center justify-center bg-gradient-to-br from-primary/10 to-secondary/10">
-                          <ShoppingBag className="h-12 w-12 text-primary/40" />
+                        <div className="flex h-full flex-col items-center justify-center bg-gradient-to-br from-primary/10 to-secondary/10 p-4">
+                          <ShoppingBag className="h-12 w-12 text-primary/40 mb-2" />
+                          <span className="text-xs text-muted text-center">No preview available</span>
                         </div>
                       )}
                       {item.featured && (

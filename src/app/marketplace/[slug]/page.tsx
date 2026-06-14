@@ -1,6 +1,5 @@
 import React from "react";
 import Image from "next/image";
-import { marketplaceRepository } from "@/lib/repositories/marketplace.repository";
 import { Container } from "@/components/layout/Container";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -9,6 +8,7 @@ import { notFound } from "next/navigation";
 import { ShoppingBag, Download, ArrowLeft, ShieldCheck, Zap } from "lucide-react";
 import Link from "next/link";
 import { purchaseItemAction, trackItemViewAction } from "@/lib/actions/marketplace-actions";
+import { marketplaceRepository } from "@/lib/repositories/marketplace.repository";
 
 export default async function MarketplaceItemPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;

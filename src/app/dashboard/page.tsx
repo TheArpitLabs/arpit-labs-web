@@ -88,7 +88,17 @@ export default function DashboardPage() {
 
   return (
     <DashboardLayout user={user} profile={profile}>
-      <div className="space-y-6">
+      <div className="space-y-8">
+        {/* Welcome Section */}
+        <div className="rounded-2xl bg-gradient-to-r from-primary/10 to-secondary/10 p-6 lg:p-8">
+          <h1 className="text-2xl lg:text-3xl font-bold text-foreground">
+            Welcome back, {profile?.full_name?.split(" ")[0] ?? "User"}!
+          </h1>
+          <p className="mt-2 text-muted">
+            Here&apos;s what&apos;s happening with your projects today.
+          </p>
+        </div>
+
         {/* Stats Cards */}
         <StatsCards
           totalProjects={totalProjects}

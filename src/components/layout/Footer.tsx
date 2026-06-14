@@ -30,8 +30,6 @@ const resources = [
 
 const company = [
   { label: "Careers", href: "/careers" },
-  { label: "Privacy Policy", href: "/privacy" },
-  { label: "Terms of Service", href: "/terms" },
   { label: "Press Kit", href: "/press" }
 ];
 
@@ -215,9 +213,7 @@ export function Footer() {
               <p>Built with <Heart className="inline h-4 w-4 text-red-500 fill-red-500" /> for engineers</p>
             </div>
             <div className="flex items-center gap-6">
-              <Link href="/privacy" className="transition hover:text-white">Privacy</Link>
-              <Link href="/terms" className="transition hover:text-white">Terms</Link>
-              <Link href="/sitemap.xml" className="transition hover:text-white">Sitemap</Link>
+              <a href="/sitemap.xml" className="transition hover:text-white">Sitemap</a>
             </div>
           </div>
         </div>

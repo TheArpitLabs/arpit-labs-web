@@ -63,12 +63,24 @@ export function ActivityChart({ projects }: ActivityChartProps) {
   const data = generateActivityData();
 
   return (
-    <Card className="p-6">
-      <h3 className="mb-6 text-lg font-semibold text-foreground">Activity Overview</h3>
+    <Card variant="glass" className="p-6">
+      <div className="mb-6 flex items-center justify-between">
+        <h3 className="text-lg font-semibold text-foreground">Activity Overview</h3>
+        <div className="flex gap-4 text-xs">
+          <div className="flex items-center gap-2">
+            <div className="h-2 w-2 rounded-full bg-primary" />
+            <span className="text-muted">Views</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="h-2 w-2 rounded-full bg-secondary" />
+            <span className="text-muted">Projects</span>
+          </div>
+        </div>
+      </div>
       <div className="h-64">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" className="stroke-border/50" />
+            <CartesianGrid strokeDasharray="3 3" className="stroke-border/30" />
             <XAxis
               dataKey="date"
               className="text-xs text-muted"
@@ -89,15 +101,17 @@ export function ActivityChart({ projects }: ActivityChartProps) {
               type="monotone"
               dataKey="views"
               stroke="hsl(var(--primary))"
-              strokeWidth={2}
-              dot={{ fill: "hsl(var(--primary))" }}
+              strokeWidth={3}
+              dot={{ fill: "hsl(var(--primary))", r: 4 }}
+              activeDot={{ r: 6 }}
             />
             <Line
               type="monotone"
               dataKey="projects"
               stroke="hsl(var(--secondary))"
-              strokeWidth={2}
-              dot={{ fill: "hsl(var(--secondary))" }}
+              strokeWidth={3}
+              dot={{ fill: "hsl(var(--secondary))", r: 4 }}
+              activeDot={{ r: 6 }}
             />
           </LineChart>
         </ResponsiveContainer>

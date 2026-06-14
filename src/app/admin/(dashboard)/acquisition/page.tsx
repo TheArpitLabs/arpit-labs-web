@@ -1,5 +1,8 @@
-import { Database, GitBranch, SearchCheck, ShieldCheck, Sparkles, UploadCloud } from "lucide-react";
+import { Database, GitBranch, SearchCheck, ShieldCheck, Sparkles, UploadCloud, CheckCircle, XCircle, Rocket } from "lucide-react";
 import { AdminTable } from "@/components/admin/AdminTable";
+import { GitHubImportForm } from "@/components/admin/GitHubImportForm";
+import { AcquisitionActions } from "@/components/admin/AcquisitionActions";
+import { ProjectAnalysisReview } from "@/components/admin/ProjectAnalysisReview";
 import { listAcquisitionQueue, knowledgeFeatureFlags } from "@/lib/knowledge-ecosystem";
 
 const providers = ["GitHub", "GitLab", "Devpost", "Kaggle", "Hugging Face", "arXiv", "Research Paper"];
@@ -9,6 +12,7 @@ export default async function AdminAcquisitionPage() {
   const queuedCount = queue.filter((item: any) => item.status === "queued").length;
   const approvedCount = queue.filter((item: any) => item.status === "approved").length;
   const duplicateCount = queue.filter((item: any) => item.status === "duplicate").length;
+  const featureEnabled = knowledgeFeatureFlags.acquisitionEngine;
 
   return (
     <div className="space-y-6">
@@ -37,30 +41,55 @@ export default async function AdminAcquisitionPage() {
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[1fr_360px]">
-        <div className="rounded-[1.5rem] border border-border/70 bg-card/90 p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950/90">
-          <div className="mb-5 flex items-center gap-3">
-            <Database size={20} className="text-primary" />
-            <h2 className="text-xl font-semibold text-foreground">Review Queue</h2>
-          </div>
-          <AdminTable headers={["Source", "Title", "Status", "Quality", "Trust"]}>
-            {queue.length === 0 ? (
-              <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-sm text-muted">
-                  No acquisition candidates yet. Use the API to queue imports from approved providers.
-                </td>
-              </tr>
-            ) : (
-              queue.map((item: any) => (
-                <tr key={item.id}>
-                  <td className="px-4 py-3 text-sm font-medium capitalize text-foreground">{item.provider}</td>
-                  <td className="px-4 py-3 text-sm text-muted">{item.title}</td>
-                  <td className="px-4 py-3 text-sm capitalize text-muted">{item.status}</td>
-                  <td className="px-4 py-3 text-sm text-muted">{item.quality_score ?? "-"}</td>
-                  <td className="px-4 py-3 text-sm text-muted">{item.trust_score ?? "-"}</td>
+        <div className="space-y-6">
+          <GitHubImportForm featureEnabled={featureEnabled} />
+          
+          <div className="rounded-[1.5rem] border border-border/70 bg-card/90 p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950/90">
+            <div className="mb-5 flex items-center gap-3">
+              <Database size={20} className="text-primary" />
+              <h2 className="text-xl font-semibold text-foreground">Review Queue</h2>
+            </div>
+            <AdminTable headers={["Source", "Title", "Status", "Analysis", "Actions"]}>
+              {queue.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="px-4 py-8 text-center text-sm text-muted">
+                    No acquisition candidates yet. Use the GitHub import form above to add repositories.
+                  </td>
                 </tr>
-              ))
-            )}
-          </AdminTable>
+              ) : (
+                queue.map((item: any) => (
+                  <tr key={item.id}>
+                    <td className="px-4 py-3 text-sm font-medium capitalize text-foreground">{item.provider}</td>
+                    <td className="px-4 py-3 text-sm text-muted">{item.title}</td>
+                    <td className="px-4 py-3 text-sm capitalize text-muted">{item.status}</td>
+                    <td className="px-4 py-3 text-sm text-muted">
+                      {item.ai_analysis_status === "completed" ? (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-300">
+                          <CheckCircle size={12} />
+                          Analyzed
+                        </span>
+                      ) : item.ai_analysis_status === "failed" ? (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-red-500/10 px-2 py-1 text-xs font-semibold text-red-700 dark:text-red-300">
+                          <XCircle size={12} />
+                          Failed
+                        </span>
+                      ) : (
+                        <span className="text-xs text-muted">Pending</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-muted">
+                      <AcquisitionActions item={item} />
+                    </td>
+                  </tr>
+                ))
+              )}
+            </AdminTable>
+          </div>
+
+          {/* Show analysis review for the first queued item */}
+          {queue.length > 0 && queue[0].status === "queued" && (
+            <ProjectAnalysisReview queueItem={queue[0]} />
+          )}
         </div>
 
         <div className="space-y-4">
