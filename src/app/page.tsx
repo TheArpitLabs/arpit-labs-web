@@ -8,6 +8,7 @@ import { Card, BentoCard } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Brain, Cpu, Code2, Wifi, FolderOpen, FlaskConical, ArrowRight, Eye, Users } from "lucide-react";
 import { getExperiments, getLabNotes, getJourneyTimeline, getProjects } from "@/lib/actions/server-actions";
+import { getProjects as getProjectsData } from "@/lib/data/projects";
 import Image from "next/image";
 import Link from "next/link";
 import { EngineeringDomains } from "@/components/landing/EngineeringDomains";
@@ -37,12 +38,16 @@ const MarketplaceResourcesSection = dynamic(() => import("@/components/landing/M
 const ConsolidatedTestimonials = dynamic(() => import("@/components/landing/ConsolidatedTestimonials").then(mod => ({ default: mod.ConsolidatedTestimonials })));
 
 export default async function HomePage() {
-  const [experiments, notes, journey, projects] = await Promise.all([
+  const [experiments, notes, journey, projectsFromServer] = await Promise.all([
     getExperiments(),
     getLabNotes(),
     getJourneyTimeline(),
     getProjects()
   ]);
+
+  // Use data file directly as fallback
+  const projects = projectsFromServer.length > 0 ? projectsFromServer : getProjectsData();
+  console.log("Home page projects count:", projects.length);
 
   return (
     <main className="bg-background text-foreground">

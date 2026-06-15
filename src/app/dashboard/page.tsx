@@ -85,16 +85,28 @@ export default function DashboardPage() {
   const totalViews = projects.reduce((sum, p) => sum + (p.views_count || 0), 0);
   const totalLikes = projects.reduce((sum, p) => sum + (p.likes_count || 0), 0);
   const publishedProjects = projects.filter(p => p.status === 'published').length;
+  const profileFirstName = profile?.full_name?.trim().split(/\s+/)[0];
+  const metadataFirstName = user.user_metadata?.full_name?.trim().split(/\s+/)[0];
+  const usableName = (value?: string | null) => {
+    const normalized = value?.trim();
+    return normalized && !["user", "creator", "member"].includes(normalized.toLowerCase()) ? normalized : null;
+  };
+  const displayName =
+    (user.email || profile?.email)?.split("@")[0] ||
+    usableName(profileFirstName) ||
+    usableName(metadataFirstName) ||
+    "Creator";
 
   return (
     <DashboardLayout user={user} profile={profile}>
       <div className="space-y-8">
         {/* Welcome Section */}
-        <div className="rounded-2xl bg-gradient-to-r from-primary/10 to-secondary/10 p-6 lg:p-8">
+        <div className="relative overflow-hidden rounded-2xl border border-primary/20 bg-gradient-to-r from-primary/15 via-surface to-secondary/10 p-6 shadow-sm lg:p-8">
+          <div className="absolute right-0 top-0 h-full w-32 bg-primary/5" aria-hidden="true" />
           <h1 className="text-2xl lg:text-3xl font-bold text-foreground">
-            Welcome back, {profile?.full_name?.split(" ")[0] ?? "User"}!
+            Welcome back, {displayName}!
           </h1>
-          <p className="mt-2 text-muted">
+          <p className="relative mt-2 text-muted">
             Here&apos;s what&apos;s happening with your projects today.
           </p>
         </div>

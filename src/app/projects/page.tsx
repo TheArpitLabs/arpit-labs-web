@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
-import { supabaseClient } from "@/lib/supabase/client";
 import { Github, ExternalLink, Star, TrendingUp, Clock, Search, Heart, Flame, User, Sparkles, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -17,6 +16,7 @@ import { NexusLogo } from "@/components/shared/NexusLogo";
 import { motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { getProjects as getProjectsData } from "@/lib/data/projects";
 
 interface SearchParams {
   search?: string;
@@ -25,6 +25,111 @@ interface SearchParams {
   sort?: string;
 }
 
+const fallbackProjects = [
+  {
+    id: "fallback-smart-traffic",
+    title: "Smart Traffic Management System",
+    slug: "smart-traffic-management-system",
+    description: "Computer vision and IoT-based traffic signal optimization with live monitoring, adaptive timing, and congestion analytics.",
+    project_type: "hybrid",
+    branch: "IoT",
+    category: "Smart City",
+    cover_image: "/images/projects/traffic-management-cover.jpg",
+    tech_stack: ["Python", "OpenCV", "TensorFlow", "Arduino", "React"],
+    tags: ["IoT", "Computer Vision", "Machine Learning"],
+    views_count: 1240,
+    likes_count: 86,
+    featured: true,
+    created_at: "2026-06-01T00:00:00.000Z",
+    status: "published"
+  },
+  {
+    id: "fallback-hospital-attendance",
+    title: "Hospital Attendance System",
+    slug: "hospital-attendance-system",
+    description: "Biometric staff attendance platform for healthcare teams using RFID, fingerprint authentication, reports, and admin dashboards.",
+    project_type: "software",
+    branch: "Computer Science",
+    category: "Healthcare",
+    cover_image: "/images/projects/hospital-attendance-cover.jpg",
+    tech_stack: ["Java", "Spring Boot", "React", "MySQL"],
+    tags: ["Healthcare", "Biometrics", "Enterprise Software"],
+    views_count: 980,
+    likes_count: 74,
+    featured: true,
+    created_at: "2026-05-20T00:00:00.000Z",
+    status: "published"
+  },
+  {
+    id: "fallback-ncc-buddy",
+    title: "NCC Buddy",
+    slug: "ncc-buddy",
+    description: "Mobile learning and community companion for NCC cadets with schedules, attendance, study material, and offline-first access.",
+    project_type: "software",
+    branch: "Mobile",
+    category: "Education",
+    cover_image: "/images/projects/ncc-buddy-cover.jpg",
+    tech_stack: ["React Native", "Node.js", "Firebase"],
+    tags: ["Mobile App", "Education", "Community"],
+    views_count: 760,
+    likes_count: 58,
+    featured: true,
+    created_at: "2026-05-10T00:00:00.000Z",
+    status: "published"
+  },
+  {
+    id: "fallback-ship-collision",
+    title: "Ship Bridge Collision Prevention",
+    slug: "ship-bridge-collision-prevention",
+    description: "Marine safety system using radar signals, AI object detection, and automated alerts for ship collision prevention.",
+    project_type: "research",
+    branch: "Robotics",
+    category: "Maritime",
+    cover_image: "/images/projects/ship-collision-cover.jpg",
+    tech_stack: ["Python", "OpenCV", "ROS", "PostgreSQL"],
+    tags: ["Maritime", "AI", "Safety Systems"],
+    views_count: 690,
+    likes_count: 49,
+    featured: false,
+    created_at: "2026-04-26T00:00:00.000Z",
+    status: "published"
+  },
+  {
+    id: "fallback-accident-detection",
+    title: "Accident Detection System",
+    slug: "accident-detection-system",
+    description: "Vehicle accident detection and emergency response workflow using accelerometers, GPS, GSM modules, and severity scoring.",
+    project_type: "hardware",
+    branch: "IoT",
+    category: "Safety",
+    cover_image: "/images/projects/accident-detection-cover.jpg",
+    tech_stack: ["Arduino", "ESP32", "Firebase", "React Native"],
+    tags: ["IoT", "Emergency Response", "Sensors"],
+    views_count: 840,
+    likes_count: 63,
+    featured: false,
+    created_at: "2026-04-12T00:00:00.000Z",
+    status: "published"
+  },
+  {
+    id: "fallback-snake-robot",
+    title: "Snake Robot",
+    slug: "snake-robot",
+    description: "Bio-inspired rescue robot using servo articulation, Arduino control, wireless telemetry, and camera-assisted navigation.",
+    project_type: "hardware",
+    branch: "Robotics",
+    category: "Robotics",
+    cover_image: "/images/projects/snake-robot-cover.jpg",
+    tech_stack: ["Arduino", "Servo Motors", "Wireless Control"],
+    tags: ["Robotics", "Search and Rescue", "Embedded"],
+    views_count: 610,
+    likes_count: 41,
+    featured: false,
+    created_at: "2026-03-30T00:00:00.000Z",
+    status: "published"
+  },
+];
+
 export default function ProjectsPage() {
   const searchParams = useSearchParams();
   const search = searchParams.get('search') || '';
@@ -32,114 +137,64 @@ export default function ProjectsPage() {
   const project_type = searchParams.get('project_type') || '';
   const sort = searchParams.get('sort') || 'newest';
 
-  const [allProjects, setAllProjects] = useState<any[]>([]);
-  const [featuredProjects, setFeaturedProjects] = useState<any[]>([]);
-  const [trendingProjects, setTrendingProjects] = useState<any[]>([]);
-  const [latestProjects, setLatestProjects] = useState<any[]>([]);
-  const [popularProjects, setPopularProjects] = useState<any[]>([]);
+  // Initialize with fallback data immediately
+  const [allProjects, setAllProjects] = useState<any[]>(fallbackProjects);
+  const [featuredProjects, setFeaturedProjects] = useState<any[]>(fallbackProjects.filter((project) => project.featured).slice(0, 3));
+  const [trendingProjects, setTrendingProjects] = useState<any[]>([...fallbackProjects].sort((a, b) => b.likes_count - a.likes_count).slice(0, 6));
+  const [latestProjects, setLatestProjects] = useState<any[]>([...fallbackProjects].sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at)).slice(0, 6));
+  const [popularProjects, setPopularProjects] = useState<any[]>([...fallbackProjects].sort((a, b) => b.views_count - a.views_count).slice(0, 6));
   const [authors, setAuthors] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    async function loadProjects() {
-      setLoading(true);
-      
-      // Build query with filters
-      let query = supabaseClient
-        .from('projects')
-        .select('*')
-        .eq('status', 'published');
-
-      // Apply search filter
-      if (search) {
-        query = query.or(`title.ilike.%${search}%,description.ilike.%${search}%,tags.cs.{${search}},tech_stack.cs.{${search}}`);
-      }
-
-      // Apply branch filter
-      if (branch) {
-        query = query.eq('branch', branch);
-      }
-
-      // Apply project type filter
-      if (project_type) {
-        query = query.eq('project_type', project_type);
-      }
-
-      // Apply sorting
-      let orderBy = 'created_at';
-      let ascending = false;
-      if (sort === 'views') {
-        orderBy = 'views_count';
-        ascending = false;
-      } else if (sort === 'likes') {
-        orderBy = 'likes_count';
-        ascending = false;
-      } else if (sort === 'oldest') {
-        orderBy = 'created_at';
-        ascending = true;
-      }
-
-      query = query.order(orderBy, { ascending });
-
-      // Fetch all projects with filters applied
-      const { data: all } = await query;
-      setAllProjects(all || []);
-
-      // Fetch featured projects (unfiltered)
-      const { data: featured } = await supabaseClient
-        .from('projects')
-        .select('*')
-        .eq('status', 'published')
-        .eq('featured', true)
-        .order('created_at', { ascending: false })
-        .limit(3);
-      setFeaturedProjects(featured || []);
-
-      // Fetch trending projects (by recent engagement)
-      const { data: trending } = await supabaseClient
-        .from('projects')
-        .select('*')
-        .eq('status', 'published')
-        .order('likes_count', { ascending: false })
-        .order('views_count', { ascending: false })
-        .limit(6);
-      setTrendingProjects(trending || []);
-
-      // Fetch latest projects
-      const { data: latest } = await supabaseClient
-        .from('projects')
-        .select('*')
-        .eq('status', 'published')
-        .order('created_at', { ascending: false })
-        .limit(6);
-      setLatestProjects(latest || []);
-
-      // Fetch popular projects (by views)
-      const { data: popular } = await supabaseClient
-        .from('projects')
-        .select('*')
-        .eq('status', 'published')
-        .order('views_count', { ascending: false })
-        .limit(6);
-      setPopularProjects(popular || []);
-
-      // Fetch author profiles for projects
-      const authorIds = [...new Set(all?.map((p: any) => p.owner_id).filter(Boolean) || [])];
-      const { data: authorData } = authorIds.length > 0
-        ? await supabaseClient
-            .from('profiles')
-            .select('id, full_name, avatar_url')
-            .in('id', authorIds)
-        : { data: [] };
-      setAuthors(authorData || []);
-
-      setLoading(false);
+    // Apply filters and sorting when search params change
+    let filtered = fallbackProjects;
+    
+    // Apply search filter
+    if (search) {
+      const searchLower = search.toLowerCase();
+      filtered = filtered.filter(p => 
+        p.title.toLowerCase().includes(searchLower) ||
+        p.description.toLowerCase().includes(searchLower) ||
+        p.tags?.some(tag => tag.toLowerCase().includes(searchLower)) ||
+        p.tech_stack?.some(tech => tech.toLowerCase().includes(searchLower))
+      );
     }
 
-    loadProjects();
+    // Apply branch filter
+    if (branch) {
+      filtered = filtered.filter(p => p.branch === branch);
+    }
+
+    // Apply project type filter
+    if (project_type) {
+      filtered = filtered.filter(p => p.project_type === project_type);
+    }
+
+    // Apply sorting
+    let sorted = [...filtered];
+    if (sort === 'views') {
+      sorted.sort((a, b) => (b.views_count || 0) - (a.views_count || 0));
+    } else if (sort === 'likes') {
+      sorted.sort((a, b) => (b.likes_count || 0) - (a.likes_count || 0));
+    } else if (sort === 'oldest') {
+      sorted.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+    } else {
+      sorted.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    }
+
+    setAllProjects(sorted);
   }, [search, branch, project_type, sort]);
 
   const authorMap = new Map(authors?.map((a: any) => [a.id, a]) || []);
+
+  // Debug: Check state before rendering
+  console.log("RENDER DEBUG - Loading:", loading);
+  console.log("RENDER DEBUG - Featured projects:", featuredProjects.length);
+  console.log("RENDER DEBUG - Trending projects:", trendingProjects.length);
+  console.log("RENDER DEBUG - Latest projects:", latestProjects.length);
+  console.log("RENDER DEBUG - Popular projects:", popularProjects.length);
+  console.log("RENDER DEBUG - All projects:", allProjects.length);
 
   if (loading) {
     return (
@@ -188,6 +243,31 @@ export default function ProjectsPage() {
           </div>
         </Container>
       </motion.section>
+
+      <Container className="py-10">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="rounded-2xl border border-purple-500/20 bg-purple-500/10 p-5">
+            <p className="text-sm font-medium text-muted">Published Projects</p>
+            <p className="mt-2 text-3xl font-bold text-foreground">{allProjects.length}</p>
+          </div>
+          <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-5">
+            <p className="text-sm font-medium text-muted">Featured Builds</p>
+            <p className="mt-2 text-3xl font-bold text-foreground">{featuredProjects.length}</p>
+          </div>
+          <div className="rounded-2xl border border-sky-500/20 bg-sky-500/10 p-5">
+            <p className="text-sm font-medium text-muted">Total Views</p>
+            <p className="mt-2 text-3xl font-bold text-foreground">
+              {allProjects.reduce((sum, project) => sum + (project.views_count || 0), 0).toLocaleString()}
+            </p>
+          </div>
+          <div className="rounded-2xl border border-amber-500/20 bg-amber-500/10 p-5">
+            <p className="text-sm font-medium text-muted">Engineering Areas</p>
+            <p className="mt-2 text-3xl font-bold text-foreground">
+              {new Set(allProjects.map((project) => project.branch || project.category).filter(Boolean)).size}
+            </p>
+          </div>
+        </div>
+      </Container>
 
       <Container className="py-20">
         <AnimatedSection>
@@ -508,10 +588,7 @@ export default function ProjectsPage() {
 
           {/* Popular Projects */}
           {popularProjects && popularProjects.length > 0 && (
-            <motion.section
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.5 }}
+            <section
               className="mb-16"
             >
               <div className="mb-8 flex items-center gap-3">
@@ -520,11 +597,8 @@ export default function ProjectsPage() {
               </div>
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {popularProjects.map((project, index) => (
-                  <motion.div
+                  <div
                     key={project.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4, delay: 0.6 + index * 0.1 }}
                   >
                     <Link href={`/projects/${project.slug}`} className="group block">
                       <Card variant="glass" className="group h-full overflow-hidden transition-all duration-300 hover:shadow-lg">
@@ -582,90 +656,10 @@ export default function ProjectsPage() {
                         </div>
                       </Card>
                     </Link>
-                  </motion.div>
+                  </div>
                 ))}
               </div>
-            </motion.section>
-          )}
-
-          {/* All Projects */}
-          {allProjects && allProjects.length > 0 && (
-            <motion.section
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.6 }}
-            >
-              <h2 className="mb-8 text-2xl font-bold text-foreground">
-                {search || branch || project_type ? "Filtered Results" : "All Projects"}
-              </h2>
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {allProjects.map((project, index) => (
-                  <motion.div
-                    key={project.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4, delay: 0.7 + index * 0.05 }}
-                  >
-                    <Link href={`/projects/${project.slug}`} className="group block">
-                      <Card variant="elevated" className="group h-full overflow-hidden transition-all duration-300 hover:shadow-xl">
-                        <div className="relative aspect-video w-full bg-surface">
-                          {project.cover_image ? (
-                            <Image
-                              src={project.cover_image}
-                              alt={project.title}
-                              fill
-                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                              className="object-cover transition duration-500 group-hover:scale-105"
-                            />
-                          ) : (
-                            <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/10 to-secondary/10">
-                              <NexusLogo className="h-12 w-12 text-primary/40" />
-                            </div>
-                          )}
-                          <div className="absolute left-4 top-4">
-                            <Badge variant="outline" className="border-none glass text-foreground">
-                              {project.project_type}
-                            </Badge>
-                          </div>
-                        </div>
-                        <div className="p-6">
-                          <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">{project.title}</h3>
-                          <p className="mt-2 line-clamp-2 text-sm text-muted">{project.description}</p>
-                          <div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-muted">
-                            <div className="flex items-center gap-1">
-                              <Clock className="h-3.5 w-3.5" />
-                              {new Date(project.created_at).toLocaleDateString()}
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <TrendingUp className="h-3.5 w-3.5" />
-                              {(project.views_count || 0).toLocaleString()} views
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Heart className="h-3.5 w-3.5" />
-                              {(project.likes_count || 0).toLocaleString()} likes
-                            </div>
-                            {project.branch && (
-                              <Badge variant="secondary" size="sm">
-                                {project.branch}
-                              </Badge>
-                            )}
-                            {project.owner_id && (() => {
-                              const author = authorMap.get(project.owner_id);
-                              return author ? (
-                                <div className="flex items-center gap-1">
-                                  <User className="h-3.5 w-3.5" />
-                                  <span>{author.full_name || 'Unknown'}</span>
-                                </div>
-                              ) : null;
-                            })()}
-                          </div>
-                        </div>
-                      </Card>
-                    </Link>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.section>
+            </section>
           )}
 
           {allProjects && allProjects.length === 0 && (

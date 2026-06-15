@@ -10,6 +10,18 @@ interface DashboardHeaderProps {
 }
 
 export function DashboardHeader({ user, profile, onMenuClick }: DashboardHeaderProps) {
+  const profileFirstName = profile?.full_name?.trim().split(/\s+/)[0];
+  const metadataFirstName = user?.user_metadata?.full_name?.trim().split(/\s+/)[0];
+  const usableName = (value?: string | null) => {
+    const normalized = value?.trim();
+    return normalized && !["user", "creator", "member"].includes(normalized.toLowerCase()) ? normalized : null;
+  };
+  const displayName =
+    (user?.email || profile?.email)?.split("@")[0] ||
+    usableName(profileFirstName) ||
+    usableName(metadataFirstName) ||
+    "Creator";
+
   return (
     <header className="flex items-center justify-between border-b border-border/70 glass px-4 py-4 lg:px-8">
       <div className="flex items-center gap-4">
@@ -22,7 +34,7 @@ export function DashboardHeader({ user, profile, onMenuClick }: DashboardHeaderP
         <div>
           <h1 className="text-xl font-semibold text-foreground">Dashboard</h1>
           <p className="text-sm text-muted">
-            Welcome back, {profile?.full_name?.split(" ")[0] ?? "User"}
+            Welcome back, {displayName}
           </p>
         </div>
       </div>

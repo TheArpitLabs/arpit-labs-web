@@ -6,11 +6,11 @@ import { experimentsRepository } from "@/lib/repositories/experiments.repository
 import { labNotesRepository } from "@/lib/repositories/labnotes.repository";
 import { journeyRepository } from "@/lib/repositories/journey.repository";
 import { productsRepository } from "@/lib/repositories/products.repository";
-import { projectsRepository } from "@/lib/repositories/projects.repository";
 import { hackathonsRepository } from "@/lib/repositories/hackathons.repository";
 import { contactFormSchema, newsletterSchema } from "@/lib/validation";
 import { handleValidationError } from "@/lib/errors";
 import { Experiment, Hackathon, HackathonSubmission, HackathonTeam, HackathonTeamMember, LabNote, JourneyItem, Product, Project } from "@/types/content";
+import { getProjects as getProjectsData, getProjectBySlug as getProjectBySlugData } from "@/lib/data/projects";
 
 export async function submitContactMessage(formData: unknown) {
   try {
@@ -66,8 +66,7 @@ export async function getJourneyTimeline(): Promise<JourneyItem[]> {
 
 export async function getProjects(): Promise<Project[]> {
   try {
-    const projects = await projectsRepository.getProjects({ status: 'published' }) as Project[];
-    return projects;
+    return getProjectsData();
   } catch {
     return [];
   }
@@ -75,8 +74,7 @@ export async function getProjects(): Promise<Project[]> {
 
 export async function getProjectBySlug(slug: string): Promise<Project | null> {
   try {
-    const project = await projectsRepository.getProjectBySlug(slug) as Project | null;
-    return project && project.status === 'published' ? project : null;
+    return getProjectBySlugData(slug);
   } catch {
     return null;
   }
