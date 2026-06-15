@@ -19,18 +19,33 @@ export default function MarketplacePage({
 }: {
   searchParams: Promise<{ category?: string; q?: string }>;
 }) {
-  const [resolvedSearchParams, setResolvedSearchParams] = React.useState<{ category?: string; q?: string; type?: string }>({});
+  const [resolvedSearchParams, setResolvedSearchParams] = React.useState<{ category?: string; q?: string; type?: string; sort?: string; price?: string }>({});
   const [categories, setCategories] = React.useState<any[]>([]);
   const [items, setItems] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
+  const [sortBy, setSortBy] = React.useState("newest");
+  const [priceFilter, setPriceFilter] = React.useState<string>("all");
 
   const resourceTypes = [
-    { name: "Learning Resources", icon: BookOpen, slug: "learning", count: 24, color: "from-purple-500/10 to-pink-500/10", iconColor: "from-purple-500 to-pink-500" },
-    { name: "Templates", icon: Layout, slug: "templates", count: 18, color: "from-blue-500/10 to-cyan-500/10", iconColor: "from-blue-500 to-cyan-500" },
-    { name: "Starter Kits", icon: Zap, slug: "starter-kits", count: 12, color: "from-green-500/10 to-emerald-500/10", iconColor: "from-green-500 to-emerald-500" },
-    { name: "Design Assets", icon: Layers, slug: "design-assets", count: 15, color: "from-orange-500/10 to-red-500/10", iconColor: "from-orange-500 to-red-500" },
-    { name: "Documentation", icon: Code2, slug: "documentation", count: 20, color: "from-indigo-500/10 to-violet-500/10", iconColor: "from-indigo-500 to-violet-500" },
+    { name: "Learning Resources", icon: BookOpen, slug: "learning", color: "from-purple-500/10 to-pink-500/10", iconColor: "from-purple-500 to-pink-500" },
+    { name: "Templates", icon: Layout, slug: "templates", color: "from-blue-500/10 to-cyan-500/10", iconColor: "from-blue-500 to-cyan-500" },
+    { name: "Starter Kits", icon: Zap, slug: "starter-kits", color: "from-green-500/10 to-emerald-500/10", iconColor: "from-green-500 to-emerald-500" },
+    { name: "Design Assets", icon: Layers, slug: "design-assets", color: "from-orange-500/10 to-red-500/10", iconColor: "from-orange-500 to-red-500" },
+    { name: "Documentation", icon: Code2, slug: "documentation", color: "from-indigo-500/10 to-violet-500/10", iconColor: "from-indigo-500 to-violet-500" },
   ];
+
+  // Calculate dynamic counts for resource types
+  const getResourceTypeCount = (slug: string) => {
+    return items.filter((item: any) => {
+      const categoryName = item.category?.name?.toLowerCase() || "";
+      if (slug === "learning") return categoryName.includes("learning") || categoryName.includes("course") || categoryName.includes("tutorial");
+      if (slug === "templates") return categoryName.includes("template") || categoryName.includes("boilerplate");
+      if (slug === "starter-kits") return categoryName.includes("starter") || categoryName.includes("kit");
+      if (slug === "design-assets") return categoryName.includes("design") || categoryName.includes("ui") || categoryName.includes("asset");
+      if (slug === "documentation") return categoryName.includes("documentation") || categoryName.includes("docs");
+      return false;
+    }).length;
+  };
 
   React.useEffect(() => {
     async function loadData() {
@@ -52,12 +67,48 @@ export default function MarketplacePage({
     loadData();
   }, [searchParams]);
 
-  const filteredItems = resolvedSearchParams.q
-    ? items.filter((item: any) =>
-        item.title.toLowerCase().includes(resolvedSearchParams.q!.toLowerCase()) ||
-        item.description?.toLowerCase().includes(resolvedSearchParams.q!.toLowerCase())
-      )
-    : items;
+  const filteredItems = items
+    .filter((item: any) => {
+      // Search filter
+      if (resolvedSearchParams.q) {
+        const searchLower = resolvedSearchParams.q.toLowerCase();
+        if (!item.title.toLowerCase().includes(searchLower) && 
+            !item.description?.toLowerCase().includes(searchLower)) {
+          return false;
+        }
+      }
+      
+      // Category filter
+      if (resolvedSearchParams.category && item.category?.slug !== resolvedSearchParams.category) {
+        return false;
+      }
+      
+      // Price filter
+      if (priceFilter === "free" && item.price !== 0) {
+        return false;
+      }
+      if (priceFilter === "paid" && item.price === 0) {
+        return false;
+      }
+      
+      return true;
+    })
+    .sort((a: any, b: any) => {
+      // Sorting
+      switch (sortBy) {
+        case "price-low":
+          return a.price - b.price;
+        case "price-high":
+          return b.price - a.price;
+        case "popular":
+          return b.sales_count - a.sales_count;
+        case "rating":
+          return (b.rating || 4.5) - (a.rating || 4.5);
+        case "newest":
+        default:
+          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      }
+    });
 
   // Separate items into sections
   const featuredItems = filteredItems.filter((item: any) => item.featured);
@@ -109,29 +160,32 @@ export default function MarketplacePage({
           className="mb-12"
         >
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-            {resourceTypes.map((type) => (
-              <Link key={type.slug} href={`/marketplace?type=${type.slug}`}>
-                <motion.div
-                  whileHover={{ y: -4, scale: 1.02 }}
-                  className="group relative overflow-hidden rounded-2xl glass p-6 transition-all hover:shadow-2xl"
-                >
-                  <div className={`absolute inset-0 bg-gradient-to-br ${type.color} opacity-0 transition-opacity group-hover:opacity-100`} />
-                  <div className="relative">
-                    <motion.div
-                      whileHover={{ scale: 1.1, rotate: 5 }}
-                      transition={{ duration: 0.3 }}
-                      className={`mb-3 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${type.iconColor} text-white shadow-lg`}
-                    >
-                      <type.icon size={24} />
-                    </motion.div>
-                    <h3 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors">
-                      {type.name}
-                    </h3>
-                    <p className="text-sm text-muted">{type.count} resources</p>
-                  </div>
-                </motion.div>
-              </Link>
-            ))}
+            {resourceTypes.map((type) => {
+              const count = getResourceTypeCount(type.slug);
+              return (
+                <Link key={type.slug} href={`/marketplace?type=${type.slug}`}>
+                  <motion.div
+                    whileHover={{ y: -4, scale: 1.02 }}
+                    className="group relative overflow-hidden rounded-2xl glass p-6 transition-all hover:shadow-2xl"
+                  >
+                    <div className={`absolute inset-0 bg-gradient-to-br ${type.color} opacity-0 transition-opacity group-hover:opacity-100`} />
+                    <div className="relative">
+                      <motion.div
+                        whileHover={{ scale: 1.1, rotate: 5 }}
+                        transition={{ duration: 0.3 }}
+                        className={`mb-3 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${type.iconColor} text-white shadow-lg`}
+                      >
+                        <type.icon size={24} />
+                      </motion.div>
+                      <h3 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors">
+                        {type.name}
+                      </h3>
+                      <p className="text-sm text-muted">{count} resources</p>
+                    </div>
+                  </motion.div>
+                </Link>
+              );
+            })}
           </div>
         </motion.div>
 
@@ -166,17 +220,122 @@ export default function MarketplacePage({
             ))}
           </div>
 
-          <div className="relative w-full max-w-sm">
-            <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
-            <form action="/marketplace" method="GET">
-              {resolvedSearchParams.category && <input type="hidden" name="category" value={resolvedSearchParams.category} />}
-              <input
-                name="q"
-                defaultValue={resolvedSearchParams.q}
-                placeholder="Search assets..."
-                className="w-full rounded-2xl glass pl-12 pr-4 py-3 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
-              />
-            </form>
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+            <div className="relative w-full max-w-sm">
+              <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
+              <form action="/marketplace" method="GET">
+                {resolvedSearchParams.category && <input type="hidden" name="category" value={resolvedSearchParams.category} />}
+                <input
+                  name="q"
+                  defaultValue={resolvedSearchParams.q}
+                  placeholder="Search assets..."
+                  className="w-full rounded-2xl glass pl-12 pr-4 py-3 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                />
+              </form>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Advanced Filters */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.15 }}
+          className="mb-8 flex flex-wrap gap-4 items-center justify-between p-4 rounded-2xl glass"
+        >
+          <div className="flex flex-wrap gap-4 items-center">
+            <div className="flex items-center gap-2">
+              <Filter className="h-4 w-4 text-muted" />
+              <span className="text-sm font-medium">Sort by:</span>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setSortBy("newest")}
+                className={`px-3 py-1.5 rounded-lg text-sm transition-all ${
+                  sortBy === "newest" 
+                    ? "bg-primary text-primary-foreground" 
+                    : "bg-background/50 hover:bg-background/80 text-muted-foreground"
+                }`}
+              >
+                Newest
+              </button>
+              <button
+                onClick={() => setSortBy("popular")}
+                className={`px-3 py-1.5 rounded-lg text-sm transition-all ${
+                  sortBy === "popular" 
+                    ? "bg-primary text-primary-foreground" 
+                    : "bg-background/50 hover:bg-background/80 text-muted-foreground"
+                }`}
+              >
+                Popular
+              </button>
+              <button
+                onClick={() => setSortBy("price-low")}
+                className={`px-3 py-1.5 rounded-lg text-sm transition-all ${
+                  sortBy === "price-low" 
+                    ? "bg-primary text-primary-foreground" 
+                    : "bg-background/50 hover:bg-background/80 text-muted-foreground"
+                }`}
+              >
+                Price: Low to High
+              </button>
+              <button
+                onClick={() => setSortBy("price-high")}
+                className={`px-3 py-1.5 rounded-lg text-sm transition-all ${
+                  sortBy === "price-high" 
+                    ? "bg-primary text-primary-foreground" 
+                    : "bg-background/50 hover:bg-background/80 text-muted-foreground"
+                }`}
+              >
+                Price: High to Low
+              </button>
+              <button
+                onClick={() => setSortBy("rating")}
+                className={`px-3 py-1.5 rounded-lg text-sm transition-all ${
+                  sortBy === "rating" 
+                    ? "bg-primary text-primary-foreground" 
+                    : "bg-background/50 hover:bg-background/80 text-muted-foreground"
+                }`}
+              >
+                Top Rated
+              </button>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-muted-foreground">Price:</span>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setPriceFilter("all")}
+                className={`px-3 py-1.5 rounded-lg text-sm transition-all ${
+                  priceFilter === "all" 
+                    ? "bg-primary text-primary-foreground" 
+                    : "bg-background/50 hover:bg-background/80 text-muted-foreground"
+                }`}
+              >
+                All
+              </button>
+              <button
+                onClick={() => setPriceFilter("free")}
+                className={`px-3 py-1.5 rounded-lg text-sm transition-all ${
+                  priceFilter === "free" 
+                    ? "bg-primary text-primary-foreground" 
+                    : "bg-background/50 hover:bg-background/80 text-muted-foreground"
+                }`}
+              >
+                Free
+              </button>
+              <button
+                onClick={() => setPriceFilter("paid")}
+                className={`px-3 py-1.5 rounded-lg text-sm transition-all ${
+                  priceFilter === "paid" 
+                    ? "bg-primary text-primary-foreground" 
+                    : "bg-background/50 hover:bg-background/80 text-muted-foreground"
+                }`}
+              >
+                Paid
+              </button>
+            </div>
           </div>
         </motion.div>
 
@@ -201,8 +360,8 @@ export default function MarketplacePage({
                   transition={{ duration: 0.4, delay: 0.3 + index * 0.1 }}
                 >
                   <Link href={`/marketplace/${item.slug}`} className="group block">
-                    <Card variant="elevated" className="group h-full overflow-hidden transition-all duration-300 hover:shadow-xl">
-                      <div className="aspect-video relative overflow-hidden bg-surface">
+                    <Card className="group h-full overflow-hidden transition-all duration-300 hover:shadow-xl border-border/50">
+                      <div className="aspect-video relative overflow-hidden bg-gradient-to-br from-primary/5 to-secondary/5">
                         {item.preview_image ? (
                           <Image
                             src={item.preview_image}
@@ -217,9 +376,15 @@ export default function MarketplacePage({
                             <span className="text-xs text-muted text-center">No preview available</span>
                           </div>
                         )}
-                        <Badge variant="glow" className="absolute left-3 top-3 bg-primary text-primary-foreground">
+                        <Badge className="absolute left-3 top-3 bg-gradient-to-r from-primary to-secondary text-white shadow-lg">
+                          <Star className="h-3 w-3 mr-1 fill-current" />
                           Featured
                         </Badge>
+                        {item.price === 0 && (
+                          <Badge className="absolute right-3 top-3 bg-green-500 text-white shadow-lg">
+                            Free
+                          </Badge>
+                        )}
                       </div>
                       <div className="p-5">
                         <div className="mb-2 flex items-center justify-between">
@@ -227,7 +392,7 @@ export default function MarketplacePage({
                             {item.category?.name}
                           </span>
                           <div className="flex items-center gap-1">
-                            <Star className="h-3.5 w-3.5 fill-primary text-primary" />
+                            <Star className="h-3.5 w-3.5 fill-yellow-500 text-yellow-500" />
                             <span className="text-xs font-semibold">{(item as any).rating || '4.5'}</span>
                           </div>
                         </div>
@@ -240,7 +405,7 @@ export default function MarketplacePage({
                             {item.price === 0 ? "Free" : `$${item.price}`}
                           </span>
                           <span className="text-xs text-muted">
-                            {(item as any).downloads || '0'} downloads
+                            {item.sales_count || 0} sales
                           </span>
                         </div>
                       </div>
@@ -304,8 +469,8 @@ export default function MarketplacePage({
                   transition={{ duration: 0.4, delay: 0.5 + index * 0.1 }}
                 >
                   <Link href={`/marketplace/${item.slug}`} className="group block">
-                    <Card variant="glass" className="group h-full overflow-hidden transition-all duration-300 hover:shadow-lg">
-                      <div className="aspect-video relative overflow-hidden bg-surface">
+                    <Card className="group h-full overflow-hidden transition-all duration-300 hover:shadow-xl border-border/50">
+                      <div className="aspect-video relative overflow-hidden bg-gradient-to-br from-primary/5 to-secondary/5">
                         {item.preview_image ? (
                           <Image
                             src={item.preview_image}
@@ -319,6 +484,11 @@ export default function MarketplacePage({
                             <span className="text-xs text-muted text-center">No preview available</span>
                           </div>
                         )}
+                        {item.price === 0 && (
+                          <Badge className="absolute right-3 top-3 bg-green-500 text-white shadow-lg">
+                            Free
+                          </Badge>
+                        )}
                       </div>
                       <div className="p-4">
                         <div className="mb-1 flex items-center justify-between">
@@ -326,7 +496,7 @@ export default function MarketplacePage({
                             {item.category?.name}
                           </span>
                           <div className="flex items-center gap-1">
-                            <Star className="h-3.5 w-3.5 fill-primary text-primary" />
+                            <Star className="h-3.5 w-3.5 fill-yellow-500 text-yellow-500" />
                             <span className="text-xs font-semibold">{(item as any).rating || '4.5'}</span>
                           </div>
                         </div>
@@ -336,7 +506,7 @@ export default function MarketplacePage({
                             {item.price === 0 ? "Free" : `$${item.price}`}
                           </span>
                           <span className="text-xs text-muted">
-                            {(item as any).downloads || '0'} downloads
+                            {item.sales_count || 0} sales
                           </span>
                         </div>
                       </div>
@@ -369,8 +539,8 @@ export default function MarketplacePage({
                   transition={{ duration: 0.4, delay: 0.6 + index * 0.1 }}
                 >
                   <Link href={`/marketplace/${item.slug}`} className="group block">
-                    <Card variant="glass" className="group h-full overflow-hidden transition-all duration-300 hover:shadow-lg">
-                      <div className="aspect-video relative overflow-hidden bg-surface">
+                    <Card className="group h-full overflow-hidden transition-all duration-300 hover:shadow-xl border-border/50">
+                      <div className="aspect-video relative overflow-hidden bg-gradient-to-br from-primary/5 to-secondary/5">
                         {item.preview_image ? (
                           <Image
                             src={item.preview_image}
@@ -384,6 +554,11 @@ export default function MarketplacePage({
                             <span className="text-xs text-muted text-center">No preview available</span>
                           </div>
                         )}
+                        {item.price === 0 && (
+                          <Badge className="absolute right-3 top-3 bg-green-500 text-white shadow-lg">
+                            Free
+                          </Badge>
+                        )}
                       </div>
                       <div className="p-4">
                         <div className="mb-1 flex items-center justify-between">
@@ -391,7 +566,7 @@ export default function MarketplacePage({
                             {item.category?.name}
                           </span>
                           <div className="flex items-center gap-1">
-                            <Star className="h-3.5 w-3.5 fill-primary text-primary" />
+                            <Star className="h-3.5 w-3.5 fill-yellow-500 text-yellow-500" />
                             <span className="text-xs font-semibold">{(item as any).rating || '4.5'}</span>
                           </div>
                         </div>
@@ -401,7 +576,7 @@ export default function MarketplacePage({
                             {item.price === 0 ? "Free" : `$${item.price}`}
                           </span>
                           <span className="text-xs text-muted">
-                            {(item as any).downloads || '0'} downloads
+                            {item.sales_count || 0} sales
                           </span>
                         </div>
                       </div>
@@ -419,20 +594,25 @@ export default function MarketplacePage({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.7 }}
         >
-          <h2 className="mb-6 text-2xl font-semibold text-foreground">
-            {resolvedSearchParams.q ? "Search Results" : resolvedSearchParams.category ? "Category Results" : "All Products"}
-          </h2>
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="mb-6 flex items-center justify-between">
+            <h2 className="text-2xl font-semibold text-foreground">
+              {resolvedSearchParams.q ? "Search Results" : resolvedSearchParams.category ? "Category Results" : "All Products"}
+              <span className="ml-2 text-sm font-normal text-muted-foreground">
+                ({filteredItems.length} items)
+              </span>
+            </h2>
+          </div>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {filteredItems.map((item: any, index: number) => (
               <motion.div
                 key={item.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.8 + index * 0.05 }}
+                transition={{ duration: 0.4, delay: Math.min(index * 0.05, 0.5) }}
               >
                 <Link href={`/marketplace/${item.slug}`} className="group block">
-                  <Card variant="elevated" className="group h-full overflow-hidden transition-all duration-300 hover:shadow-xl">
-                    <div className="aspect-video relative overflow-hidden bg-surface">
+                  <Card className="group h-full overflow-hidden transition-all duration-300 hover:shadow-xl border-border/50">
+                    <div className="aspect-video relative overflow-hidden bg-gradient-to-br from-primary/5 to-secondary/5">
                       {item.preview_image ? (
                         <Image
                           src={item.preview_image}
@@ -447,8 +627,14 @@ export default function MarketplacePage({
                         </div>
                       )}
                       {item.featured && (
-                        <Badge variant="glow" className="absolute left-3 top-3 bg-primary text-primary-foreground">
+                        <Badge className="absolute left-3 top-3 bg-gradient-to-r from-primary to-secondary text-white shadow-lg">
+                          <Star className="h-3 w-3 mr-1 fill-current" />
                           Featured
+                        </Badge>
+                      )}
+                      {item.price === 0 && (
+                        <Badge className="absolute right-3 top-3 bg-green-500 text-white shadow-lg">
+                          Free
                         </Badge>
                       )}
                     </div>
@@ -458,7 +644,7 @@ export default function MarketplacePage({
                           {item.category?.name}
                         </span>
                         <div className="flex items-center gap-1">
-                          <Star className="h-3.5 w-3.5 fill-primary text-primary" />
+                          <Star className="h-3.5 w-3.5 fill-yellow-500 text-yellow-500" />
                           <span className="text-xs font-semibold">{(item as any).rating || '4.5'}</span>
                         </div>
                       </div>
@@ -471,7 +657,7 @@ export default function MarketplacePage({
                           {item.price === 0 ? "Free" : `$${item.price}`}
                         </span>
                         <span className="text-xs text-muted">
-                          {(item as any).downloads || '0'} downloads
+                          {item.sales_count || 0} sales
                         </span>
                       </div>
                     </div>

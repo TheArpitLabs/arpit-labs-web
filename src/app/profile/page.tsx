@@ -12,7 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { StatCardSkeleton } from "@/components/ui/card-skeleton";
 import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
-import { User, Mail, Calendar, FolderOpen, Search, MessageSquare, Bookmark, Award, Code2, TrendingUp, Users, Activity, Loader2, Heart } from "lucide-react";
+import { User, Mail, Calendar, FolderOpen, Search, MessageSquare, Bookmark, Award, Code2, TrendingUp, Users, Activity, Loader2, Heart, Star, Flame, Trophy } from "lucide-react";
 
 export default function ProfilePage() {
   const [user, setUser] = useState<any | null>(null);
@@ -20,6 +20,9 @@ export default function ProfilePage() {
   const [saved, setSaved] = useState<any[]>([]);
   const [projects, setProjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [gamificationData, setGamificationData] = useState<any>(null);
+  const [userBadges, setUserBadges] = useState<any[]>([]);
+  const [userAchievements, setUserAchievements] = useState<any[]>([]);
 
   useEffect(() => {
     let mounted = true;
@@ -32,16 +35,22 @@ export default function ProfilePage() {
         setUser(data?.user ?? null);
 
         if (data?.user) {
-          const [{ data: p }, { data: s }, { data: proj }] = await Promise.all([
+          const [{ data: p }, { data: s }, { data: proj }, { data: gam }, { data: ub }, { data: ua }] = await Promise.all([
             supabaseClient.from("profiles").select("*").eq("id", data.user.id).single(),
             supabaseClient.from("saved_content").select("*").eq("user_id", data.user.id).order("created_at", { ascending: false }),
             supabaseClient.from("projects").select("*").eq("owner_id", data.user.id).order("created_at", { ascending: false }),
+            supabaseClient.from("user_gamification_summary").select("*").eq("user_id", data.user.id).single(),
+            supabaseClient.from("user_badges").select("*, badges(*)").eq("user_id", data.user.id).order("earned_at", { ascending: false }),
+            supabaseClient.from("user_achievements").select("*, achievements(*)").eq("user_id", data.user.id).order("updated_at", { ascending: false }),
           ]);
 
           if (mounted) {
             setProfile(p ?? null);
             setSaved(s ?? []);
             setProjects(proj ?? []);
+            setGamificationData(gam ?? null);
+            setUserBadges(ub ?? []);
+            setUserAchievements(ua ?? []);
           }
         }
       } catch (error) {
@@ -59,16 +68,22 @@ export default function ProfilePage() {
       setUser(session?.user ?? null);
       if (session?.user) {
         try {
-          const [{ data: p }, { data: s }, { data: proj }] = await Promise.all([
+          const [{ data: p }, { data: s }, { data: proj }, { data: gam }, { data: ub }, { data: ua }] = await Promise.all([
             supabaseClient.from("profiles").select("*").eq("id", session.user.id).single(),
             supabaseClient.from("saved_content").select("*").eq("user_id", session.user.id).order("created_at", { ascending: false }),
             supabaseClient.from("projects").select("*").eq("owner_id", session.user.id).order("created_at", { ascending: false }),
+            supabaseClient.from("user_gamification_summary").select("*").eq("user_id", session.user.id).single(),
+            supabaseClient.from("user_badges").select("*, badges(*)").eq("user_id", session.user.id).order("earned_at", { ascending: false }),
+            supabaseClient.from("user_achievements").select("*, achievements(*)").eq("user_id", session.user.id).order("updated_at", { ascending: false }),
           ]);
 
           if (mounted) {
             setProfile(p ?? null);
             setSaved(s ?? []);
             setProjects(proj ?? []);
+            setGamificationData(gam ?? null);
+            setUserBadges(ub ?? []);
+            setUserAchievements(ua ?? []);
           }
         } catch (error) {
           console.error("Error loading profile data on auth change:", error);
@@ -78,6 +93,9 @@ export default function ProfilePage() {
           setProfile(null);
           setSaved([]);
           setProjects([]);
+          setGamificationData(null);
+          setUserBadges([]);
+          setUserAchievements([]);
         }
       }
     });
@@ -204,6 +222,48 @@ export default function ProfilePage() {
           label="Bookmarked items"
           trend="+8%"
         />
+      </section>
+
+      {/* Gamification Stats */}
+      <section className="mb-8">
+        <div className="mb-4 flex items-center gap-2">
+          <Star className="h-5 w-5 text-purple-400" />
+          <h2 className="text-xl font-semibold text-white">Gamification Progress</h2>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="rounded-2xl border border-purple-500/30 bg-purple-950/50 p-6 shadow-sm backdrop-blur-sm">
+            <div className="flex items-center gap-3 mb-2">
+              <Star className="h-5 w-5 text-yellow-400" />
+              <span className="text-sm text-gray-400">Points</span>
+            </div>
+            <div className="text-2xl font-bold text-white">{gamificationData?.points?.toLocaleString() || 0}</div>
+            <div className="text-xs text-gray-400">Level {gamificationData?.level || 1}</div>
+          </div>
+          <div className="rounded-2xl border border-purple-500/30 bg-purple-950/50 p-6 shadow-sm backdrop-blur-sm">
+            <div className="flex items-center gap-3 mb-2">
+              <Flame className="h-5 w-5 text-orange-400" />
+              <span className="text-sm text-gray-400">Current Streak</span>
+            </div>
+            <div className="text-2xl font-bold text-white">{gamificationData?.current_streak || 0} days</div>
+            <div className="text-xs text-gray-400">Best: {gamificationData?.longest_streak || 0} days</div>
+          </div>
+          <div className="rounded-2xl border border-purple-500/30 bg-purple-950/50 p-6 shadow-sm backdrop-blur-sm">
+            <div className="flex items-center gap-3 mb-2">
+              <Award className="h-5 w-5 text-blue-400" />
+              <span className="text-sm text-gray-400">Badges</span>
+            </div>
+            <div className="text-2xl font-bold text-white">{userBadges.length}</div>
+            <div className="text-xs text-gray-400">Earned badges</div>
+          </div>
+          <div className="rounded-2xl border border-purple-500/30 bg-purple-950/50 p-6 shadow-sm backdrop-blur-sm">
+            <div className="flex items-center gap-3 mb-2">
+              <Trophy className="h-5 w-5 text-purple-400" />
+              <span className="text-sm text-gray-400">Achievements</span>
+            </div>
+            <div className="text-2xl font-bold text-white">{userAchievements.filter(ua => ua.completed_at).length}</div>
+            <div className="text-xs text-gray-400">Completed</div>
+          </div>
+        </div>
       </section>
 
       {/* My Projects */}
@@ -364,19 +424,87 @@ export default function ProfilePage() {
 
       {/* Achievements */}
       <section className="mb-8">
-        <div className="mb-4 flex items-center gap-2">
-          <Award className="h-5 w-5 text-purple-400" />
-          <h2 className="text-xl font-semibold text-white">Achievements</h2>
+        <div className="mb-4 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Award className="h-5 w-5 text-purple-400" />
+            <h2 className="text-xl font-semibold text-white">Achievements</h2>
+          </div>
+          <Link href="/gamification/achievements" className="text-sm text-purple-400 hover:text-purple-300 transition">
+            View All
+          </Link>
         </div>
-        <div className="rounded-[2rem] border border-purple-500/30 bg-purple-950/50 p-8 shadow-sm backdrop-blur-sm">
-          <EmptyState
-            icon={Award}
-            title="No achievements yet"
-            description="Complete activities and contribute to earn achievements."
-            actionLabel="Explore Activities"
-            actionHref="/"
-            variant="minimal"
-          />
+        <div className="rounded-[2rem] border border-purple-500/30 bg-purple-950/50 p-6 shadow-sm backdrop-blur-sm">
+          {userAchievements.length > 0 ? (
+            <div className="grid gap-4 sm:grid-cols-2">
+              {userAchievements.slice(0, 4).map((ua) => (
+                <div key={ua.id} className="rounded-xl border border-purple-500/30 bg-purple-900/30 p-4">
+                  <div className="flex items-start justify-between mb-2">
+                    <div className="flex-1">
+                      <h4 className="font-medium text-white">{ua.achievements?.name}</h4>
+                      <p className="text-xs text-gray-400 line-clamp-1">{ua.achievements?.description}</p>
+                    </div>
+                    {ua.completed_at && (
+                      <Badge variant="success" size="sm" className="bg-green-500 text-white">
+                        ✓
+                      </Badge>
+                    )}
+                  </div>
+                  <div className="mt-2 h-2 bg-purple-800 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full transition-all ${ua.completed_at ? 'bg-green-500' : 'bg-purple-500'}`}
+                      style={{ width: `${Math.min(100, ((ua.progress?.current || 0) / (ua.achievements?.criteria?.target || 1)) * 100)}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <EmptyState
+              icon={Award}
+              title="No achievements yet"
+              description="Complete activities and contribute to earn achievements."
+              actionLabel="Explore Activities"
+              actionHref="/gamification"
+              variant="minimal"
+            />
+          )}
+        </div>
+      </section>
+
+      {/* Badges */}
+      <section className="mb-8">
+        <div className="mb-4 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Award className="h-5 w-5 text-purple-400" />
+            <h2 className="text-xl font-semibold text-white">Badges</h2>
+          </div>
+          <Link href="/gamification/badges" className="text-sm text-purple-400 hover:text-purple-300 transition">
+            View All
+          </Link>
+        </div>
+        <div className="rounded-[2rem] border border-purple-500/30 bg-purple-950/50 p-6 shadow-sm backdrop-blur-sm">
+          {userBadges.length > 0 ? (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+              {userBadges.slice(0, 8).map((ub) => (
+                <div key={ub.id} className="rounded-xl border border-purple-500/30 bg-purple-900/30 p-4 text-center">
+                  <div className="text-3xl mb-2">{ub.badges?.icon || '🏆'}</div>
+                  <div className="text-sm font-medium text-white">{ub.badges?.name}</div>
+                  <div className="text-xs text-gray-400 mt-1">
+                    {new Date(ub.earned_at).toLocaleDateString()}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <EmptyState
+              icon={Award}
+              title="No badges yet"
+              description="Earn badges by completing various activities on the platform."
+              actionLabel="Explore Gamification"
+              actionHref="/gamification"
+              variant="minimal"
+            />
+          )}
         </div>
       </section>
       </div>
