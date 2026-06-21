@@ -3,8 +3,10 @@
  * Implements caching, query optimization, and performance tracking for learning operations
  */
 
+type LearningData = Record<string, unknown> | unknown[];
+
 interface CacheEntry {
-  data: any;
+  data: LearningData;
   timestamp: number;
   ttl: number;
 }
@@ -13,7 +15,7 @@ class LearningCache {
   private cache: Map<string, CacheEntry> = new Map();
   private defaultTTL = 300000; // 5 minutes in milliseconds
 
-  set(key: string, data: any, ttl: number = this.defaultTTL): void {
+  set(key: string, data: LearningData, ttl: number = this.defaultTTL): void {
     this.cache.set(key, {
       data,
       timestamp: Date.now(),
@@ -21,7 +23,7 @@ class LearningCache {
     });
   }
 
-  get(key: string): any | null {
+  get(key: string): LearningData | null {
     const entry = this.cache.get(key);
     if (!entry) return null;
 
@@ -59,7 +61,7 @@ const learningCache = new LearningCache();
 /**
  * Generate cache key for learning operations
  */
-export function generateLearningCacheKey(operation: string, params: Record<string, any>): string {
+export function generateLearningCacheKey(operation: string, params: Record<string, unknown>): string {
   const paramString = Object.entries(params)
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([k, v]) => `${k}=${v}`)
@@ -70,14 +72,14 @@ export function generateLearningCacheKey(operation: string, params: Record<strin
 /**
  * Get cached learning result
  */
-export function getCachedLearningResult(key: string): any | null {
+export function getCachedLearningResult(key: string): LearningData | null {
   return learningCache.get(key);
 }
 
 /**
  * Cache learning result
  */
-export function cacheLearningResult(key: string, data: any, ttl?: number): void {
+export function cacheLearningResult(key: string, data: LearningData, ttl?: number): void {
   learningCache.set(key, data, ttl);
 }
 
@@ -95,8 +97,8 @@ export function clearLearningCache(pattern?: string): void {
 /**
  * Optimize learning query parameters
  */
-export function optimizeLearningQuery(params: Record<string, any>): Record<string, any> {
-  const optimized: Record<string, any> = {};
+export function optimizeLearningQuery(params: Record<string, unknown>): Record<string, unknown> {
+  const optimized: Record<string, unknown> = {};
 
   // Sanitize string parameters
   Object.entries(params).forEach(([key, value]) => {
@@ -110,11 +112,11 @@ export function optimizeLearningQuery(params: Record<string, any>): Record<strin
   });
 
   // Set reasonable limits
-  if (optimized.limit && optimized.limit > 50) {
+  if (typeof optimized.limit === 'number' && optimized.limit > 50) {
     optimized.limit = 50;
   }
 
-  if (optimized.maxDepth && optimized.maxDepth > 5) {
+  if (typeof optimized.maxDepth === 'number' && optimized.maxDepth > 5) {
     optimized.maxDepth = 5;
   }
 

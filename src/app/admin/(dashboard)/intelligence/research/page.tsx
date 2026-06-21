@@ -33,14 +33,23 @@ export default function ResearchIntelligenceDashboard() {
 
   const indexPaper = async () => {
     try {
+      const external_id = prompt('Enter external ID (e.g., arXiv:1234.5678):');
+      const source = prompt('Enter source (e.g., arxiv):');
+      const title = prompt('Enter paper title:');
+      
+      if (!external_id || !source || !title) {
+        alert('All fields are required');
+        return;
+      }
+
       const response = await fetch('/api/admin/intelligence/research', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           action: 'index_paper',
-          external_id: 'arXiv:1234.5678',
-          source: 'arxiv',
-          title: 'Sample Paper'
+          external_id,
+          source,
+          title
         })
       });
       alert('Paper indexed successfully');

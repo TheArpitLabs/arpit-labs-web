@@ -33,14 +33,23 @@ export default function OrganizationIntelligenceDashboard() {
 
   const indexOrganization = async () => {
     try {
+      const external_id = prompt('Enter external ID (e.g., crunchbase-12345):');
+      const source = prompt('Enter source (e.g., crunchbase):');
+      const name = prompt('Enter organization name:');
+      
+      if (!external_id || !source || !name) {
+        alert('All fields are required');
+        return;
+      }
+
       const response = await fetch('/api/admin/intelligence/organizations', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           action: 'index_organization',
-          external_id: 'crunchbase-12345',
-          source: 'crunchbase',
-          name: 'Sample Organization'
+          external_id,
+          source,
+          name
         })
       });
       alert('Organization indexed successfully');

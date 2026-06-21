@@ -3,6 +3,20 @@ import { assertKnowledgeFeature } from "./feature-flags";
 import { normalizeText, uniqueKeywords, inferDifficulty } from "./text";
 import type { AcquisitionCandidate } from "./types";
 
+interface QueueItemMetadata {
+  languages?: Record<string, number>;
+  topics?: string[];
+  stars?: number;
+}
+
+interface QueueItem {
+  title?: string;
+  description?: string;
+  raw_content?: string;
+  provider?: string;
+  metadata?: QueueItemMetadata;
+}
+
 export interface EnhancedAnalysisResult {
   executiveSummary: string;
   technicalSummary: string;
@@ -145,7 +159,7 @@ export async function analyzeProjectEnhanced(queueItemId: string): Promise<Enhan
   }
 }
 
-function generateExecutiveSummary(queueItem: any, text: string): string {
+function generateExecutiveSummary(queueItem: QueueItem, text: string): string {
   const title = queueItem.title || "This project";
   const description = queueItem.description || "";
   const provider = queueItem.provider || "GitHub";
@@ -157,7 +171,7 @@ function generateExecutiveSummary(queueItem: any, text: string): string {
   return `${title} is a ${provider} repository that has been imported into the Arpit Labs platform. The project contains code and documentation that can be studied to understand practical engineering implementations and best practices.`;
 }
 
-function generateTechnicalSummary(queueItem: any, text: string): string {
+function generateTechnicalSummary(queueItem: QueueItem, text: string): string {
   const languages = queueItem.metadata?.languages || [];
   const topics = queueItem.metadata?.topics || [];
   const stars = queueItem.metadata?.stars || 0;
@@ -165,7 +179,8 @@ function generateTechnicalSummary(queueItem: any, text: string): string {
   let summary = `This project implements a software solution using `;
   
   if (languages.length > 0) {
-    summary += `${languages.slice(0, 3).join(", ")}${languages.length > 3 ? " and other technologies" : ""}`;
+    const languageNames = Object.keys(languages);
+    summary += `${languageNames.slice(0, 3).join(", ")}${languageNames.length > 3 ? " and other technologies" : ""}`;
   } else {
     summary += "modern software development practices";
   }
@@ -183,7 +198,7 @@ function generateTechnicalSummary(queueItem: any, text: string): string {
   return summary;
 }
 
-function generateEngineeringOverview(queueItem: any, text: string): string {
+function generateEngineeringOverview(queueItem: QueueItem, text: string): string {
   const title = queueItem.title || "The project";
   const hasReadme = queueItem.raw_content && queueItem.raw_content.length > 100;
   
@@ -200,7 +215,7 @@ function generateEngineeringOverview(queueItem: any, text: string): string {
   return overview;
 }
 
-function detectTechStack(normalizedText: string, metadata: any): EnhancedAnalysisResult["techStack"] {
+function detectTechStack(normalizedText: string, metadata: QueueItemMetadata): EnhancedAnalysisResult["techStack"] {
   const detected = {
     languages: [] as string[],
     frameworks: [] as string[],
@@ -233,7 +248,7 @@ function detectTechStack(normalizedText: string, metadata: any): EnhancedAnalysi
   return detected;
 }
 
-function assessDifficulty(normalizedText: string, metadata: any): "beginner" | "intermediate" | "advanced" | "expert" {
+function assessDifficulty(normalizedText: string, metadata: QueueItemMetadata): "beginner" | "intermediate" | "advanced" | "expert" {
   // Use existing difficulty inference as baseline
   const baseline = inferDifficulty(normalizedText);
   
@@ -261,7 +276,7 @@ function assessDifficulty(normalizedText: string, metadata: any): "beginner" | "
   return baseline;
 }
 
-function generateDifficultyReasoning(normalizedText: string, metadata: any): string {
+function generateDifficultyReasoning(normalizedText: string, metadata: QueueItemMetadata): string {
   const difficulty = assessDifficulty(normalizedText, metadata);
   const reasons: string[] = [];
   
@@ -284,7 +299,7 @@ function generateDifficultyReasoning(normalizedText: string, metadata: any): str
   }
   
   // Add metadata-based reasoning
-  if (metadata?.stars > 1000) {
+  if ((metadata?.stars || 0) > 1000) {
     reasons.push("High community engagement indicates production-grade complexity");
   }
   
@@ -313,9 +328,9 @@ function classifyDomains(normalizedText: string): string[] {
   return detectedDomains;
 }
 
-function generateLearningOutcomes(queueItem: any, normalizedText: string): string[] {
+function generateLearningOutcomes(queueItem: QueueItem, normalizedText: string): string[] {
   const domains = classifyDomains(normalizedText);
-  const techStack = detectTechStack(normalizedText, queueItem.metadata);
+  const techStack = detectTechStack(normalizedText, queueItem.metadata || {});
   const outcomes: string[] = [];
   
   // Domain-specific outcomes
@@ -357,8 +372,8 @@ function generateLearningOutcomes(queueItem: any, normalizedText: string): strin
   return outcomes.slice(0, 6);
 }
 
-function generateArchitectureSummary(queueItem: any, normalizedText: string): EnhancedAnalysisResult["architecture"] {
-  const techStack = detectTechStack(normalizedText, queueItem.metadata);
+function generateArchitectureSummary(queueItem: QueueItem, normalizedText: string): EnhancedAnalysisResult["architecture"] {
+  const techStack = detectTechStack(normalizedText, queueItem.metadata || {});
   const domains = classifyDomains(normalizedText);
   
   // Generate components based on tech stack

@@ -26,7 +26,8 @@ export default async function AdminProjectsPage({ searchParams }: AdminProjectsP
     status: params?.status as 'draft' | 'published' | 'archived' | undefined,
   };
 
-  const projects = await projectsRepository.getProjects(filters);
+  const projectsResult = await projectsRepository.getProjects(filters);
+  const projects = projectsResult.data;
   const editingProject = params?.edit ? projects.find((p) => p.id === params.edit) || await projectsRepository.getProjectBySlug(params.edit).catch(() => null) : null;
 
   const categories = Array.from(new Set(projects.map(p => p.category))).filter(Boolean);

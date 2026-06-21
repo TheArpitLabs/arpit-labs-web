@@ -23,6 +23,7 @@ import { getQualityScoringEngine } from '../quality-scoring/quality-scoring-engi
 import { getKnowledgeGraphEngine } from '../knowledge-graph/knowledge-graph-engine';
 import { getSemanticSearchEngine } from '../search-layer/semantic-search-engine';
 import { getModerationEngine } from '../moderation/moderation-engine';
+import { logger } from '@/lib/logger';
 
 export interface PipelineOrchestrator {
   start(): Promise<void>;
@@ -56,12 +57,12 @@ class BasePipelineOrchestrator implements PipelineOrchestrator {
 
   async start(): Promise<void> {
     if (this.isRunning) {
-      console.log('Pipeline orchestrator already running');
+      logger.debug('Pipeline orchestrator already running');
       return;
     }
 
     this.isRunning = true;
-    console.log('Pipeline orchestrator started');
+    logger.info('Pipeline orchestrator started');
 
     // Load and start scheduled jobs
     await this.loadScheduledJobs();
@@ -78,7 +79,7 @@ class BasePipelineOrchestrator implements PipelineOrchestrator {
     }
 
     this.isRunning = false;
-    console.log('Pipeline orchestrator stopping');
+    logger.info('Pipeline orchestrator stopping');
 
     // Clear all job timers
     this.jobTimers.forEach(timer => clearTimeout(timer));
@@ -91,7 +92,7 @@ class BasePipelineOrchestrator implements PipelineOrchestrator {
       }
     }
 
-    console.log('Pipeline orchestrator stopped');
+    logger.info('Pipeline orchestrator stopped');
   }
 
   private async loadScheduledJobs(): Promise<void> {
@@ -184,7 +185,7 @@ class BasePipelineOrchestrator implements PipelineOrchestrator {
 
     for (const [jobId, job] of this.activeJobs.entries()) {
       if (job.status === 'running' && job.startedAt && job.startedAt < timeoutThreshold) {
-        console.log(`Job ${jobId} timed out, marking as failed`);
+        logger.warn(`Job ${jobId} timed out, marking as failed`);
         await this.failJob(jobId, 'Job timeout');
       }
     }
@@ -556,7 +557,7 @@ class BasePipelineOrchestrator implements PipelineOrchestrator {
               await this.reindexContent();
               break;
             default:
-              console.log(`Unknown maintenance task: ${task}`);
+              logger.warn(`Unknown maintenance task: ${task}`);
           }
           itemsSucceeded++;
         } catch (error) {
@@ -601,12 +602,12 @@ class BasePipelineOrchestrator implements PipelineOrchestrator {
 
   private async optimizeDatabase(): Promise<void> {
     // Placeholder for database optimization
-    console.log('Database optimization completed');
+    logger.debug('Database optimization completed');
   }
 
   private async reindexContent(): Promise<void> {
     // Placeholder for reindexing
-    console.log('Content reindexing completed');
+    logger.debug('Content reindexing completed');
   }
 
   async cancelJob(jobId: string): Promise<void> {
@@ -754,7 +755,7 @@ class BasePipelineOrchestrator implements PipelineOrchestrator {
 
   private async executeStage(stage: PipelineStage): Promise<void> {
     // Placeholder for stage execution
-    console.log(`Executing stage: ${stage.name}`);
+    logger.debug(`Executing stage: ${stage.name}`);
   }
 
   async retryJob(jobId: string): Promise<void> {

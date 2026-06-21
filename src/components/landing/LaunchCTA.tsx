@@ -10,7 +10,7 @@ export function LaunchCTA() {
       {/* Background gradients */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute left-0 top-0 h-[600px] w-[600px] rounded-full bg-primary/10 blur-3xl" />
-        <div className="absolute right-0 bottom-0 h-[500px] w-[500px] rounded-full bg-secondary/10 blur-3xl" />
+        <div className="absolute right-0 bottom-0 h-[500px] w-[500px] rounded-full bg-accent/10 blur-3xl" />
         <div className="absolute left-1/2 top-1/2 h-[400px] w-[400px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/5 blur-3xl" />
       </div>
 
@@ -28,7 +28,7 @@ export function LaunchCTA() {
             whileInView={{ scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="mx-auto mb-8 inline-flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-secondary/20"
+            className="mx-auto mb-8 inline-flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-accent/20"
           >
             <Rocket className="h-10 w-10 text-primary" />
           </motion.div>
@@ -39,7 +39,7 @@ export function LaunchCTA() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="mb-6 text-hero text-gradient"
+            className="mb-6 font-heading text-hero font-bold text-gradient"
           >
             Build The Future With Arpit Labs
           </motion.h1>
@@ -65,7 +65,7 @@ export function LaunchCTA() {
           >
             <Link
               href="/projects"
-              className="premium-button group inline-flex items-center justify-center"
+              className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-primary to-accent px-6 py-3 text-sm font-semibold text-white shadow-glow transition hover:shadow-glow-lg hover:opacity-90"
             >
               <Sparkles className="mr-2 h-5 w-5" />
               Explore Projects
@@ -73,7 +73,7 @@ export function LaunchCTA() {
             </Link>
             <Link
               href="/community/global"
-              className="premium-button-secondary group inline-flex items-center justify-center"
+              className="inline-flex items-center justify-center rounded-xl border border-border bg-surface px-6 py-3 text-sm font-semibold text-foreground transition hover:bg-surface-elevated hover:border-primary/50"
             >
               <Zap className="mr-2 h-5 w-5" />
               Join Community
@@ -120,7 +120,7 @@ export function LaunchCTA() {
           className="absolute right-10 bottom-20 hidden lg:block"
         >
           <div className="rounded-2xl glass p-4">
-            <Zap className="h-6 w-6 text-secondary" />
+            <Zap className="h-6 w-6 text-accent" />
           </div>
         </motion.div>
       </div>

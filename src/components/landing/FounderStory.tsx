@@ -30,7 +30,7 @@ export function FounderStory() {
           className="mb-20 text-center"
         >
           <p className="mb-4 text-sm uppercase tracking-[0.28em] text-muted">Founder Story</p>
-          <h2 className="mb-6 text-section-title">
+          <h2 className="mb-6 font-heading text-section-title font-bold">
             Building the Future of Engineering
           </h2>
           <p className="mx-auto max-w-3xl text-lg text-muted">
@@ -47,12 +47,12 @@ export function FounderStory() {
             transition={{ duration: 0.6 }}
             className="relative overflow-hidden rounded-3xl glass p-8"
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-secondary/10 opacity-0 transition-opacity duration-300 hover:opacity-100" />
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-accent/10 opacity-0 transition-opacity duration-300 hover:opacity-100" />
             <div className="relative">
-              <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/20 to-secondary/20 text-primary">
+              <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 text-primary">
                 <Target size={32} />
               </div>
-              <h3 className="mb-4 text-3xl font-bold text-foreground">Vision</h3>
+              <h3 className="mb-4 text-3xl font-heading font-bold text-foreground">Vision</h3>
               <p className="text-lg text-muted leading-relaxed">
                 To democratize access to industry-grade engineering education by providing real-world projects, comprehensive documentation, and AI-powered learning tools that bridge the gap between academic knowledge and professional excellence.
               </p>
@@ -66,12 +66,12 @@ export function FounderStory() {
             transition={{ duration: 0.6 }}
             className="relative overflow-hidden rounded-3xl glass p-8"
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-secondary/10 to-primary/10 opacity-0 transition-opacity duration-300 hover:opacity-100" />
+            <div className="absolute inset-0 bg-gradient-to-br from-accent/10 to-primary/10 opacity-0 transition-opacity duration-300 hover:opacity-100" />
             <div className="relative">
-              <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-secondary/20 to-primary/20 text-secondary">
+              <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-accent/20 to-primary/20 text-accent">
                 <Rocket size={32} />
               </div>
-              <h3 className="mb-4 text-3xl font-bold text-foreground">Mission</h3>
+              <h3 className="mb-4 text-3xl font-heading font-bold text-foreground">Mission</h3>
               <p className="text-lg text-muted leading-relaxed">
                 To build the most comprehensive engineering platform that empowers students, researchers, and professionals to master AI, IoT, software, and hardware through hands-on experience with production-quality projects and cutting-edge tools.
               </p>
@@ -88,13 +88,13 @@ export function FounderStory() {
           className="mb-20"
         >
           <div className="mb-12 text-center">
-            <h3 className="text-3xl font-bold text-foreground">The Engineering Journey</h3>
+            <h3 className="text-3xl font-heading font-bold text-foreground">The Engineering Journey</h3>
             <p className="mt-4 text-muted">Key milestones that shaped Arpit Labs</p>
           </div>
 
           <div className="relative">
             {/* Timeline line */}
-            <div className="absolute left-1/2 top-0 h-full w-0.5 -translate-x-1/2 bg-gradient-to-b from-primary via-secondary to-primary opacity-20" />
+            <div className="absolute left-1/2 top-0 h-full w-0.5 -translate-x-1/2 bg-gradient-to-b from-primary via-accent to-primary opacity-20" />
 
             <div className="space-y-12">
               {journeyMilestones.map((milestone, index) => {
@@ -110,19 +110,19 @@ export function FounderStory() {
                   >
                     <div className={`w-5/12 ${index % 2 === 0 ? 'text-right pr-8' : 'text-left pl-8'}`}>
                       <div className="relative overflow-hidden rounded-2xl glass p-6">
-                        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5 opacity-0 transition-opacity duration-300 hover:opacity-100" />
+                        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 opacity-0 transition-opacity duration-300 hover:opacity-100" />
                         <div className="relative">
                           <span className="mb-3 inline-block rounded-full bg-gradient-to-r from-primary/10 to-secondary/10 px-4 py-1 text-sm font-semibold text-primary">
                             {milestone.year}
                           </span>
-                          <h4 className="mb-2 text-xl font-bold text-foreground">{milestone.title}</h4>
+                          <h4 className="mb-2 text-xl font-heading font-bold text-foreground">{milestone.title}</h4>
                           <p className="text-muted">{milestone.description}</p>
                         </div>
                       </div>
                     </div>
                     
                     {/* Timeline dot */}
-                    <div className="absolute left-1/2 flex h-4 w-4 -translate-x-1/2 items-center justify-center rounded-full bg-gradient-to-r from-primary to-secondary shadow-lg">
+                    <div className="absolute left-1/2 flex h-4 w-4 -translate-x-1/2 items-center justify-center rounded-full bg-gradient-to-r from-primary to-accent shadow-lg">
                       <div className="h-2 w-2 rounded-full bg-background" />
                     </div>
                     
@@ -142,7 +142,7 @@ export function FounderStory() {
           transition={{ duration: 0.6 }}
         >
           <div className="mb-12 text-center">
-            <h3 className="text-3xl font-bold text-foreground">Core Values</h3>
+            <h3 className="text-3xl font-heading font-bold text-foreground">Core Values</h3>
             <p className="mt-4 text-muted">Principles that guide everything we build</p>
           </div>
 
@@ -159,10 +159,10 @@ export function FounderStory() {
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5 opacity-0 transition-opacity duration-300 hover:opacity-100" />
                 <div className="relative">
-                  <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary/10 to-secondary/10 text-primary">
+                  <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary/10 to-accent/10 text-primary">
                     <value.icon size={24} />
                   </div>
-                  <h4 className="mb-2 text-lg font-bold text-foreground">{value.title}</h4>
+                  <h4 className="mb-2 text-lg font-heading font-bold text-foreground">{value.title}</h4>
                   <p className="text-sm text-muted">{value.description}</p>
                 </div>
               </motion.div>
@@ -179,23 +179,23 @@ export function FounderStory() {
           className="mt-20"
         >
           <div className="relative overflow-hidden rounded-3xl glass p-12 text-center">
-            <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-secondary/5" />
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-accent/5" />
             <div className="relative">
-              <h3 className="mb-4 text-3xl font-bold text-foreground">Join the Innovation Journey</h3>
+              <h3 className="mb-4 text-3xl font-heading font-bold text-foreground">Join the Innovation Journey</h3>
               <p className="mb-8 max-w-2xl mx-auto text-lg text-muted">
                 Be part of the next generation of engineering excellence. Explore projects, contribute to research, and build the future with Arpit Labs.
               </p>
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-center">
                 <Link
                   href="/projects"
-                  className="premium-button group inline-flex items-center justify-center"
+                  className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-primary to-accent px-6 py-3 text-sm font-semibold text-white shadow-glow transition hover:opacity-90 group"
                 >
                   Explore Projects
                   <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Link>
                 <Link
                   href="/research"
-                  className="premium-button-secondary inline-flex items-center justify-center"
+                  className="inline-flex items-center justify-center rounded-xl border border-border bg-surface px-6 py-3 text-sm font-semibold text-foreground transition hover:bg-surface-elevated hover:border-primary/50"
                 >
                   View Research
                 </Link>

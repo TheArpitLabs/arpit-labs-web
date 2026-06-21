@@ -10,5 +10,10 @@ if (!supabaseUrl || !supabaseServiceKey) {
 export const supabaseServer = createClient(supabaseUrl, supabaseServiceKey, {
   auth: {
     persistSession: false
+  },
+  global: {
+    fetch: (url, options = {}) => {
+      return fetch(url, { ...options, signal: AbortSignal.timeout(30000) });
+    }
   }
 });

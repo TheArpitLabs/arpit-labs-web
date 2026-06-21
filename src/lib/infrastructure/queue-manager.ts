@@ -3,6 +3,8 @@
  * Handles job scheduling, processing, and monitoring
  */
 
+import { logger } from '@/lib/logger';
+
 export interface Job {
   id: string;
   type: string;
@@ -85,7 +87,7 @@ class QueueManager {
     if (this.isRunning) return;
     
     this.isRunning = true;
-    console.log('[QueueManager] Starting job processing...');
+    logger.info('Queue manager starting job processing');
     
     this.process();
   }
@@ -95,7 +97,7 @@ class QueueManager {
    */
   async stop(): Promise<void> {
     this.isRunning = false;
-    console.log('[QueueManager] Stopping job processing...');
+    logger.info('Queue manager stopping job processing');
     
     // Wait for current jobs to complete
     while (this.processing.size > 0) {
@@ -146,16 +148,16 @@ class QueueManager {
     job.attempts++;
 
     try {
-      console.log(`[QueueManager] Processing job ${job.id} (${job.type})`);
+      logger.debug(`Processing job ${job.id} (${job.type})`);
       const result = await handler.handler(job);
       
       job.status = 'completed';
       job.completedAt = new Date();
       job.result = result;
       
-      console.log(`[QueueManager] Completed job ${job.id}`);
+      logger.debug(`Completed job ${job.id}`);
     } catch (error) {
-      console.error(`[QueueManager] Job ${job.id} failed:`, error);
+      logger.error(`Job ${job.id} failed`, { error });
       
       if (job.attempts >= job.maxAttempts) {
         job.status = 'failed';

@@ -2,6 +2,62 @@ import { supabaseServer } from "@/lib/supabase/server";
 import { assertKnowledgeFeature } from "./feature-flags";
 import { jaccardSimilarity } from "./text";
 
+interface Project {
+  id: string;
+  title: string;
+  description?: string;
+  slug: string;
+  domain?: string;
+  difficulty?: string;
+  tech_stack?: string[];
+  author?: string;
+  overview?: string;
+  architecture?: string;
+}
+
+interface ResearchPaper {
+  id: string;
+  title: string;
+  abstract?: string;
+  description?: string;
+  slug: string;
+  domain?: string;
+  technologies?: string[];
+  author?: string;
+}
+
+interface Resource {
+  id: string;
+  title: string;
+  description?: string;
+  slug: string;
+  domain?: string;
+  technologies?: string[];
+  author?: string;
+}
+
+interface Dataset {
+  id: string;
+  title: string;
+  description?: string;
+  slug: string;
+  domain?: string;
+  technologies?: string[];
+  author?: string;
+}
+
+interface Organization {
+  id: string;
+  name: string;
+  description?: string;
+  slug: string;
+  technologies?: string[];
+}
+
+interface PartialProject {
+  author?: string;
+}
+
 export interface RecommendationResult {
   id: string;
   entityType: "project" | "research" | "resource" | "dataset" | "contributor" | "organization";
@@ -66,7 +122,7 @@ export class EnhancedRecommendationEngine {
 
     // Calculate recommendations
     const recommendations = await Promise.all(
-      candidates.map(async (candidate: any) => {
+      candidates.map(async (candidate: Project) => {
         const factors = await calculateRecommendationFactors(sourceProject, candidate);
         const relevanceScore = calculateRelevanceScore(factors);
 
@@ -123,7 +179,7 @@ export class EnhancedRecommendationEngine {
 
     // Calculate recommendations
     const recommendations = await Promise.all(
-      research.map(async (paper: any) => {
+      research.map(async (paper: ResearchPaper) => {
         const factors = await calculateResearchFactors(sourceProject, paper);
         const relevanceScore = calculateRelevanceScore(factors);
 
@@ -179,7 +235,7 @@ export class EnhancedRecommendationEngine {
 
     // Calculate recommendations
     const recommendations = await Promise.all(
-      resources.map(async (resource: any) => {
+      resources.map(async (resource: Resource) => {
         const factors = await calculateResourceFactors(sourceProject, resource);
         const relevanceScore = calculateRelevanceScore(factors);
 
@@ -236,7 +292,7 @@ export class EnhancedRecommendationEngine {
     if (!similarProjects || similarProjects.length === 0) return [];
 
     // Get unique contributors
-    const contributors = [...new Set(similarProjects.map((p: any) => p.author).filter(Boolean))];
+    const contributors = [...new Set(similarProjects.map((p: PartialProject) => p.author).filter((a): a is string => Boolean(a)))];
 
     // Calculate recommendations
     const recommendations = contributors.map((contributor: string) => {
@@ -248,7 +304,7 @@ export class EnhancedRecommendationEngine {
         entityType: "contributor" as const,
         entityId: contributor,
         title: contributor,
-        description: `Contributor to ${similarProjects.filter((p: any) => p.author === contributor).length} similar projects`,
+        description: `Contributor to ${similarProjects.filter((p: PartialProject) => p.author === contributor).length} similar projects`,
         url: `/contributors/${contributor}`,
         relevanceScore,
         factors: includeFactors ? factors : undefined,
@@ -292,7 +348,7 @@ export class EnhancedRecommendationEngine {
 
     // Calculate recommendations
     const recommendations = await Promise.all(
-      datasets.map(async (dataset: any) => {
+      datasets.map(async (dataset: Dataset) => {
         const factors = await calculateDatasetFactors(sourceProject, dataset);
         const relevanceScore = calculateRelevanceScore(factors);
 
@@ -348,7 +404,7 @@ export class EnhancedRecommendationEngine {
 
     // Calculate recommendations
     const recommendations = await Promise.all(
-      organizations.map(async (org: any) => {
+      organizations.map(async (org: Organization) => {
         const factors = await calculateOrganizationFactors(sourceProject, org);
         const relevanceScore = calculateRelevanceScore(factors);
 
@@ -401,7 +457,7 @@ export class EnhancedRecommendationEngine {
   /**
    * Store recommendations in database
    */
-  async storeRecommendations(projectId: string, recommendations: any[]): Promise<void> {
+  async storeRecommendations(projectId: string, recommendations: RecommendationResult[]): Promise<void> {
     // Delete existing recommendations
     await supabaseServer
       .from("recommendations")
@@ -429,7 +485,7 @@ export class EnhancedRecommendationEngine {
   /**
    * Get cached recommendations
    */
-  async getCachedRecommendations(projectId: string): Promise<any[] | null> {
+  async getCachedRecommendations(projectId: string): Promise<RecommendationResult[] | null> {
     const { data } = await supabaseServer
       .from("recommendation_cache")
       .select("recommendations")
@@ -446,7 +502,7 @@ export class EnhancedRecommendationEngine {
   /**
    * Cache recommendations
    */
-  async cacheRecommendations(projectId: string, recommendations: any[], ttl: number = 3600000): Promise<void> {
+  async cacheRecommendations(projectId: string, recommendations: RecommendationResult[], ttl: number = 3600000): Promise<void> {
     const expiresAt = new Date(Date.now() + ttl).toISOString();
 
     const { error } = await supabaseServer.from("recommendation_cache").upsert({
@@ -465,7 +521,7 @@ export class EnhancedRecommendationEngine {
 /**
  * Calculate recommendation factors between two projects
  */
-async function calculateRecommendationFactors(source: any, candidate: any): Promise<{
+async function calculateRecommendationFactors(source: Project, candidate: Project): Promise<{
   semanticSimilarity: number;
   sharedTechnologies: number;
   sharedDomains: number;
@@ -506,7 +562,7 @@ async function calculateRecommendationFactors(source: any, candidate: any): Prom
 /**
  * Calculate research factors
  */
-async function calculateResearchFactors(project: any, paper: any): Promise<{
+async function calculateResearchFactors(project: Project, paper: ResearchPaper): Promise<{
   semanticSimilarity: number;
   sharedTechnologies: number;
   sharedDomains: number;
@@ -538,7 +594,7 @@ async function calculateResearchFactors(project: any, paper: any): Promise<{
 /**
  * Calculate resource factors
  */
-async function calculateResourceFactors(project: any, resource: any): Promise<{
+async function calculateResourceFactors(project: Project, resource: Resource): Promise<{
   semanticSimilarity: number;
   sharedTechnologies: number;
   sharedDomains: number;
@@ -570,25 +626,19 @@ async function calculateResourceFactors(project: any, resource: any): Promise<{
 /**
  * Calculate contributor factors
  */
-function calculateContributorFactors(project: any, contributor: string, similarProjects: any[]): {
+function calculateContributorFactors(project: Project, contributor: string, similarProjects: PartialProject[]): {
   semanticSimilarity: number;
   sharedTechnologies: number;
   sharedDomains: number;
   sharedContributors: number;
   sharedDatasets: number;
 } {
-  const contributorProjects = similarProjects.filter((p: any) => p.author === contributor);
+  const contributorProjects = similarProjects.filter((p: PartialProject) => p.author === contributor);
   const sharedContributors = contributorProjects.length > 0 ? 1 : 0;
 
-  const sharedTech = contributorProjects.filter((p: any) => {
-    const projectTech = project.tech_stack || [];
-    const pTech = p.tech_stack || [];
-    return projectTech.some((t: string) => pTech.includes(t));
-  }).length;
-  const sharedTechnologies = similarProjects.length > 0 ? sharedTech / similarProjects.length : 0;
-
-  const sharedDomain = contributorProjects.filter((p: any) => p.domain === project.domain).length;
-  const sharedDomains = similarProjects.length > 0 ? sharedDomain / similarProjects.length : 0;
+  // Since we only have author info from the query, we can't calculate tech/domain overlap
+  const sharedTechnologies = 0;
+  const sharedDomains = 0;
 
   return {
     semanticSimilarity: 0,
@@ -602,7 +652,7 @@ function calculateContributorFactors(project: any, contributor: string, similarP
 /**
  * Calculate dataset factors
  */
-async function calculateDatasetFactors(project: any, dataset: any): Promise<{
+async function calculateDatasetFactors(project: Project, dataset: Dataset): Promise<{
   semanticSimilarity: number;
   sharedTechnologies: number;
   sharedDomains: number;
@@ -634,7 +684,7 @@ async function calculateDatasetFactors(project: any, dataset: any): Promise<{
 /**
  * Calculate organization factors
  */
-async function calculateOrganizationFactors(project: any, org: any): Promise<{
+async function calculateOrganizationFactors(project: Project, org: Organization): Promise<{
   semanticSimilarity: number;
   sharedTechnologies: number;
   sharedDomains: number;

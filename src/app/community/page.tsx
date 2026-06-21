@@ -20,10 +20,10 @@ export default async function CommunityPage() {
         <Container>
           <AnimatedSection>
             <div className="max-w-3xl space-y-6">
-              <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 text-sm font-bold tracking-wide text-primary">
+              <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 text-sm font-heading font-bold tracking-wide text-primary">
                 <Users size={18} /> Engineering Network
               </div>
-              <h1 className="text-5xl font-extrabold tracking-tight text-foreground sm:text-6xl">
+              <h1 className="text-5xl font-heading font-extrabold tracking-tight text-foreground sm:text-6xl">
                 Connect, Collaborate, <span className="text-gradient">Build Together</span>
               </h1>
               <p className="text-xl text-muted leading-relaxed">
@@ -49,7 +49,7 @@ export default async function CommunityPage() {
           {/* Network Activity Types */}
           <div className="mb-16">
             <div className="mb-8">
-              <h2 className="text-3xl font-bold text-foreground">Network Activity</h2>
+              <h2 className="text-3xl font-heading font-bold text-foreground">Network Activity</h2>
               <p className="mt-2 text-muted">Explore different types of community engagement</p>
             </div>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -58,12 +58,12 @@ export default async function CommunityPage() {
                   whileHover={{ y: -4, scale: 1.02 }}
                   className="group relative overflow-hidden rounded-3xl glass p-6 transition-all hover:shadow-2xl"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5 opacity-0 transition-opacity group-hover:opacity-100" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 opacity-0 transition-opacity group-hover:opacity-100" />
                   <div className="relative">
-                    <div className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/10 to-secondary/10 text-primary">
+                    <div className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/10 to-accent/10 text-primary">
                       <MessageSquare size={28} />
                     </div>
-                    <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors">Discussions</h3>
+                    <h3 className="text-xl font-heading font-bold text-foreground group-hover:text-primary transition-colors">Discussions</h3>
                     <p className="mt-2 text-sm text-muted">Technical conversations and knowledge sharing</p>
                   </div>
                 </motion.div>
@@ -78,7 +78,7 @@ export default async function CommunityPage() {
                     <div className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-yellow-500/10 to-orange-500/10 text-yellow-500">
                       <Trophy size={28} />
                     </div>
-                    <h3 className="text-xl font-bold text-foreground group-hover:text-yellow-500 transition-colors">Challenges</h3>
+                    <h3 className="text-xl font-heading font-bold text-foreground group-hover:text-yellow-500 transition-colors">Challenges</h3>
                     <p className="mt-2 text-sm text-muted">Engineering challenges and competitions</p>
                   </div>
                 </motion.div>
@@ -93,7 +93,7 @@ export default async function CommunityPage() {
                     <div className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500/10 to-cyan-500/10 text-blue-500">
                       <Megaphone size={28} />
                     </div>
-                    <h3 className="text-xl font-bold text-foreground group-hover:text-blue-500 transition-colors">Announcements</h3>
+                    <h3 className="text-xl font-heading font-bold text-foreground group-hover:text-blue-500 transition-colors">Announcements</h3>
                     <p className="mt-2 text-sm text-muted">Platform updates and important news</p>
                   </div>
                 </motion.div>
@@ -108,7 +108,7 @@ export default async function CommunityPage() {
                     <div className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-green-500/10 to-emerald-500/10 text-green-500">
                       <Handshake size={28} />
                     </div>
-                    <h3 className="text-xl font-bold text-foreground group-hover:text-green-500 transition-colors">Collaborations</h3>
+                    <h3 className="text-xl font-heading font-bold text-foreground group-hover:text-green-500 transition-colors">Collaborations</h3>
                     <p className="mt-2 text-sm text-muted">Project partnerships and team opportunities</p>
                   </div>
                 </motion.div>
@@ -120,7 +120,7 @@ export default async function CommunityPage() {
           <div className="space-y-8">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-3xl font-bold text-foreground">Recent Network Activity</h2>
+                <h2 className="text-3xl font-heading font-bold text-foreground">Recent Network Activity</h2>
                 <p className="text-muted">Latest discussions, challenges, and collaborations</p>
               </div>
               <div className="flex items-center gap-4">
@@ -132,7 +132,7 @@ export default async function CommunityPage() {
                     className="w-64 rounded-xl glass pl-10 pr-4 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                   />
                 </div>
-                <button className="flex items-center gap-2 text-sm font-semibold text-primary hover:underline">
+                <button className="flex items-center gap-2 text-sm font-heading font-semibold text-primary hover:underline">
                   <Filter size={16} /> Filter
                 </button>
                 <Link href="/community/new" className="premium-button inline-flex items-center justify-center">
@@ -165,7 +165,7 @@ export default async function CommunityPage() {
                                 <span>{new Date(p.created_at).toLocaleDateString()}</span>
                               </div>
                             </div>
-                            <h3 className="text-2xl font-bold text-foreground group-hover:text-primary transition-colors">
+                            <h3 className="text-2xl font-heading font-bold text-foreground group-hover:text-primary transition-colors">
                               {p.title}
                             </h3>
                             <p className="mt-3 line-clamp-2 text-lg text-muted">

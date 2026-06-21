@@ -10,7 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Github, ExternalLink, TrendingUp, FileText, Database, ArrowRight, Sparkles, Star, Download, Filter } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 import { useSearchParams } from "next/navigation";
 
@@ -67,8 +67,8 @@ interface Dataset {
   size: string;
 }
 
-export default async function SubdomainPage({ params }: { params: Promise<{ domain: string; subdomain: string }> }) {
-  const resolvedParams = await params;
+export default function SubdomainPage({ params }: { params: Promise<{ domain: string; subdomain: string }> }) {
+  const resolvedParams = use(params);
   const domainSlug = resolvedParams.domain;
   const subdomainSlug = resolvedParams.subdomain;
 

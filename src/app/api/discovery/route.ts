@@ -42,6 +42,14 @@ export async function GET(request: NextRequest) {
         const pipelineStats = await supabaseServer.rpc("get_pipeline_statistics", {
           source_param: source || null,
         });
+        if (pipelineStats.error) {
+          console.error("Pipeline stats error:", pipelineStats.error);
+          return NextResponse.json({ 
+            success: false, 
+            error: "Pipeline statistics function not available. Please run database migrations.",
+            details: pipelineStats.error 
+          }, { status: 503 });
+        }
         return NextResponse.json({ success: true, result: pipelineStats });
 
       default:

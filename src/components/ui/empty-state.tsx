@@ -30,9 +30,9 @@ export function EmptyState({
     default: {
       container: "py-20",
       iconSize: "h-24 w-24",
-      iconBg: "bg-gradient-to-br from-primary/10 to-secondary/10",
+      iconBg: "bg-gradient-to-br from-primary/10 to-accent/10",
       iconColor: "text-primary/40",
-      titleSize: "text-2xl",
+      titleSize: "text-2xl font-heading",
       descriptionSize: "text-base"
     },
     minimal: {
@@ -40,15 +40,15 @@ export function EmptyState({
       iconSize: "h-16 w-16",
       iconBg: "bg-muted/10",
       iconColor: "text-muted/40",
-      titleSize: "text-lg",
+      titleSize: "text-lg font-heading",
       descriptionSize: "text-sm"
     },
     illustrated: {
       container: "py-24",
       iconSize: "h-32 w-32",
-      iconBg: "bg-gradient-to-br from-primary/20 to-secondary/20",
+      iconBg: "bg-gradient-to-br from-primary/20 to-accent/20",
       iconColor: "text-primary/60",
-      titleSize: "text-3xl",
+      titleSize: "text-3xl font-heading",
       descriptionSize: "text-lg"
     }
   };

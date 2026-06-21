@@ -4,6 +4,7 @@
  */
 
 import { queueManager } from './queue-manager';
+import { logger } from '@/lib/logger';
 
 export interface ScheduleConfig {
   interval: number; // milliseconds
@@ -81,7 +82,7 @@ class BackgroundJobScheduler {
     if (this.isRunning) return;
     
     this.isRunning = true;
-    console.log('[BackgroundJobScheduler] Starting scheduler...');
+    logger.info('Background job scheduler starting');
     
     this.schedule();
   }
@@ -91,7 +92,7 @@ class BackgroundJobScheduler {
    */
   async stop(): Promise<void> {
     this.isRunning = false;
-    console.log('[BackgroundJobScheduler] Stopping scheduler...');
+    logger.info('Background job scheduler stopping');
     
     // Clear all intervals
     for (const interval of this.intervals.values()) {
@@ -125,7 +126,7 @@ class BackgroundJobScheduler {
       
       if (now >= job.nextRun) {
         try {
-          console.log(`[BackgroundJobScheduler] Running job: ${name}`);
+          logger.debug(`Running scheduled job: ${name}`);
           await job.handler();
           
           job.lastRun = now;
@@ -160,7 +161,7 @@ class BackgroundJobScheduler {
       throw new Error(`Job ${name} not found`);
     }
 
-    console.log(`[BackgroundJobScheduler] Manually triggering job: ${name}`);
+    logger.debug(`Manually triggering job: ${name}`);
     await job.handler();
     
     job.lastRun = new Date();

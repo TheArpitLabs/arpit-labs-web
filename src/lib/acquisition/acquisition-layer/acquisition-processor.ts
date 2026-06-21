@@ -11,6 +11,7 @@ import { ContentExtractorFactory } from './content-extractor';
 import { getDiscoveryManager } from '../source-discovery/discovery-manager';
 import { supabaseServer } from '@/lib/supabase/server';
 import { ContentType, ContentProvider } from '../source-discovery/types';
+import { logger } from '@/lib/logger';
 
 export class AcquisitionProcessor {
   private config: Required<AcquisitionConfig>;
@@ -333,7 +334,7 @@ export class AcquisitionProcessor {
   private async runDeduplication(itemId: string): Promise<void> {
     // This will be implemented in the Deduplication Engine
     // For now, just update status
-    console.log(`Running deduplication for item ${itemId}`);
+    logger.debug(`Running deduplication for item ${itemId}`);
   }
 
   /**
@@ -342,7 +343,7 @@ export class AcquisitionProcessor {
   private async runComplianceCheck(itemId: string): Promise<void> {
     // This will be implemented in the Compliance Engine
     // For now, just update status
-    console.log(`Running compliance check for item ${itemId}`);
+    logger.debug(`Running compliance check for item ${itemId}`);
   }
 
   /**
@@ -351,7 +352,7 @@ export class AcquisitionProcessor {
   private async runAIEnrichment(itemId: string): Promise<void> {
     // This will be implemented in the AI Enrichment Engine
     // For now, just update status
-    console.log(`Running AI enrichment for item ${itemId}`);
+    logger.debug(`Running AI enrichment for item ${itemId}`);
   }
 
   /**
@@ -360,7 +361,7 @@ export class AcquisitionProcessor {
   private async runQualityScoring(itemId: string): Promise<void> {
     // This will be implemented in the Quality Scoring Engine
     // For now, just update status
-    console.log(`Running quality scoring for item ${itemId}`);
+    logger.debug(`Running quality scoring for item ${itemId}`);
   }
 }
 

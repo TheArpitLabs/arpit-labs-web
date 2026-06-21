@@ -5,7 +5,46 @@
  */
 
 import { BaseConnector } from './base-connector';
-import { DiscoveryConfig, DiscoveryResult, DiscoveredContent, ContentProvider } from './types';
+import { DiscoveryConfig, DiscoveryResult, DiscoveredContent, ContentProvider, DiscoveryRule } from './types';
+
+interface ProductHuntPost {
+  id: string;
+  name: string;
+  tagline?: string;
+  description?: string;
+  url: string;
+  votes_count: number;
+  comments_count: number;
+  featured_at?: string;
+  thumbnail?: {
+    url?: string;
+  };
+  user?: {
+    username?: string;
+    name?: string;
+    url?: string;
+  };
+  topics?: {
+    edges?: Array<{
+      node: {
+        name: string;
+      };
+    }>;
+  };
+  created_at?: string;
+  website?: string;
+}
+
+interface ProductHuntResponse {
+  data?: {
+    posts?: {
+      edges?: Array<{
+        node: ProductHuntPost;
+      }>;
+    };
+    post?: ProductHuntPost;
+  };
+}
 
 export class ProductHuntConnector extends BaseConnector {
   private apiBaseUrl = 'https://api.producthunt.com/v2';
@@ -43,15 +82,15 @@ export class ProductHuntConnector extends BaseConnector {
             sourceUrl: item.url,
             contentType: 'project',
             title: item.name,
-            description: item.tagline || item.description,
-            author: item.user?.username,
-            organization: item.user?.username,
+            description: item.tagline || item.description || '',
+            author: item.user?.username || null,
+            organization: item.user?.username || null,
             discoveryMetadata: {
               votesCount: item.votes_count,
               commentsCount: item.comments_count,
-              featuredAt: item.featured_at,
-              topics: item.topics,
-              thumbnail: item.thumbnail?.url,
+              featuredAt: item.featured_at || null,
+              topics: item.topics?.edges?.map((t) => t.node.name) || [],
+              thumbnail: item.thumbnail?.url || null,
               ruleId: rule.id,
               ruleWeight: rule.weight,
             },
@@ -93,7 +132,7 @@ export class ProductHuntConnector extends BaseConnector {
   /**
    * Search ProductHunt by rule
    */
-  private async searchByRule(rule: any, maxResults: number): Promise<any[]> {
+  private async searchByRule(rule: DiscoveryRule, maxResults: number): Promise<ProductHuntPost[]> {
     const query = this.buildSearchQuery(rule);
     
     // ProductHunt API requires GraphQL
@@ -142,16 +181,16 @@ export class ProductHuntConnector extends BaseConnector {
     const data = await response.json();
     const edges = data?.data?.posts?.edges || [];
     
-    return edges.map((edge: any) => ({
+    return edges.map((edge: { node: ProductHuntPost }) => ({
       ...edge.node,
-      topics: edge.node.topics?.edges?.map((t: any) => t.node.name) || [],
+      topics: edge.node.topics?.edges?.map((t) => t.node.name) || [],
     }));
   }
 
   /**
    * Build search query from rule
    */
-  private buildSearchQuery(rule: any): string {
+  private buildSearchQuery(rule: DiscoveryRule): string {
     const pattern = rule.pattern;
     
     switch (rule.ruleType) {
@@ -219,7 +258,7 @@ export class ProductHuntConnector extends BaseConnector {
    * Normalize ProductHunt content to standard format
    */
   async normalizeContent(content: Record<string, unknown>): Promise<Record<string, unknown>> {
-    const product = content as any;
+    const product = content as unknown as ProductHuntPost;
 
     return {
       provider: 'producthunt' as ContentProvider,
@@ -237,12 +276,12 @@ export class ProductHuntConnector extends BaseConnector {
         commentsCount: product.comments_count,
         featuredAt: product.featured_at,
         createdAt: product.created_at,
-        topics: product.topics?.edges?.map((t: any) => t.node.name) || [],
+        topics: product.topics?.edges?.map((t) => t.node.name) || [],
         thumbnail: product.thumbnail?.url,
         website: product.website,
       },
-      tags: product.topics?.edges?.map((t: any) => t.node.name) || [],
-      categories: product.topics?.edges?.slice(0, 3).map((t: any) => t.node.name) || [],
+      tags: product.topics?.edges?.map((t) => t.node.name) || [],
+      categories: product.topics?.edges?.slice(0, 3).map((t) => t.node.name) || [],
     };
   }
 

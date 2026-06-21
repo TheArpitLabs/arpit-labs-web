@@ -1,6 +1,7 @@
 import { saasRepository } from "@/lib/repositories/saas.repository";
 import { getCurrentUser } from "@/lib/auth";
 import { OrganizationRole } from "@/types/saas";
+import { logger } from "@/lib/logger";
 
 export async function getCurrentOrganization(slug: string) {
   const user = await getCurrentUser();
@@ -30,26 +31,19 @@ export async function hasOrganizationPermission(
 }
 
 export async function getTenantContext() {
-  console.log('[getTenantContext] === START ===');
   const user = await getCurrentUser();
-  console.log('[getTenantContext] getCurrentUser result:', {
-    hasUser: !!user,
-    userId: user?.id,
-    userEmail: user?.email,
-  });
   
   if (!user) {
-    console.log('[getTenantContext] No user found, returning null');
+    logger.debug('No user found in tenant context');
     return null;
   }
 
   const organizations = await saasRepository.getOrganizationsForUser(user.id);
-  console.log('[getTenantContext] Organizations fetched:', {
-    count: organizations.length,
-    organizationIds: organizations.map(o => o.id),
+  logger.debug('Tenant context retrieved', { 
+    userId: user.id, 
+    organizationCount: organizations.length 
   });
   
-  console.log('[getTenantContext] === SUCCESS === Returning context with user:', user.email);
   return {
     user,
     organizations,

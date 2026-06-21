@@ -38,10 +38,10 @@ export default async function ResearchPage() {
       <section className="relative border-b border-border/70 bg-gradient-to-b from-surface/50 to-background py-20">
         <Container>
           <div className="max-w-4xl space-y-6">
-            <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-bold uppercase tracking-wider text-primary">
+            <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-heading font-bold uppercase tracking-wider text-primary">
               <Microscope size={16} /> Engineering Knowledge Hub
             </div>
-            <h1 className="text-5xl font-bold tracking-tight text-foreground sm:text-6xl">
+            <h1 className="text-5xl font-heading font-bold tracking-tight text-foreground sm:text-6xl">
               Research & Innovation
             </h1>
             <p className="text-xl text-muted">
@@ -66,7 +66,7 @@ export default async function ResearchPage() {
           {/* Content Types */}
           <div className="mb-16">
             <div className="mb-8">
-              <h2 className="text-3xl font-bold text-foreground">Content Types</h2>
+              <h2 className="text-3xl font-heading font-bold text-foreground">Content Types</h2>
               <p className="mt-2 text-muted">Explore different formats of engineering knowledge</p>
             </div>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
@@ -76,7 +76,7 @@ export default async function ResearchPage() {
                     <div className={`mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${type.iconColor} text-white`}>
                       <type.icon size={24} />
                     </div>
-                    <h3 className="mb-2 text-lg font-bold text-foreground group-hover:text-primary transition-colors">
+                    <h3 className="mb-2 text-lg font-heading font-bold text-foreground group-hover:text-primary transition-colors">
                       {type.name}
                     </h3>
                     <p className="text-sm text-muted">{type.count} resources</p>
@@ -90,10 +90,10 @@ export default async function ResearchPage() {
           <div className="mb-16">
             <div className="mb-8 flex items-center justify-between">
               <div>
-                <h2 className="text-3xl font-bold text-foreground">Research Categories</h2>
+                <h2 className="text-3xl font-heading font-bold text-foreground">Research Categories</h2>
                 <p className="mt-2 text-muted">Browse by engineering domain</p>
               </div>
-              <button className="flex items-center gap-2 text-sm font-semibold text-primary hover:underline">
+              <button className="flex items-center gap-2 text-sm font-heading font-semibold text-primary hover:underline">
                 <Filter size={16} /> Filter All
               </button>
             </div>
@@ -101,11 +101,11 @@ export default async function ResearchPage() {
               {categories.map((category) => (
                 <Link key={category.name} href={`/research?category=${category.name.toLowerCase().replace(/\s+/g, '-')}`}>
                   <Card className="group flex items-center gap-4 p-6 transition-all hover:shadow-2xl hover:border-primary/50">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-primary/10 to-secondary/10 text-primary">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-primary/10 to-accent/10 text-primary">
                       <category.icon size={28} />
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors">
+                      <h3 className="text-lg font-heading font-bold text-foreground group-hover:text-primary transition-colors">
                         {category.name}
                       </h3>
                       <p className="text-sm text-muted">{category.count} publications</p>
@@ -121,10 +121,10 @@ export default async function ResearchPage() {
           <div className="mb-16">
             <div className="mb-8 flex items-center justify-between">
               <div>
-                <h2 className="text-3xl font-bold text-foreground">Featured Research</h2>
+                <h2 className="text-3xl font-heading font-bold text-foreground">Featured Research</h2>
                 <p className="mt-2 text-muted">Highlighted publications and breakthrough studies</p>
               </div>
-              <Link href="/research?featured=true" className="flex items-center gap-2 text-sm font-semibold text-primary hover:underline">
+              <Link href="/research?featured=true" className="flex items-center gap-2 text-sm font-heading font-semibold text-primary hover:underline">
                 View All Featured
                 <ArrowRight size={16} />
               </Link>
@@ -141,7 +141,7 @@ export default async function ResearchPage() {
                         {paper.published_at ? new Date(paper.published_at).toLocaleDateString() : "Draft"}
                       </span>
                     </div>
-                    <h3 className="mb-3 text-xl font-bold text-foreground group-hover:text-primary transition-colors line-clamp-2">
+                    <h3 className="mb-3 text-xl font-heading font-bold text-foreground group-hover:text-primary transition-colors line-clamp-2">
                       {paper.title}
                     </h3>
                     <p className="mb-4 text-sm text-muted line-clamp-3">
@@ -151,7 +151,7 @@ export default async function ResearchPage() {
                       <span>By {paper.authors.join(", ")}</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2 text-xs font-semibold text-primary">
+                      <div className="flex items-center gap-2 text-xs font-heading font-semibold text-primary">
                         <FileText size={14} />
                         Read Paper
                       </div>
@@ -167,10 +167,10 @@ export default async function ResearchPage() {
           <div className="mb-16">
             <div className="mb-8 flex items-center justify-between">
               <div>
-                <h2 className="text-3xl font-bold text-foreground">Latest Publications</h2>
+                <h2 className="text-3xl font-heading font-bold text-foreground">Latest Publications</h2>
                 <p className="mt-2 text-muted">Recently added research and technical content</p>
               </div>
-              <Link href="/research?sort=latest" className="flex items-center gap-2 text-sm font-semibold text-primary hover:underline">
+              <Link href="/research?sort=latest" className="flex items-center gap-2 text-sm font-heading font-semibold text-primary hover:underline">
                 View All
                 <ArrowRight size={16} />
               </Link>
@@ -186,7 +186,7 @@ export default async function ResearchPage() {
                       {paper.published_at ? new Date(paper.published_at).toLocaleDateString() : "Draft"}
                     </span>
                   </div>
-                  <h3 className="mb-3 text-xl font-bold text-foreground group-hover:text-primary transition-colors">
+                  <h3 className="mb-3 text-xl font-heading font-bold text-foreground group-hover:text-primary transition-colors">
                     {paper.title}
                   </h3>
                   <p className="mb-4 text-sm text-muted line-clamp-3">
@@ -194,7 +194,7 @@ export default async function ResearchPage() {
                   </p>
                   <div className="flex items-center justify-between">
                     <div className="text-xs text-muted">By {paper.authors.join(", ")}</div>
-                    <div className="flex items-center gap-2 text-sm font-semibold text-primary">
+                    <div className="flex items-center gap-2 text-sm font-heading font-semibold text-primary">
                       <FileText size={16} />
                       Read Paper
                     </div>
@@ -208,10 +208,10 @@ export default async function ResearchPage() {
           <div>
             <div className="mb-8 flex items-center justify-between">
               <div>
-                <h2 className="text-3xl font-bold text-foreground">Open Datasets</h2>
+                <h2 className="text-3xl font-heading font-bold text-foreground">Open Datasets</h2>
                 <p className="mt-2 text-muted">Curated datasets for community research and development</p>
               </div>
-              <Link href="/research/datasets" className="flex items-center gap-2 text-sm font-semibold text-primary hover:underline">
+              <Link href="/research/datasets" className="flex items-center gap-2 text-sm font-heading font-semibold text-primary hover:underline">
                 Browse All Datasets
                 <ArrowRight size={16} />
               </Link>
@@ -224,11 +224,11 @@ export default async function ResearchPage() {
                       <Database size={28} />
                     </div>
                     <div>
-                      <h4 className="text-lg font-bold text-foreground">{ds.title}</h4>
+                      <h4 className="text-lg font-heading font-bold text-foreground">{ds.title}</h4>
                       <p className="text-sm text-muted">{ds.format} · {ds.size} · {ds.license}</p>
                     </div>
                   </div>
-                  <button className="rounded-xl bg-primary px-6 py-3 text-sm font-bold text-white transition hover:bg-primary/90">
+                  <button className="rounded-xl bg-primary px-6 py-3 text-sm font-heading font-bold text-foreground transition hover:bg-primary/90">
                     Download
                   </button>
                 </Card>

@@ -9,8 +9,8 @@ const engineeringDomains = [
     name: "Artificial Intelligence",
     description: "Advanced AI systems, neural networks, and intelligent automation solutions",
     icon: Brain,
-    gradient: "from-purple-500/10 to-pink-500/10",
-    iconGradient: "from-purple-500 to-pink-500",
+    gradient: "from-primary/10 to-accent/10",
+    iconGradient: "from-primary to-accent",
     projects: 12,
     research: 8,
     resources: 24
@@ -19,8 +19,8 @@ const engineeringDomains = [
     name: "Machine Learning",
     description: "ML algorithms, predictive models, and data-driven intelligence systems",
     icon: Brain,
-    gradient: "from-blue-500/10 to-cyan-500/10",
-    iconGradient: "from-blue-500 to-cyan-500",
+    gradient: "from-accent/10 to-success/10",
+    iconGradient: "from-accent to-success",
     projects: 10,
     research: 6,
     resources: 18
@@ -29,8 +29,8 @@ const engineeringDomains = [
     name: "Data Science",
     description: "Big data analytics, visualization, and statistical modeling projects",
     icon: Database,
-    gradient: "from-green-500/10 to-emerald-500/10",
-    iconGradient: "from-green-500 to-emerald-500",
+    gradient: "from-success/10 to-primary/10",
+    iconGradient: "from-success to-primary",
     projects: 8,
     research: 5,
     resources: 15
@@ -39,8 +39,8 @@ const engineeringDomains = [
     name: "IoT",
     description: "Connected devices, sensor networks, and smart system implementations",
     icon: Wifi,
-    gradient: "from-cyan-500/10 to-blue-500/10",
-    iconGradient: "from-cyan-500 to-blue-500",
+    gradient: "from-accent/10 to-primary/10",
+    iconGradient: "from-accent to-primary",
     projects: 15,
     research: 7,
     resources: 22
@@ -49,8 +49,8 @@ const engineeringDomains = [
     name: "Robotics",
     description: "Autonomous systems, robotic arms, and intelligent automation projects",
     icon: Bot,
-    gradient: "from-orange-500/10 to-red-500/10",
-    iconGradient: "from-orange-500 to-red-500",
+    gradient: "from-warning/10 to-error/10",
+    iconGradient: "from-warning to-error",
     projects: 6,
     research: 4,
     resources: 12
@@ -59,8 +59,8 @@ const engineeringDomains = [
     name: "Cybersecurity",
     description: "Security protocols, encryption systems, and network protection solutions",
     icon: Shield,
-    gradient: "from-red-500/10 to-rose-500/10",
-    iconGradient: "from-red-500 to-rose-500",
+    gradient: "from-error/10 to-warning/10",
+    iconGradient: "from-error to-warning",
     projects: 9,
     research: 6,
     resources: 16
@@ -69,8 +69,8 @@ const engineeringDomains = [
     name: "Web Development",
     description: "Full-stack applications, modern frameworks, and responsive web solutions",
     icon: Globe,
-    gradient: "from-indigo-500/10 to-violet-500/10",
-    iconGradient: "from-indigo-500 to-violet-500",
+    gradient: "from-primary/10 to-accent/10",
+    iconGradient: "from-primary to-accent",
     projects: 18,
     research: 3,
     resources: 30
@@ -79,8 +79,8 @@ const engineeringDomains = [
     name: "Mobile Development",
     description: "Native and cross-platform mobile applications with modern UI/UX",
     icon: Smartphone,
-    gradient: "from-pink-500/10 to-rose-500/10",
-    iconGradient: "from-pink-500 to-rose-500",
+    gradient: "from-accent/10 to-primary/10",
+    iconGradient: "from-accent to-primary",
     projects: 7,
     research: 2,
     resources: 14
@@ -89,8 +89,8 @@ const engineeringDomains = [
     name: "Cloud Computing",
     description: "Cloud architecture, serverless solutions, and distributed systems",
     icon: Cloud,
-    gradient: "from-sky-500/10 to-blue-500/10",
-    iconGradient: "from-sky-500 to-blue-500",
+    gradient: "from-primary/10 to-accent/10",
+    iconGradient: "from-primary to-accent",
     projects: 11,
     research: 5,
     resources: 20
@@ -99,8 +99,8 @@ const engineeringDomains = [
     name: "DevOps",
     description: "CI/CD pipelines, infrastructure automation, and deployment strategies",
     icon: Server,
-    gradient: "from-slate-500/10 to-gray-500/10",
-    iconGradient: "from-slate-500 to-gray-500",
+    gradient: "from-muted/10 to-muted-dark/10",
+    iconGradient: "from-muted to-muted-dark",
     projects: 8,
     research: 3,
     resources: 17
@@ -109,8 +109,8 @@ const engineeringDomains = [
     name: "Electronics",
     description: "Circuit design, PCB development, and electronic system prototyping",
     icon: CircuitBoard,
-    gradient: "from-yellow-500/10 to-orange-500/10",
-    iconGradient: "from-yellow-500 to-orange-500",
+    gradient: "from-warning/10 to-accent/10",
+    iconGradient: "from-warning to-accent",
     projects: 14,
     research: 8,
     resources: 25
@@ -119,8 +119,8 @@ const engineeringDomains = [
     name: "Embedded Systems",
     description: "Microcontroller programming, firmware development, and real-time systems",
     icon: Microchip,
-    gradient: "from-amber-500/10 to-yellow-500/10",
-    iconGradient: "from-amber-500 to-yellow-500",
+    gradient: "from-accent/10 to-warning/10",
+    iconGradient: "from-accent to-warning",
     projects: 13,
     research: 7,
     resources: 21
@@ -129,8 +129,8 @@ const engineeringDomains = [
     name: "Research",
     description: "Academic research, whitepapers, and technical publications",
     icon: FlaskConical,
-    gradient: "from-teal-500/10 to-cyan-500/10",
-    iconGradient: "from-teal-500 to-cyan-500",
+    gradient: "from-success/10 to-accent/10",
+    iconGradient: "from-success to-accent",
     projects: 5,
     research: 15,
     resources: 28
@@ -139,8 +139,8 @@ const engineeringDomains = [
     name: "Innovation",
     description: "Cutting-edge prototypes, experimental projects, and emerging technologies",
     icon: Lightbulb,
-    gradient: "from-lime-500/10 to-green-500/10",
-    iconGradient: "from-lime-500 to-green-500",
+    gradient: "from-success/10 to-primary/10",
+    iconGradient: "from-success to-primary",
     projects: 4,
     research: 9,
     resources: 13
@@ -149,8 +149,8 @@ const engineeringDomains = [
     name: "Open Source",
     description: "Community-driven projects, contributions, and collaborative development",
     icon: GitBranch,
-    gradient: "from-emerald-500/10 to-teal-500/10",
-    iconGradient: "from-emerald-500 to-teal-500",
+    gradient: "from-success/10 to-accent/10",
+    iconGradient: "from-success to-accent",
     projects: 20,
     research: 4,
     resources: 35
@@ -169,7 +169,7 @@ export function EngineeringDomains() {
           className="mb-16 text-center"
         >
           <p className="mb-4 text-sm uppercase tracking-[0.28em] text-muted">Engineering Ecosystem</p>
-          <h2 className="mb-6 text-section-title">
+          <h2 className="mb-6 font-heading text-section-title font-bold">
             15 Domains of Innovation
           </h2>
           <p className="mx-auto max-w-3xl text-lg text-muted">
@@ -203,7 +203,7 @@ export function EngineeringDomains() {
                   </motion.div>
                   
                   {/* Title */}
-                  <h3 className="mb-2 text-lg font-bold text-foreground group-hover:text-primary transition-colors line-clamp-1">
+                  <h3 className="mb-2 text-lg font-heading font-bold text-foreground group-hover:text-primary transition-colors line-clamp-1">
                     {domain.name}
                   </h3>
                   
@@ -249,24 +249,24 @@ export function EngineeringDomains() {
         >
           <div className="grid gap-6 sm:grid-cols-3">
             <div className="rounded-3xl glass p-8 text-center">
-              <div className="text-4xl font-bold bg-gradient-to-r from-foreground to-muted bg-clip-text text-transparent">
+              <div className="text-4xl font-heading font-bold bg-gradient-to-r from-foreground to-muted bg-clip-text text-transparent">
                 {engineeringDomains.reduce((sum, d) => sum + d.projects, 0)}
               </div>
-              <p className="mt-2 text-sm font-semibold text-foreground">Total Projects</p>
+              <p className="mt-2 text-sm font-heading font-semibold text-foreground">Total Projects</p>
               <p className="text-xs text-muted">Across all domains</p>
             </div>
             <div className="rounded-3xl glass p-8 text-center">
-              <div className="text-4xl font-bold bg-gradient-to-r from-foreground to-muted bg-clip-text text-transparent">
+              <div className="text-4xl font-heading font-bold bg-gradient-to-r from-foreground to-muted bg-clip-text text-transparent">
                 {engineeringDomains.reduce((sum, d) => sum + d.research, 0)}
               </div>
-              <p className="mt-2 text-sm font-semibold text-foreground">Research Papers</p>
+              <p className="mt-2 text-sm font-heading font-semibold text-foreground">Research Papers</p>
               <p className="text-xs text-muted">Academic publications</p>
             </div>
             <div className="rounded-3xl glass p-8 text-center">
-              <div className="text-4xl font-bold bg-gradient-to-r from-foreground to-muted bg-clip-text text-transparent">
+              <div className="text-4xl font-heading font-bold bg-gradient-to-r from-foreground to-muted bg-clip-text text-transparent">
                 {engineeringDomains.reduce((sum, d) => sum + d.resources, 0)}
               </div>
-              <p className="mt-2 text-sm font-semibold text-foreground">Resources</p>
+              <p className="mt-2 text-sm font-heading font-semibold text-foreground">Resources</p>
               <p className="text-xs text-muted">Learning materials</p>
             </div>
           </div>

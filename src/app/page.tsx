@@ -8,10 +8,10 @@ import { Card, BentoCard } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Brain, Cpu, Code2, Wifi, FolderOpen, FlaskConical, ArrowRight, Eye, Users } from "lucide-react";
 import { getExperiments, getLabNotes, getJourneyTimeline, getProjects } from "@/lib/actions/server-actions";
-import { getProjects as getProjectsData } from "@/lib/data/projects";
 import Image from "next/image";
 import Link from "next/link";
 import { EngineeringDomains } from "@/components/landing/EngineeringDomains";
+import { logger } from "@/lib/logger";
 
 const PremiumHero = dynamic(() => import("@/components/landing/PremiumHero").then(mod => ({ default: mod.PremiumHero })), {
   loading: () => <div className="h-screen animate-pulse bg-surface" />
@@ -45,9 +45,9 @@ export default async function HomePage() {
     getProjects()
   ]);
 
-  // Use data file directly as fallback
-  const projects = projectsFromServer.length > 0 ? projectsFromServer : getProjectsData();
-  console.log("Home page projects count:", projects.length);
+  // Use projects from server (database) - limit to 12 for home page
+  const projects = projectsFromServer.slice(0, 12);
+  logger.debug(`Home page projects count: ${projects.length}`);
 
   return (
     <main className="bg-background text-foreground">
@@ -87,9 +87,9 @@ export default async function HomePage() {
             </div>
 
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {projects.slice(0, 6).map((project, index) => (
-                <PremiumProjectCard key={project.id} project={{ 
-                  ...project, 
+              {projects.slice(0, 12).map((project, index) => (
+                <PremiumProjectCard key={project.id} project={{
+                  ...project,
                   cover_image: project.cover_image || undefined,
                   category: project.category || undefined
                 }} index={index} />

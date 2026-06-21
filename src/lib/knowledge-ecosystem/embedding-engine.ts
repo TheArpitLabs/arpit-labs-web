@@ -284,10 +284,10 @@ export class EmbeddingEngine {
       case "project":
         return await this.generateProjectEmbeddings(entityId);
       case "research":
-        // TODO: Implement research embeddings
+        // Research embeddings feature not yet implemented - returns empty result
         return { success: true, generated: 0, failed: 0, errors: ["Research embeddings not yet implemented"] };
       case "resource":
-        // TODO: Implement resource embeddings
+        // Resource embeddings feature not yet implemented - returns empty result
         return { success: true, generated: 0, failed: 0, errors: ["Resource embeddings not yet implemented"] };
       default:
         throw new Error(`Unknown entity type: ${entityType}`);

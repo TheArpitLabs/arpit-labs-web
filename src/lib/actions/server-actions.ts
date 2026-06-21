@@ -7,10 +7,10 @@ import { labNotesRepository } from "@/lib/repositories/labnotes.repository";
 import { journeyRepository } from "@/lib/repositories/journey.repository";
 import { productsRepository } from "@/lib/repositories/products.repository";
 import { hackathonsRepository } from "@/lib/repositories/hackathons.repository";
+import { projectsRepository } from "@/lib/repositories/projects.repository";
 import { contactFormSchema, newsletterSchema } from "@/lib/validation";
 import { handleValidationError } from "@/lib/errors";
 import { Experiment, Hackathon, HackathonSubmission, HackathonTeam, HackathonTeamMember, LabNote, JourneyItem, Product, Project } from "@/types/content";
-import { getProjects as getProjectsData, getProjectBySlug as getProjectBySlugData } from "@/lib/data/projects";
 
 export async function submitContactMessage(formData: unknown) {
   try {
@@ -64,17 +64,63 @@ export async function getJourneyTimeline(): Promise<JourneyItem[]> {
   }
 }
 
-export async function getProjects(): Promise<Project[]> {
+export async function getProjects(filters?: { 
+  status?: 'draft' | 'published' | 'archived'; 
+  featured?: boolean; 
+  search?: string; 
+  category?: string; 
+  branch?: string;
+  project_type?: string;
+  owner_id?: string;
+  page?: number;
+  limit?: number;
+  sort?: string;
+}): Promise<Project[]> {
   try {
-    return getProjectsData();
+    const result = await projectsRepository.getProjects({ 
+      status: 'published',
+      ...filters 
+    });
+    return result.data as Project[];
   } catch {
     return [];
   }
 }
 
+export async function getProjectsWithPagination(filters?: { 
+  status?: 'draft' | 'published' | 'archived'; 
+  featured?: boolean; 
+  search?: string; 
+  category?: string; 
+  branch?: string;
+  project_type?: string;
+  owner_id?: string;
+  page?: number;
+  limit?: number;
+  sort?: string;
+}) {
+  try {
+    return await projectsRepository.getProjects({ 
+      status: 'published',
+      ...filters 
+    });
+  } catch {
+    return {
+      data: [],
+      meta: {
+        page: 1,
+        limit: 24,
+        totalCount: 0,
+        totalPages: 0,
+        hasMore: false
+      }
+    };
+  }
+}
+
 export async function getProjectBySlug(slug: string): Promise<Project | null> {
   try {
-    return getProjectBySlugData(slug);
+    return await projectsRepository.getProjectBySlug(slug) as Project | null;
   } catch {
     return null;
   }

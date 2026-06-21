@@ -15,6 +15,7 @@ import { journeyRepository } from '@/lib/repositories/journey.repository';
 import { labNotesRepository } from '@/lib/repositories/labnotes.repository';
 import { projectsRepository } from '@/lib/repositories/projects.repository';
 import type { Experiment, JourneyItem, LabNote, Project } from '@/types/content';
+import { logger } from '@/lib/logger';
 
 // Initialize Supabase client
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
@@ -35,7 +36,7 @@ interface AIConversation {
   userId: string | null;
   messages: AIMessage[];
   topic: 'projects' | 'blog' | 'experiments' | 'general';
-  context: Record<string, any>;
+  context: Record<string, unknown>;
 }
 
 /**
@@ -53,7 +54,7 @@ export class AIChatService {
   }
 
   private initializeAI() {
-    console.log('AI Chat Service initialized');
+    logger.debug('AI Chat Service initialized');
   }
 
   /**
@@ -85,7 +86,7 @@ export class AIChatService {
         created_at: new Date().toISOString(),
       });
     } catch (error) {
-      console.error('Failed to save conversation to DB:', error);
+      logger.error('Failed to save conversation to DB', { error });
     }
 
     return conversation;
@@ -119,7 +120,7 @@ export class AIChatService {
         created_at: new Date().toISOString(),
       });
     } catch (error) {
-      console.error('Failed to save message to DB:', error);
+      logger.error('Failed to save message to DB', { error });
     }
 
     // Generate AI response
@@ -141,7 +142,7 @@ export class AIChatService {
         created_at: new Date().toISOString(),
       });
     } catch (error) {
-      console.error('Failed to save response to DB:', error);
+      logger.error('Failed to save response to DB', { error });
     }
 
     return {
@@ -168,7 +169,7 @@ export class AIChatService {
     try {
       return await this.callOpenAI(systemPrompt, messages);
     } catch (error) {
-      console.error('OpenAI call failed:', error);
+      logger.error('OpenAI call failed', { error });
       return this.generateFallbackResponse(conversation.topic);
     }
   }
@@ -184,7 +185,7 @@ export class AIChatService {
       const results = typeof semanticSearchService !== 'undefined' ? await semanticSearchService.search(query, 3) : null;
 
       if (Array.isArray(results) && results.length > 0) {
-        return results.map((r: any) => r.preview || r.chunk || '');
+        return results.map((r: { preview?: string; chunk?: string }) => r.preview || r.chunk || '');
       }
 
       // Fallback: direct DB query for matching source_type
@@ -195,9 +196,9 @@ export class AIChatService {
         .eq('is_active', true)
         .limit(3);
 
-      return data ? data.map((item: any) => item.content) : [];
+      return data ? data.map((item: { content: string }) => item.content) : [];
     } catch (error) {
-      console.error('Failed to search knowledge base:', error);
+      logger.error('Failed to search knowledge base', { error });
       return [];
     }
   }
@@ -236,7 +237,7 @@ export class AIChatService {
   /**
    * Call OpenAI API
    */
-  private async callOpenAI(systemPrompt: string, messages: any[]): Promise<string> {
+  private async callOpenAI(systemPrompt: string, messages: Array<{ role: string; content: string }>): Promise<string> {
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
       return this.generateFallbackResponse('general');
@@ -267,7 +268,7 @@ export class AIChatService {
       const data = await response.json();
       return data?.choices?.[0]?.message?.content?.trim() || 'Unable to generate response';
     } catch (error) {
-      console.error('OpenAI call error:', error);
+      logger.error('OpenAI call error', { error });
       throw error;
     }
   }
@@ -307,7 +308,7 @@ export class AIChatService {
         updated_at: new Date().toISOString(),
       }).eq('id', conversationId);
     } catch (error) {
-      console.error('Failed to save conversation:', error);
+      logger.error('Failed to save conversation', { error });
     }
   }
 }
@@ -441,7 +442,7 @@ export class KnowledgeBaseService {
    * Index new content
    */
   async indexContent(item: KnowledgeBaseItem): Promise<void> {
-    console.log(`Indexing ${item.sourceType}: ${item.title}`);
+    logger.debug(`Indexing ${item.sourceType}: ${item.title}`);
 
     await this.deleteExistingEmbeddings(item);
 
@@ -449,7 +450,7 @@ export class KnowledgeBaseService {
     const chunks = await this.splitText(item.content);
 
     if (chunks.length === 0) {
-      console.warn(`No content to index for ${item.sourceType}:${item.sourceId}`);
+      logger.warn(`No content to index for ${item.sourceType}:${item.sourceId}`);
       return;
     }
 
@@ -517,7 +518,7 @@ export class KnowledgeBaseService {
       const data = await res.json();
       return data.data.map((d: any) => d.embedding as number[]);
     } catch (error) {
-      console.error('Embedding generation failed:', error);
+      logger.error('Embedding generation failed', { error });
       return chunks.map(() => Array(1536).fill(0));
     }
   }
@@ -553,10 +554,10 @@ export class KnowledgeBaseService {
       ]);
 
       if (error) {
-        console.error('Failed to store embedding in Supabase:', error.message || error);
+        logger.error('Failed to store embedding in Supabase', { error: error.message || error });
       }
     } catch (err) {
-      console.error('Error storing embedding:', err);
+      logger.error('Error storing embedding', { error: err });
     }
   }
 
@@ -568,10 +569,10 @@ export class KnowledgeBaseService {
         .match({ content_type: item.sourceType, content_id: item.sourceId });
 
       if (error) {
-        console.error('Failed to delete existing embeddings:', error.message || error);
+        logger.error('Failed to delete existing embeddings', { error: error.message || error });
       }
     } catch (error) {
-      console.error('Error deleting existing embeddings:', error);
+      logger.error('Error deleting existing embeddings', { error });
     }
   }
 
@@ -633,14 +634,16 @@ export class KnowledgeBaseService {
    * Update knowledge base from projects/blog/experiments
    */
   async refreshKnowledgeBase(): Promise<{ count: number; timestamp: string }> {
-    console.log('Refreshing knowledge base...');
+    logger.debug('Refreshing knowledge base...');
 
-    const [projects, labNotes, experiments, journey] = await Promise.all([
+    const [projectsResult, labNotes, experiments, journey] = await Promise.all([
       projectsRepository.getProjects(),
       labNotesRepository.getLabNotes({ published: true }),
       experimentsRepository.getExperiments({ published: true }),
       journeyRepository.getJourneyTimeline(),
     ]);
+
+    const projects = projectsResult.data;
 
     const items: KnowledgeBaseItem[] = [
       ...projects.map((project) => ({
@@ -713,7 +716,7 @@ export class SemanticSearchService {
    * Search content by semantic similarity
    */
   async search(query: string, limit: number = 5): Promise<SearchResult[]> {
-    console.log(`Semantic search for: ${query}`);
+    logger.debug(`Semantic search for: ${query}`);
 
     try {
       // 1) Generate embedding for query
@@ -729,7 +732,15 @@ export class SemanticSearchService {
       const rows = Array.isArray(rpc.data) ? rpc.data : [];
 
       // 3) Map RPC results to SearchResult
-      const results: SearchResult[] = rows.map((r: any) => ({
+      const results: SearchResult[] = rows.map((r: {
+        id: string;
+        title?: string;
+        metadata?: { title?: string; url?: string };
+        content_type?: string;
+        content_id: string;
+        similarity?: number;
+        chunk?: string;
+      }) => ({
         id: r.id,
         title: r.title || (r.metadata && r.metadata.title) || 'Untitled',
         sourceType: r.content_type || 'unknown',
@@ -741,7 +752,7 @@ export class SemanticSearchService {
 
       return results;
     } catch (error) {
-      console.error('Search failed:', error);
+      logger.error('Search failed', { error });
       return [];
     }
   }
@@ -781,14 +792,14 @@ export class SemanticSearchService {
 
       if (!res.ok) {
         const text = await res.text();
-        console.error('OpenAI embedding error:', res.status, text);
+        logger.error('OpenAI embedding error', { status: res.status, text });
         return Array(1536).fill(0);
       }
 
       const data = await res.json();
       return data?.data?.[0]?.embedding || Array(1536).fill(0);
     } catch (err) {
-      console.error('Failed to generate query embedding:', err);
+      logger.error('Failed to generate query embedding', { error: err });
       return Array(1536).fill(0);
     }
   }
@@ -796,19 +807,27 @@ export class SemanticSearchService {
   /**
    * Search vector database
    */
-  private async searchVectorDatabase(embedding: number[], limit: number): Promise<any[]> {
+  private async searchVectorDatabase(embedding: number[], limit: number): Promise<unknown[]> {
     return [];
   }
 
   /**
    * Enrich search results with metadata
    */
-  private async enrichResults(results: any[]): Promise<SearchResult[]> {
+  private async enrichResults(results: Array<{
+    id: string;
+    title?: string;
+    sourceType?: string;
+    sourceId?: string;
+    similarity?: number;
+    preview?: string;
+    url?: string;
+  }>): Promise<SearchResult[]> {
     return results.map((r) => ({
       id: r.id,
       title: r.title || 'Untitled',
-      sourceType: r.sourceType,
-      sourceId: r.sourceId,
+      sourceType: r.sourceType || 'unknown',
+      sourceId: r.sourceId || r.id,
       similarity: r.similarity || 0.9,
       preview: r.preview || '',
       url: r.url || '#',
@@ -828,7 +847,7 @@ export class ContentGenerationService {
    * Generate project ideas
    */
   async generateProjectIdeas(category: string, count: number = 5): Promise<string[]> {
-    console.log(`Generating ${count} project ideas for ${category}`);
+    logger.debug(`Generating ${count} project ideas for ${category}`);
 
     const prompt = `Generate ${count} creative and practical project ideas for ${category} (IoT, AI, Cybersecurity, or Web Development). 
     Each idea should be unique, interesting, and achievable.
@@ -838,7 +857,7 @@ export class ContentGenerationService {
       const response = await this.callOpenAI(prompt);
       return response.split('\n').filter((idea) => idea.trim().length > 0);
     } catch (error) {
-      console.error('Failed to generate ideas:', error);
+      logger.error('Failed to generate ideas', { error });
       return this.getFallbackIdeas(category);
     }
   }
@@ -847,7 +866,7 @@ export class ContentGenerationService {
    * Generate tech stack suggestions
    */
   async generateTechStack(projectDescription: string): Promise<Record<string, string[]>> {
-    console.log('Generating tech stack suggestions...');
+    logger.debug('Generating tech stack suggestions...');
 
     const prompt = `Based on this project: "${projectDescription}", suggest a modern tech stack with categories for:
     - frontend
@@ -863,7 +882,7 @@ export class ContentGenerationService {
         return JSON.parse(jsonMatch[0]);
       }
     } catch (error) {
-      console.error('Failed to generate tech stack:', error);
+      logger.error('Failed to generate tech stack', { error });
     }
 
     return {
@@ -883,7 +902,7 @@ export class ContentGenerationService {
     budget: number = 5000,
     techStack: string[] = []
   ): Promise<GeneratedProject> {
-    console.log(`Generating project idea for category: ${category}`);
+    logger.debug(`Generating project idea for category: ${category}`);
 
     const ideas = await this.generateProjectIdeas(category, 1);
     const title = ideas[0]?.replace(/^\d+\.\s*/, '') || `${category} project idea`;
@@ -946,7 +965,7 @@ export class ContentGenerationService {
    * Generate architecture diagram description
    */
   async generateArchitectureDiagram(projectDescription: string): Promise<string> {
-    console.log('Generating architecture diagram...');
+    logger.debug('Generating architecture diagram...');
 
     const prompt = `Create a detailed ASCII architecture diagram for: "${projectDescription}". 
     Include components, data flow, and external services. Keep it concise but complete.`;
@@ -1002,7 +1021,7 @@ export class ContentGenerationService {
   private async callOpenAI(prompt: string): Promise<string> {
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
-      console.log('OpenAI key missing');
+      logger.error('OpenAI API key is not configured');
       throw new Error('OpenAI API key is not configured');
     }
 
@@ -1030,7 +1049,7 @@ export class ContentGenerationService {
       const text = await response.text();
 
       if (!response.ok) {
-        console.error('OpenAI API error:', response.status, text);
+        logger.error('OpenAI API error', { status: response.status, text });
         throw new Error(`OpenAI API error: ${response.status}`);
       }
 
@@ -1038,11 +1057,11 @@ export class ContentGenerationService {
         const data = JSON.parse(text);
         return data?.choices?.[0]?.message?.content?.trim() ?? '';
       } catch (error) {
-        console.error('Failed to parse OpenAI response:', error);
+        logger.error('Failed to parse OpenAI response', { error });
         throw new Error('Failed to parse OpenAI response');
       }
     } catch (error) {
-      console.error('OpenAI call failed:', error);
+      logger.error('OpenAI call failed', { error });
       throw error;
     }
   }
@@ -1344,7 +1363,7 @@ Return JSON with keys seoDescription, metaTags, openGraph, keywords.`;
       .single();
 
     if (error || !data) {
-      console.error('Failed to create AI generation record:', error);
+      logger.error('Failed to create AI generation record', { error });
       return null;
     }
 
@@ -1384,7 +1403,7 @@ Return JSON with keys seoDescription, metaTags, openGraph, keywords.`;
       .single();
 
     if (error || !data) {
-      console.error('Failed to create AI report record:', error);
+      logger.error('Failed to create AI report record', { error });
       return null;
     }
 
@@ -1406,7 +1425,7 @@ Return JSON with keys seoDescription, metaTags, openGraph, keywords.`;
       .single();
 
     if (error || !data) {
-      console.error('Failed to create AI job record:', error);
+      logger.error('Failed to create AI job record', { error });
       return null;
     }
 
@@ -1443,7 +1462,7 @@ Return JSON with keys seoDescription, metaTags, openGraph, keywords.`;
     try {
       return JSON.parse(jsonMatch[0]) as T;
     } catch (error) {
-      console.error('JSON parse failed:', error);
+      logger.error('JSON parse failed', { error });
       return null;
     }
   }
@@ -1471,7 +1490,7 @@ export class AnalyticsService {
    * Predict visitor interests
    */
   async predictVisitorInterests(visitorData: any): Promise<Prediction> {
-    console.log('Predicting visitor interests...');
+    logger.debug('Predicting visitor interests...');
 
     return {
       subject: 'visitor_interests',
@@ -1484,7 +1503,7 @@ export class AnalyticsService {
    * Predict popular content
    */
   async predictPopularContent(): Promise<Prediction> {
-    console.log('Predicting popular content...');
+    logger.debug('Predicting popular content...');
 
     return {
       subject: 'popular_content',
@@ -1497,7 +1516,7 @@ export class AnalyticsService {
    * Predict trending technologies
    */
   async predictTrendingTechnologies(): Promise<Prediction> {
-    console.log('Predicting trending technologies...');
+    logger.debug('Predicting trending technologies...');
 
     return {
       subject: 'trending_technologies',
@@ -1510,7 +1529,7 @@ export class AnalyticsService {
    * Track visitor behavior
    */
   async trackVisitorBehavior(event: any): Promise<void> {
-    console.log('Tracking visitor behavior:', event);
+    logger.debug('Tracking visitor behavior', { event });
     // Store in ai_analytics_events table
   }
 }
@@ -1535,7 +1554,7 @@ export class AutomationService {
    * Schedule automation
    */
   async scheduleAutomation(workflow: AutomationWorkflow): Promise<{ id: string }> {
-    console.log(`Scheduling automation: ${workflow.name}`);
+    logger.debug(`Scheduling automation: ${workflow.name}`);
     // Save to database and schedule with cron
     return { id: workflow.id };
   }
@@ -1544,7 +1563,7 @@ export class AutomationService {
    * Execute automation
    */
   async executeAutomation(workflowId: string): Promise<{ status: string }> {
-    console.log(`Executing automation: ${workflowId}`);
+    logger.debug(`Executing automation: ${workflowId}`);
 
     // 1. Get workflow from database
     // 2. Execute each action
@@ -1557,7 +1576,7 @@ export class AutomationService {
    * Auto-publish blog post
    */
   async autoPushBlogPost(postId: string): Promise<void> {
-    console.log(`Auto-publishing blog post: ${postId}`);
+    logger.debug(`Auto-publishing blog post: ${postId}`);
     // Generate SEO metadata
     // Schedule social share
     // Add to newsletter queue
@@ -1567,7 +1586,7 @@ export class AutomationService {
    * Generate newsletter
    */
   async generateNewsletter(): Promise<string> {
-    console.log('Generating newsletter...');
+    logger.debug('Generating newsletter...');
     // Collect top articles
     // Create summary
     // Format HTML
@@ -1578,7 +1597,7 @@ export class AutomationService {
    * Share to social media
    */
   async shareToSocialMedia(content: string, platforms: string[]): Promise<void> {
-    console.log(`Sharing to: ${platforms.join(', ')}`);
+    logger.debug(`Sharing to: ${platforms.join(', ')}`);
     // Share to Twitter, LinkedIn, etc.
   }
 
@@ -1586,7 +1605,7 @@ export class AutomationService {
    * Generate weekly report
    */
   async generateWeeklyReport(): Promise<string> {
-    console.log('Generating weekly report...');
+    logger.debug('Generating weekly report...');
     return 'Weekly report content...';
   }
 }
@@ -1603,7 +1622,7 @@ export class RecruiterAssistantService {
    * Generate resume summary
    */
   async generateResumeSummary(userData: any): Promise<string> {
-    console.log('Generating resume summary...');
+    logger.debug('Generating resume summary...');
 
     const prompt = `Create a professional resume summary for a developer with: ${JSON.stringify(userData)}`;
     return 'Professional resume summary...';
@@ -1613,7 +1632,7 @@ export class RecruiterAssistantService {
    * Generate skills overview
    */
   async generateSkillsOverview(projects: any[]): Promise<Record<string, string[]>> {
-    console.log('Generating skills overview...');
+    logger.debug('Generating skills overview...');
 
     return {
       languages: ['TypeScript', 'Python', 'JavaScript'],
@@ -1627,7 +1646,7 @@ export class RecruiterAssistantService {
    * Create project showcase
    */
   async createProjectShowcase(projects: any[]): Promise<string> {
-    console.log('Creating project showcase...');
+    logger.debug('Creating project showcase...');
     return '<div>Project showcase HTML...</div>';
   }
 
@@ -1635,7 +1654,7 @@ export class RecruiterAssistantService {
    * Generate hiring report
    */
   async generateHiringReport(): Promise<string> {
-    console.log('Generating hiring report...');
+    logger.debug('Generating hiring report...');
     return 'Hiring report content...';
   }
 }

@@ -2,7 +2,7 @@ import type { Config } from "tailwindcss";
 
 const config: Config = {
   content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
-  darkMode: ["class"],
+  darkMode: "class",
   theme: {
     extend: {
       colors: {
@@ -44,6 +44,7 @@ const config: Config = {
       },
       fontFamily: {
         sans: ["var(--font-sans)"],
+        heading: ["var(--font-heading)"],
         mono: ["var(--font-mono)"]
       },
       spacing: {

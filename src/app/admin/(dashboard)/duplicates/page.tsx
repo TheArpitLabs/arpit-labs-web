@@ -2,6 +2,26 @@ import { supabaseServer } from "@/lib/supabase/server";
 import { Database, ShieldCheck, AlertTriangle, CheckCircle, XCircle, GitMerge, Ban, Plus } from "lucide-react";
 import { AdminTable } from "@/components/admin/AdminTable";
 
+interface DuplicateCheck {
+  id: string;
+  is_duplicate: boolean;
+  duplicate_type: string;
+  confidence: number;
+  queue_item?: {
+    title?: string;
+    provider?: string;
+  };
+}
+
+interface QueueItem {
+  id: string;
+  title?: string;
+  provider?: string;
+  source_url?: string;
+  repository_url?: string;
+  status?: string;
+}
+
 export default async function AdminDuplicatesPage() {
   // Fetch duplicate checks
   const { data: duplicateChecks } = await supabaseServer
@@ -28,9 +48,9 @@ export default async function AdminDuplicatesPage() {
     .order("created_at", { ascending: false })
     .limit(20);
 
-  const duplicates = duplicateChecks?.filter((check: any) => check.is_duplicate) || [];
-  const potentialDuplicates = duplicateChecks?.filter((check: any) => check.duplicate_type === "potential") || [];
-  const exactDuplicates = duplicateChecks?.filter((check: any) => check.duplicate_type === "exact") || [];
+  const duplicates = duplicateChecks?.filter((check: DuplicateCheck) => check.is_duplicate) || [];
+  const potentialDuplicates = duplicateChecks?.filter((check: DuplicateCheck) => check.duplicate_type === "potential") || [];
+  const exactDuplicates = duplicateChecks?.filter((check: DuplicateCheck) => check.duplicate_type === "exact") || [];
 
   return (
     <div className="space-y-6">
@@ -72,7 +92,7 @@ export default async function AdminDuplicatesPage() {
                   </td>
                 </tr>
               ) : (
-                exactDuplicates.map((check: any) => (
+                exactDuplicates.map((check: DuplicateCheck) => (
                   <tr key={check.id}>
                     <td className="px-4 py-3 text-sm font-medium text-foreground">{check.queue_item?.title}</td>
                     <td className="px-4 py-3 text-sm capitalize text-muted">{check.queue_item?.provider}</td>

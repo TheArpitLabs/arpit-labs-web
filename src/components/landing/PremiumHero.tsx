@@ -11,10 +11,10 @@ interface PremiumHeroProps {
 }
 
 const techStack = [
-  { icon: Brain, name: "AI & ML", color: "from-purple-500 to-pink-500" },
-  { icon: Cpu, name: "IoT", color: "from-blue-500 to-cyan-500" },
-  { icon: Code2, name: "Software", color: "from-green-500 to-emerald-500" },
-  { icon: Globe, name: "Cloud", color: "from-orange-500 to-red-500" },
+  { icon: Brain, name: "AI & ML", color: "from-primary to-accent" },
+  { icon: Cpu, name: "IoT", color: "from-accent to-success" },
+  { icon: Code2, name: "Software", color: "from-primary to-secondary" },
+  { icon: Globe, name: "Cloud", color: "from-accent to-primary" },
 ];
 
 export function PremiumHero({ projectCount, experimentCount, totalViews }: PremiumHeroProps) {
@@ -42,11 +42,11 @@ export function PremiumHero({ projectCount, experimentCount, totalViews }: Premi
     <section className="relative min-h-screen overflow-hidden bg-gradient-to-b from-background via-background to-background/95">
       {/* Background gradients */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute left-0 top-0 h-[600px] w-[600px] rounded-full bg-primary/5 blur-3xl" />
-        <div className="absolute right-0 top-0 h-[500px] w-[500px] rounded-full bg-secondary/5 blur-3xl" />
-        <div className="absolute bottom-0 left-1/2 h-[400px] w-[400px] -translate-x-1/2 rounded-full bg-primary/5 blur-3xl" />
+        <div className="absolute left-0 top-0 h-[600px] w-[600px] rounded-full bg-primary/10 blur-3xl" />
+        <div className="absolute right-0 top-0 h-[500px] w-[500px] rounded-full bg-accent/10 blur-3xl" />
+        <div className="absolute bottom-0 left-1/2 h-[400px] w-[400px] -translate-x-1/2 rounded-full bg-primary/10 blur-3xl" />
         {/* Animated grid pattern */}
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(94,92,230,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(94,92,230,0.03)_1px,transparent_1px)] bg-[size:64px_64px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_50%,black,transparent)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(59,130,246,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(59,130,246,0.03)_1px,transparent_1px)] bg-[size:64px_64px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_50%,black,transparent)]" />
       </div>
 
       <div className="relative z-10 flex min-h-screen items-center px-4 py-20 sm:px-6 lg:px-8">
@@ -63,10 +63,10 @@ export function PremiumHero({ projectCount, experimentCount, totalViews }: Premi
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="inline-flex items-center gap-3 rounded-full border border-border/80 glass px-4 py-2 text-sm"
+              className="inline-flex items-center gap-3 rounded-full border border-border glass px-4 py-2 text-sm"
             >
               <Sparkles className="h-4 w-4 text-primary" />
-              <span className="font-semibold text-primary">Engineering Innovation Platform</span>
+              <span className="font-heading font-semibold text-primary">Engineering Discovery Platform</span>
               <span className="text-muted">Build, Learn & Grow</span>
             </motion.div>
 
@@ -77,7 +77,7 @@ export function PremiumHero({ projectCount, experimentCount, totalViews }: Premi
               transition={{ duration: 0.6, delay: 0.2 }}
               className="space-y-6"
             >
-              <h1 className="max-w-3xl bg-gradient-to-r from-foreground via-foreground to-muted bg-clip-text text-hero font-bold leading-tight tracking-tight">
+              <h1 className="max-w-3xl bg-gradient-to-r from-foreground via-foreground to-muted bg-clip-text text-hero font-heading font-bold leading-tight tracking-tight">
                 Build the Future of Engineering with Real-World Projects
               </h1>
               <p className="max-w-2xl text-lg text-muted sm:text-xl">
@@ -115,14 +115,14 @@ export function PremiumHero({ projectCount, experimentCount, totalViews }: Premi
             >
               <a
                 href="#featured-projects"
-                className="premium-button group inline-flex items-center justify-center"
+                className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-primary to-accent px-6 py-3 text-sm font-semibold text-white shadow-glow transition hover:shadow-glow-lg hover:opacity-90"
               >
                 Browse Projects
                 <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </a>
               <a
                 href="#about"
-                className="premium-button-secondary inline-flex items-center justify-center"
+                className="inline-flex items-center justify-center rounded-xl border border-border bg-surface px-6 py-3 text-sm font-semibold text-foreground transition hover:bg-surface-elevated hover:border-primary/50"
               >
                 Learn More
               </a>
@@ -169,15 +169,15 @@ export function PremiumHero({ projectCount, experimentCount, totalViews }: Premi
             className="relative hidden lg:block"
           >
             {/* Main Dashboard Card */}
-            <div className="relative rounded-3xl glass-heavy p-6 shadow-2xl">
+            <div className="relative rounded-3xl glass p-6 shadow-2xl">
               {/* Header */}
               <div className="mb-6 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary/10 to-secondary/10">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary/10 to-accent/10">
                     <NexusLogo className="h-6 w-6 text-primary" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-foreground">Dashboard</h3>
+                    <h3 className="font-heading font-semibold text-foreground">Dashboard</h3>
                     <p className="text-xs text-muted">Real-time analytics</p>
                   </div>
                 </div>
@@ -201,7 +201,7 @@ export function PremiumHero({ projectCount, experimentCount, totalViews }: Premi
                       <item.icon className="h-4 w-4 text-primary" />
                       <span className="text-xs font-semibold text-success">{item.change}</span>
                     </div>
-                    <p className="mt-2 text-2xl font-bold text-foreground">{item.value}</p>
+                    <p className="mt-2 text-2xl font-heading font-bold text-foreground">{item.value}</p>
                     <p className="text-xs text-muted">{item.label}</p>
                   </motion.div>
                 ))}
@@ -218,11 +218,11 @@ export function PremiumHero({ projectCount, experimentCount, totalViews }: Premi
                     className="flex items-center justify-between rounded-2xl glass p-4"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary/10 to-secondary/10">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary/10 to-accent/10">
                         <NexusLogo className="h-5 w-5 text-primary" />
                       </div>
                       <div>
-                        <p className="font-semibold text-foreground">{card.title}</p>
+                        <p className="font-heading font-semibold text-foreground">{card.title}</p>
                         <div className="flex items-center gap-3 text-xs text-muted">
                           <span className="flex items-center gap-1">
                             <Eye className="h-3 w-3" />
@@ -244,7 +244,7 @@ export function PremiumHero({ projectCount, experimentCount, totalViews }: Premi
 
               {/* Activity Feed */}
               <div className="rounded-2xl glass p-4">
-                <h4 className="mb-3 text-sm font-semibold text-foreground">Recent Activity</h4>
+                <h4 className="mb-3 text-sm font-heading font-semibold text-foreground">Recent Activity</h4>
                 <div className="space-y-3">
                   {activityItems.map((item, index) => (
                     <motion.div
@@ -270,7 +270,7 @@ export function PremiumHero({ projectCount, experimentCount, totalViews }: Premi
               className="absolute -right-4 top-20 rounded-2xl glass p-4 shadow-xl"
             >
               <TrendingUp className="h-6 w-6 text-primary" />
-              <p className="mt-2 text-sm font-semibold text-foreground">+24%</p>
+              <p className="mt-2 text-sm font-heading font-semibold text-foreground">+24%</p>
               <p className="text-xs text-muted">Growth</p>
             </motion.div>
 
@@ -279,8 +279,8 @@ export function PremiumHero({ projectCount, experimentCount, totalViews }: Premi
               transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
               className="absolute -left-4 bottom-20 rounded-2xl glass p-4 shadow-xl"
             >
-              <Clock className="h-6 w-6 text-secondary" />
-              <p className="mt-2 text-sm font-semibold text-foreground">24/7</p>
+              <Clock className="h-6 w-6 text-accent" />
+              <p className="mt-2 text-sm font-heading font-semibold text-foreground">24/7</p>
               <p className="text-xs text-muted">Available</p>
             </motion.div>
           </motion.div>

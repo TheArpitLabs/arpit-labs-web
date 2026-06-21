@@ -3,8 +3,10 @@
  * Implements caching, query optimization, and performance tracking for graph operations
  */
 
+type GraphData = Record<string, unknown> | unknown[];
+
 interface CacheEntry {
-  data: any;
+  data: GraphData;
   timestamp: number;
   ttl: number;
 }
@@ -13,7 +15,7 @@ class GraphCache {
   private cache: Map<string, CacheEntry> = new Map();
   private defaultTTL = 300000; // 5 minutes in milliseconds
 
-  set(key: string, data: any, ttl: number = this.defaultTTL): void {
+  set(key: string, data: GraphData, ttl: number = this.defaultTTL): void {
     this.cache.set(key, {
       data,
       timestamp: Date.now(),
@@ -21,7 +23,7 @@ class GraphCache {
     });
   }
 
-  get(key: string): any | null {
+  get(key: string): GraphData | null {
     const entry = this.cache.get(key);
     if (!entry) return null;
 
@@ -59,7 +61,7 @@ const graphCache = new GraphCache();
 /**
  * Generate cache key for graph operations
  */
-export function generateGraphCacheKey(operation: string, params: Record<string, any>): string {
+export function generateGraphCacheKey(operation: string, params: Record<string, unknown>): string {
   const paramString = Object.entries(params)
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([k, v]) => `${k}=${v}`)
@@ -70,14 +72,14 @@ export function generateGraphCacheKey(operation: string, params: Record<string, 
 /**
  * Get cached graph result
  */
-export function getCachedGraphResult(key: string): any | null {
+export function getCachedGraphResult(key: string): GraphData | null {
   return graphCache.get(key);
 }
 
 /**
  * Cache graph result
  */
-export function cacheGraphResult(key: string, data: any, ttl?: number): void {
+export function cacheGraphResult(key: string, data: GraphData, ttl?: number): void {
   graphCache.set(key, data, ttl);
 }
 
@@ -95,8 +97,8 @@ export function clearGraphCache(pattern?: string): void {
 /**
  * Optimize graph query parameters
  */
-export function optimizeGraphQuery(params: Record<string, any>): Record<string, any> {
-  const optimized: Record<string, any> = {};
+export function optimizeGraphQuery(params: Record<string, unknown>): Record<string, unknown> {
+  const optimized: Record<string, unknown> = {};
 
   // Sanitize string parameters
   Object.entries(params).forEach(([key, value]) => {
@@ -110,11 +112,11 @@ export function optimizeGraphQuery(params: Record<string, any>): Record<string, 
   });
 
   // Set reasonable limits
-  if (optimized.limit && optimized.limit > 100) {
+  if (typeof optimized.limit === 'number' && optimized.limit > 100) {
     optimized.limit = 100;
   }
 
-  if (optimized.maxDepth && optimized.maxDepth > 10) {
+  if (typeof optimized.maxDepth === 'number' && optimized.maxDepth > 10) {
     optimized.maxDepth = 10;
   }
 

@@ -60,7 +60,7 @@ export function ConsolidatedTestimonials() {
           className="mb-16 text-center"
         >
           <p className="mb-4 text-sm uppercase tracking-[0.28em] text-muted">Testimonials</p>
-          <h2 className="mb-6 text-section-title">
+          <h2 className="mb-6 font-heading text-section-title font-bold">
             Engineers Building Their Future Here
           </h2>
           <p className="mx-auto max-w-3xl text-lg text-muted">
@@ -80,7 +80,7 @@ export function ConsolidatedTestimonials() {
               whileHover={{ y: -8 }}
               className="relative overflow-hidden rounded-3xl glass p-8 transition-all duration-300 hover:shadow-2xl"
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5 opacity-0 transition-opacity duration-300 hover:opacity-100" />
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 opacity-0 transition-opacity duration-300 hover:opacity-100" />
               <div className="relative">
                 {/* Quote Icon */}
                 <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
@@ -101,13 +101,13 @@ export function ConsolidatedTestimonials() {
 
                 {/* Author */}
                 <div className="flex items-center gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-secondary/20">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-accent/20">
                     <span className="text-lg font-bold text-primary">
                       {testimonial.avatar}
                     </span>
                   </div>
                   <div>
-                    <p className="font-semibold text-foreground">{testimonial.name}</p>
+                    <p className="font-heading font-semibold text-foreground">{testimonial.name}</p>
                     <p className="text-sm text-muted">{testimonial.role}</p>
                   </div>
                 </div>
@@ -126,24 +126,24 @@ export function ConsolidatedTestimonials() {
         >
           <div className="grid gap-6 sm:grid-cols-3">
             <div className="rounded-3xl glass p-8 text-center">
-              <div className="text-4xl font-bold bg-gradient-to-r from-foreground to-muted bg-clip-text text-transparent">
+              <div className="text-4xl font-heading font-bold bg-gradient-to-r from-foreground to-muted bg-clip-text text-transparent">
                 95%
               </div>
-              <p className="mt-2 text-sm font-semibold text-foreground">Career Growth</p>
+              <p className="mt-2 text-sm font-heading font-semibold text-foreground">Career Growth</p>
               <p className="text-xs text-muted">Reported by users</p>
             </div>
             <div className="rounded-3xl glass p-8 text-center">
-              <div className="text-4xl font-bold bg-gradient-to-r from-foreground to-muted bg-clip-text text-transparent">
+              <div className="text-4xl font-heading font-bold bg-gradient-to-r from-foreground to-muted bg-clip-text text-transparent">
                 4.9/5
               </div>
-              <p className="mt-2 text-sm font-semibold text-foreground">Average Rating</p>
+              <p className="mt-2 text-sm font-heading font-semibold text-foreground">Average Rating</p>
               <p className="text-xs text-muted">Across all reviews</p>
             </div>
             <div className="rounded-3xl glass p-8 text-center">
-              <div className="text-4xl font-bold bg-gradient-to-r from-foreground to-muted bg-clip-text text-transparent">
+              <div className="text-4xl font-heading font-bold bg-gradient-to-r from-foreground to-muted bg-clip-text text-transparent">
                 89%
               </div>
-              <p className="mt-2 text-sm font-semibold text-foreground">Would Recommend</p>
+              <p className="mt-2 text-sm font-heading font-semibold text-foreground">Would Recommend</p>
               <p className="text-xs text-muted">To other engineers</p>
             </div>
           </div>

@@ -8,6 +8,7 @@ import { Queue, Worker, Job, QueueOptions } from 'bullmq';
 import { JobType, JobData, JobResult, QueueConfig, QueueHealth, RetryConfig, DeadLetterConfig } from './types';
 import { supabaseServer } from '@/lib/supabase/server';
 import { getAcquisitionProcessor } from '../acquisition-layer/acquisition-processor';
+import { logger } from '@/lib/logger';
 
 export class QueueManager {
   private queues: Map<string, Queue> = new Map();
@@ -113,7 +114,7 @@ export class QueueManager {
     );
 
     worker.on('completed', (job: Job, result: JobResult) => {
-      console.log(`Job ${job.id} in queue ${queueName} completed:`, result);
+      logger.debug(`Job ${job.id} in queue ${queueName} completed`, { result });
     });
 
     worker.on('failed', (job: Job | undefined, error: Error) => {
@@ -519,13 +520,13 @@ export class QueueManager {
     // Close all workers
     for (const [name, worker] of this.workers.entries()) {
       await worker.close();
-      console.log(`Worker ${name} closed`);
+      logger.debug(`Worker ${name} closed`);
     }
 
     // Close all queues
     for (const [name, queue] of this.queues.entries()) {
       await queue.close();
-      console.log(`Queue ${name} closed`);
+      logger.debug(`Queue ${name} closed`);
     }
   }
 }

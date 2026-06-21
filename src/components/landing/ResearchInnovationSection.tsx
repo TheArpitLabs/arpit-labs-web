@@ -9,32 +9,32 @@ const researchCategories = [
     name: "Artificial Intelligence",
     description: "Neural networks, deep learning, and AI systems research",
     icon: Microscope,
-    gradient: "from-purple-500/10 to-pink-500/10",
-    iconGradient: "from-purple-500 to-pink-500",
+    gradient: "from-primary/10 to-accent/10",
+    iconGradient: "from-primary to-accent",
     count: 8
   },
   {
     name: "IoT & Embedded Systems",
     description: "Connected devices, sensor networks, and edge computing",
     icon: Zap,
-    gradient: "from-blue-500/10 to-cyan-500/10",
-    iconGradient: "from-blue-500 to-cyan-500",
+    gradient: "from-accent/10 to-success/10",
+    iconGradient: "from-accent to-success",
     count: 7
   },
   {
     name: "Cybersecurity",
     description: "Security protocols, encryption, and network protection",
     icon: Target,
-    gradient: "from-red-500/10 to-rose-500/10",
-    iconGradient: "from-red-500 to-rose-500",
+    gradient: "from-error/10 to-warning/10",
+    iconGradient: "from-error to-warning",
     count: 6
   },
   {
     name: "Data Science",
     description: "Big data analytics, visualization, and statistical modeling",
     icon: TrendingUp,
-    gradient: "from-green-500/10 to-emerald-500/10",
-    iconGradient: "from-green-500 to-emerald-500",
+    gradient: "from-success/10 to-primary/10",
+    iconGradient: "from-success to-primary",
     count: 5
   }
 ];
@@ -110,7 +110,7 @@ export function ResearchInnovationSection() {
           className="mb-20"
         >
           <div className="mb-12">
-            <h3 className="text-2xl font-bold text-foreground">Research Categories</h3>
+            <h3 className="text-2xl font-heading font-bold text-foreground">Research Categories</h3>
             <p className="mt-2 text-muted">Explore research across key engineering domains</p>
           </div>
 
@@ -136,7 +136,7 @@ export function ResearchInnovationSection() {
                       <category.icon size={24} />
                     </motion.div>
                     
-                    <h4 className="mb-2 text-lg font-bold text-foreground group-hover:text-primary transition-colors">
+                    <h4 className="mb-2 text-lg font-heading font-bold text-foreground group-hover:text-primary transition-colors">
                       {category.name}
                     </h4>
                     

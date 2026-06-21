@@ -6,15 +6,15 @@ import { motion, HTMLMotionProps } from "framer-motion";
 
 export function Card({ className, variant = "default", ...props }: React.HTMLAttributes<HTMLDivElement> & { variant?: "default" | "glass" | "gradient" | "elevated" }) {
   const variants = {
-    default: "premium-card",
-    glass: "glass",
-    gradient: "premium-card gradient-border",
-    elevated: "premium-card shadow-lg"
+    default: "bg-card border border-border rounded-xl shadow-md hover:shadow-lg transition-all duration-200",
+    glass: "glass rounded-xl",
+    gradient: "bg-card border border-border rounded-xl gradient-border shadow-md hover:shadow-lg transition-all duration-200",
+    elevated: "bg-card border border-border rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
   };
 
   return (
     <motion.div
-      whileHover={{ y: -4, boxShadow: "var(--shadow-xl)" }}
+      whileHover={{ y: -4 }}
       transition={{ duration: 0.2 }}
       className={cn(variants[variant], className)}
       {...(props as HTMLMotionProps<"div">)}

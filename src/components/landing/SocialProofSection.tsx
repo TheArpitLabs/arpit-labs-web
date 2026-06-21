@@ -52,7 +52,7 @@ export function SocialProofSection() {
         >
           <div className="mb-12 text-center">
             <p className="mb-4 text-sm uppercase tracking-[0.28em] text-muted">Achievements</p>
-            <h2 className="mb-6 text-section-title">
+            <h2 className="mb-6 font-heading text-section-title font-bold">
               Building Systems That Matter
             </h2>
           </div>
@@ -68,15 +68,15 @@ export function SocialProofSection() {
                 whileHover={{ y: -8 }}
                 className="relative overflow-hidden rounded-3xl glass p-8 text-center transition-all duration-300 hover:shadow-2xl"
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5 opacity-0 transition-opacity duration-300 hover:opacity-100" />
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 opacity-0 transition-opacity duration-300 hover:opacity-100" />
                 <div className="relative">
-                  <div className="mx-auto mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/10 to-secondary/10 text-primary shadow-lg">
+                  <div className="mx-auto mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/10 to-accent/10 text-primary shadow-lg">
                     <achievement.icon size={32} />
                   </div>
-                  <div className="mb-2 text-5xl font-bold bg-gradient-to-r from-foreground to-muted bg-clip-text text-transparent">
+                  <div className="mb-2 text-5xl font-heading font-bold bg-gradient-to-r from-foreground to-muted bg-clip-text text-transparent">
                     {achievement.value}
                   </div>
-                  <p className="mb-1 text-lg font-semibold text-foreground">{achievement.label}</p>
+                  <p className="mb-1 text-lg font-heading font-semibold text-foreground">{achievement.label}</p>
                   <p className="text-sm text-muted">{achievement.description}</p>
                 </div>
               </motion.div>
@@ -94,7 +94,7 @@ export function SocialProofSection() {
         >
           <div className="mb-12 text-center">
             <p className="mb-4 text-sm uppercase tracking-[0.28em] text-muted">Community Love</p>
-            <h2 className="mb-6 text-section-title">
+            <h2 className="mb-6 font-heading text-section-title font-bold">
               Engineers Building Their Future Here
             </h2>
           </div>
@@ -110,7 +110,7 @@ export function SocialProofSection() {
                 whileHover={{ y: -8 }}
                 className="relative overflow-hidden rounded-3xl glass p-8 transition-all duration-300 hover:shadow-2xl"
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5 opacity-0 transition-opacity duration-300 hover:opacity-100" />
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 opacity-0 transition-opacity duration-300 hover:opacity-100" />
                 <div className="relative">
                   <div className="mb-4 flex items-center gap-1">
                     {[...Array(testimonial.rating)].map((_, i) => (
@@ -121,13 +121,13 @@ export function SocialProofSection() {
                     &ldquo;{testimonial.content}&rdquo;
                   </p>
                   <div className="flex items-center gap-4">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-secondary/20">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-accent/20">
                       <span className="text-lg font-bold text-primary">
                         {testimonial.name.charAt(0)}
                       </span>
                     </div>
                     <div>
-                      <p className="font-semibold text-foreground">{testimonial.name}</p>
+                      <p className="font-heading font-semibold text-foreground">{testimonial.name}</p>
                       <p className="text-sm text-muted">{testimonial.role}</p>
                     </div>
                   </div>
@@ -146,14 +146,14 @@ export function SocialProofSection() {
         >
           <div className="mb-12 text-center">
             <p className="mb-4 text-sm uppercase tracking-[0.28em] text-muted">Journey</p>
-            <h2 className="mb-6 text-section-title">
+            <h2 className="mb-6 font-heading text-section-title font-bold">
               Our Evolution
             </h2>
           </div>
 
           <div className="relative">
             {/* Timeline line */}
-            <div className="absolute left-1/2 top-0 h-full w-0.5 -translate-x-1/2 bg-gradient-to-b from-primary via-secondary to-primary opacity-20" />
+            <div className="absolute left-1/2 top-0 h-full w-0.5 -translate-x-1/2 bg-gradient-to-b from-primary via-accent to-primary opacity-20" />
 
             <div className="space-y-8">
               {milestones.map((milestone, index) => (
@@ -167,16 +167,16 @@ export function SocialProofSection() {
                 >
                   <div className={`w-5/12 ${index % 2 === 0 ? 'text-right pr-8' : 'text-left pl-8'}`}>
                     <div className="rounded-2xl glass p-6">
-                      <span className="mb-2 inline-block rounded-full bg-gradient-to-r from-primary/10 to-secondary/10 px-3 py-1 text-sm font-semibold text-primary">
+                      <span className="mb-2 inline-block rounded-full bg-gradient-to-r from-primary/10 to-accent/10 px-3 py-1 text-sm font-semibold text-primary">
                         {milestone.year}
                       </span>
-                      <h3 className="mb-2 text-xl font-bold text-foreground">{milestone.title}</h3>
+                      <h3 className="mb-2 text-xl font-heading font-bold text-foreground">{milestone.title}</h3>
                       <p className="text-muted">{milestone.description}</p>
                     </div>
                   </div>
                   
                   {/* Timeline dot */}
-                  <div className="absolute left-1/2 flex h-4 w-4 -translate-x-1/2 items-center justify-center rounded-full bg-gradient-to-r from-primary to-secondary shadow-lg">
+                  <div className="absolute left-1/2 flex h-4 w-4 -translate-x-1/2 items-center justify-center rounded-full bg-gradient-to-r from-primary to-accent shadow-lg">
                     <div className="h-2 w-2 rounded-full bg-background" />
                   </div>
                   

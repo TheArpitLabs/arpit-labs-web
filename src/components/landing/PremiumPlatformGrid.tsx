@@ -66,7 +66,7 @@ export function PremiumPlatformGrid() {
           className="mb-16 text-center"
         >
           <p className="mb-4 text-sm uppercase tracking-[0.28em] text-muted">Platform</p>
-          <h2 className="mb-6 text-section-title">
+          <h2 className="mb-6 font-heading text-section-title font-bold">
             Explore the Ecosystem
           </h2>
           <p className="mx-auto max-w-3xl text-lg text-muted">
@@ -97,7 +97,7 @@ export function PremiumPlatformGrid() {
                     <feature.icon size={32} />
                   </motion.div>
                   
-                  <h3 className="mb-4 text-2xl font-bold text-foreground group-hover:text-primary transition-colors">
+                  <h3 className="mb-4 text-2xl font-heading font-bold text-foreground group-hover:text-primary transition-colors">
                     {feature.title}
                   </h3>
                   

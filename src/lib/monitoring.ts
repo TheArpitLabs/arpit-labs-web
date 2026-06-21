@@ -3,6 +3,8 @@
  * Optional integration - requires NEXT_PUBLIC_SENTRY_DSN environment variable
  */
 
+import { logger } from '@/lib/logger';
+
 let Sentry: any = null;
 
 try {
@@ -48,7 +50,7 @@ export function captureMessage(message: string, level: string = 'info') {
   if (Sentry) {
     Sentry.captureMessage(message, level);
   } else {
-    console.log(`[${level.toUpperCase()}]`, message);
+    logger[level === 'error' ? 'error' : level === 'warn' ? 'warn' : 'info'](message);
   }
 }
 

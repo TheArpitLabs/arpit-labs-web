@@ -4,7 +4,7 @@ import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@supabase/supabase-js";
-import { clearAdminSessionCookies, requireAdmin, setAdminSessionCookies } from "@/lib/auth";
+import { clearAdminSessionCookies, hasAdminRole, requireAdmin, setAdminSessionCookies } from "@/lib/auth";
 import { uploadFileToBucket } from "@/lib/admin-storage";
 import { contactsRepository } from "@/lib/repositories/contacts.repository";
 import { experimentsRepository } from "@/lib/repositories/experiments.repository";
@@ -69,8 +69,12 @@ export async function adminSignIn(formData: FormData) {
     password 
   });
 
-  if (error || !data.session) {
+  if (error || !data.session || !data.user) {
     redirect("/admin/login?error=" + encodeURIComponent("Invalid credentials") as never);
+  }
+
+  if (!(await hasAdminRole(data.user))) {
+    redirect("/admin/login?error=" + encodeURIComponent("This account does not have admin access") as never);
   }
 
   await setAdminSessionCookies(data.session.access_token, data.session.refresh_token);

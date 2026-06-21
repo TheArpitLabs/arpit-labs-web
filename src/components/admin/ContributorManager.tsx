@@ -56,9 +56,17 @@ export function ContributorManager({ projectId, projectSlug, isOwner }: Contribu
 
     try {
       setAdding(true);
-      // In a real implementation, you'd need to look up the user_id from the email
-      // For now, this is a placeholder that shows the UI pattern
-      const userId = newContributorEmail; // This should be a real UUID lookup
+      // Look up the user_id from the email via API
+      const response = await fetch(`/api/admin/users?email=${encodeURIComponent(newContributorEmail)}`);
+      const { data } = await response.json();
+      
+      if (!data || data.length === 0) {
+        alert("User not found with this email");
+        setAdding(false);
+        return;
+      }
+      
+      const userId = data[0].id;
       
       await contributorsRepository.addContributor({
         project_id: projectId,

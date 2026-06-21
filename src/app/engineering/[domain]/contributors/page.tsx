@@ -10,7 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Users, Github, Trophy, Star, ArrowRight, MapPin, Link as LinkIcon, TrendingUp } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
@@ -42,8 +42,8 @@ interface Contributor {
   expertise_areas: string[];
 }
 
-export default async function DomainContributorsPage({ params }: { params: Promise<{ domain: string }> }) {
-  const resolvedParams = await params;
+export default function DomainContributorsPage({ params }: { params: Promise<{ domain: string }> }) {
+  const resolvedParams = use(params);
   const domainSlug = resolvedParams.domain;
 
   return (
@@ -276,6 +276,7 @@ function DomainContributorsPageContent({ domainSlug }: { domainSlug: string }) {
                       <div className="relative">
                         <div className="w-16 h-16 rounded-full bg-slate-700 overflow-hidden">
                           {contributor.avatar_url ? (
+                            // eslint-disable-next-line @next/next/no-img-element
                             <img src={contributor.avatar_url} alt={contributor.name} className="w-full h-full object-cover" />
                           ) : (
                             <Users className="w-8 h-8 text-slate-400 m-4" />
@@ -359,6 +360,7 @@ function DomainContributorsPageContent({ domainSlug }: { domainSlug: string }) {
                   <Card key={contributor.id} className="p-6 bg-slate-800/50 border-slate-700 hover:border-slate-500 transition-all text-center">
                     <div className="w-16 h-16 rounded-full bg-slate-700 mx-auto mb-4 overflow-hidden">
                       {contributor.avatar_url ? (
+                        // eslint-disable-next-line @next/next/no-img-element
                         <img src={contributor.avatar_url} alt={contributor.name} className="w-full h-full object-cover" />
                       ) : (
                         <Users className="w-8 h-8 text-slate-400 m-4" />

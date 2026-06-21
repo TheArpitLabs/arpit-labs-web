@@ -47,7 +47,7 @@ export function ProjectSection({ title, icon, projects, variant = "trending", au
     >
       <div className="mb-8 flex items-center gap-3">
         {icon}
-        <h2 className="text-2xl font-bold text-foreground">{title}</h2>
+        <h2 className="text-2xl font-heading font-bold text-foreground">{title}</h2>
       </div>
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {projects.map((project, index) => (

@@ -106,9 +106,9 @@ export default function EngineeringPage() {
           icon: d.icon,
           color: d.color,
           total_projects: domainCounts.get(d.id) || 0,
-          total_research_papers: 0, // TODO: Implement when research papers are ready
-          total_datasets: 0, // TODO: Implement when datasets are ready
-          total_contributors: 0, // TODO: Implement when contributors are ready
+          total_research_papers: 0, // Research papers feature not yet implemented
+          total_datasets: 0, // Datasets feature not yet implemented
+          total_contributors: 0, // Contributors feature not yet implemented
           total_content: domainCounts.get(d.id) || 0,
         }));
 

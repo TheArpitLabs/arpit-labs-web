@@ -13,6 +13,28 @@ import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import { Search, Filter, ShoppingBag, Package, TrendingUp, Clock, Sparkles, Star, ArrowRight, BookOpen, Layout, Zap, Layers, Code2, Database } from "lucide-react";
 
+interface MarketplaceCategory {
+  id: string;
+  name: string;
+  slug: string;
+}
+
+interface MarketplaceItem {
+  id: string;
+  title: string;
+  description: string;
+  slug: string;
+  price: number;
+  featured: boolean;
+  preview_image?: string;
+  sales_count: number;
+  rating?: number;
+  category?: {
+    name: string;
+    slug: string;
+  };
+  created_at: string;
+}
 
 export default function MarketplacePage({
   searchParams,
@@ -20,8 +42,8 @@ export default function MarketplacePage({
   searchParams: Promise<{ category?: string; q?: string }>;
 }) {
   const [resolvedSearchParams, setResolvedSearchParams] = React.useState<{ category?: string; q?: string; type?: string; sort?: string; price?: string }>({});
-  const [categories, setCategories] = React.useState<any[]>([]);
-  const [items, setItems] = React.useState<any[]>([]);
+  const [categories, setCategories] = React.useState<MarketplaceCategory[]>([]);
+  const [items, setItems] = React.useState<MarketplaceItem[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [sortBy, setSortBy] = React.useState("newest");
   const [priceFilter, setPriceFilter] = React.useState<string>("all");
@@ -36,7 +58,7 @@ export default function MarketplacePage({
 
   // Calculate dynamic counts for resource types
   const getResourceTypeCount = (slug: string) => {
-    return items.filter((item: any) => {
+    return items.filter((item: MarketplaceItem) => {
       const categoryName = item.category?.name?.toLowerCase() || "";
       if (slug === "learning") return categoryName.includes("learning") || categoryName.includes("course") || categoryName.includes("tutorial");
       if (slug === "templates") return categoryName.includes("template") || categoryName.includes("boilerplate");
@@ -68,7 +90,7 @@ export default function MarketplacePage({
   }, [searchParams]);
 
   const filteredItems = items
-    .filter((item: any) => {
+    .filter((item: MarketplaceItem) => {
       // Search filter
       if (resolvedSearchParams.q) {
         const searchLower = resolvedSearchParams.q.toLowerCase();
@@ -93,7 +115,7 @@ export default function MarketplacePage({
       
       return true;
     })
-    .sort((a: any, b: any) => {
+    .sort((a: MarketplaceItem, b: MarketplaceItem) => {
       // Sorting
       switch (sortBy) {
         case "price-low":
@@ -111,7 +133,7 @@ export default function MarketplacePage({
     });
 
   // Separate items into sections
-  const featuredItems = filteredItems.filter((item: any) => item.featured);
+  const featuredItems = filteredItems.filter((item: MarketplaceItem) => item.featured);
   const trendingItems = filteredItems.slice(0, 4);
   const recentlyAdded = [...filteredItems].reverse().slice(0, 4);
 
@@ -352,7 +374,7 @@ export default function MarketplacePage({
               <h2 className="text-2xl font-semibold text-foreground">Featured Products</h2>
             </div>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {featuredItems.map((item: any, index: number) => (
+              {featuredItems.map((item: MarketplaceItem, index: number) => (
                 <motion.div
                   key={item.id}
                   initial={{ opacity: 0, y: 20 }}
@@ -393,7 +415,7 @@ export default function MarketplacePage({
                           </span>
                           <div className="flex items-center gap-1">
                             <Star className="h-3.5 w-3.5 fill-yellow-500 text-yellow-500" />
-                            <span className="text-xs font-semibold">{(item as any).rating || '4.5'}</span>
+                            <span className="text-xs font-semibold">{item.rating || '4.5'}</span>
                           </div>
                         </div>
                         <h3 className="line-clamp-1 font-semibold text-foreground group-hover:text-primary transition-colors">{item.title}</h3>
@@ -430,7 +452,7 @@ export default function MarketplacePage({
               <h2 className="text-2xl font-semibold text-foreground">Popular Categories</h2>
             </div>
             <div className="flex flex-wrap gap-3">
-              {categories.slice(0, 8).map((cat: any, index: number) => (
+              {categories.slice(0, 8).map((cat: MarketplaceCategory, index: number) => (
                 <motion.div
                   key={cat.id}
                   initial={{ opacity: 0, scale: 0.9 }}
@@ -461,7 +483,7 @@ export default function MarketplacePage({
               <h2 className="text-2xl font-semibold text-foreground">Trending</h2>
             </div>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {trendingItems.map((item: any, index: number) => (
+              {trendingItems.map((item: MarketplaceItem, index: number) => (
                 <motion.div
                   key={item.id}
                   initial={{ opacity: 0, y: 20 }}
@@ -497,7 +519,7 @@ export default function MarketplacePage({
                           </span>
                           <div className="flex items-center gap-1">
                             <Star className="h-3.5 w-3.5 fill-yellow-500 text-yellow-500" />
-                            <span className="text-xs font-semibold">{(item as any).rating || '4.5'}</span>
+                            <span className="text-xs font-semibold">{item.rating || '4.5'}</span>
                           </div>
                         </div>
                         <h3 className="line-clamp-1 font-semibold text-foreground text-sm group-hover:text-primary transition-colors">{item.title}</h3>
@@ -531,7 +553,7 @@ export default function MarketplacePage({
               <h2 className="text-2xl font-semibold text-foreground">Recently Added</h2>
             </div>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {recentlyAdded.map((item: any, index: number) => (
+              {recentlyAdded.map((item: MarketplaceItem, index: number) => (
                 <motion.div
                   key={item.id}
                   initial={{ opacity: 0, y: 20 }}
@@ -567,7 +589,7 @@ export default function MarketplacePage({
                           </span>
                           <div className="flex items-center gap-1">
                             <Star className="h-3.5 w-3.5 fill-yellow-500 text-yellow-500" />
-                            <span className="text-xs font-semibold">{(item as any).rating || '4.5'}</span>
+                            <span className="text-xs font-semibold">{item.rating || '4.5'}</span>
                           </div>
                         </div>
                         <h3 className="line-clamp-1 font-semibold text-foreground text-sm group-hover:text-primary transition-colors">{item.title}</h3>
@@ -603,7 +625,7 @@ export default function MarketplacePage({
             </h2>
           </div>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {filteredItems.map((item: any, index: number) => (
+            {filteredItems.map((item: MarketplaceItem, index: number) => (
               <motion.div
                 key={item.id}
                 initial={{ opacity: 0, y: 20 }}
@@ -645,7 +667,7 @@ export default function MarketplacePage({
                         </span>
                         <div className="flex items-center gap-1">
                           <Star className="h-3.5 w-3.5 fill-yellow-500 text-yellow-500" />
-                          <span className="text-xs font-semibold">{(item as any).rating || '4.5'}</span>
+                          <span className="text-xs font-semibold">{item.rating || '4.5'}</span>
                         </div>
                       </div>
                       <h3 className="line-clamp-1 font-semibold text-foreground group-hover:text-primary transition-colors">{item.title}</h3>

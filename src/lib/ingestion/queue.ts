@@ -11,6 +11,7 @@
 
 import { Queue, Worker, Job, QueueOptions, WorkerOptions } from 'bullmq';
 import Redis from 'ioredis';
+import { logger } from '@/lib/logger';
 
 // ============================================================================
 // TYPES
@@ -163,7 +164,7 @@ export class IngestionQueueManager {
       this.config.concurrency.avgJobLatency
     );
 
-    console.log(`Starting worker with concurrency: ${optimalConcurrency}`);
+    logger.debug(`Starting worker with concurrency: ${optimalConcurrency}`);
 
     const workerOptions: WorkerOptions = {
       connection: this.config.connection,
@@ -194,7 +195,7 @@ export class IngestionQueueManager {
     );
 
     this.worker.on('completed', (job: Job) => {
-      console.log(`Job ${job.id} completed`);
+      logger.debug(`Job ${job.id} completed`);
     });
 
     this.worker.on('failed', (job: Job | undefined, error: Error) => {
@@ -217,7 +218,7 @@ export class IngestionQueueManager {
 
     await this.worker.close();
     this.worker = null;
-    console.log('Worker stopped');
+    logger.debug('Worker stopped');
   }
 
   /**
@@ -301,7 +302,7 @@ export class IngestionQueueManager {
     }
 
     const waitTime = Math.max(0, resetTime - Date.now());
-    console.log(`Rate limit hit. Pausing for ${waitTime}ms`);
+    logger.warn(`Rate limit hit. Pausing for ${waitTime}ms`);
 
     // Pause the queue temporarily
     await this.pause();

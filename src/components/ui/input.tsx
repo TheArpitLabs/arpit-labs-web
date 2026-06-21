@@ -53,7 +53,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             }}
             animate={{
               borderColor: isFocused ? "var(--primary)" : error ? "var(--error)" : "var(--border)",
-              boxShadow: isFocused ? "0 0 0 3px rgba(94, 92, 230, 0.1)" : "none"
+              boxShadow: isFocused ? "0 0 0 3px rgba(59, 130, 246, 0.1)" : "none"
             }}
             transition={{ duration: 0.2 }}
             {...props as any}

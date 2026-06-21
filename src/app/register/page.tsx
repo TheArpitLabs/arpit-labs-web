@@ -72,6 +72,8 @@ export default function RegisterPage() {
       return;
     }
 
+    const sessionResult = await response.json();
+
     try {
       await supabaseClient.from("profiles").insert({ id: data.user.id, email: data.user.email, full_name: fullName });
     } catch (err) {
@@ -79,7 +81,7 @@ export default function RegisterPage() {
     }
 
     setLoading(false);
-    router.push("/profile");
+    router.push(sessionResult.redirectTo || "/dashboard");
   };
 
   const passwordStrength = {
@@ -93,19 +95,19 @@ export default function RegisterPage() {
   const strengthScore = Object.values(passwordStrength).filter(Boolean).length;
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-950 to-slate-900">
+    <main className="min-h-screen bg-gradient-to-br from-slate-900 via-surface to-slate-900">
       <Navbar />
-      <div className="px-4 py-10 text-white sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-md rounded-[2.5rem] border border-purple-500/30 bg-purple-950/50 p-8 shadow-sm backdrop-blur-sm">
+      <div className="px-4 py-10 text-foreground sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-md rounded-[2.5rem] border border-border bg-surface p-8 shadow-sm backdrop-blur-sm">
         <div className="mb-8 space-y-3 text-center">
-          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-purple-400">Get Started</p>
-          <h1 className="text-3xl font-bold text-white">Create your account</h1>
-          <p className="text-sm text-gray-300">Join Arpit Labs to access research, projects, and community features.</p>
+          <p className="text-xs font-heading font-semibold uppercase tracking-[0.28em] text-primary">Get Started</p>
+          <h1 className="text-3xl font-heading font-bold text-foreground">Create your account</h1>
+          <p className="text-sm text-muted">Join Arpit Labs to access research, projects, and community features.</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="space-y-2">
-            <label htmlFor="fullName" className="text-sm font-medium text-white">Full name</label>
+            <label htmlFor="fullName" className="text-sm font-heading font-medium text-foreground">Full name</label>
             <input
               id="fullName"
               type="text"
@@ -113,12 +115,12 @@ export default function RegisterPage() {
               onChange={(e) => setFullName(e.target.value)}
               required
               placeholder="John Doe"
-              className="w-full rounded-2xl border border-purple-500/30 bg-purple-900/30 px-4 py-3 text-sm outline-none transition focus:border-purple-500 text-white placeholder:text-gray-500"
+              className="w-full rounded-2xl border border-border bg-surface-elevated px-4 py-3 text-sm outline-none transition focus:border-primary text-foreground placeholder:text-muted"
             />
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="email" className="text-sm font-medium text-white">Email</label>
+            <label htmlFor="email" className="text-sm font-heading font-medium text-foreground">Email</label>
             <input
               id="email"
               type="email"
@@ -126,12 +128,12 @@ export default function RegisterPage() {
               onChange={(e) => setEmail(e.target.value)}
               required
               placeholder="you@example.com"
-              className="w-full rounded-2xl border border-purple-500/30 bg-purple-900/30 px-4 py-3 text-sm outline-none transition focus:border-purple-500 text-white placeholder:text-gray-500"
+              className="w-full rounded-2xl border border-border bg-surface-elevated px-4 py-3 text-sm outline-none transition focus:border-primary text-foreground placeholder:text-muted"
             />
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="password" className="text-sm font-medium text-white">Password</label>
+            <label htmlFor="password" className="text-sm font-heading font-medium text-foreground">Password</label>
             <div className="relative">
               <input
                 id="password"
@@ -140,12 +142,12 @@ export default function RegisterPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 placeholder="••••••••"
-                className="w-full rounded-2xl border border-purple-500/30 bg-purple-900/30 px-4 py-3 pr-12 text-sm outline-none transition focus:border-purple-500 text-white placeholder:text-gray-500"
+                className="w-full rounded-2xl border border-border bg-surface-elevated px-4 py-3 pr-12 text-sm outline-none transition focus:border-primary text-foreground placeholder:text-muted"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 transition hover:text-white"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted transition hover:text-foreground"
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
@@ -188,7 +190,7 @@ export default function RegisterPage() {
 
           <button
             disabled={loading}
-            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-purple-500 to-purple-700 px-4 py-3 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-primary to-accent px-4 py-3 text-sm font-heading font-semibold text-foreground transition hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? (
               <>
@@ -202,9 +204,9 @@ export default function RegisterPage() {
         </form>
 
         <div className="mt-6 text-center">
-          <p className="text-sm text-gray-300">
+          <p className="text-sm text-muted">
             Already have an account?{" "}
-            <Link href="/login" className="font-medium text-purple-400 hover:text-purple-300 transition">
+            <Link href="/login" className="font-heading font-medium text-primary hover:text-accent transition">
               Sign in
             </Link>
           </p>

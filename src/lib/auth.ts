@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import { createClient } from "@supabase/supabase-js";
 import { supabaseServer } from "@/lib/supabase/server";
 import { adminAccessCookieName, adminRefreshCookieName, userAccessCookieName, userRefreshCookieName } from "@/lib/auth-constants";
+import { logger } from "@/lib/logger";
+import { getUserRole } from "./auth/admin";
 
 function createBrowserCompatibleSupabaseClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -47,14 +49,12 @@ async function clearSessionCookies(accessCookie: string, refreshCookie: string) 
 }
 
 export async function setUserSessionCookies(accessToken: string, refreshToken: string) {
-  console.log('[setUserSessionCookies] Setting cookies:', {
+  logger.debug('Setting user session cookies', {
     hasAccessToken: !!accessToken,
     hasRefreshToken: !!refreshToken,
-    accessCookieName: userAccessCookieName,
-    refreshCookieName: userRefreshCookieName,
   });
   await setSessionCookies(accessToken, refreshToken, userAccessCookieName, userRefreshCookieName);
-  console.log('[setUserSessionCookies] Cookies set successfully');
+  logger.debug('User session cookies set successfully');
 }
 
 export async function clearUserSessionCookies() {
@@ -62,23 +62,12 @@ export async function clearUserSessionCookies() {
 }
 
 export async function getUserSession() {
-  console.log('[getUserSession] === START ===');
   const cookieStore = await cookies();
   const accessToken = cookieStore.get(userAccessCookieName)?.value;
   const refreshToken = cookieStore.get(userRefreshCookieName)?.value;
 
-  console.log('[getUserSession] Cookies check:', {
-    hasAccessToken: !!accessToken,
-    accessTokenLength: accessToken?.length,
-    hasRefreshToken: !!refreshToken,
-    refreshTokenLength: refreshToken?.length,
-    accessCookieName: userAccessCookieName,
-    refreshCookieName: userRefreshCookieName,
-    allCookies: Array.from(cookieStore.getAll()).map(c => c.name),
-  });
-
   if (!accessToken || !refreshToken) {
-    console.log('[getUserSession] Missing tokens, returning null');
+    logger.debug('Missing user session tokens');
     return null;
   }
 
@@ -88,35 +77,20 @@ export async function getUserSession() {
     refresh_token: refreshToken,
   });
 
-  console.log('[getUserSession] setSession result:', {
-    hasSessionError: !!sessionError,
-    sessionErrorMessage: sessionError?.message,
-    hasSession: !!sessionData.session,
-    sessionUserId: sessionData.session?.user?.id,
-  });
-
   if (sessionError || !sessionData.session) {
-    console.log('[getUserSession] Session error or no session, returning null');
+    logger.warn('User session error or no session', { error: sessionError?.message });
     return null;
   }
 
   const currentAccessToken = sessionData.session.access_token;
   const { data: userData, error: userError } = await supabaseServer.auth.getUser(currentAccessToken);
 
-  console.log('[getUserSession] getUser result:', {
-    hasUserError: !!userError,
-    userErrorMessage: userError?.message,
-    hasUser: !!userData.user,
-    userId: userData.user?.id,
-    userEmail: userData.user?.email,
-  });
-
   if (userError || !userData.user) {
-    console.log('[getUserSession] User error or no user, returning null');
+    logger.warn('User error or no user', { error: userError?.message });
     return null;
   }
 
-  console.log('[getUserSession] === SUCCESS === Returning session with user:', userData.user.email);
+  logger.debug('User session retrieved successfully', { email: userData.user.email });
   return {
     accessToken: currentAccessToken,
     refreshToken: sessionData.session.refresh_token,
@@ -125,14 +99,7 @@ export async function getUserSession() {
 }
 
 export async function getCurrentUser() {
-  console.log('[getCurrentUser] === START ===');
   const session = await getUserSession();
-  console.log('[getCurrentUser] Result:', {
-    hasSession: !!session,
-    hasUser: !!session?.user,
-    userId: session?.user?.id,
-    userEmail: session?.user?.email,
-  });
   return session?.user ?? null;
 }
 
@@ -159,7 +126,20 @@ function isAdminEmail(email?: string | null) {
   return allowedEmails.includes(email.toLowerCase());
 }
 
-function hasAdminRole(user: { email?: string | null; app_metadata?: Record<string, unknown>; user_metadata?: Record<string, unknown> }) {
+export async function hasAdminRole(user: { id?: string; email?: string | null; app_metadata?: Record<string, unknown>; user_metadata?: Record<string, unknown> }) {
+  // Check profiles.role first (primary source of truth)
+  if (user.id) {
+    try {
+      const role = await getUserRole(user.id);
+      if (role === "admin") {
+        return true;
+      }
+    } catch (error) {
+      logger.warn("Failed to check user role from profiles", { userId: user.id, error });
+    }
+  }
+
+  // Fallback to app_metadata and user_metadata for backward compatibility
   const appRole = user.app_metadata?.role;
   const metadataRole = user.user_metadata?.role;
   return appRole === "admin" || metadataRole === "admin" || isAdminEmail(user.email);
@@ -269,7 +249,7 @@ export async function getAdminSession() {
   const currentAccessToken = sessionData.session.access_token;
   const { data: userData, error: userError } = await supabaseServer.auth.getUser(currentAccessToken);
 
-  if (userError || !userData.user || !hasAdminRole(userData.user)) {
+  if (userError || !userData.user || !(await hasAdminRole(userData.user))) {
     return null;
   }
 
@@ -291,7 +271,7 @@ export async function getAdminUserFromRequest(request: Request) {
 
   const { data: userData, error: userError } = await supabaseServer.auth.getUser(token);
 
-  if (userError || !userData.user || !hasAdminRole(userData.user)) {
+  if (userError || !userData.user || !(await hasAdminRole(userData.user))) {
     return null;
   }
 

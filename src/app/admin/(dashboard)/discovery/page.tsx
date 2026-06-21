@@ -1,5 +1,7 @@
-import { Globe, Search, CheckCircle, Clock, XCircle, AlertCircle, PlayCircle } from "lucide-react";
+import { Globe, Search, CheckCircle, Clock, XCircle, AlertCircle, PlayCircle, Database, TrendingUp, Star, Shield } from "lucide-react";
+import { headers } from "next/headers";
 import { Suspense } from "react";
+import { ProjectDiscoveryEngine } from "@/components/admin/ProjectDiscoveryEngine";
 
 export default function DiscoveryAdminPage() {
   return (
@@ -10,6 +12,15 @@ export default function DiscoveryAdminPage() {
           <h1 className="text-4xl font-bold text-foreground">Autonomous Discovery</h1>
         </div>
         <p className="text-muted">Automated knowledge discovery from GitHub, GitLab, arXiv, Kaggle, HuggingFace, Devpost, Hack2Skill, Unstop</p>
+      </div>
+
+      {/* Project Discovery Engine */}
+      <div className="mb-8">
+        <div className="flex items-center gap-3 mb-4">
+          <Database size={28} className="text-primary" />
+          <h2 className="text-2xl font-bold text-foreground">Project Discovery Engine</h2>
+        </div>
+        <ProjectDiscoveryEngine />
       </div>
 
       <Suspense fallback={<DiscoveryDashboardLoading />}>
@@ -28,11 +39,12 @@ function DiscoveryDashboardLoading() {
 }
 
 async function DiscoveryDashboard() {
-  const [statistics, pipelineStats, sources, discoveredItems] = await Promise.all([
+  const [statistics, pipelineStats, sources, discoveredItems, qualityStats] = await Promise.all([
     fetchDiscoveryStatistics(),
     fetchPipelineStatistics(),
     fetchDiscoverySources(),
     fetchDiscoveredItems("discovered"),
+    fetchQualityStatistics(),
   ]);
 
   return (
@@ -59,6 +71,53 @@ async function DiscoveryDashboard() {
           value={statistics[0]?.total_rejected || 0}
           icon={<XCircle size={20} />}
         />
+      </div>
+
+      {/* Quality Cards */}
+      <div className="rounded-[1.5rem] border border-border/70 bg-card/90 p-6 shadow-sm dark:border-slate-800 dark:bg-slate-950/90">
+        <div className="flex items-center gap-3 mb-4">
+          <Shield size={20} className="text-primary" />
+          <h2 className="text-xl font-semibold text-foreground">Repository Quality</h2>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
+          <QualityCard
+            title="Excellent"
+            value={qualityStats.excellent || 0}
+            color="green"
+            icon={<Star size={20} />}
+          />
+          <QualityCard
+            title="High Quality"
+            value={qualityStats.high_quality || 0}
+            color="blue"
+            icon={<Star size={20} />}
+          />
+          <QualityCard
+            title="Good"
+            value={qualityStats.good || 0}
+            color="yellow"
+            icon={<Star size={20} />}
+          />
+          <QualityCard
+            title="Average"
+            value={qualityStats.average || 0}
+            color="orange"
+            icon={<Star size={20} />}
+          />
+          <QualityCard
+            title="Rejected"
+            value={qualityStats.rejected || 0}
+            color="red"
+            icon={<XCircle size={20} />}
+          />
+          <QualityCard
+            title="Avg Score"
+            value={qualityStats.average_score || 0}
+            color="purple"
+            icon={<TrendingUp size={20} />}
+            isScore
+          />
+        </div>
       </div>
 
       {/* Discovery Sources */}
@@ -92,27 +151,90 @@ async function DiscoveryDashboard() {
 }
 
 async function fetchDiscoveryStatistics() {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/discovery?action=statistics`);
+  const response = await fetch(`${await getAppOrigin()}/api/discovery?action=statistics`, { cache: "no-store" });
   const data = await response.json();
   return data.result || [];
 }
 
 async function fetchPipelineStatistics() {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/discovery?action=pipeline-stats`);
-  const data = await response.json();
-  return data.result || [];
+  try {
+    const response = await fetch(`${await getAppOrigin()}/api/discovery?action=pipeline-stats`, { cache: "no-store" });
+    const data = await response.json();
+    
+    console.log('Pipeline stats API response:', {
+      success: data.success,
+      result: data.result,
+      isArray: Array.isArray(data.result),
+      error: data.error
+    });
+    
+    // Defensive validation: ensure we always return an array
+    const result = data.result;
+    if (Array.isArray(result)) {
+      return result;
+    }
+    
+    // Handle nested pipelines structure
+    if (result && typeof result === 'object' && Array.isArray(result.pipelines)) {
+      return result.pipelines;
+    }
+    
+    // Handle null, undefined, or invalid responses
+    console.warn('Pipeline stats returned non-array value:', result);
+    return [];
+  } catch (error) {
+    console.error('Failed to fetch pipeline statistics:', error);
+    return [];
+  }
 }
 
 async function fetchDiscoverySources() {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/discovery?action=sources`);
-  const data = await response.json();
-  return data.result || [];
+  try {
+    const response = await fetch(`${await getAppOrigin()}/api/discovery?action=sources`, { cache: "no-store" });
+    const data = await response.json();
+    const result = data.result;
+    return Array.isArray(result) ? result : [];
+  } catch (error) {
+    console.error('Failed to fetch discovery sources:', error);
+    return [];
+  }
 }
 
 async function fetchDiscoveredItems(status: string) {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/discovery?action=items&status=${status}`);
-  const data = await response.json();
-  return data.result || [];
+  try {
+    const response = await fetch(`${await getAppOrigin()}/api/discovery?action=items&status=${status}`, { cache: "no-store" });
+    const data = await response.json();
+    const result = data.result;
+    return Array.isArray(result) ? result : [];
+  } catch (error) {
+    console.error('Failed to fetch discovered items:', error);
+    return [];
+  }
+}
+
+async function fetchQualityStatistics() {
+  try {
+    const response = await fetch(`${await getAppOrigin()}/api/admin/discovery/quality`, { cache: "no-store" });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Failed to fetch quality statistics:', error);
+    return {
+      average_score: 0,
+      excellent: 0,
+      high_quality: 0,
+      good: 0,
+      average: 0,
+      rejected: 0,
+    };
+  }
+}
+
+async function getAppOrigin() {
+  const headerStore = await headers();
+  const host = headerStore.get("x-forwarded-host") || headerStore.get("host") || "localhost:3000";
+  const protocol = headerStore.get("x-forwarded-proto") || (host.includes("localhost") ? "http" : "https");
+  return `${protocol}://${host}`;
 }
 
 function SummaryCard({ title, value, icon }: { title: string; value: number; icon: React.ReactNode }) {
@@ -127,10 +249,41 @@ function SummaryCard({ title, value, icon }: { title: string; value: number; ico
   );
 }
 
+function QualityCard({ title, value, color, icon, isScore }: { title: string; value: number; color: string; icon: React.ReactNode; isScore?: boolean }) {
+  const colorClasses: Record<string, string> = {
+    green: "text-green-500",
+    blue: "text-blue-500",
+    yellow: "text-yellow-500",
+    orange: "text-orange-500",
+    red: "text-red-500",
+    purple: "text-purple-500",
+  };
+
+  return (
+    <div className="rounded-lg border border-border/70 bg-muted/30 p-4 hover:border-primary/50 hover:bg-muted/50 dark:border-slate-800 dark:hover:bg-slate-800">
+      <div className="flex items-center gap-2 mb-2">
+        <div className={colorClasses[color]}>{icon}</div>
+        <h3 className="text-xs font-medium text-muted">{title}</h3>
+      </div>
+      <div className="text-xl font-bold text-foreground">{isScore ? value.toFixed(1) : value}</div>
+    </div>
+  );
+}
+
 function SourcesList({ sources }: { sources: any[] }) {
+  const safeSources = Array.isArray(sources) ? sources : [];
+  
+  if (safeSources.length === 0) {
+    return (
+      <div className="text-center py-8 text-muted">
+        No discovery sources available
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-2">
-      {sources.map((source) => (
+      {safeSources.map((source) => (
         <div
           key={source.id}
           className="flex items-center justify-between rounded-lg border border-border/70 bg-muted/30 p-4 hover:border-primary/50 hover:bg-muted/50 dark:border-slate-800 dark:hover:bg-slate-800"
@@ -156,9 +309,20 @@ function SourcesList({ sources }: { sources: any[] }) {
 }
 
 function PipelineStatsList({ pipelines }: { pipelines: any[] }) {
+  // Defensive validation: ensure pipelines is always an array
+  const safePipelines = Array.isArray(pipelines) ? pipelines : [];
+  
+  if (safePipelines.length === 0) {
+    return (
+      <div className="text-center py-8 text-muted">
+        No pipeline statistics available
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-2">
-      {pipelines.map((pipeline) => (
+      {safePipelines.map((pipeline) => (
         <div
           key={`${pipeline.source}-${pipeline.pipeline}`}
           className="flex items-center justify-between rounded-lg border border-border/70 bg-muted/30 p-4 hover:border-primary/50 hover:bg-muted/50 dark:border-slate-800 dark:hover:bg-slate-800"
@@ -192,7 +356,9 @@ function PipelineStatsList({ pipelines }: { pipelines: any[] }) {
 }
 
 function DiscoveryItemsList({ items }: { items: any[] }) {
-  if (items.length === 0) {
+  const safeItems = Array.isArray(items) ? items : [];
+  
+  if (safeItems.length === 0) {
     return (
       <div className="text-center py-8 text-muted">
         No discovered items found
@@ -202,7 +368,7 @@ function DiscoveryItemsList({ items }: { items: any[] }) {
 
   return (
     <div className="space-y-2">
-      {items.map((item) => (
+      {safeItems.map((item) => (
         <div
           key={item.id}
           className="flex items-center justify-between rounded-lg border border-border/70 bg-muted/30 p-4 hover:border-primary/50 hover:bg-muted/50 dark:border-slate-800 dark:hover:bg-slate-800"

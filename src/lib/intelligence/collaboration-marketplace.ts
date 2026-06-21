@@ -1,6 +1,82 @@
 import { supabaseServer } from "@/lib/supabase/server";
 import { assertKnowledgeFeature } from "../knowledge-ecosystem/feature-flags";
 
+interface DatabaseOpportunityRecord {
+  id: string;
+  type: string;
+  title: string;
+  description: string;
+  creator_id: string;
+  creator_name: string;
+  requirements: Record<string, unknown>;
+  project_idea?: string;
+  team_size?: number;
+  roles?: string[];
+  timeline?: string;
+  expertise?: string[];
+  mentorship_type?: string;
+  duration?: string;
+  commitment?: string;
+  research_area?: string;
+  paper_title?: string;
+  collaboration_type?: string;
+  institution?: string;
+  startup_stage?: string;
+  equity?: string;
+  compensation?: string;
+  hackathon_name?: string;
+  hackathon_date?: string;
+  team_role?: string;
+  skills_needed?: string[];
+  status: string;
+  match_score: number;
+  applicants: string[];
+  created_at: string;
+  updated_at: string;
+}
+
+interface DatabaseApplicationRecord {
+  id: string;
+  opportunity_id: string;
+  applicant_id: string;
+  applicant_name: string;
+  message: string;
+  status: string;
+  created_at: string;
+}
+
+interface Application {
+  id: string;
+  opportunityId: string;
+  applicantId: string;
+  applicantName: string;
+  message: string;
+  status: string;
+  createdAt: string;
+}
+
+interface TypeSpecificFields {
+  projectIdea?: string;
+  teamSize?: number;
+  roles?: string[];
+  timeline?: string;
+  expertise?: string[];
+  mentorshipType?: string;
+  duration?: string;
+  commitment?: string;
+  researchArea?: string;
+  paperTitle?: string;
+  collaborationType?: string;
+  institution?: string;
+  startupStage?: string;
+  equity?: string;
+  compensation?: string;
+  hackathonName?: string;
+  hackathonDate?: string;
+  teamRole?: string;
+  skillsNeeded?: string[];
+}
+
 export interface CollaborationOpportunity {
   id: string;
   type: "team_formation" | "mentor_discovery" | "research_collaboration" | "startup_collaboration" | "hackathon_collaboration";
@@ -318,7 +394,7 @@ export class CollaborationMarketplaceEngine {
   /**
    * Get type-specific fields
    */
-  private getTypeSpecificFields(data: any): any {
+  private getTypeSpecificFields(data: DatabaseOpportunityRecord): TypeSpecificFields {
     switch (data.type) {
       case "team_formation":
         return {
@@ -381,15 +457,15 @@ export class CollaborationMarketplaceEngine {
 
     if (!data) return [];
 
-    return data.map((d: any) => ({
+    return data.map((d: DatabaseOpportunityRecord): CollaborationOpportunity => ({
       id: d.id,
-      type: d.type,
+      type: d.type as CollaborationOpportunity['type'],
       title: d.title,
       description: d.description,
       creatorId: d.creator_id,
       creatorName: d.creator_name,
-      requirements: d.requirements || {},
-      status: d.status,
+      requirements: d.requirements as { skills: string[]; experience: string; availability: string; location?: string },
+      status: d.status as CollaborationOpportunity['status'],
       matchScore: d.match_score || 0,
       applicants: d.applicants || [],
       createdAt: d.created_at,
@@ -431,7 +507,7 @@ export class CollaborationMarketplaceEngine {
   /**
    * Get applications for opportunity
    */
-  async getOpportunityApplications(opportunityId: string): Promise<any[]> {
+  async getOpportunityApplications(opportunityId: string): Promise<Application[]> {
     const { data } = await supabaseServer
       .from("collaboration_applications")
       .select("*")
@@ -440,7 +516,7 @@ export class CollaborationMarketplaceEngine {
 
     if (!data) return [];
 
-    return data.map((d: any) => ({
+    return data.map((d: DatabaseApplicationRecord): Application => ({
       id: d.id,
       opportunityId: d.opportunity_id,
       applicantId: d.applicant_id,
@@ -517,15 +593,15 @@ export class CollaborationMarketplaceEngine {
 
     if (!data) return [];
 
-    return data.map((d: any) => ({
+    return data.map((d: DatabaseOpportunityRecord): CollaborationOpportunity => ({
       id: d.id,
-      type: d.type,
+      type: d.type as CollaborationOpportunity['type'],
       title: d.title,
       description: d.description,
       creatorId: d.creator_id,
       creatorName: d.creator_name,
-      requirements: d.requirements || {},
-      status: d.status,
+      requirements: d.requirements as { skills: string[]; experience: string; availability: string; location?: string },
+      status: d.status as CollaborationOpportunity['status'],
       matchScore: d.match_score || 0,
       applicants: d.applicants || [],
       createdAt: d.created_at,
@@ -545,7 +621,7 @@ export class CollaborationMarketplaceEngine {
 
     if (!data) return [];
 
-    const opportunityIds = data.map((d: any) => d.opportunity_id);
+    const opportunityIds = data.map((d: { opportunity_id: string }) => d.opportunity_id);
 
     const opportunities: CollaborationOpportunity[] = [];
     for (const id of opportunityIds) {

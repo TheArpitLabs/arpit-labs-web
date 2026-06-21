@@ -10,6 +10,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "test:discovery": "tsx scripts/tests/github-discovery-engine.test.ts",
     "bulk-ingest": "npx tsx scripts/bulk-ingest.ts"
   },
   "dependencies": {
@@ -17,6 +18,7 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@hookform/resolvers": "^5.4.0",
+    "@octokit/rest": "^22.0.1",
     "@supabase/supabase-js": "^2.106.2",
     "@tiptap/extension-code-block-lowlight": "^2.11.5",
     "@tiptap/extension-image": "^2.11.5",
@@ -59,6 +61,7 @@
     "eslint-config-next": "^15.2.0",
     "postcss": "^8.4.35",
     "tailwindcss": "^3.4.4",
+    "tsx": "^4.22.4",
     "typescript": "^5.6.0"
   }
 }

@@ -2,6 +2,30 @@ import { supabaseServer } from "@/lib/supabase/server";
 import { assertKnowledgeFeature } from "./feature-flags";
 import { jaccardSimilarity, tokenize } from "./text";
 
+interface Project {
+  id: string;
+  title: string;
+  slug: string;
+  description?: string;
+  domain?: string;
+  difficulty?: string;
+  tech_stack?: string[];
+  author?: string;
+  stars?: number;
+  created_at?: string;
+}
+
+interface EmbeddingResult {
+  id: string;
+  content_id: string;
+  content_type: string;
+  similarity?: number;
+}
+
+interface SearchHistory {
+  query: string;
+}
+
 export interface SearchOptions {
   query: string;
   limit?: number;
@@ -40,7 +64,7 @@ export interface SearchResult {
     technology?: string[];
     author?: string;
     organization?: string;
-    [key: string]: any;
+    [key: string]: unknown;
   };
   highlights?: {
     title?: string;
@@ -183,18 +207,20 @@ async function vectorSearch(
     }
 
     // Fetch full entity data
-    const entityIds = embeddings.map((e: any) => e.content_id).filter(Boolean);
+    const entityIds = embeddings.map((e: EmbeddingResult) => e.content_id).filter(Boolean);
     const { data: projects } = await supabaseServer
       .from("projects")
       .select("id,title,slug,description,domain,difficulty,tech_stack,author,stars")
       .in("id", entityIds);
 
-    const projectMap = new Map((projects || []).map((p: any) => [p.id, p]));
+    const projectMap = new Map((projects || []).map((p: Project) => [p.id, p]));
 
     const results: SearchResult[] = embeddings
-      .filter((e: any) => e.content_type === "project" && projectMap.has(e.content_id))
-      .map((e: any) => {
+      .filter((e: EmbeddingResult) => e.content_type === "project" && projectMap.has(e.content_id))
+      .map((e: EmbeddingResult) => {
         const project = projectMap.get(e.content_id);
+        if (!project) return null;
+        
         const similarity = e.similarity || 0;
         return {
           id: e.id,
@@ -205,7 +231,7 @@ async function vectorSearch(
           url: `/projects/${project.slug}`,
           score: similarity,
           relevanceScore: similarity,
-          popularityScore: Math.min(project.stars / 1000, 1),
+          popularityScore: Math.min((project.stars || 0) / 1000, 1),
           qualityScore: 0.5,
           metadata: {
             domain: project.domain ? [project.domain] : [],
@@ -214,7 +240,7 @@ async function vectorSearch(
             author: project.author,
           },
         };
-      });
+      }).filter((r: SearchResult | null): r is SearchResult => r !== null);
 
     return results;
   } catch (error) {
@@ -239,7 +265,7 @@ async function fullTextSearch(
       .textSearch("title", query)
       .limit(limit * 2);
 
-    const results: SearchResult[] = (projects || []).map((project: any) => ({
+    const results: SearchResult[] = (projects || []).map((project: Project) => ({
       id: project.id,
       entityType: "project",
       entityId: project.id,
@@ -248,7 +274,7 @@ async function fullTextSearch(
       url: `/projects/${project.slug}`,
       score: 0.7,
       relevanceScore: 0.7,
-      popularityScore: Math.min(project.stars / 1000, 1),
+      popularityScore: Math.min((project.stars || 0) / 1000, 1),
       qualityScore: 0.5,
       metadata: {
         domain: project.domain ? [project.domain] : [],
@@ -522,7 +548,7 @@ export async function getSearchSuggestions(query: string, limit: number = 5): Pr
     .ilike("title", `%${query}%`)
     .limit(limit);
 
-  const suggestions = (projects || []).map((p: any) => p.title);
+  const suggestions = (projects || []).map((p: { title: string }) => p.title);
 
   // Add common search terms
   const commonTerms = [
@@ -555,7 +581,7 @@ export async function getRecentSearches(userId: string, limit: number = 10): Pro
       .order("created_at", { ascending: false })
       .limit(limit);
 
-    return (data || []).map((s: any) => s.query);
+    return (data || []).map((s: SearchHistory) => s.query);
   } catch (error) {
     console.error("Failed to get recent searches:", error);
     return [];

@@ -3,8 +3,10 @@
  * Implements caching, pagination, and query optimization for search
  */
 
+type SearchResult = Record<string, unknown>;
+
 interface CacheEntry {
-  results: any[];
+  results: SearchResult[];
   timestamp: number;
   ttl: number;
 }
@@ -13,7 +15,7 @@ class SearchCache {
   private cache: Map<string, CacheEntry> = new Map();
   private defaultTTL = 5 * 60 * 1000; // 5 minutes
 
-  set(key: string, results: any[], ttl: number = this.defaultTTL): void {
+  set(key: string, results: SearchResult[], ttl: number = this.defaultTTL): void {
     this.cache.set(key, {
       results,
       timestamp: Date.now(),
@@ -21,7 +23,7 @@ class SearchCache {
     });
   }
 
-  get(key: string): any[] | null {
+  get(key: string): SearchResult[] | null {
     const entry = this.cache.get(key);
     if (!entry) return null;
 
@@ -52,7 +54,7 @@ const searchCache = new SearchCache();
 /**
  * Generate cache key from search options
  */
-export function generateCacheKey(query: string, mode: string, filters: any): string {
+export function generateCacheKey(query: string, mode: string, filters: Record<string, unknown>): string {
   const filtersStr = JSON.stringify(filters);
   return `${mode}:${query}:${filtersStr}`;
 }
@@ -60,14 +62,14 @@ export function generateCacheKey(query: string, mode: string, filters: any): str
 /**
  * Get cached search results
  */
-export function getCachedSearch(key: string): any[] | null {
+export function getCachedSearch(key: string): SearchResult[] | null {
   return searchCache.get(key);
 }
 
 /**
  * Cache search results
  */
-export function cacheSearch(key: string, results: any[], ttl?: number): void {
+export function cacheSearch(key: string, results: SearchResult[], ttl?: number): void {
   searchCache.set(key, results, ttl);
 }
 

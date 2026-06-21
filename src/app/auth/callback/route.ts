@@ -1,26 +1,33 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import { setUserSessionCookies } from "@/lib/auth";
+import { hasAdminRole, setAdminSessionCookies, setUserSessionCookies } from "@/lib/auth";
+import { logger } from "@/lib/logger";
 
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get("code");
   const provider = requestUrl.searchParams.get("provider") || "unknown";
 
-  console.log(`[OAuth Callback] Received callback for provider: ${provider}`);
+  logger.debug(`OAuth callback received for provider: ${provider}`);
 
   if (code) {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
     
     if (!supabaseUrl || !supabaseServiceKey) {
-      console.error(`[OAuth Callback] Missing Supabase environment variables`);
+      logger.error('Missing Supabase environment variables');
       return NextResponse.redirect(`${requestUrl.origin}/login?error=config_error`);
     }
     
     const supabase = createClient(supabaseUrl, supabaseServiceKey, {
       auth: {
-        persistSession: false
+        persistSession: false,
+        autoRefreshToken: false
+      },
+      global: {
+        headers: {
+          Authorization: `Bearer ${supabaseServiceKey}`
+        }
       }
     });
     
@@ -28,64 +35,78 @@ export async function GET(request: NextRequest) {
       const { data, error } = await supabase.auth.exchangeCodeForSession(code);
       
       if (error) {
-        console.error(`[OAuth Callback] Error exchanging code for session:`, error);
+        logger.error('Error exchanging code for session', { error });
         return NextResponse.redirect(`${requestUrl.origin}/login?error=oauth_failed`);
       }
 
-      console.log(`[OAuth Success] Session created for user: ${data.user?.id}`);
+      logger.debug(`Session created for user: ${data.user?.id}`);
       
       // Set session cookies
       if (data.session) {
         await setUserSessionCookies(data.session.access_token, data.session.refresh_token);
-        console.log(`[OAuth Success] Session cookies set`);
+        if (data.user && await hasAdminRole(data.user)) {
+          await setAdminSessionCookies(data.session.access_token, data.session.refresh_token);
+        }
+        logger.debug('Session cookies set');
       }
 
       // Create profile if it doesn't exist
       if (data.user) {
-        const { data: existingProfile } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("id", data.user.id)
-          .single();
-
-        if (!existingProfile) {
-          console.log(`[Profile Created] Creating profile for user: ${data.user.id}`);
-          
-          const fullName = data.user.user_metadata?.full_name || 
-                          data.user.user_metadata?.name || 
-                          data.user.email?.split("@")[0];
-          
-          const avatarUrl = data.user.user_metadata?.avatar_url || 
-                           data.user.user_metadata?.picture;
-
-          const { error: profileError } = await supabase
+        try {
+          const { data: existingProfile, error: selectError } = await supabase
             .from("profiles")
-            .insert({
-              id: data.user.id,
-              email: data.user.email || "",
-              full_name: fullName,
-              avatar_url: avatarUrl || null,
-            });
+            .select("*")
+            .eq("id", data.user.id)
+            .single();
 
-          if (profileError) {
-            console.error(`[Profile Created] Error creating profile:`, profileError);
-          } else {
-            console.log(`[Profile Created] Profile created successfully`);
+          if (selectError && selectError.code !== 'PGRST116') {
+            logger.error('Error checking profile', { error: selectError });
           }
-        } else {
-          console.log(`[Profile Created] Profile already exists, skipping creation`);
+
+          if (!existingProfile) {
+            logger.debug(`Creating profile for user: ${data.user.id}`);
+            
+            const fullName = data.user.user_metadata?.full_name || 
+                            data.user.user_metadata?.name || 
+                            data.user.email?.split("@")[0];
+            
+            const avatarUrl = data.user.user_metadata?.avatar_url || 
+                             data.user.user_metadata?.picture;
+
+            const { error: profileError } = await supabase
+              .from("profiles")
+              .insert({
+                id: data.user.id,
+                email: data.user.email || "",
+                full_name: fullName,
+                avatar_url: avatarUrl || null,
+              });
+
+            if (profileError) {
+              logger.error('Error creating profile', { error: profileError });
+              // Don't fail the entire flow if profile creation fails
+            } else {
+              logger.debug('Profile created successfully');
+            }
+          } else {
+            logger.debug('Profile already exists, skipping creation');
+          }
+        } catch (profileError) {
+          logger.error('Unexpected error during profile creation', { error: profileError });
+          // Don't fail the entire flow if profile creation fails
         }
       }
 
-      console.log(`[Redirecting to Profile] Redirecting to /profile`);
-      return NextResponse.redirect(`${requestUrl.origin}/profile`);
+      const redirectTo = data.user && await hasAdminRole(data.user) ? "/admin" : "/dashboard";
+      logger.debug(`Redirecting to ${redirectTo}`);
+      return NextResponse.redirect(`${requestUrl.origin}${redirectTo}`);
       
     } catch (error) {
-      console.error(`[OAuth Callback] Unexpected error:`, error);
+      logger.error('Unexpected OAuth callback error', { error });
       return NextResponse.redirect(`${requestUrl.origin}/login?error=oauth_error`);
     }
   }
 
-  console.log(`[OAuth Callback] No code found, redirecting to login`);
+  logger.debug('No code found, redirecting to login');
   return NextResponse.redirect(`${requestUrl.origin}/login`);
 }

@@ -14,6 +14,7 @@ import React, { useEffect, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
+import { logger } from "@/lib/logger";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
@@ -123,9 +124,7 @@ export default function DomainLandingPageContent({ domainSlug }: { domainSlug: s
         if (subdomainsError) throw subdomainsError;
         setSubdomains(subdomainsData || []);
 
-        console.log("DOMAIN DEBUG - Slug:", domainSlug);
-        console.log("DOMAIN DEBUG - Domain ID:", domain.id);
-        console.log("DOMAIN DEBUG - Domain Name:", domain.name);
+        logger.debug('Domain landing page', { slug: domainSlug, domainId: domain.id, domainName: domain.name });
 
         // Fetch projects using projects.category → category_domain_mapping.category → engineering_domains.slug
         const { data: categoryMappings, error: categoryError } = await supabase
@@ -133,21 +132,15 @@ export default function DomainLandingPageContent({ domainSlug }: { domainSlug: s
           .select('category')
           .eq('domain_id', domain.id);
 
-        console.error("CATEGORY MAPPINGS ERROR FULL:", {
-          error: categoryError,
-          code: categoryError?.code,
-          message: categoryError?.message,
-          details: categoryError?.details,
-          hint: categoryError?.hint
-        });
-        console.log("CATEGORY MAPPINGS QUERY RESULT:", categoryMappings);
-        console.log("DOMAIN DEBUG - Category mappings count:", categoryMappings?.length || 0);
+        if (categoryError) {
+          logger.error('Category mappings error', { error: categoryError });
+        }
+        logger.debug('Category mappings fetched', { count: categoryMappings?.length || 0 });
 
         if (categoryError) throw categoryError;
 
         const categories = (categoryMappings || []).map((m: any) => m.category);
-        console.log("DOMAIN DEBUG - Categories:", categories);
-        console.log("DOMAIN DEBUG - Categories count:", categories.length);
+        logger.debug('Categories extracted', { categories, count: categories.length });
 
         // Fetch projects filtered by category
         const { data: projectsData, error: projectsError } = await supabase
@@ -158,10 +151,10 @@ export default function DomainLandingPageContent({ domainSlug }: { domainSlug: s
           .order('github_stars', { ascending: false })
           .limit(50);
 
-        console.log("DOMAIN DEBUG - Projects error:", projectsError);
-        console.log("DOMAIN DEBUG - Projects count:", projectsData?.length || 0);
-        console.log("DOMAIN DEBUG - Projects sample:", projectsData?.slice(0, 2));
-        console.log("DOMAIN DEBUG - Total projects for domain:", (projectsData || []).length);
+        if (projectsError) {
+          logger.error('Projects fetch error', { error: projectsError });
+        }
+        logger.debug('Projects fetched', { count: projectsData?.length || 0 });
 
         if (projectsError) throw projectsError;
 
@@ -204,9 +197,9 @@ export default function DomainLandingPageContent({ domainSlug }: { domainSlug: s
         setDomainData({
           ...domain,
           total_projects: totalProjects,
-          total_research_papers: 0, // TODO: Implement when research papers are ready
-          total_datasets: 0, // TODO: Implement when datasets are ready
-          total_contributors: 0 // TODO: Implement when contributors are ready
+          total_research_papers: 0, // Research papers feature not yet implemented
+          total_datasets: 0, // Datasets feature not yet implemented
+          total_contributors: 0 // Contributors feature not yet implemented
         });
 
         setResearchPapers([]);

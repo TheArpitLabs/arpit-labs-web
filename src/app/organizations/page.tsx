@@ -8,19 +8,13 @@ import { Plus, Building2, ChevronRight } from "lucide-react";
 import { redirect } from "next/navigation";
 
 export default async function OrganizationsPage() {
-  console.log('[Organizations page] Starting...');
   const context = await getTenantContext();
-  console.log('[Organizations page] Context result:', {
-    hasContext: !!context,
-  });
   
   if (!context) {
-    console.log('[Organizations page] No context, redirecting to /login');
     redirect("/login");
   }
 
   const organizations = context.organizations;
-  console.log('[Organizations page] Rendering with organizations count:', organizations.length);
 
   return (
     <main className="min-h-screen bg-background">

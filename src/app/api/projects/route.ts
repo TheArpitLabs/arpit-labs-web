@@ -7,23 +7,52 @@ import { getUserFromRequest } from "@/lib/auth";
 // GET /api/projects - List all projects with filters
 export async function GET(request: NextRequest) {
   try {
+    // Authentication is optional for GET requests - allow public access to published projects
     const user = await getUserFromRequest(request);
-    if (!user) {
-      return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
-      );
-    }
 
     const searchParams = request.nextUrl.searchParams;
-    const status = searchParams.get('status') as 'draft' | 'published' | 'archived' | null;
+    let status = searchParams.get('status') as 'draft' | 'published' | 'archived' | null;
     const project_type = searchParams.get('project_type');
     const featured = searchParams.get('featured') === 'true';
     const search = searchParams.get('search');
     const owner_id = searchParams.get('owner_id');
-    const limit = parseInt(searchParams.get('limit') || '20');
-    const offset = parseInt(searchParams.get('offset') || '0');
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '24');
+    const offset = (page - 1) * limit;
 
+    // If user is not authenticated, only show published projects
+    if (!user && !status) {
+      status = 'published';
+    }
+
+    // Get count first
+    let countQuery = supabaseServer
+      .from('projects')
+      .select('*', { count: 'exact', head: true });
+
+    if (status) {
+      countQuery = countQuery.eq('status', status);
+    }
+    if (project_type) {
+      countQuery = countQuery.eq('project_type', project_type);
+    }
+    if (featured) {
+      countQuery = countQuery.eq('featured', true);
+    }
+    if (owner_id) {
+      countQuery = countQuery.eq('owner_id', owner_id);
+    }
+    if (search) {
+      countQuery = countQuery.or(`title.ilike.%${search}%,description.ilike.%${search}%`);
+    }
+
+    const { count: totalCount, error: countError } = await countQuery;
+
+    if (countError) {
+      throw handleDatabaseError(countError);
+    }
+
+    // Get data with pagination
     let query = supabaseServer
       .from('projects')
       .select('*')
@@ -53,7 +82,19 @@ export async function GET(request: NextRequest) {
       throw handleDatabaseError(error);
     }
 
-    return NextResponse.json({ data, meta: { limit, offset, total: data?.length || 0 } });
+    const totalPages = Math.ceil((totalCount || 0) / limit);
+
+    return NextResponse.json({ 
+      data, 
+      meta: { 
+        page,
+        limit,
+        offset,
+        totalCount: totalCount || 0,
+        totalPages,
+        hasMore: page < totalPages
+      } 
+    });
   } catch (error) {
     console.error('Error in GET /api/projects:', error);
     return NextResponse.json(

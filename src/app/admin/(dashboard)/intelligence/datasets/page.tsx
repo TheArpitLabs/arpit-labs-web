@@ -33,14 +33,23 @@ export default function DatasetIntelligenceDashboard() {
 
   const indexDataset = async () => {
     try {
+      const external_id = prompt('Enter external ID (e.g., kaggle-12345):');
+      const source = prompt('Enter source (e.g., kaggle):');
+      const name = prompt('Enter dataset name:');
+      
+      if (!external_id || !source || !name) {
+        alert('All fields are required');
+        return;
+      }
+
       const response = await fetch('/api/admin/intelligence/datasets', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           action: 'index_dataset',
-          external_id: 'kaggle-12345',
-          source: 'kaggle',
-          name: 'Sample Dataset'
+          external_id,
+          source,
+          name
         })
       });
       alert('Dataset indexed successfully');
