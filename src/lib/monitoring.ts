@@ -5,41 +5,53 @@
 
 import { logger } from '@/lib/logger';
 
-let Sentry: any = null;
+let Sentry: any = null; // eslint-disable-line @typescript-eslint/no-explicit-any
+let sentryInitialized = false;
 
-// Dynamic import to avoid require() style import
-void (async () => {
+// Lazy load Sentry on first use (optional dependency)
+async function loadSentry() {
+  if (sentryInitialized) return;
+  sentryInitialized = true;
+
   try {
-    const sentryModule = await import("@sentry/nextjs");
+    // @ts-expect-error - Sentry is an optional dependency
+    const sentryModule = await import('@sentry/nextjs');
     Sentry = sentryModule.default || sentryModule;
-  } catch {
-    logger.warn('Sentry error monitoring not configured.');
+  } catch (_error) {
+    // Sentry not installed - that's okay, it's optional
+    logger.debug('Sentry error monitoring not available');
   }
-})();
+}
 
 const SENTRY_DSN = process.env.NEXT_PUBLIC_SENTRY_DSN;
 const ENVIRONMENT = process.env.NODE_ENV || 'development';
 
-export function initializeSentry() {
+export async function initializeSentry() {
+  await loadSentry();
+
   if (!SENTRY_DSN || !Sentry) {
-    logger.warn('SENTRY_DSN not configured or Sentry not installed');
+    logger.debug('SENTRY_DSN not configured or Sentry not installed');
     return;
   }
 
-  Sentry.init({
-    dsn: SENTRY_DSN,
-    environment: ENVIRONMENT,
-    tracesSampleRate: ENVIRONMENT === 'production' ? 0.1 : 1.0,
-    debug: ENVIRONMENT !== 'production',
-    integrations: [
-      new Sentry.Replay({
-        maskAllText: true,
-        blockAllMedia: true,
-      }),
-    ],
-    replaysSessionSampleRate: ENVIRONMENT === 'production' ? 0.1 : 1.0,
-    replaysOnErrorSampleRate: 1.0,
-  });
+  try {
+    Sentry.init({
+      dsn: SENTRY_DSN,
+      environment: ENVIRONMENT,
+      tracesSampleRate: ENVIRONMENT === 'production' ? 0.1 : 1.0,
+      debug: ENVIRONMENT !== 'production',
+      integrations: [
+        new Sentry.Replay({
+          maskAllText: true,
+          blockAllMedia: true,
+        }),
+      ],
+      replaysSessionSampleRate: ENVIRONMENT === 'production' ? 0.1 : 1.0,
+      replaysOnErrorSampleRate: 1.0,
+    });
+  } catch (error) {
+    logger.debug('Failed to initialize Sentry', error);
+  }
 }
 
 export function captureException(error: Error, context?: Record<string, any>) {

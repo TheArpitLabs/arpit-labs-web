@@ -5,17 +5,22 @@
 
 import { logger } from '@/lib/logger';
 
-let DOMPurify: any = null;
+let DOMPurify: any = null; // eslint-disable-line @typescript-eslint/no-explicit-any
+let sanitizerInitialized = false;
 
-// Dynamic import to avoid require() style import
-void (async () => {
+// Lazy load DOMPurify on first use (optional dependency)
+async function loadDOMPurify() {
+  if (sanitizerInitialized) return;
+  sanitizerInitialized = true;
+
   try {
+    // @ts-expect-error - isomorphic-dompurify is an optional dependency
     const dompurifyModule = await import('isomorphic-dompurify');
     DOMPurify = dompurifyModule.default || dompurifyModule;
-  } catch {
-    logger.warn('DOMPurify not available, input sanitization will be limited.');
+  } catch (_error) {
+    logger.debug('DOMPurify not available, using fallback sanitization.');
   }
-})();
+}
 
 // Simple fallback if DOMPurify is not available
 function fallbackSanitize(input: string): string {
@@ -79,8 +84,25 @@ export function sanitizeHtml(html: string): string {
   if (DOMPurify) {
     return DOMPurify.sanitize(html, {
       ALLOWED_TAGS: [
-        'p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-        'ul', 'ol', 'li', 'a', 'img', 'blockquote', 'code', 'pre',
+        'p',
+        'br',
+        'strong',
+        'em',
+        'u',
+        'h1',
+        'h2',
+        'h3',
+        'h4',
+        'h5',
+        'h6',
+        'ul',
+        'ol',
+        'li',
+        'a',
+        'img',
+        'blockquote',
+        'code',
+        'pre',
       ],
       ALLOWED_ATTR: ['href', 'src', 'alt', 'title', 'target', 'rel'],
     });
@@ -108,9 +130,7 @@ export function validateUrl(url: string): boolean {
 const csrfTokens = new Map<string, { token: string; created: number }>();
 
 export function generateCsrfToken(sessionId: string): string {
-  const token = Buffer.from(
-    Math.random().toString() + Date.now().toString()
-  ).toString('base64');
+  const token = Buffer.from(Math.random().toString() + Date.now().toString()).toString('base64');
 
   csrfTokens.set(sessionId, {
     token,
