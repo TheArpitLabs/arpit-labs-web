@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAdminUserFromRequest } from "@/lib/auth";
+import { getAdminUserFromRequest } from "@/lib/auth/auth";
 import { supabaseServer } from "@/lib/supabase/server";
 import { bulkQueueAcquisition, listAcquisitionQueue, queueAcquisition, updateAcquisitionStatus, publishApprovedItem } from "@/lib/knowledge-ecosystem";
-import { GitHubService } from "@/lib/github.service";
+import { GitHubService } from "@/lib/github/github.service";
 import { analyzeProjectEnhanced } from "@/lib/knowledge-ecosystem/enhanced-analysis";
 import { checkDuplicate, storeDuplicateCheck } from "@/lib/knowledge-ecosystem/enhanced-duplicate-detection";
 import { normalizeRepositoryUrl, extractRepositoryId } from "@/lib/knowledge-ecosystem/url-normalization";
 import { contentHash } from "@/lib/knowledge-ecosystem/text";
 import type { AcquisitionProvider, AcquisitionStatus } from "@/lib/knowledge-ecosystem";
+import { logger } from '@/lib/logger';
 
 export async function GET(request: NextRequest) {
   const admin = await getAdminUserFromRequest(request);
@@ -79,7 +80,7 @@ export async function POST(request: NextRequest) {
         .eq("id", item.id);
       
       if (updateError) {
-        console.error("Failed to update normalized data:", updateError);
+        logger.error("Failed to update normalized data:", updateError);
       }
       
       // Run duplicate detection
@@ -99,7 +100,7 @@ export async function POST(request: NextRequest) {
           });
         }
       } catch (duplicateError) {
-        console.error("Duplicate detection failed:", duplicateError);
+        logger.error("Duplicate detection failed:", duplicateError);
         // Don't fail the import if duplicate detection fails
       }
       
@@ -107,7 +108,7 @@ export async function POST(request: NextRequest) {
       try {
         await analyzeProjectEnhanced(item.id);
       } catch (analysisError) {
-        console.error("Auto-analysis failed:", analysisError);
+        logger.error("Auto-analysis failed:", analysisError);
         // Don't fail the import if analysis fails
       }
       

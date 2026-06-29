@@ -8,7 +8,7 @@ import { ExternalLink, Github, Search } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { NexusLogo } from "@/components/shared/NexusLogo";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/utils";
 import { Project } from "@/types/content";
 
 interface ProjectsExplorerProps {

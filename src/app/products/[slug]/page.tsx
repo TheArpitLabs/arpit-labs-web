@@ -10,6 +10,7 @@ import { productsRepository } from "@/lib/repositories/products.repository";
 import { createArticleMetadata } from "@/lib/seo";
 import { Product } from "@/types/content";
 import { ProductTracker } from "@/components/analytics/ProductTracker";
+import { logger } from '@/lib/logger';
 
 interface ProductDetailPageProps {
   params: Promise<{
@@ -43,7 +44,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
       notFound();
     }
   } catch (error) {
-    console.error("Error fetching product detail:", error);
+    logger.error("Error fetching product detail:", error);
     notFound();
   }
 

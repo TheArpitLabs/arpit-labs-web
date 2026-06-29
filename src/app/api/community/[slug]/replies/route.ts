@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseServer } from '@/lib/supabase/server';
-import { sanitizeText } from '@/lib/sanitize';
-import { checkRateLimit } from '@/lib/rate-limit';
-import { createAuthenticatedSupabaseClient, getUserTokenFromRequest, getUserRefreshTokenFromRequest } from '@/lib/auth';
+import { sanitizeText } from '@/lib/utils/sanitize';
+import { checkRateLimit } from '@/lib/rate-limiting';
+import { createAuthenticatedSupabaseClient, getUserTokenFromRequest, getUserRefreshTokenFromRequest } from '@/lib/auth/auth';
+import { logger } from '@/lib/logger';
 
 export async function POST(request: NextRequest, { params }: any) {
   try {
@@ -33,13 +34,13 @@ export async function POST(request: NextRequest, { params }: any) {
       .select()
       .single();
     if (error) {
-      console.error('Failed to insert reply', error);
+      logger.error('Failed to insert reply', error);
       return NextResponse.json({ success: false, error: 'Failed to add reply' }, { status: 500 });
     }
 
     return NextResponse.json({ success: true, reply: data }, { status: 201 });
   } catch (err) {
-    console.error('POST /api/community/[slug]/replies error', err);
+    logger.error('POST /api/community/[slug]/replies error', err);
     return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
   }
 }

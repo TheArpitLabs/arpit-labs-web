@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TrendingUp, FileText, Database, Users, ArrowRight, Sparkles, BarChart3, RefreshCw } from "lucide-react";
 import { createClient } from "@supabase/supabase-js";
+import { logger } from '@/lib/logger';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
@@ -50,7 +51,7 @@ async function getDomainStats(): Promise<DomainStats[]> {
     .order('total_content', { ascending: false });
 
   if (error) {
-    console.error('Error fetching domain stats:', error);
+    logger.error('Error fetching domain stats:', error);
     return [];
   }
 
@@ -65,7 +66,7 @@ async function getSubdomainStats(): Promise<SubdomainStats[]> {
     .limit(20);
 
   if (error) {
-    console.error('Error fetching subdomain stats:', error);
+    logger.error('Error fetching subdomain stats:', error);
     return [];
   }
 
@@ -84,7 +85,7 @@ async function getRecentClassifications() {
     .limit(10);
 
   if (error) {
-    console.error('Error fetching recent classifications:', error);
+    logger.error('Error fetching recent classifications:', error);
     return [];
   }
 

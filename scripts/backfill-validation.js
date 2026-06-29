@@ -33,7 +33,7 @@ function validateRepositoryData(data) {
     null;
 
   // Debug logging
-  console.log({
+  logger.info({
     title: data.title,
     stars,
     topicsCount: topics?.length || 0,
@@ -206,7 +206,7 @@ function isValidUrl(url) {
 }
 
 async function backfillValidation() {
-  console.log('🚀 Starting validation backfill...\n');
+  logger.info('🚀 Starting validation backfill...\n');
 
   // Fetch all projects
   const { data: projects, error: fetchError } = await supabase
@@ -214,11 +214,11 @@ async function backfillValidation() {
     .select('*');
 
   if (fetchError) {
-    console.error('❌ Error fetching projects:', fetchError);
+    logger.error('❌ Error fetching projects:', fetchError);
     process.exit(1);
   }
 
-  console.log(`📊 Found ${projects.length} projects\n`);
+  logger.info(`📊 Found ${projects.length} projects\n`);
 
   let updated = 0;
   let skipped = 0;
@@ -229,7 +229,7 @@ async function backfillValidation() {
       // Skip if already validated
       if (project.validation_status && project.validation_status !== 'pending') {
         skipped++;
-        console.log(`⏭️  Skipping ${project.title} (already validated: ${project.validation_status})`);
+        logger.info(`⏭️  Skipping ${project.title} (already validated: ${project.validation_status})`);
         continue;
       }
 
@@ -263,24 +263,24 @@ async function backfillValidation() {
         .eq('id', project.id);
 
       if (updateError) {
-        console.error(`❌ Failed to update ${project.title}:`, updateError);
+        logger.error(`❌ Failed to update ${project.title}:`, updateError);
         failed++;
         continue;
       }
 
       updated++;
-      console.log(`✅ Updated ${project.title}: ${validationResult.validationStatus} (score: ${validationResult.validationScore})`);
+      logger.info(`✅ Updated ${project.title}: ${validationResult.validationStatus} (score: ${validationResult.validationScore})`);
     } catch (error) {
-      console.error(`❌ Error processing ${project.title}:`, error);
+      logger.error(`❌ Error processing ${project.title}:`, error);
       failed++;
     }
   }
 
-  console.log('\n📈 Final Statistics:');
-  console.log(`   Updated: ${updated}`);
-  console.log(`   Skipped: ${skipped}`);
-  console.log(`   Failed: ${failed}`);
-  console.log(`   Total: ${projects.length}`);
+  logger.info('\n📈 Final Statistics:');
+  logger.info(`   Updated: ${updated}`);
+  logger.info(`   Skipped: ${skipped}`);
+  logger.info(`   Failed: ${failed}`);
+  logger.info(`   Total: ${projects.length}`);
 
   // Verify results
   const { data: verification } = await supabase
@@ -299,13 +299,13 @@ async function backfillValidation() {
     statusCounts[p.validation_status] = (statusCounts[p.validation_status] || 0) + 1;
   });
 
-  console.log('\n📊 Validation Status Distribution:');
-  console.log(`   Passed: ${statusCounts.passed}`);
-  console.log(`   Failed: ${statusCounts.failed}`);
-  console.log(`   Skipped: ${statusCounts.skipped}`);
-  console.log(`   Pending: ${statusCounts.pending}`);
+  logger.info('\n📊 Validation Status Distribution:');
+  logger.info(`   Passed: ${statusCounts.passed}`);
+  logger.info(`   Failed: ${statusCounts.failed}`);
+  logger.info(`   Skipped: ${statusCounts.skipped}`);
+  logger.info(`   Pending: ${statusCounts.pending}`);
 
-  console.log('\n✨ Backfill complete!');
+  logger.info('\n✨ Backfill complete!');
 }
 
 backfillValidation().catch(console.error);

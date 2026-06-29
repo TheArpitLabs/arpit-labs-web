@@ -7,6 +7,7 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { logger } from '@/lib/logger';
 
 export default function DiscoveryAnalyticsDashboard() {
   const [analytics, setAnalytics] = useState<any>(null);
@@ -23,7 +24,7 @@ export default function DiscoveryAnalyticsDashboard() {
       const data = await response.json();
       setAnalytics(data);
     } catch (error) {
-      console.error('Error fetching analytics:', error);
+      logger.error('Error fetching analytics:', error);
     } finally {
       setLoading(false);
     }

@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { supabaseServer } from "@/lib/supabase/server";
 import { saasRepository } from "@/lib/repositories/saas.repository";
-import { getUserSession } from "@/lib/auth";
+import { getUserSession } from "@/lib/auth/auth";
 import { OrganizationRole } from "@/types/saas";
 import { z } from "zod";
 

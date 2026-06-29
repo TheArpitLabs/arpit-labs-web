@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabase/server";
-import { getUserFromRequest } from "@/lib/auth";
+import { getUserFromRequest } from "@/lib/auth/auth";
 import { handleDatabaseError } from "@/lib/errors";
+import { logger } from '@/lib/logger';
 
 // GET /api/gamification/user-progress - Get user's gamification progress
 export async function GET(request: NextRequest) {
@@ -73,7 +74,7 @@ export async function GET(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Error in GET /api/gamification/user-progress:', error);
+    logger.error('Error in GET /api/gamification/user-progress:', error);
     return NextResponse.json(
       { error: 'Failed to fetch user progress' },
       { status: 500 }

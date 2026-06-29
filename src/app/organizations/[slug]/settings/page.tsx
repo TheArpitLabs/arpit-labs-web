@@ -1,6 +1,6 @@
 import { Container } from "@/components/layout/Container";
 import { Footer } from "@/components/layout/Footer";
-import { getCurrentOrganization } from "@/lib/saas";
+import { getCurrentOrganization } from "@/lib/utils/saas";
 import { updateOrganizationAction } from "@/lib/actions/saas-actions";
 import { AdminSubmitButton } from "@/components/admin/AdminSubmitButton";
 import { ArrowLeft, Shield, Trash2, Building2 } from "lucide-react";

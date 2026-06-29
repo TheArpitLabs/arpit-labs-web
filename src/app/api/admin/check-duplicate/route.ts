@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAdminUserFromRequest } from "@/lib/auth";
+import { getAdminUserFromRequest } from "@/lib/auth/auth";
 import { checkDuplicate, storeDuplicateCheck } from "@/lib/knowledge-ecosystem/enhanced-duplicate-detection";
 import { supabaseServer } from "@/lib/supabase/server";
+import { logger } from '@/lib/logger';
 
 export async function POST(request: NextRequest) {
   const admin = await getAdminUserFromRequest(request);
@@ -63,7 +64,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, result });
   } catch (error) {
-    console.error("Duplicate check failed:", error);
+    logger.error("Duplicate check failed:", error);
     return NextResponse.json(
       { success: false, error: error instanceof Error ? error.message : "Duplicate check failed" },
       { status: 500 }

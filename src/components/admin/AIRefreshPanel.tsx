@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { logger } from '@/lib/logger';
 
 interface RefreshPayload {
   success: boolean;
@@ -38,7 +39,7 @@ export default function AIRefreshPanel() {
       }
     } catch (error) {
       setStatus('Unable to rebuild knowledge base.');
-      console.error(error);
+      logger.error(error instanceof Error ? error.message : String(error));
     } finally {
       setIsLoading(false);
     }

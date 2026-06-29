@@ -2,6 +2,7 @@
 
 import { Network, Search, Filter, BarChart3, Loader2 } from "lucide-react";
 import { Suspense, useState } from "react";
+import { logger } from '@/lib/logger';
 
 export default function KnowledgeGraphPage() {
   return (
@@ -127,7 +128,7 @@ function GraphSearch() {
       const data = await response.json();
       setResults(data.success ? data.result : []);
     } catch (error) {
-      console.error("Search failed:", error);
+      logger.error("Search failed:", error);
     } finally {
       setLoading(false);
     }

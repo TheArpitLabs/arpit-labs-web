@@ -39,7 +39,7 @@ export function PremiumHero({ projectCount, experimentCount, totalViews }: Premi
     { text: "Engineering ecosystem active", time: "24/7", icon: CheckCircle2 },
   ];
   return (
-    <section className="relative min-h-screen overflow-hidden bg-gradient-to-b from-background via-background to-background/95">
+    <section className="relative min-h-[70vh] overflow-hidden bg-gradient-to-b from-background via-background to-background/95">
       {/* Background gradients */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute left-0 top-0 h-[600px] w-[600px] rounded-full bg-primary/10 blur-3xl" />
@@ -49,21 +49,21 @@ export function PremiumHero({ projectCount, experimentCount, totalViews }: Premi
         <div className="absolute inset-0 bg-[linear-gradient(rgba(59,130,246,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(59,130,246,0.03)_1px,transparent_1px)] bg-[size:64px_64px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_50%,black,transparent)]" />
       </div>
 
-      <div className="relative z-10 flex min-h-screen items-center px-4 py-20 sm:px-6 lg:px-8">
+      <div className="relative z-10 flex min-h-[70vh] items-center px-4 py-12 sm:px-6 lg:px-8">
         <div className="mx-auto grid w-full max-w-7xl gap-12 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
           {/* Left Column */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="space-y-8"
+            className="space-y-6"
           >
             {/* Badge */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="inline-flex items-center gap-3 rounded-full border border-border glass px-4 py-2 text-sm"
+              className="inline-flex items-center gap-2 rounded-full border border-border glass px-3 py-1.5 text-xs"
             >
               <Sparkles className="h-4 w-4 text-primary" />
               <span className="font-heading font-semibold text-primary">Engineering Discovery Platform</span>
@@ -75,12 +75,12 @@ export function PremiumHero({ projectCount, experimentCount, totalViews }: Premi
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="space-y-6"
+              className="space-y-4"
             >
-              <h1 className="max-w-3xl bg-gradient-to-r from-foreground via-foreground to-muted bg-clip-text text-hero font-heading font-bold leading-tight tracking-tight">
+              <h1 className="max-w-3xl bg-gradient-to-r from-foreground via-foreground to-muted bg-clip-text text-4xl font-heading font-bold leading-tight tracking-tight sm:text-5xl">
                 Build the Future of Engineering with Real-World Projects
               </h1>
-              <p className="max-w-2xl text-lg text-muted sm:text-xl">
+              <p className="max-w-2xl text-base text-muted sm:text-lg">
                 Master AI, IoT, software, and hardware through industry-grade projects with complete documentation, AI explanations, and a thriving engineering ecosystem.
               </p>
             </motion.div>
@@ -98,7 +98,7 @@ export function PremiumHero({ projectCount, experimentCount, totalViews }: Premi
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.3, delay: 0.3 + index * 0.1 }}
-                  className="flex items-center gap-2 rounded-full border border-border/80 bg-surface/80 px-4 py-2 text-sm font-medium text-foreground backdrop-blur-sm"
+                  className="flex items-center gap-2 rounded-full border border-border/80 bg-surface/80 px-3 py-1.5 text-xs font-medium text-foreground backdrop-blur-sm"
                 >
                   <tech.icon className={`h-4 w-4 bg-gradient-to-br ${tech.color} bg-clip-text text-transparent`} />
                   {tech.name}
@@ -111,18 +111,18 @@ export function PremiumHero({ projectCount, experimentCount, totalViews }: Premi
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="flex flex-col gap-4 sm:flex-row sm:items-center"
+              className="flex flex-col gap-3 sm:flex-row sm:items-center"
             >
               <a
                 href="#featured-projects"
-                className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-primary to-accent px-6 py-3 text-sm font-semibold text-white shadow-glow transition hover:shadow-glow-lg hover:opacity-90"
+                className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-primary to-accent px-5 py-2.5 text-sm font-semibold text-white shadow-glow transition hover:shadow-glow-lg hover:opacity-90"
               >
                 Browse Projects
                 <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </a>
               <a
                 href="#about"
-                className="inline-flex items-center justify-center rounded-xl border border-border bg-surface px-6 py-3 text-sm font-semibold text-foreground transition hover:bg-surface-elevated hover:border-primary/50"
+                className="inline-flex items-center justify-center rounded-xl border border-border bg-surface px-5 py-2.5 text-sm font-semibold text-foreground transition hover:bg-surface-elevated hover:border-primary/50"
               >
                 Learn More
               </a>
@@ -133,7 +133,7 @@ export function PremiumHero({ projectCount, experimentCount, totalViews }: Premi
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
-              className="flex flex-wrap gap-6 pt-4"
+              className="flex flex-wrap gap-4 pt-2"
             >
               <div className="flex items-center gap-2">
                 <div className="flex -space-x-2">
@@ -174,7 +174,7 @@ export function PremiumHero({ projectCount, experimentCount, totalViews }: Premi
               <div className="mb-6 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary/10 to-accent/10">
-                    <NexusLogo className="h-6 w-6 text-primary" />
+                    <NexusLogo className="h-8 w-8 text-primary" />
                   </div>
                   <div>
                     <h3 className="font-heading font-semibold text-foreground">Dashboard</h3>
@@ -219,7 +219,7 @@ export function PremiumHero({ projectCount, experimentCount, totalViews }: Premi
                   >
                     <div className="flex items-center gap-3">
                       <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary/10 to-accent/10">
-                        <NexusLogo className="h-5 w-5 text-primary" />
+                        <NexusLogo className="h-8 w-8 text-primary" />
                       </div>
                       <div>
                         <p className="font-heading font-semibold text-foreground">{card.title}</p>

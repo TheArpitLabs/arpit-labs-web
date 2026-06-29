@@ -11,7 +11,7 @@ const supabase = createClient(
 );
 
 async function debugValidationData() {
-  console.log('🔍 Debugging validation data mapping...\n');
+  logger.info('🔍 Debugging validation data mapping...\n');
 
   // Fetch first 10 GitHub repositories
   const { data: projects, error } = await supabase
@@ -39,54 +39,54 @@ async function debugValidationData() {
     .limit(5);
 
   if (!starError && starredRepos && starredRepos.length > 0) {
-    console.log('🌟 Repositories with stars > 0:\n');
+    logger.info('🌟 Repositories with stars > 0:\n');
     for (const repo of starredRepos) {
-      console.log(`   - ${repo.title}: ${repo.github_stars} stars`);
-      console.log(`     URL: ${repo.github_url}`);
+      logger.info(`   - ${repo.title}: ${repo.github_stars} stars`);
+      logger.info(`     URL: ${repo.github_url}`);
     }
-    console.log('\n───────────────────────────────────────────────────────────────\n');
+    logger.info('\n───────────────────────────────────────────────────────────────\n');
   } else {
-    console.log('⚠️  No repositories found with github_stars > 0\n');
-    console.log('───────────────────────────────────────────────────────────────\n');
+    logger.info('⚠️  No repositories found with github_stars > 0\n');
+    logger.info('───────────────────────────────────────────────────────────────\n');
   }
 
-  console.log('📊 First 10 GitHub repositories:\n');
+  logger.info('📊 First 10 GitHub repositories:\n');
   for (const project of projects) {
-    console.log(`   - ${project.title}`);
-    console.log(`     Stars: ${project.github_stars} (also stars field: ${project.stars})`);
-    console.log(`     Topics: ${project.repository_topics?.length || 0} topics`);
-    console.log(`     Owner: ${project.github_owner}`);
-    console.log(`     Forks: ${project.forks}`);
-    console.log(`     Contributors: ${project.contributors_count}`);
-    console.log(`     Last commit: ${project.last_commit_at}`);
-    console.log(`     GitHub URL: ${project.github_url}`);
-    console.log(`     Repo ID: ${project.github_repository_id}`);
-    console.log('');
+    logger.info(`   - ${project.title}`);
+    logger.info(`     Stars: ${project.github_stars} (also stars field: ${project.stars})`);
+    logger.info(`     Topics: ${project.repository_topics?.length || 0} topics`);
+    logger.info(`     Owner: ${project.github_owner}`);
+    logger.info(`     Forks: ${project.forks}`);
+    logger.info(`     Contributors: ${project.contributors_count}`);
+    logger.info(`     Last commit: ${project.last_commit_at}`);
+    logger.info(`     GitHub URL: ${project.github_url}`);
+    logger.info(`     Repo ID: ${project.github_repository_id}`);
+    logger.info('');
   }
 
-  console.log('───────────────────────────────────────────────────────────────\n');
+  logger.info('───────────────────────────────────────────────────────────────\n');
 
   if (error) {
-    console.error('❌ Error fetching projects:', error);
+    logger.error('❌ Error fetching projects:', error);
     process.exit(1);
   }
 
-  console.log(`📊 Found ${projects.length} GitHub repositories\n`);
-  console.log('═══════════════════════════════════════════════════════════════════\n');
+  logger.info(`📊 Found ${projects.length} GitHub repositories\n`);
+  logger.info('═══════════════════════════════════════════════════════════════════\n');
 
   for (const project of projects) {
-    console.log(`📦 Repository: ${project.title}`);
-    console.log(`   GitHub URL: ${project.github_url}`);
-    console.log(`   ⭐ Stars: ${project.github_stars || 0}`);
-    console.log(`   🏷️  Topics: ${project.repository_topics ? project.repository_topics.length : 0} topics`);
-    console.log(`   👤 Owner: ${project.github_owner || 'missing'}`);
+    logger.info(`📦 Repository: ${project.title}`);
+    logger.info(`   GitHub URL: ${project.github_url}`);
+    logger.info(`   ⭐ Stars: ${project.github_stars || 0}`);
+    logger.info(`   🏷️  Topics: ${project.repository_topics ? project.repository_topics.length : 0} topics`);
+    logger.info(`   👤 Owner: ${project.github_owner || 'missing'}`);
     
     if (project.repository_topics && project.repository_topics.length > 0) {
-      console.log(`   📋 Topic List: ${project.repository_topics.slice(0, 5).join(', ')}${project.repository_topics.length > 5 ? '...' : ''}`);
+      logger.info(`   📋 Topic List: ${project.repository_topics.slice(0, 5).join(', ')}${project.repository_topics.length > 5 ? '...' : ''}`);
     }
     
-    console.log('');
-    console.log('───────────────────────────────────────────────────────────────\n');
+    logger.info('');
+    logger.info('───────────────────────────────────────────────────────────────\n');
   }
 
   // Summary
@@ -94,14 +94,14 @@ async function debugValidationData() {
   const withTopics = projects.filter(p => p.repository_topics && p.repository_topics.length > 0).length;
   const withOwner = projects.filter(p => p.github_owner).length;
 
-  console.log('📈 Summary:');
-  console.log(`   Repositories with stars > 0: ${withStars}/${projects.length}`);
-  console.log(`   Repositories with topics: ${withTopics}/${projects.length}`);
-  console.log(`   Repositories with owner: ${withOwner}/${projects.length}`);
-  console.log('');
+  logger.info('📈 Summary:');
+  logger.info(`   Repositories with stars > 0: ${withStars}/${projects.length}`);
+  logger.info(`   Repositories with topics: ${withTopics}/${projects.length}`);
+  logger.info(`   Repositories with owner: ${withOwner}/${projects.length}`);
+  logger.info('');
   
   // Search for specific repositories mentioned in the bug report
-  console.log('🎯 Searching for specific repositories from bug report...\n');
+  logger.info('🎯 Searching for specific repositories from bug report...\n');
   const searchTerms = ['Grafana', 'Home Assistant', 'Transformers', 'Excalidraw', 'Prophet'];
   
   for (const searchTerm of searchTerms) {
@@ -112,27 +112,27 @@ async function debugValidationData() {
       .limit(3);
     
     if (!searchError && searchResults && searchResults.length > 0) {
-      console.log(`🔍 "${searchTerm}" search results:`);
+      logger.info(`🔍 "${searchTerm}" search results:`);
       for (const result of searchResults) {
-        console.log(`   - ${result.title}`);
-        console.log(`     ⭐ Stars: ${result.github_stars || 0}`);
-        console.log(`     🏷️  Topics: ${result.repository_topics ? result.repository_topics.length : 0}`);
-        console.log(`     👤 Owner: ${result.github_owner || 'missing'}`);
+        logger.info(`   - ${result.title}`);
+        logger.info(`     ⭐ Stars: ${result.github_stars || 0}`);
+        logger.info(`     🏷️  Topics: ${result.repository_topics ? result.repository_topics.length : 0}`);
+        logger.info(`     👤 Owner: ${result.github_owner || 'missing'}`);
       }
-      console.log('');
+      logger.info('');
     } else {
-      console.log(`⚠️  "${searchTerm}": Not found in database`);
-      console.log('');
+      logger.info(`⚠️  "${searchTerm}": Not found in database`);
+      logger.info('');
     }
   }
 }
 
 debugValidationData()
   .then(() => {
-    console.log('\n✅ Debug completed');
+    logger.info('\n✅ Debug completed');
     process.exit(0);
   })
   .catch((error) => {
-    console.error('\n❌ Error:', error);
+    logger.error('\n❌ Error:', error);
     process.exit(1);
   });

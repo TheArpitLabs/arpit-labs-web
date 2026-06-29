@@ -4,6 +4,7 @@ import { skillExtractionEngine } from "@/lib/knowledge-ecosystem/skill-extractio
 import { prerequisiteEngine } from "@/lib/knowledge-ecosystem/prerequisite-engine";
 import { learningPathGenerator } from "@/lib/knowledge-ecosystem/learning-path-generator";
 import { careerTrackEngine } from "@/lib/knowledge-ecosystem/career-track-engine";
+import { logger } from '@/lib/logger';
 
 export async function GET(request: NextRequest) {
   try {
@@ -83,7 +84,7 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ success: false, error: "Unknown action" }, { status: 400 });
     }
   } catch (error) {
-    console.error("Learning API failed:", error);
+    logger.error("Learning API failed:", error);
     return NextResponse.json(
       { success: false, error: error instanceof Error ? error.message : "Learning API failed" },
       { status: 500 }
@@ -149,7 +150,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ success: false, error: "Unknown action" }, { status: 400 });
     }
   } catch (error) {
-    console.error("Learning API POST failed:", error);
+    logger.error("Learning API POST failed:", error);
     return NextResponse.json(
       { success: false, error: error instanceof Error ? error.message : "Learning API POST failed" },
       { status: 500 }

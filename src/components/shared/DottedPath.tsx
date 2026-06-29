@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Plane } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/utils";
 import { prefersReducedMotion } from "@/lib/animations/config";
 
 interface DottedPathProps {

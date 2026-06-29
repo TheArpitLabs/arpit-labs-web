@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabase/server";
-import { getUserFromRequest } from "@/lib/auth";
+import { getUserFromRequest } from "@/lib/auth/auth";
 import { handleDatabaseError } from "@/lib/errors";
 import { getUserBadges, getUserStatsForBadges, checkAndAwardBadges } from "@/lib/gamification/badge-system";
+import { logger } from '@/lib/logger';
 
 // GET /api/gamification/user-badges - Get user's earned badges
 export async function GET(request: NextRequest) {
@@ -19,7 +20,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ data: badges });
   } catch (error) {
-    console.error('Error in GET /api/gamification/user-badges:', error);
+    logger.error('Error in GET /api/gamification/user-badges:', error);
     return NextResponse.json(
       { error: 'Failed to fetch user badges' },
       { status: 500 }
@@ -53,7 +54,7 @@ export async function POST(request: NextRequest) {
       totalNewlyEarned: newlyEarnedBadges.length
     });
   } catch (error) {
-    console.error('Error in POST /api/gamification/user-badges:', error);
+    logger.error('Error in POST /api/gamification/user-badges:', error);
     return NextResponse.json(
       { error: 'Failed to check badges' },
       { status: 500 }

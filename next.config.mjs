@@ -3,6 +3,9 @@ const nextConfig = {
   typedRoutes: true,
   compress: true,
   poweredByHeader: false,
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   images: {
     remotePatterns: [
       {

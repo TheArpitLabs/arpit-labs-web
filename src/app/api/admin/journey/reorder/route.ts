@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { journeyRepository } from "@/lib/repositories/journey.repository";
-import { requireAdmin } from "@/lib/auth";
+import { requireAdmin } from "@/lib/auth/auth";
+import { logger } from '@/lib/logger';
 
 export async function POST(request: Request) {
   try {
@@ -15,7 +16,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
-    console.error("Reorder error:", error);
+    logger.error("Reorder error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to reorder" },
       { status: 500 }

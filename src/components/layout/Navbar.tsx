@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Globe, ChevronDown, Search, User } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/utils";
 import { ThemeToggle } from "@/components/shared/ThemeToggle";
 import { NexusLogo } from "@/components/shared/NexusLogo";
 import Link from "next/link";
@@ -111,10 +111,10 @@ export function Navbar() {
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-4 py-4 sm:px-6 lg:px-8">
         <Link href="/" className="group inline-flex items-center gap-3 text-lg font-heading font-semibold text-foreground transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70">
           <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-accent text-white shadow-glow">
-            <NexusLogo className="h-5 w-5" />
+            <NexusLogo className="h-8 w-8" />
           </span>
-          <span className="sr-only">Arpit Labs</span>
-          <span className="hidden sm:inline text-foreground">Arpit Labs</span>
+          <span className="sr-only">Axiora</span>
+          <span className="hidden sm:inline text-foreground">Axiora</span>
         </Link>
 
         <nav className="hidden items-center gap-6 lg:gap-8 md:flex">

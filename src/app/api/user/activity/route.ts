@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabase/server";
-import { getUserFromRequest } from "@/lib/auth";
+import { getUserFromRequest } from "@/lib/auth/auth";
 import { handleDatabaseError } from "@/lib/errors";
+import { logger } from '@/lib/logger';
 
 // GET /api/user/activity - Get user's recent activity
 export async function GET(request: NextRequest) {
@@ -15,7 +16,8 @@ export async function GET(request: NextRequest) {
     }
 
     const searchParams = request.nextUrl.searchParams;
-    const limit = parseInt(searchParams.get('limit') || '10');
+    const limit = parseInt(searchParams.get('limit') || '10', 10);
+    const offset = parseInt(searchParams.get('offset') || '0', 10);
 
     const activities: any[] = [];
 
@@ -103,13 +105,19 @@ export async function GET(request: NextRequest) {
     // Sort all activities by date
     activities.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
-    // Return limited results
-    return NextResponse.json({
+    // Return limited results with caching headers
+    const response = NextResponse.json({
       data: activities.slice(0, limit)
     });
+    
+    // Add caching headers (shorter cache for activity)
+    response.headers.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=120');
+    response.headers.set('CDN-Cache-Control', 'public, s-maxage=60');
+    
+    return response;
 
   } catch (error) {
-    console.error('Error in GET /api/user/activity:', error);
+    logger.error('Error in GET /api/user/activity:', error);
     return NextResponse.json(
       { error: 'Failed to fetch user activity' },
       { status: 500 }

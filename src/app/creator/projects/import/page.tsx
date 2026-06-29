@@ -7,9 +7,10 @@ import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Github, Loader2, CheckCircle, AlertCircle } from "lucide-react";
-import { GitHubService, GitHubRepository } from "@/lib/github.service";
+import { GitHubService, GitHubRepository } from "@/lib/github/github.service";
 import { supabaseClient } from "@/lib/supabase/client";
 import { ProjectInput } from "@/lib/validation/project.schema";
+import { logger } from '@/lib/logger';
 
 const PROJECT_TYPES = [
   { value: 'software', label: 'Software' },
@@ -144,7 +145,7 @@ export default function ImportProjectPage() {
       // Redirect to edit page
       router.push(`/creator/projects/${project.slug}/edit`);
     } catch (err) {
-      console.error('Error importing project:', err);
+      logger.error('Error importing project:', err);
       setError(err instanceof Error ? err.message : "Failed to import project");
     } finally {
       setIsImporting(false);

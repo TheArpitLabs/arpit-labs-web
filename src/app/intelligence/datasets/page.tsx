@@ -8,6 +8,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Database, Star, Download } from 'lucide-react';
+import { logger } from '@/lib/logger';
 
 export default function PublicDatasetDashboard() {
   const [datasets, setDatasets] = useState<any[]>([]);
@@ -24,7 +25,7 @@ export default function PublicDatasetDashboard() {
       const data = await response.json();
       setDatasets(data.data || []);
     } catch (error) {
-      console.error('Error fetching datasets:', error);
+      logger.error('Error fetching datasets:', error);
     } finally {
       setLoading(false);
     }

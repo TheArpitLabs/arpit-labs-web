@@ -6,6 +6,7 @@
 
 import { QualityResult, QualityConfig, QualityThresholds } from './types';
 import { supabaseServer } from '@/lib/supabase/server';
+import { logger } from '@/lib/logger';
 
 export class QualityScoringEngine {
   private config: QualityConfig;
@@ -502,7 +503,7 @@ export class QualityScoringEngine {
       });
 
     if (error) {
-      console.error(`Failed to store quality metrics: ${error.message}`);
+      logger.error(`Failed to store quality metrics: ${error.message}`);
     }
 
     // Update queue item with quality score

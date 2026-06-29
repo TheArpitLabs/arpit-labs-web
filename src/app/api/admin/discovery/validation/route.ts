@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseServer } from '@/lib/supabase/server';
-import { validateRepositoryData, getValidationStatistics as getBatchValidationStatistics, type RepositoryDataInput } from '@/lib/project-discovery/repository-data-validator';
-import { logValidationEvent, getValidationAnalytics } from '@/lib/validation-logging-service';
+import { validateRepositoryData, getValidationStatistics as getBatchValidationStatistics, type RepositoryDataInput } from '@/lib/discovery/project-discovery/repository-data-validator';
+import { logValidationEvent, getValidationAnalytics } from '@/lib/discovery/validation-logging-service';
+import { logger } from '@/lib/logger';
 
 /**
  * GET /api/admin/discovery/validation
@@ -28,7 +29,7 @@ export async function GET(request: NextRequest) {
       return await getValidationOverview();
     }
   } catch (error) {
-    console.error('Error in validation API:', error);
+    logger.error('Error in validation API:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -88,7 +89,7 @@ export async function POST(request: NextRequest) {
       statistics,
     });
   } catch (error) {
-    console.error('Error validating repositories:', error);
+    logger.error('Error validating repositories:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -159,7 +160,7 @@ export async function PUT(request: NextRequest) {
       .eq('id', project_id);
 
     if (updateError) {
-      console.error('Error updating project validation:', updateError);
+      logger.error('Error updating project validation:', updateError);
       return NextResponse.json(
         { error: 'Failed to update project validation' },
         { status: 500 }
@@ -181,7 +182,7 @@ export async function PUT(request: NextRequest) {
       validation: validationResult,
     });
   } catch (error) {
-    console.error('Error re-validating project:', error);
+    logger.error('Error re-validating project:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -200,7 +201,7 @@ async function getValidationOverview() {
     .not('validation_status', 'is', null);
 
   if (projectsError) {
-    console.error('Error fetching validation data:', projectsError);
+    logger.error('Error fetching validation data:', projectsError);
     return NextResponse.json(
       { error: 'Failed to fetch validation data' },
       { status: 500 }
@@ -267,7 +268,7 @@ async function getValidationStatistics() {
     .not('validation_status', 'is', null);
 
   if (projectsError) {
-    console.error('Error fetching validation statistics:', projectsError);
+    logger.error('Error fetching validation statistics:', projectsError);
     return NextResponse.json(
       { error: 'Failed to fetch validation statistics' },
       { status: 500 }
@@ -318,7 +319,7 @@ async function getRecentValidations() {
     .limit(20);
 
   if (projectsError) {
-    console.error('Error fetching recent validations:', projectsError);
+    logger.error('Error fetching recent validations:', projectsError);
     return NextResponse.json(
       { error: 'Failed to fetch recent validations' },
       { status: 500 }
@@ -341,7 +342,7 @@ async function getCommonErrors() {
     .eq('validation_status', 'failed');
 
   if (projectsError) {
-    console.error('Error fetching common errors:', projectsError);
+    logger.error('Error fetching common errors:', projectsError);
     return NextResponse.json(
       { error: 'Failed to fetch common errors' },
       { status: 500 }
@@ -378,7 +379,7 @@ async function updateProjectValidation(project_id: string, results: any[]) {
   // Use the first validation result (assuming single project validation)
   const validation = results[0]?.validation;
   if (!validation) {
-    console.log('No validation result found for:', project_id);
+    logger.info('No validation result found for:', project_id);
     return;
   }
 
@@ -394,9 +395,9 @@ async function updateProjectValidation(project_id: string, results: any[]) {
     .eq('id', project_id);
 
   if (error) {
-    console.error('Error updating project validation:', error);
+    logger.error('Error updating project validation:', error);
     throw error;
   }
 
-  console.log('Updated project validation for:', project_id, validation.validationStatus);
+  logger.info(`Updated project validation for: ${project_id}, status: ${validation.validationStatus}`);
 }

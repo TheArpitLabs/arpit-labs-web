@@ -18,7 +18,7 @@ const navLinks: NavLink[] = [
   { label: "Research", href: "/research", description: "Research publications" },
   { label: "Innovation", href: "/innovation", description: "Startup initiatives" },
   { label: "Community", href: "/community/global", description: "Join the network" },
-  { label: "Contact", href: "mailto:contact@arpitlabs.com", description: "Get in touch" }
+  { label: "Contact", href: "mailto:contact@axiora.com", description: "Get in touch" }
 ];
 
 const resources = [
@@ -34,10 +34,10 @@ const company = [
 ];
 
 const socialLinks = [
-  { label: "GitHub", href: "https://github.com/arpit-labs", icon: Github, color: "hover:text-white" },
-  { label: "LinkedIn", href: "https://linkedin.com/in/arpit-labs", icon: Linkedin, color: "hover:text-blue-500" },
-  { label: "Twitter", href: "https://twitter.com/arpitlabs", icon: Twitter, color: "hover:text-sky-400" },
-  { label: "Email", href: "mailto:contact@arpitlabs.com", icon: Mail, color: "hover:text-purple-400" }
+  { label: "GitHub", href: "https://github.com/axiora", icon: Github, color: "hover:text-white" },
+  { label: "LinkedIn", href: "https://linkedin.com/in/axiora", icon: Linkedin, color: "hover:text-blue-500" },
+  { label: "Twitter", href: "https://twitter.com/axiora", icon: Twitter, color: "hover:text-sky-400" },
+  { label: "Email", href: "mailto:contact@axiora.com", icon: Mail, color: "hover:text-purple-400" }
 ];
 
 export function Footer() {
@@ -63,16 +63,16 @@ export function Footer() {
               >
                 <Link href="/" className="inline-flex items-center gap-3 group">
                   <div className="relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-primary to-accent shadow-glow transition-shadow">
-                    <NexusLogo className="h-7 w-7 text-white" />
+                    <NexusLogo className="h-10 w-10 text-white" />
                   </div>
                   <div>
-                    <h1 className="text-2xl font-heading font-bold">Arpit Labs</h1>
-                    <p className="text-xs text-accent">Engineering Discovery Platform</p>
+                    <h1 className="text-2xl font-heading font-bold">Axiora</h1>
+                    <p className="text-xs text-accent">AI-Powered Innovation Platform</p>
                   </div>
                 </Link>
                 
                 <p className="max-w-sm text-sm leading-relaxed text-muted">
-                  A world-class engineering discovery platform. Explore AI, IoT, Software, Hardware, and Cybersecurity projects. Build resilient systems through systems thinking.
+                  AI-powered innovation platform for projects, research, community, courses, marketplace, and autonomous discovery.
                 </p>
 
                 <div className="flex flex-wrap gap-3">
@@ -206,7 +206,7 @@ export function Footer() {
           {/* Bottom Bar */}
           <div className="flex flex-col gap-4 border-t border-border pt-8 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-2">
-              <p>© {new Date().getFullYear()} Arpit Labs</p>
+              <p>© {new Date().getFullYear()} Axiora</p>
               <span className="text-accent">•</span>
               <p>Built with <Heart className="inline h-4 w-4 text-error fill-error" /> for engineers</p>
             </div>

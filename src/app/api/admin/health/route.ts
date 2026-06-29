@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAdminUserFromRequest } from "@/lib/auth";
+import { getAdminUserFromRequest } from "@/lib/auth/auth";
 import { supabaseServer } from "@/lib/supabase/server";
 
 // GET /api/admin/health - Check system health status

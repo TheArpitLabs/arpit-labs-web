@@ -1,6 +1,6 @@
 import { Container } from "@/components/layout/Container";
 import { Footer } from "@/components/layout/Footer";
-import { getTenantContext } from "@/lib/saas";
+import { getTenantContext } from "@/lib/utils/saas";
 import { createOrganizationAction } from "@/lib/actions/saas-actions";
 import { AdminSubmitButton } from "@/components/admin/AdminSubmitButton";
 import Link from "next/link";

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { Link2, FileText, BookOpen, Users, Database, Building2, Loader2, ChevronRight } from "lucide-react";
+import { logger } from '@/lib/logger';
 
 interface ProjectRecommendationsProps {
   projectId: string;
@@ -51,7 +52,7 @@ export function ProjectRecommendations({ projectId }: ProjectRecommendationsProp
         setRecommendations(data.result);
       }
     } catch (error) {
-      console.error("Failed to fetch recommendations:", error);
+      logger.error("Failed to fetch recommendations:", error);
     } finally {
       setLoading(false);
     }

@@ -1,17 +1,17 @@
 import { Container } from "@/components/layout/Container";
 import { Footer } from "@/components/layout/Footer";
-import { ecosystemRepository } from "@/lib/repositories/ecosystem.repository";
 import { Globe, Users, MessageSquare, MapPin, Search } from "lucide-react";
 import Link from "next/link";
-import type { CommunityChapter } from "@/types/content";
 
 export const dynamic = "force-dynamic";
 
 export default async function GlobalCommunityPage() {
-  let chapters: CommunityChapter[] = [];
+  let chapters: any[] = [];
 
   try {
-    chapters = await ecosystemRepository.getCommunityChapters();
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || ''}/api/community/chapters`, { cache: 'no-store' });
+    const json = await res.json().catch(() => ({ data: [] }));
+    chapters = json?.data || [];
   } catch (error) {
     console.error("Failed to load community chapters:", error);
   }
@@ -66,10 +66,10 @@ export default async function GlobalCommunityPage() {
                       <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
                         <MapPin size={20} />
                       </div>
-                      <span className="text-xs font-heading font-bold text-muted">{chapter.member_count} Members</span>
+                      <span className="text-xs font-heading font-bold text-muted">{chapter.member_count || 0} Members</span>
                     </div>
                     <h3 className="text-xl font-heading font-bold text-foreground">{chapter.name}</h3>
-                    <p className="text-sm text-muted">{chapter.city ? `${chapter.city}, ` : ''}{chapter.country}</p>
+                    <p className="text-sm text-muted">{chapter.city ? `${chapter.city}, ` : ''}{chapter.country_name || chapter.country}</p>
                     <button className="mt-6 w-full rounded-xl border border-border py-2 text-sm font-heading font-bold transition group-hover:bg-primary group-hover:text-foreground group-hover:border-primary">
                       Join Chapter
                     </button>

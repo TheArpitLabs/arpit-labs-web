@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Trophy, Rocket, Heart, Users, Star, Award, Target, CheckCircle, Lock, Loader2, AlertCircle } from "lucide-react";
 import { supabaseClient } from "@/lib/supabase/client";
+import { logger } from '@/lib/logger';
 
 interface ProfileAchievementsProps {
   profile: any;
@@ -42,7 +43,7 @@ export function ProfileAchievements({ profile, isOwnProfile = false }: ProfileAc
       if (error) throw error;
       setAchievements(data || []);
     } catch (err) {
-      console.error("Error fetching achievements:", err);
+      logger.error("Error fetching achievements:", err);
       setError("Failed to load achievements");
     } finally {
       setLoading(false);

@@ -6,6 +6,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getPipelineOrchestrator } from '@/lib/acquisition/orchestration/pipeline-orchestrator';
+import { logger } from '@/lib/logger';
 
 // GET /api/admin/acquisition/jobs/[jobId] - Get job status
 export async function GET(
@@ -39,7 +40,7 @@ export async function GET(
       data: job
     });
   } catch (error) {
-    console.error('Error getting job status:', error);
+    logger.error('Error getting job status:', error);
     return NextResponse.json({
       success: false,
       error: 'Failed to get job status'
@@ -81,7 +82,7 @@ export async function POST(
         return NextResponse.json({ success: false, error: 'Invalid action' }, { status: 400 });
     }
   } catch (error) {
-    console.error('Error in job POST:', error);
+    logger.error('Error in job POST:', error);
     return NextResponse.json({
       success: false,
       error: 'Failed to process job request'

@@ -13,17 +13,17 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
-  console.error('Error: Missing Supabase credentials in .env.local');
-  console.error('Required: NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY');
+  logger.error('Error: Missing Supabase credentials in .env.local');
+  logger.error('Required: NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY');
   process.exit(1);
 }
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 async function applyMigration() {
-  console.log('Applying critical database migrations...');
-  console.log(`Supabase URL: ${supabaseUrl}`);
-  console.log('');
+  logger.info('Applying critical database migrations...');
+  logger.info(`Supabase URL: ${supabaseUrl}`);
+  logger.info('');
 
   // Read the migration file
   const migrationPath = path.join(__dirname, '../supabase/migrations/20260606_consolidated_critical_fixes.sql');
@@ -35,8 +35,8 @@ async function applyMigration() {
     .map(s => s.trim())
     .filter(s => s.length > 0 && !s.startsWith('--'));
 
-  console.log(`Found ${statements.length} SQL statements to execute`);
-  console.log('');
+  logger.info(`Found ${statements.length} SQL statements to execute`);
+  logger.info('');
 
   let successCount = 0;
   let errorCount = 0;
@@ -51,27 +51,27 @@ async function applyMigration() {
         const { error: queryError } = await supabase.from('_temp').select('*').limit(1);
         if (queryError && queryError.code === '42P01') {
           // Table doesn't exist, expected for CREATE TABLE statements
-          console.log(`✓ Statement ${i + 1}: CREATE/ALTER operation (expected)`);
+          logger.info(`✓ Statement ${i + 1}: CREATE/ALTER operation (expected)`);
         } else {
-          console.log(`✗ Statement ${i + 1}: ${error.message}`);
+          logger.info(`✗ Statement ${i + 1}: ${error.message}`);
           errorCount++;
         }
       } else {
-        console.log(`✓ Statement ${i + 1}: Success`);
+        logger.info(`✓ Statement ${i + 1}: Success`);
         successCount++;
       }
     } catch (err) {
-      console.log(`✗ Statement ${i + 1}: ${err.message}`);
+      logger.info(`✗ Statement ${i + 1}: ${err.message}`);
       errorCount++;
     }
   }
 
-  console.log('');
-  console.log(`Migration complete: ${successCount} successful, ${errorCount} errors`);
-  console.log('');
-  console.log('Please test the routes:');
-  console.log('  http://localhost:3000/research');
-  console.log('  http://localhost:3000/marketplace');
+  logger.info('');
+  logger.info(`Migration complete: ${successCount} successful, ${errorCount} errors`);
+  logger.info('');
+  logger.info('Please test the routes:');
+  logger.info('  http://localhost:3000/research');
+  logger.info('  http://localhost:3000/marketplace');
 }
 
 applyMigration().catch(console.error);

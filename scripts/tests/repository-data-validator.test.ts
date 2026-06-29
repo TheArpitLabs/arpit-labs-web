@@ -6,6 +6,7 @@
  */
 
 import { validateRepositoryData, getValidationStatistics, getValidationSummary, type RepositoryDataInput } from '@/lib/project-discovery/repository-data-validator';
+import { logger } from '@/lib/logger';
 
 // Test cases for validation
 const testCases: { name: string; input: RepositoryDataInput; expectedStatus: 'passed' | 'failed' | 'skipped' }[] = [
@@ -154,32 +155,32 @@ const testCases: { name: string; input: RepositoryDataInput; expectedStatus: 'pa
 
 // Run tests
 function runTests() {
-  console.log('Running Repository Data Validator Tests...\n');
+  logger.info('Running Repository Data Validator Tests...\n');
   
   let passed = 0;
   let failed = 0;
 
   testCases.forEach((testCase, index) => {
-    console.log(`Test ${index + 1}: ${testCase.name}`);
+    logger.info(`Test ${index + 1}: ${testCase.name}`);
     
     const result = validateRepositoryData(testCase.input);
     
     if (result.validationStatus === testCase.expectedStatus) {
-      console.log(`✅ PASSED - Status: ${result.validationStatus}, Score: ${result.validationScore}`);
+      logger.info(`✅ PASSED - Status: ${result.validationStatus}, Score: ${result.validationScore}`);
       passed++;
     } else {
-      console.log(`❌ FAILED - Expected: ${testCase.expectedStatus}, Got: ${result.validationStatus}, Score: ${result.validationScore}`);
-      console.log(`   Errors: ${result.errors.join(', ')}`);
+      logger.info(`❌ FAILED - Expected: ${testCase.expectedStatus}, Got: ${result.validationStatus}, Score: ${result.validationScore}`);
+      logger.info(`   Errors: ${result.errors.join(', ')}`);
       failed++;
     }
     
-    console.log('');
+    logger.info('');
   });
 
-  console.log(`\n=== Test Results ===`);
-  console.log(`Total: ${testCases.length}`);
-  console.log(`Passed: ${passed}`);
-  console.log(`Failed: ${failed}`);
+  logger.info(`\n=== Test Results ===`);
+  logger.info(`Total: ${testCases.length}`);
+  logger.info(`Passed: ${passed}`);
+  logger.info(`Failed: ${failed}`);
   
   return { total: testCases.length, passed, failed };
 }

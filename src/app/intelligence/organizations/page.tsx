@@ -8,6 +8,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Building, Trophy, Users } from 'lucide-react';
+import { logger } from '@/lib/logger';
 
 export default function PublicOrganizationDashboard() {
   const [organizations, setOrganizations] = useState<any[]>([]);
@@ -24,7 +25,7 @@ export default function PublicOrganizationDashboard() {
       const data = await response.json();
       setOrganizations(data.data || []);
     } catch (error) {
-      console.error('Error fetching organizations:', error);
+      logger.error('Error fetching organizations:', error);
     } finally {
       setLoading(false);
     }

@@ -5,7 +5,7 @@ import { PointsDisplay } from "@/components/gamification/PointsDisplay";
 import { StreakDisplay } from "@/components/gamification/StreakDisplay";
 import { LevelProgress } from "@/components/gamification/LevelProgress";
 import { supabaseServer } from "@/lib/supabase/server";
-import { getCurrentUser } from "@/lib/auth";
+import { getCurrentUser } from "@/lib/auth/auth";
 import { createPageMetadata } from "@/lib/seo";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";

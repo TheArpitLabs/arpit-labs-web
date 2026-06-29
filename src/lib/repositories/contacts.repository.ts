@@ -2,6 +2,7 @@ import { supabaseServer } from "@/lib/supabase/server";
 import { ContactMessage } from "@/types/content";
 import { ContactFormInput } from "@/lib/validation/contact.schema";
 import { handleDatabaseError } from "@/lib/errors";
+import { logger } from '@/lib/logger';
 
 export const contactsRepository = {
   async getContactMessages(filters?: { search?: string; isRead?: boolean }) {
@@ -21,7 +22,7 @@ export const contactsRepository = {
     const { data, error } = await query;
 
     if (error) {
-      console.error("Database error in getContactMessages:", error);
+      logger.error("Database error in getContactMessages:", error);
       throw handleDatabaseError(error);
     }
     return data ?? [];
@@ -35,7 +36,7 @@ export const contactsRepository = {
       .single();
 
     if (error) {
-      console.error("Database error in submitContactMessage:", error);
+      logger.error("Database error in submitContactMessage:", error);
       throw handleDatabaseError(error);
     }
     return data;
@@ -50,7 +51,7 @@ export const contactsRepository = {
       .single();
 
     if (error) {
-      console.error("Database error in updateContactMessage:", error);
+      logger.error("Database error in updateContactMessage:", error);
       throw handleDatabaseError(error);
     }
     return data;
@@ -59,7 +60,7 @@ export const contactsRepository = {
   async deleteContactMessage(id: string) {
     const { error } = await supabaseServer.from("contact_messages").delete().eq("id", id);
     if (error) {
-      console.error("Database error in deleteContactMessage:", error);
+      logger.error("Database error in deleteContactMessage:", error);
       throw handleDatabaseError(error);
     }
     return true;

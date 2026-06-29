@@ -8,6 +8,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { logger } from '@/lib/logger';
 
 interface Message {
   id: string;
@@ -53,7 +54,7 @@ export function AIChat({ defaultTopic = 'general', className = '' }: AIChatProps
         },
       ]);
     } catch (error) {
-      console.error('Failed to initialize chat:', error);
+      logger.error('Failed to initialize chat:', error);
     }
   }, [defaultTopic]);
 
@@ -108,7 +109,7 @@ export function AIChat({ defaultTopic = 'general', className = '' }: AIChatProps
 
       setMessages((prev) => [...prev, assistantMessage]);
     } catch (error) {
-      console.error('Failed to send message:', error);
+      logger.error('Failed to send message:', error);
 
       // Add error message
       const errorMessage: Message = {
@@ -234,7 +235,7 @@ export function AISearch({ className = '' }: AISearchProps) {
       const data = await response.json();
       setResults(data.results || []);
     } catch (error) {
-      console.error('Search failed:', error);
+      logger.error('Search failed:', error);
       setResults([]);
     } finally {
       setIsLoading(false);
@@ -344,7 +345,7 @@ export function AIProjectGenerator({ className = '' }: AIProjectGeneratorProps) 
       const data = await response.json();
       setGeneratedProject(data.project);
     } catch (error) {
-      console.error('Failed to generate project:', error);
+      logger.error('Failed to generate project:', error);
     } finally {
       setIsLoading(false);
     }
@@ -442,7 +443,7 @@ export function AnalyticsPreview() {
         const data = await response.json();
         setPredictions(data.predictions || []);
       } catch (error) {
-        console.error('Failed to fetch predictions:', error);
+        logger.error('Failed to fetch predictions:', error);
       } finally {
         setIsLoading(false);
       }

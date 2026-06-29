@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabase/server";
 import { paymentRepository } from "@/lib/repositories/payment.repository";
 import { generateInvoicePDF } from "@/lib/payments/invoice-utils";
+import { logger } from '@/lib/logger';
 
 export async function GET(request: Request) {
   const authorization = request.headers.get("authorization")?.replace("Bearer ", "") ?? "";
@@ -58,7 +59,7 @@ export async function GET(request: Request) {
       },
     });
   } catch (error) {
-    console.error("Invoice PDF generation error:", error);
+    logger.error("Invoice PDF generation error:", error);
     return NextResponse.json({ success: false, error: "Failed to generate invoice" }, { status: 500 });
   }
 }

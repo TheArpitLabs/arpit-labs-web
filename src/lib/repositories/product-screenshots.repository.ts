@@ -1,6 +1,7 @@
 import { supabaseServer } from "@/lib/supabase/server";
 import { ProductScreenshot } from "@/types/content";
 import { handleDatabaseError } from "@/lib/errors";
+import { logger } from '@/lib/logger';
 
 export const productScreenshotsRepository = {
   async getScreenshotsByProductId(productId: string) {
@@ -11,7 +12,7 @@ export const productScreenshotsRepository = {
       .order("sort_order", { ascending: true });
 
     if (error) {
-      console.error("Database error in getScreenshotsByProductId:", error);
+      logger.error("Database error in getScreenshotsByProductId:", error);
       throw handleDatabaseError(error);
     }
 
@@ -25,7 +26,7 @@ export const productScreenshotsRepository = {
       .eq("product_id", productId);
 
     if (deleteError) {
-      console.error("Database error in replaceScreenshots delete:", deleteError);
+      logger.error("Database error in replaceScreenshots delete:", deleteError);
       throw handleDatabaseError(deleteError);
     }
 
@@ -45,7 +46,7 @@ export const productScreenshotsRepository = {
       .select();
 
     if (error) {
-      console.error("Database error in replaceScreenshots insert:", error);
+      logger.error("Database error in replaceScreenshots insert:", error);
       throw handleDatabaseError(error);
     }
 

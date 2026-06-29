@@ -3,6 +3,7 @@
 import { supabaseServer } from "@/lib/supabase/server";
 import { Achievement, UserAchievement } from "./types";
 import { calculateAchievementProgress, isAchievementCompleted, updateAchievementProgress } from "./achievements";
+import { logger } from '@/lib/logger';
 
 /**
  * Get all available achievements
@@ -14,7 +15,7 @@ export async function getAllAchievements(): Promise<Achievement[]> {
     .order('points_reward', { ascending: false });
 
   if (error) {
-    console.error('Error fetching achievements:', error);
+    logger.error('Error fetching achievements:', error);
     return [];
   }
 
@@ -35,7 +36,7 @@ export async function getUserAchievements(userId: string): Promise<UserAchieveme
     .order('updated_at', { ascending: false });
 
   if (error) {
-    console.error('Error fetching user achievements:', error);
+    logger.error('Error fetching user achievements:', error);
     return [];
   }
 
@@ -91,7 +92,7 @@ export async function initializeAchievementProgress(
     .single();
 
   if (error) {
-    console.error('Error initializing achievement progress:', error);
+    logger.error('Error initializing achievement progress:', error);
     return null;
   }
 
@@ -141,7 +142,7 @@ export async function trackAchievementProgress(
     .single();
 
   if (error) {
-    console.error('Error updating achievement progress:', error);
+    logger.error('Error updating achievement progress:', error);
     return { completed: false, userAchievement };
   }
 

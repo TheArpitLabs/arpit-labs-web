@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabase/server";
 import { autonomousDiscoveryEngine } from "@/lib/intelligence/autonomous-discovery";
+import { logger } from '@/lib/logger';
 
 export async function GET(request: NextRequest) {
   try {
@@ -43,7 +44,7 @@ export async function GET(request: NextRequest) {
           source_param: source || null,
         });
         if (pipelineStats.error) {
-          console.error("Pipeline stats error:", pipelineStats.error);
+          logger.error("Pipeline stats error:", pipelineStats.error);
           return NextResponse.json({ 
             success: false, 
             error: "Pipeline statistics function not available. Please run database migrations.",
@@ -56,7 +57,7 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ success: false, error: "Unknown action" }, { status: 400 });
     }
   } catch (error) {
-    console.error("Discovery API failed:", error);
+    logger.error("Discovery API failed:", error);
     return NextResponse.json(
       { success: false, error: error instanceof Error ? error.message : "Discovery API failed" },
       { status: 500 }
@@ -150,7 +151,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ success: false, error: "Unknown action" }, { status: 400 });
     }
   } catch (error) {
-    console.error("Discovery API POST failed:", error);
+    logger.error("Discovery API POST failed:", error);
     return NextResponse.json(
       { success: false, error: error instanceof Error ? error.message : "Discovery API POST failed" },
       { status: 500 }

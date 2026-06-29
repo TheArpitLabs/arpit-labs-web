@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
-const siteName = "Arpit Labs";
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://arpit-labs.com";
+const siteName = "Axiora";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://axiora.com";
 const defaultImage = `${siteUrl}/logo.png`;
-const siteDescription = "Engineering platform showcasing AI, IoT, Cybersecurity, and Web Development projects.";
+const siteDescription = "AI-powered innovation platform for projects, research, community, courses, marketplace, and autonomous discovery.";
 
 interface CreateMetadataOptions {
   title: string;
@@ -62,7 +62,7 @@ export function createPageMetadata({
       card: "summary_large_image",
       title: fullTitle,
       description,
-      creator: "@arpitlabs",
+      creator: "@axiora",
       images: [image],
     },
   };

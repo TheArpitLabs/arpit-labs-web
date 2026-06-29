@@ -1,5 +1,6 @@
 import Stripe from "stripe";
 import type { CheckoutSessionPayload, CheckoutSessionResult, PaymentProvider } from "@/lib/payments/payment-provider";
+import { logger } from '@/lib/logger';
 
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
 const stripe = stripeSecretKey
@@ -12,7 +13,7 @@ export const StripeProvider: PaymentProvider = {
   providerName: "stripe",
   async createCheckoutSession(payload: CheckoutSessionPayload): Promise<CheckoutSessionResult> {
     if (!stripe) {
-      console.error("Stripe client is not configured. STRIPE_SECRET_KEY is missing.");
+      logger.error("Stripe client is not configured. STRIPE_SECRET_KEY is missing.");
       return {
         success: false,
         provider: "stripe",
@@ -58,7 +59,7 @@ export const StripeProvider: PaymentProvider = {
         sessionId: session.id,
       };
     } catch (error) {
-      console.error("Stripe Checkout Error:", error);
+      logger.error("Stripe Checkout Error:", error);
       return {
         success: false,
         provider: "stripe",

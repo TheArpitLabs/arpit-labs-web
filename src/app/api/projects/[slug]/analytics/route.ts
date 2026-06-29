@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseServer } from '@/lib/supabase/server';
+import { logger } from '@/lib/logger';
 
 export async function POST(
   request: NextRequest,
@@ -87,7 +88,7 @@ export async function POST(
 
     return NextResponse.json({ error: 'Invalid type' }, { status: 400 });
   } catch (error) {
-    console.error('Analytics API error:', error);
+    logger.error('Analytics API error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -139,7 +140,7 @@ export async function GET(
       user_bookmarked: userBookmarked,
     });
   } catch (error) {
-    console.error('Analytics GET error:', error);
+    logger.error('Analytics GET error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

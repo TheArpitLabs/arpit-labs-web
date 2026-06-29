@@ -45,8 +45,8 @@ export default async function HomePage() {
     getProjects()
   ]);
 
-  // Use projects from server (database) - limit to 12 for home page
-  const projects = projectsFromServer.slice(0, 12);
+  // Use projects from server (database) - limit to 6 for home page
+  const projects = projectsFromServer.slice(0, 6);
   logger.debug(`Home page projects count: ${projects.length}`);
 
   return (
@@ -64,30 +64,30 @@ export default async function HomePage() {
 
       <Container>
         <AnimatedSection>
-          <section id="featured-projects" className="py-24">
-            <div className="mb-12 text-center">
-              <p className="mb-4 text-sm uppercase tracking-[0.28em] text-muted">Project Marketplace</p>
-              <h2 className="mb-6 bg-gradient-to-r from-foreground via-foreground to-muted bg-clip-text text-4xl font-bold sm:text-5xl">
+          <section id="featured-projects" className="py-10">
+            <div className="mb-6 text-center">
+              <p className="mb-2 text-xs uppercase tracking-[0.28em] text-muted">Project Marketplace</p>
+              <h2 className="mb-3 bg-gradient-to-r from-foreground via-foreground to-muted bg-clip-text text-2xl font-bold sm:text-3xl">
                 Top Projects Right Now
               </h2>
-              <p className="mx-auto max-w-3xl text-lg text-muted">
+              <p className="mx-auto max-w-2xl text-sm text-muted">
                 Not just another marketplace. A complete learning ecosystem with AI-powered tools that help you truly understand every line of code.
               </p>
             </div>
 
-            <div className="mb-8 flex flex-wrap justify-center gap-3">
+            <div className="mb-5 flex flex-wrap justify-center gap-2">
               {['AI & ML', 'IoT', 'Software', 'Hardware', 'Research', 'All Projects'].map((category) => (
                 <button
                   key={category}
-                  className="rounded-full border border-border/80 bg-surface/80 px-6 py-3 text-sm font-semibold text-foreground transition-all hover:border-primary hover:bg-primary/5 backdrop-blur-sm dark:border-slate-800 dark:bg-slate-950/80"
+                  className="rounded-full border border-border/80 bg-surface/80 px-3 py-1.5 text-[11px] font-semibold text-foreground transition-all hover:border-primary hover:bg-primary/5 backdrop-blur-sm dark:border-slate-800 dark:bg-slate-950/80"
                 >
                   {category}
                 </button>
               ))}
             </div>
 
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {projects.slice(0, 12).map((project, index) => (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {projects.map((project, index) => (
                 <PremiumProjectCard key={project.id} project={{
                   ...project,
                   cover_image: project.cover_image || undefined,
@@ -97,10 +97,20 @@ export default async function HomePage() {
             </div>
 
             {projects.length === 0 && (
-              <div className="py-12 text-center text-muted">
+              <div className="py-8 text-center text-muted">
                 No projects published yet. Check back soon!
               </div>
             )}
+
+            {/* Browse All Link */}
+            <div className="mt-6 text-center">
+              <Link 
+                href="/projects"
+                className="inline-flex items-center gap-2 text-xs font-semibold text-primary hover:text-primary/80 transition-colors"
+              >
+                Browse All Projects →
+              </Link>
+            </div>
           </section>
         </AnimatedSection>
 
@@ -108,9 +118,9 @@ export default async function HomePage() {
 
         <MarketplaceResourcesSection />
 
-        <div className="py-16" />
+        <div className="py-4" />
 
-        <AnimatedSection>
+        {/* <AnimatedSection>
           <section id="social-proof" className="py-24">
             <div className="mb-12 text-center">
               <p className="mb-4 text-sm uppercase tracking-[0.28em] text-muted">Impact</p>
@@ -126,18 +136,18 @@ export default async function HomePage() {
               <AnimatedCounter value={projects.length + experiments.length} label="Engineering Resources" icon="Users" />
             </div>
           </section>
-        </AnimatedSection>
+        </AnimatedSection> */}
 
 
         <PremiumPlatformGrid />
 
-        <div className="py-8" />
+        <div className="py-4" />
 
-        <FounderStory />
+        {/* <FounderStory /> */}
 
-        <ConsolidatedTestimonials />
+        {/* <ConsolidatedTestimonials /> */}
 
-        <div className="py-8" />
+        <div className="py-4" />
 
         <CommunitySection />
 

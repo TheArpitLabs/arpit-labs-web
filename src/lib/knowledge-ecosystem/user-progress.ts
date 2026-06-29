@@ -1,5 +1,6 @@
 import { supabaseServer } from "@/lib/supabase/server";
 import { assertKnowledgeFeature } from "./feature-flags";
+import { logger } from '@/lib/logger';
 
 export interface UserProgress {
   id: string;
@@ -50,7 +51,7 @@ export class UserProgressSystem {
       .single();
 
     if (error) {
-      console.error("Failed to record project completion:", error);
+      logger.error("Failed to record project completion:", error);
       throw error;
     }
 
@@ -77,7 +78,7 @@ export class UserProgressSystem {
       .single();
 
     if (error) {
-      console.error("Failed to record skill learning:", error);
+      logger.error("Failed to record skill learning:", error);
       throw error;
     }
 
@@ -104,7 +105,7 @@ export class UserProgressSystem {
       .single();
 
     if (error) {
-      console.error("Failed to record path completion:", error);
+      logger.error("Failed to record path completion:", error);
       throw error;
     }
 
@@ -129,7 +130,7 @@ export class UserProgressSystem {
       .single();
 
     if (error) {
-      console.error("Failed to update career track progress:", error);
+      logger.error("Failed to update career track progress:", error);
       throw error;
     }
 
@@ -347,7 +348,7 @@ export class UserProgressSystem {
       .eq("id", progressId);
 
     if (error) {
-      console.error("Failed to delete progress:", error);
+      logger.error("Failed to delete progress:", error);
       throw error;
     }
   }
@@ -362,7 +363,7 @@ export class UserProgressSystem {
       .eq("user_id", userId);
 
     if (error) {
-      console.error("Failed to clear user progress:", error);
+      logger.error("Failed to clear user progress:", error);
       throw error;
     }
   }

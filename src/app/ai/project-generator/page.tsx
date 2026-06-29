@@ -12,7 +12,8 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { SparklesIcon, CopyIcon, RefreshCwIcon } from 'lucide-react';
 import { supabaseClient } from '@/lib/supabase/client';
-import { analytics } from '@/lib/analytics';
+import { analytics } from '@/lib/analytics/analytics';
+import { logger } from '@/lib/logger';
 
 interface GeneratedProject {
   title: string;
@@ -87,7 +88,7 @@ export default function ProjectGeneratorPage() {
       analytics.featureUsage('ai_project_generator', 'premium');
       analytics.aiUsageByPlan('ai_project_generator', 'premium');
     } catch (error) {
-      console.error('Failed to generate project:', error);
+      logger.error('Failed to generate project:', error);
       setGeneratedProject(null);
       setErrorMessage(error instanceof Error ? error.message : 'Unable to generate a project right now.');
     } finally {

@@ -3,6 +3,7 @@
 import { supabaseServer } from "@/lib/supabase/server";
 import { UserStreak } from "./types";
 import { isStreakActive, isLoggedInToday, getStreakBonus, getStreakMilestone } from "./streaks";
+import { logger } from '@/lib/logger';
 
 /**
  * Get user streak data
@@ -15,7 +16,7 @@ export async function getUserStreak(userId: string): Promise<UserStreak | null> 
     .single();
 
   if (error) {
-    console.error('Error fetching user streak:', error);
+    logger.error('Error fetching user streak:', error);
     return null;
   }
 
@@ -44,7 +45,7 @@ export async function initializeUserStreak(userId: string): Promise<UserStreak |
     .single();
 
   if (error) {
-    console.error('Error initializing user streak:', error);
+    logger.error('Error initializing user streak:', error);
     return null;
   }
 
@@ -110,7 +111,7 @@ export async function updateUserStreak(userId: string): Promise<{
       .single();
 
     if (error) {
-      console.error('Error updating streak:', error);
+      logger.error('Error updating streak:', error);
       throw error;
     }
 
@@ -137,7 +138,7 @@ export async function updateUserStreak(userId: string): Promise<{
     .single();
 
   if (error) {
-    console.error('Error resetting streak:', error);
+    logger.error('Error resetting streak:', error);
     throw error;
   }
 

@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { X, Plus, Upload, Save, Eye, ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
+import { logger } from '@/lib/logger';
 
 const PROJECT_TYPES = [
   { value: 'software', label: 'Software' },
@@ -106,7 +107,7 @@ export default function CreateProjectPage() {
 
       return data.publicUrl;
     } catch (error) {
-      console.error('Error uploading image:', error);
+      logger.error('Error uploading image:', error);
       alert('Failed to upload image. Please try again.');
       return null;
     } finally {
@@ -154,12 +155,12 @@ export default function CreateProjectPage() {
           .from('project_media')
           .insert(mediaInserts);
 
-        if (mediaError) console.error('Error saving gallery images:', mediaError);
+        if (mediaError) logger.error('Error saving gallery images:', mediaError);
       }
 
       router.push('/profile/projects' as any);
     } catch (error) {
-      console.error('Error creating project:', error);
+      logger.error('Error creating project:', error);
       alert('Failed to create project. Please try again.');
     } finally {
       setIsSubmitting(false);

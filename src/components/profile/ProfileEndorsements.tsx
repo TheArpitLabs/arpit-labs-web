@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Star, ThumbsUp, MessageSquare, Loader2, AlertCircle, Send, X } from "lucide-react";
 import { supabaseClient } from "@/lib/supabase/client";
+import { logger } from '@/lib/logger';
 
 interface ProfileEndorsementsProps {
   profile: any;
@@ -57,7 +58,7 @@ export function ProfileEndorsements({ profile, currentUserId }: ProfileEndorseme
       if (error) throw error;
       setEndorsements(data || []);
     } catch (err) {
-      console.error("Error fetching endorsements:", err);
+      logger.error("Error fetching endorsements:", err);
       setError("Failed to load endorsements");
     } finally {
       setLoading(false);
@@ -99,7 +100,7 @@ export function ProfileEndorsements({ profile, currentUserId }: ProfileEndorseme
       setNewEndorsement({ skill: "", endorsement_text: "", rating: 5 });
       setShowForm(false);
     } catch (err) {
-      console.error("Error submitting endorsement:", err);
+      logger.error("Error submitting endorsement:", err);
       setError("Failed to submit endorsement");
     } finally {
       setSubmitting(false);
@@ -120,7 +121,7 @@ export function ProfileEndorsements({ profile, currentUserId }: ProfileEndorseme
 
       setEndorsements(endorsements.filter(e => e.id !== endorsementId));
     } catch (err) {
-      console.error("Error deleting endorsement:", err);
+      logger.error("Error deleting endorsement:", err);
       setError("Failed to delete endorsement");
     }
   };

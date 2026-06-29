@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import pLimit from 'p-limit';
 import dotenv from 'dotenv';
+import { logger } from '@/lib/logger';
 
 // Load environment variables
 dotenv.config();
@@ -15,9 +16,9 @@ const BATCH_SIZE = 100; // Process 100 URLs at a time
 const limit = pLimit(CONCURRENCY_LIMIT);
 
 async function ingestUrls(urls: string[]) {
-  console.log(`Starting ingestion of ${urls.length} projects...`);
-  console.log(`Concurrency limit: ${CONCURRENCY_LIMIT}`);
-  console.log(`Batch size: ${BATCH_SIZE}`);
+  logger.info(`Starting ingestion of ${urls.length} projects...`);
+  logger.info(`Concurrency limit: ${CONCURRENCY_LIMIT}`);
+  logger.info(`Batch size: ${BATCH_SIZE}`);
 
   let successCount = 0;
   let failureCount = 0;
@@ -26,7 +27,7 @@ async function ingestUrls(urls: string[]) {
   // Process in batches to avoid memory issues with large datasets
   for (let i = 0; i < urls.length; i += BATCH_SIZE) {
     const batch = urls.slice(i, i + BATCH_SIZE);
-    console.log(`\nProcessing batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(urls.length / BATCH_SIZE)} (${batch.length} URLs)...`);
+    logger.info(`\nProcessing batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(urls.length / BATCH_SIZE)} (${batch.length} URLs)...`);
 
     const tasks = batch.map((url) =>
       limit(async () => {
@@ -43,11 +44,11 @@ async function ingestUrls(urls: string[]) {
             });
 
           if (error) throw error;
-          console.log(`[QUEUED] ${url}`);
+          logger.info(`[QUEUED] ${url}`);
           successCount++;
         } catch (err) {
           const errorMessage = err instanceof Error ? err.message : String(err);
-          console.error(`[FAILED] ${url}:`, errorMessage);
+          logger.error(`[FAILED] ${url}:`, errorMessage);
           failureCount++;
           failedUrls.push({ url, error: errorMessage });
         }
@@ -62,19 +63,19 @@ async function ingestUrls(urls: string[]) {
     }
   }
 
-  console.log('\n=== Ingestion Summary ===');
-  console.log(`Total URLs processed: ${urls.length}`);
-  console.log(`Successfully queued: ${successCount}`);
-  console.log(`Failed: ${failureCount}`);
+  logger.info('\n=== Ingestion Summary ===');
+  logger.info(`Total URLs processed: ${urls.length}`);
+  logger.info(`Successfully queued: ${successCount}`);
+  logger.info(`Failed: ${failureCount}`);
 
   if (failedUrls.length > 0) {
-    console.log('\nFailed URLs:');
+    logger.info('\nFailed URLs:');
     failedUrls.forEach(({ url, error }) => {
-      console.log(`  - ${url}: ${error}`);
+      logger.info(`  - ${url}: ${error}`);
     });
   }
 
-  console.log('\nIngestion batch complete.');
+  logger.info('\nIngestion batch complete.');
 }
 
 async function ingestUrlsFromFile(filePath: string) {
@@ -100,7 +101,7 @@ async function ingestUrlsFromFile(filePath: string) {
 
     await ingestUrls(urls);
   } catch (err) {
-    console.error(`Error reading file ${filePath}:`, err);
+    logger.error(`Error reading file ${filePath}:`, err);
     process.exit(1);
   }
 }
@@ -110,18 +111,18 @@ async function main() {
   const args = process.argv.slice(2);
 
   if (args.length === 0) {
-    console.log('Usage:');
-    console.log('  1. From command-line arguments:');
-    console.log('     npx tsx scripts/bulk-ingest.ts https://github.com/user/repo https://github.com/user/repo2');
-    console.log('');
-    console.log('  2. From file (JSON, CSV, or plain text):');
-    console.log('     npx tsx scripts/bulk-ingest.ts --file urls.json');
-    console.log('     npx tsx scripts/bulk-ingest.ts --file urls.csv');
-    console.log('     npx tsx scripts/bulk-ingest.ts --file urls.txt');
-    console.log('');
-    console.log('File formats:');
-    console.log('  - JSON: Array of URLs or single URL');
-    console.log('  - CSV/Text: One URL per line (lines starting with # are ignored)');
+    logger.info('Usage:');
+    logger.info('  1. From command-line arguments:');
+    logger.info('     npx tsx scripts/bulk-ingest.ts https://github.com/user/repo https://github.com/user/repo2');
+    logger.info('');
+    logger.info('  2. From file (JSON, CSV, or plain text):');
+    logger.info('     npx tsx scripts/bulk-ingest.ts --file urls.json');
+    logger.info('     npx tsx scripts/bulk-ingest.ts --file urls.csv');
+    logger.info('     npx tsx scripts/bulk-ingest.ts --file urls.txt');
+    logger.info('');
+    logger.info('File formats:');
+    logger.info('  - JSON: Array of URLs or single URL');
+    logger.info('  - CSV/Text: One URL per line (lines starting with # are ignored)');
     process.exit(1);
   }
 
@@ -134,6 +135,6 @@ async function main() {
 }
 
 main().catch(err => {
-  console.error('Fatal error:', err);
+  logger.error('Fatal error:', err);
   process.exit(1);
 });

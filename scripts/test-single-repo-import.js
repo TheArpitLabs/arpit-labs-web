@@ -32,11 +32,11 @@ function createTestPayload(repo, languages, contributors) {
 }
 
 async function testSingleRepoImport() {
-  console.log('='.repeat(80));
-  console.log('TESTING SINGLE REPOSITORY IMPORT');
-  console.log('='.repeat(80));
-  console.log(`Target: facebook/prophet`);
-  console.log('');
+  logger.info('='.repeat(80));
+  logger.info('TESTING SINGLE REPOSITORY IMPORT');
+  logger.info('='.repeat(80));
+  logger.info(`Target: facebook/prophet`);
+  logger.info('');
 
   const octokit = new Octokit({
     auth: process.env.GITHUB_TOKEN,
@@ -45,36 +45,36 @@ async function testSingleRepoImport() {
 
   try {
     // Fetch repository data
-    console.log('1. Fetching repository data from GitHub...');
+    logger.info('1. Fetching repository data from GitHub...');
     const { data: repo } = await octokit.repos.get({ owner: 'facebook', repo: 'prophet' });
-    console.log('✓ Repository data fetched');
-    console.log(`  Stars: ${repo.stargazers_count}`);
-    console.log(`  Topics: ${repo.topics?.length || 0} topics`);
-    console.log(`  Owner: ${repo.owner?.login}`);
-    console.log('');
+    logger.info('✓ Repository data fetched');
+    logger.info(`  Stars: ${repo.stargazers_count}`);
+    logger.info(`  Topics: ${repo.topics?.length || 0} topics`);
+    logger.info(`  Owner: ${repo.owner?.login}`);
+    logger.info('');
 
     // Fetch languages
-    console.log('2. Fetching languages...');
+    logger.info('2. Fetching languages...');
     const { data: languages } = await octokit.repos.listLanguages({ owner: 'facebook', repo: 'prophet' });
     const languageNames = Object.keys(languages);
-    console.log(`✓ Languages: ${languageNames.join(', ')}`);
-    console.log('');
+    logger.info(`✓ Languages: ${languageNames.join(', ')}`);
+    logger.info('');
 
     // Fetch contributors
-    console.log('3. Fetching contributors...');
+    logger.info('3. Fetching contributors...');
     const { data: contributors } = await octokit.repos.listContributors({ owner: 'facebook', repo: 'prophet', per_page: 100 });
-    console.log(`✓ Contributors: ${contributors.length}`);
-    console.log('');
+    logger.info(`✓ Contributors: ${contributors.length}`);
+    logger.info('');
 
     // Create payload
-    console.log('4. Creating database payload...');
+    logger.info('4. Creating database payload...');
     const payload = createTestPayload(repo, languageNames, contributors);
-    console.log('✓ Payload created:');
-    console.log(JSON.stringify(payload, null, 2));
-    console.log('');
+    logger.info('✓ Payload created:');
+    logger.info(JSON.stringify(payload, null, 2));
+    logger.info('');
 
     // Check if repository already exists
-    console.log('5. Checking if repository exists in database...');
+    logger.info('5. Checking if repository exists in database...');
     const { data: existingRepo, error: checkError } = await supabase
       .from('projects')
       .select('id, title, github_stars, repository_topics')
@@ -82,20 +82,20 @@ async function testSingleRepoImport() {
       .maybeSingle();
 
     if (checkError) {
-      console.error('❌ Error checking existing repository:', checkError);
+      logger.error('❌ Error checking existing repository:', checkError);
       return;
     }
 
     if (existingRepo) {
-      console.log('⚠️  Repository already exists in database:');
-      console.log(`  ID: ${existingRepo.id}`);
-      console.log(`  Title: ${existingRepo.title}`);
-      console.log(`  Current stars: ${existingRepo.github_stars}`);
-      console.log(`  Current topics: ${existingRepo.repository_topics?.length || 0}`);
+      logger.info('⚠️  Repository already exists in database:');
+      logger.info(`  ID: ${existingRepo.id}`);
+      logger.info(`  Title: ${existingRepo.title}`);
+      logger.info(`  Current stars: ${existingRepo.github_stars}`);
+      logger.info(`  Current topics: ${existingRepo.repository_topics?.length || 0}`);
       
       // Update instead of insert
-      console.log('');
-      console.log('6. Updating existing repository...');
+      logger.info('');
+      logger.info('6. Updating existing repository...');
       const { error: updateError } = await supabase
         .from('projects')
         .update({
@@ -111,30 +111,30 @@ async function testSingleRepoImport() {
         .eq('github_url', payload.github_url);
 
       if (updateError) {
-        console.error('❌ Error updating repository:', updateError);
+        logger.error('❌ Error updating repository:', updateError);
       } else {
-        console.log('✓ Repository updated successfully');
+        logger.info('✓ Repository updated successfully');
       }
     } else {
-      console.log('✓ Repository does not exist, will insert new record');
+      logger.info('✓ Repository does not exist, will insert new record');
       
       // Insert new record
-      console.log('');
-      console.log('6. Inserting new repository...');
+      logger.info('');
+      logger.info('6. Inserting new repository...');
       const { error: insertError } = await supabase
         .from('projects')
         .insert(payload);
 
       if (insertError) {
-        console.error('❌ Error inserting repository:', insertError);
+        logger.error('❌ Error inserting repository:', insertError);
       } else {
-        console.log('✓ Repository inserted successfully');
+        logger.info('✓ Repository inserted successfully');
       }
     }
 
     // Verify the data
-    console.log('');
-    console.log('7. Verifying data in database...');
+    logger.info('');
+    logger.info('7. Verifying data in database...');
     const { data: verifyData, error: verifyError } = await supabase
       .from('projects')
       .select('*')
@@ -142,27 +142,27 @@ async function testSingleRepoImport() {
       .single();
 
     if (verifyError) {
-      console.error('❌ Error verifying data:', verifyError);
+      logger.error('❌ Error verifying data:', verifyError);
     } else {
-      console.log('✓ Data verification:');
-      console.log(`  github_stars: ${verifyData.github_stars}`);
-      console.log(`  repository_topics: ${verifyData.repository_topics?.length || 0} topics`);
-      console.log(`  github_owner: ${verifyData.github_owner}`);
-      console.log(`  github_repo_name: ${verifyData.github_repo_name}`);
-      console.log(`  forks: ${verifyData.forks}`);
-      console.log(`  contributors_count: ${verifyData.contributors_count}`);
-      console.log(`  last_commit_at: ${verifyData.last_commit_at}`);
-      console.log(`  github_repository_id: ${verifyData.github_repository_id}`);
+      logger.info('✓ Data verification:');
+      logger.info(`  github_stars: ${verifyData.github_stars}`);
+      logger.info(`  repository_topics: ${verifyData.repository_topics?.length || 0} topics`);
+      logger.info(`  github_owner: ${verifyData.github_owner}`);
+      logger.info(`  github_repo_name: ${verifyData.github_repo_name}`);
+      logger.info(`  forks: ${verifyData.forks}`);
+      logger.info(`  contributors_count: ${verifyData.contributors_count}`);
+      logger.info(`  last_commit_at: ${verifyData.last_commit_at}`);
+      logger.info(`  github_repository_id: ${verifyData.github_repository_id}`);
     }
 
   } catch (error) {
-    console.error('❌ Error during test import:', error);
+    logger.error('❌ Error during test import:', error);
   }
 
-  console.log('');
-  console.log('='.repeat(80));
-  console.log('TEST COMPLETE');
-  console.log('='.repeat(80));
+  logger.info('');
+  logger.info('='.repeat(80));
+  logger.info('TEST COMPLETE');
+  logger.info('='.repeat(80));
 }
 
 testSingleRepoImport().catch(console.error);

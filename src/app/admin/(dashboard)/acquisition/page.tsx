@@ -4,6 +4,7 @@ import { GitHubImportForm } from "@/components/admin/GitHubImportForm";
 import { AcquisitionActions } from "@/components/admin/AcquisitionActions";
 import { ProjectAnalysisReview } from "@/components/admin/ProjectAnalysisReview";
 import { listAcquisitionQueue, knowledgeFeatureFlags } from "@/lib/knowledge-ecosystem";
+import { logger } from '@/lib/logger';
 
 const providers = ["GitHub", "GitLab", "Devpost", "Kaggle", "Hugging Face", "arXiv", "Research Paper"];
 
@@ -130,7 +131,7 @@ async function safeLoadQueue() {
   try {
     return await listAcquisitionQueue();
   } catch (error) {
-    console.error("Failed to load acquisition queue:", error);
+    logger.error("Failed to load acquisition queue:", error);
     return [];
   }
 }

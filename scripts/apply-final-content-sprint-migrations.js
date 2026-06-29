@@ -13,8 +13,8 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
-  console.error('Error: Missing Supabase credentials in .env.local');
-  console.error('Required: NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY');
+  logger.error('Error: Missing Supabase credentials in .env.local');
+  logger.error('Required: NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY');
   process.exit(1);
 }
 
@@ -29,12 +29,12 @@ const migrations = [
 ];
 
 async function applyMigration(migrationFile) {
-  console.log(`Applying ${migrationFile}...`);
+  logger.info(`Applying ${migrationFile}...`);
   
   const migrationPath = path.join(__dirname, '../supabase/migrations', migrationFile);
   
   if (!fs.existsSync(migrationPath)) {
-    console.log(`  ✗ File not found: ${migrationPath}`);
+    logger.info(`  ✗ File not found: ${migrationPath}`);
     return false;
   }
 
@@ -45,9 +45,9 @@ async function applyMigration(migrationFile) {
     const { data, error } = await supabase.rpc('exec_sql', { sql: migrationSQL });
     
     if (error) {
-      console.log(`  Note: ${error.message} (may be expected for DDL operations)`);
+      logger.info(`  Note: ${error.message} (may be expected for DDL operations)`);
       // Try alternative approach - execute via direct SQL
-      console.log('  Trying direct execution...');
+      logger.info('  Trying direct execution...');
       
       // Split SQL by statements and execute each
       const statements = migrationSQL.split(';').filter(s => s.trim().length > 0);
@@ -64,49 +64,49 @@ async function applyMigration(migrationFile) {
         }
       }
       
-      console.log(`  ✓ ${successCount}/${statements.length} statements executed`);
+      logger.info(`  ✓ ${successCount}/${statements.length} statements executed`);
     } else {
-      console.log(`  ✓ Success`);
+      logger.info(`  ✓ Success`);
     }
     return true;
   } catch (err) {
-    console.log(`  Note: ${err.message} (may be expected for DDL operations)`);
+    logger.info(`  Note: ${err.message} (may be expected for DDL operations)`);
     return true; // Continue with other migrations
   }
 }
 
 async function applyAllMigrations() {
-  console.log('========================================');
-  console.log('FINAL CONTENT SPRINT - Migrations');
-  console.log('========================================');
-  console.log('');
-  console.log(`Supabase URL: ${supabaseUrl}`);
-  console.log('');
-  console.log('Migrations to apply:');
-  migrations.forEach(m => console.log(`  - ${m}`));
-  console.log('');
+  logger.info('========================================');
+  logger.info('FINAL CONTENT SPRINT - Migrations');
+  logger.info('========================================');
+  logger.info('');
+  logger.info(`Supabase URL: ${supabaseUrl}`);
+  logger.info('');
+  logger.info('Migrations to apply:');
+  migrations.forEach(m => logger.info(`  - ${m}`));
+  logger.info('');
 
   let successCount = 0;
   for (const migration of migrations) {
     const success = await applyMigration(migration);
     if (success) successCount++;
-    console.log('');
+    logger.info('');
   }
 
-  console.log('========================================');
-  console.log(`Migration process complete! (${successCount}/${migrations.length} applied)`);
-  console.log('========================================');
-  console.log('');
-  console.log('Content added:');
-  console.log('  - 5 complete projects');
-  console.log('  - 14 marketplace items across 7 categories');
-  console.log('  - 6 research papers');
-  console.log('  - 11 community posts');
-  console.log('');
-  console.log('Next steps:');
-  console.log('1. Restart your dev server: npm run dev');
-  console.log('2. Verify content appears in the application');
-  console.log('3. Check /projects, /marketplace, /research, /community');
+  logger.info('========================================');
+  logger.info(`Migration process complete! (${successCount}/${migrations.length} applied)`);
+  logger.info('========================================');
+  logger.info('');
+  logger.info('Content added:');
+  logger.info('  - 5 complete projects');
+  logger.info('  - 14 marketplace items across 7 categories');
+  logger.info('  - 6 research papers');
+  logger.info('  - 11 community posts');
+  logger.info('');
+  logger.info('Next steps:');
+  logger.info('1. Restart your dev server: npm run dev');
+  logger.info('2. Verify content appears in the application');
+  logger.info('3. Check /projects, /marketplace, /research, /community');
 }
 
 applyAllMigrations().catch(console.error);

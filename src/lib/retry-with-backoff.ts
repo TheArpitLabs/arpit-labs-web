@@ -3,6 +3,8 @@
  * Provides retry logic with exponential backoff for API calls
  */
 
+import { logger } from '@/lib/logger';
+
 export interface RetryOptions {
   maxRetries?: number;
   initialDelayMs?: number;
@@ -127,7 +129,7 @@ export function shouldRetryHttpError(error: Error, attempt: number): boolean {
  * Default onRetry callback for logging
  */
 export function logRetry(error: Error, attempt: number, delayMs: number): void {
-  console.warn(`[RETRY] Attempt ${attempt} failed: ${error.message}. Retrying in ${delayMs}ms...`);
+  logger.warn(`[RETRY] Attempt ${attempt} failed: ${error.message}. Retrying in ${delayMs}ms...`);
 }
 
 /**

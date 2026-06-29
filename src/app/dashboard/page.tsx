@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useCallback, useRef } from "react";
 import Link from "next/link";
 import type { Route } from "next";
 import Image from "next/image";
@@ -15,6 +15,7 @@ import {
   GitFork,
   Heart,
   Map,
+  LogOut,
   Pencil,
   Plus,
   Star,
@@ -23,47 +24,51 @@ import {
 } from "lucide-react";
 import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
 import { supabaseClient } from "@/lib/supabase/client";
+import { logger } from "@/lib/logger";
 
 type ProjectStatus = "published" | "draft" | "pending" | "rejected" | "featured";
 
-const fallbackProjects = [
-  {
-    id: "smart-traffic",
-    title: "Smart Traffic Management",
-    category: "AI",
-    description: "AI-powered traffic signal control system using computer vision.",
-    status: "published",
-    views_count: 3400,
-    likes_count: 234,
-    bookmarks_count: 48,
-    github_stars: 234,
-    updated_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-  },
-  {
-    id: "ncc-buddy",
-    title: "NCC Buddy",
-    category: "Web",
-    description: "Platform for NCC cadets to manage activities and events.",
-    status: "published",
-    views_count: 1800,
-    likes_count: 189,
-    bookmarks_count: 32,
-    github_stars: 189,
-    updated_at: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-  },
-  {
-    id: "hospital-management",
-    title: "Hospital Management System",
-    category: "IoT",
-    description: "IoT enabled hospital management and patient monitoring system.",
-    status: "draft",
-    views_count: 1200,
-    likes_count: 156,
-    bookmarks_count: 24,
-    github_stars: 156,
-    updated_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-  },
-];
+interface Project {
+  id: string;
+  title: string;
+  category?: string;
+  domain?: string;
+  description: string;
+  status: ProjectStatus;
+  published?: boolean;
+  views_count?: number;
+  likes_count?: number;
+  bookmarks_count?: number;
+  github_stars?: number;
+  stars?: number;
+  forks?: number;
+  updated_at?: string;
+  slug?: string;
+}
+
+interface User {
+  id: string;
+  email?: string;
+}
+
+interface Profile {
+  full_name?: string;
+  avatar_url?: string;
+  engineering_score?: number;
+  role?: string;
+  verified?: boolean;
+}
+
+interface UserStats {
+  engineeringScore?: number;
+  totalViews?: number;
+  totalLikes?: number;
+  followersCount?: number;
+  profileViews?: number;
+  publishedProjects?: number;
+  draftProjects?: number;
+  pendingProjects?: number;
+}
 
 const recommended = [
   { title: "AI Code Reviewer", meta: "Automated code review using AI and NLP.", stars: 512 },
@@ -74,66 +79,155 @@ const recommended = [
 
 export default function DashboardPage() {
   const router = useRouter();
-  const [user, setUser] = useState<any | null>(null);
-  const [profile, setProfile] = useState<any | null>(null);
-  const [projects, setProjects] = useState<any[]>([]);
-  const [userStats, setUserStats] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [userStats, setUserStats] = useState<UserStats | null>(null);
   const [recentActivity, setRecentActivity] = useState<any[]>([]);
   const [profileCompletion, setProfileCompletion] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
+  const [activityFilter, setActivityFilter] = useState<string>("all");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const searchTimeoutRef = useRef<NodeJS.Timeout>();
+
+  const handleLogout = useCallback(async () => {
+    setShowLogoutConfirm(false);
+    try {
+      await supabaseClient.auth.signOut();
+      await fetch('/api/auth/session', { method: 'DELETE' });
+      router.push('/login');
+    } catch (err) {
+      logger.error('Logout error:', err);
+      setError('Failed to logout. Please try again.');
+    }
+  }, [router]);
+
+  const handleLogoutClick = useCallback(() => {
+    setShowLogoutConfirm(true);
+  }, []);
+
+  const cancelLogout = useCallback(() => {
+    setShowLogoutConfirm(false);
+  }, []);
+
+  // Debounce search query
+  useEffect(() => {
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+    searchTimeoutRef.current = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 300);
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, [searchQuery]);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ctrl/Cmd + K for search
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        document.getElementById('project-search')?.focus();
+      }
+      // Ctrl/Cmd + L for logout
+      if ((e.ctrlKey || e.metaKey) && e.key === 'l') {
+        e.preventDefault();
+        handleLogout();
+      }
+      // Escape to clear search
+      if (e.key === 'Escape' && searchQuery) {
+        setSearchQuery('');
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleLogout, searchQuery]);
 
   useEffect(() => {
     let mounted = true;
 
     async function init() {
       setLoading(true);
-      const { data } = await supabaseClient.auth.getUser();
-      if (!mounted) return;
+      setError(null);
+      
+      try {
+        const { data } = await supabaseClient.auth.getUser();
+        if (!mounted) return;
 
-      if (!data?.user) {
-        router.push("/login");
-        return;
-      }
-
-      const sessionResponse = await fetch("/api/auth/session", { cache: "no-store" });
-      if (sessionResponse.ok) {
-        const sessionInfo = await sessionResponse.json();
-        if (sessionInfo?.isAdmin) {
-          router.replace("/admin");
+        if (!data?.user) {
+          router.push("/login");
           return;
         }
+
+        const sessionResponse = await fetch("/api/auth/session", { cache: "no-store" });
+        if (sessionResponse.ok) {
+          const sessionInfo = await sessionResponse.json();
+          if (sessionInfo?.isAdmin) {
+            router.replace("/admin");
+            return;
+          }
+        }
+
+        setUser(data.user);
+
+        const [{ data: p, error: profileError }, { data: proj, error: projectsError }, statsRes, activityRes, completionRes] = await Promise.all([
+          supabaseClient.from("profiles").select("*").eq("id", data.user.id).single(),
+          supabaseClient.from("projects").select("*").eq("owner_id", data.user.id).order("created_at", { ascending: false }).limit(24),
+          fetch("/api/user/stats"),
+          fetch("/api/user/activity?limit=10"),
+          fetch("/api/user/profile-completion"),
+        ]);
+
+        if (mounted) {
+          if (profileError) {
+            logger.error('Profile fetch error:', profileError);
+          }
+          setProfile(p ?? null);
+          
+          if (projectsError) {
+            logger.error('Projects fetch error:', projectsError);
+            setError('Failed to load projects. Please refresh the page.');
+          }
+          setProjects(proj?.length ? proj : []);
+          
+          if (statsRes.ok) {
+            const statsData = await statsRes.json();
+            setUserStats(statsData.data);
+          } else {
+            logger.error('Stats API error:', statsRes.status);
+          }
+          
+          if (activityRes.ok) {
+            const activityData = await activityRes.json();
+            setRecentActivity(activityData.data || []);
+          } else {
+            logger.error('Activity API error:', activityRes.status);
+          }
+          
+          if (completionRes.ok) {
+            const completionData = await completionRes.json();
+            setProfileCompletion(completionData.data);
+          } else {
+            logger.error('Profile completion API error:', completionRes.status);
+          }
+        }
+      } catch (err) {
+        logger.error('Dashboard initialization error:', err);
+        setError('Failed to load dashboard. Please try again.');
+      } finally {
+        if (mounted) {
+          setLoading(false);
+        }
       }
-
-      setUser(data.user);
-
-      const [{ data: p }, { data: proj }, statsRes, activityRes, completionRes] = await Promise.all([
-        supabaseClient.from("profiles").select("*").eq("id", data.user.id).single(),
-        supabaseClient.from("projects").select("*").eq("owner_id", data.user.id).order("created_at", { ascending: false }).limit(24),
-        fetch("/api/user/stats"),
-        fetch("/api/user/activity?limit=10"),
-        fetch("/api/user/profile-completion"),
-      ]);
-
-      if (mounted) {
-        setProfile(p ?? null);
-        setProjects(proj?.length ? proj : fallbackProjects);
-        
-        if (statsRes.ok) {
-          const statsData = await statsRes.json();
-          setUserStats(statsData.data);
-        }
-        
-        if (activityRes.ok) {
-          const activityData = await activityRes.json();
-          setRecentActivity(activityData.data || []);
-        }
-        
-        if (completionRes.ok) {
-          const completionData = await completionRes.json();
-          setProfileCompletion(completionData.data);
-        }
-      }
-      setLoading(false);
     }
 
     init();
@@ -151,27 +245,44 @@ export default function DashboardPage() {
   }, [router]);
 
   const stats = useMemo(() => {
-    const allProjects = projects.length ? projects : fallbackProjects;
+    const allProjects = projects.length ? projects : [];
     const totalViews = allProjects.reduce((sum, project) => sum + (project.views_count || 0), 0);
     const totalLikes = allProjects.reduce((sum, project) => sum + (project.likes_count || 0), 0);
     
     // Use backend stats if available, otherwise fall back to calculated values
     return {
       allProjects,
-      engineeringScore: userStats?.engineeringScore || Math.max(1250, totalLikes * 4 + allProjects.length * 120),
+      engineeringScore: userStats?.engineeringScore || Math.max(0, totalLikes * 4 + allProjects.length * 120),
       totalViews: userStats?.totalViews || totalViews,
       totalLikes: userStats?.totalLikes || totalLikes,
-      followers: userStats?.followersCount || 340,
-      profileViews: userStats?.profileViews || Math.max(2450, totalViews),
+      followers: userStats?.followersCount || 0,
+      profileViews: userStats?.profileViews || totalViews,
     };
   }, [projects, userStats]);
+
+  // Filter projects based on search query (with debouncing)
+  const filteredProjects = useMemo(() => {
+    if (!debouncedSearchQuery) return stats.allProjects;
+    const query = debouncedSearchQuery.toLowerCase();
+    return stats.allProjects.filter(project => 
+      project.title.toLowerCase().includes(query) ||
+      project.description.toLowerCase().includes(query) ||
+      (project.category && project.category.toLowerCase().includes(query))
+    );
+  }, [stats.allProjects, debouncedSearchQuery]);
+
+  // Filter activity based on selected filter
+  const filteredActivity = useMemo(() => {
+    if (activityFilter === 'all') return recentActivity;
+    return recentActivity.filter((activity: any) => activity.type === activityFilter);
+  }, [recentActivity, activityFilter]);
 
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background text-foreground">
         <div className="text-center">
-          <div className="mx-auto h-9 w-9 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-          <p className="mt-4 text-sm text-muted">Loading dashboard...</p>
+          <div className="mx-auto h-9 w-9 animate-spin rounded-full border-2 border-primary border-t-transparent" aria-hidden="true" />
+          <p className="mt-4 text-sm text-muted" role="status">Loading dashboard...</p>
         </div>
       </div>
     );
@@ -179,11 +290,29 @@ export default function DashboardPage() {
 
   if (!user) return null;
 
+  if (error) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background text-foreground">
+        <div className="text-center max-w-md">
+          <div className="rounded-2xl bg-red-500/20 px-4 py-3 text-sm text-red-400 mb-4" role="alert">
+            {error}
+          </div>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-primary text-white rounded-xl hover:opacity-90 transition"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   const displayName = profile?.full_name || user.email?.split("@")[0] || "Engineer";
   const firstName = displayName.split(/\s+/)[0];
-  const publishedCount = userStats?.publishedProjects || stats.allProjects.filter((project) => project.status === "published" || project.published).length;
-  const draftCount = userStats?.draftProjects || stats.allProjects.filter((project) => project.status === "draft" || !project.published).length;
-  const pendingCount = userStats?.pendingProjects || 1;
+  const publishedCount = userStats?.publishedProjects ?? stats.allProjects.filter((project) => project.status === "published" || project.published).length;
+  const draftCount = userStats?.draftProjects ?? stats.allProjects.filter((project) => project.status === "draft" || !project.published).length;
+  const pendingCount = userStats?.pendingProjects ?? stats.allProjects.filter((project) => project.status === "pending").length;
 
   return (
     <DashboardLayout user={user} profile={profile}>
@@ -197,18 +326,34 @@ export default function DashboardPage() {
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5" />
           <div className="relative flex flex-col gap-6 lg:flex-row lg:items-center">
             <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-full bg-surface ring-2 ring-primary/20">
-              <Image src={profile?.avatar_url || "/avatar-placeholder.svg"} alt={displayName} fill className="object-cover" />
-              <span className="absolute bottom-2 right-1 h-3.5 w-3.5 rounded-full bg-success ring-2 ring-background" />
+              <Image 
+                src={profile?.avatar_url || "/avatar-placeholder.svg"} 
+                alt={displayName} 
+                fill 
+                className="object-cover" 
+                sizes="96px"
+                priority
+              />
+              <span className="absolute bottom-2 right-1 h-3.5 w-3.5 rounded-full bg-success ring-2 ring-background" aria-hidden="true" />
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                 <div>
-                  <h2 className="text-2xl font-heading font-bold text-foreground">Welcome back, {firstName}! <span className="text-accent">Wave</span></h2>
+                  <h2 className="text-2xl font-heading font-bold text-foreground">Welcome back, {firstName}!</h2>
                   <p className="mt-1 text-sm text-muted">Keep building. Keep learning. Keep sharing.</p>
                 </div>
-                <Link href="/profile" className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-primary to-accent px-5 py-2.5 text-sm font-semibold text-white shadow-glow transition hover:opacity-90">
-                  Edit Profile
-                </Link>
+                <div className="flex gap-2">
+                  <Link href="/profile" className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-primary to-accent px-5 py-2.5 text-sm font-semibold text-white shadow-glow transition hover:opacity-90">
+                    Edit Profile
+                  </Link>
+                  <button
+                    onClick={handleLogoutClick}
+                    className="inline-flex items-center justify-center rounded-xl border border-border bg-surface-elevated px-4 py-2.5 text-sm font-semibold text-foreground shadow-glow transition hover:bg-surface"
+                    aria-label="Logout"
+                  >
+                    <LogOut className="h-4 w-4" />
+                  </button>
+                </div>
               </div>
               <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <HeroMetric label="Engineering Score" value={stats.engineeringScore.toLocaleString()} delta="+120 this month" />
@@ -235,7 +380,36 @@ export default function DashboardPage() {
             <section className="rounded-3xl glass p-6">
               <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
                 <h3 className="text-lg font-heading font-bold text-foreground">My Projects</h3>
-                <Link href="/profile/projects" className="text-xs font-semibold text-primary hover:text-accent transition-colors">View All Projects</Link>
+                <div className="flex items-center gap-2">
+                  <div className="relative">
+                    <input
+                      id="project-search"
+                      type="text"
+                      placeholder="Search projects... (Ctrl+K)"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-48 md:w-64 rounded-xl border border-border bg-surface-elevated px-3 py-2 pl-9 pr-3 text-xs outline-none transition focus:border-primary text-foreground placeholder:text-muted"
+                      aria-label="Search projects"
+                    />
+                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" aria-hidden="true">
+                      <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                      </svg>
+                    </div>
+                    {searchQuery && (
+                      <button
+                        onClick={() => setSearchQuery('')}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-foreground transition"
+                        aria-label="Clear search"
+                      >
+                        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    )}
+                  </div>
+                  <Link href="/profile/projects" className="text-xs font-semibold text-primary hover:text-accent transition-colors">View All</Link>
+                </div>
               </div>
               <div className="mb-4 flex gap-2 overflow-x-auto">
                 {[
@@ -249,11 +423,34 @@ export default function DashboardPage() {
                   </button>
                 ))}
               </div>
-              <div className="grid gap-4 md:grid-cols-3">
-                {stats.allProjects.slice(0, 3).map((project) => (
-                  <ProjectCard key={project.id || project.slug} project={project} />
-                ))}
-              </div>
+              {filteredProjects.length > 0 ? (
+                <div className="grid gap-4 md:grid-cols-3">
+                  {filteredProjects.slice(0, 3).map((project, index) => (
+                    <ProjectCard key={project.id || project.slug} project={project} priority={index === 0} />
+                  ))}
+                </div>
+              ) : debouncedSearchQuery ? (
+                <div className="text-center py-8">
+                  <p className="text-sm text-muted">No projects found matching "{debouncedSearchQuery}"</p>
+                  <button
+                    onClick={() => setSearchQuery("")}
+                    className="text-xs text-primary hover:text-accent mt-2"
+                  >
+                    Clear search
+                  </button>
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <p className="text-sm text-muted">No projects yet. Create your first project to get started!</p>
+                  <Link
+                    href="/creator/projects/new"
+                    className="inline-flex items-center justify-center gap-2 mt-4 rounded-xl bg-gradient-to-r from-primary to-accent px-4 py-2 text-sm font-semibold text-white shadow-glow transition hover:opacity-90"
+                  >
+                    <Plus className="h-4 w-4" />
+                    Create Project
+                  </Link>
+                </div>
+              )}
             </section>
 
             <section className="rounded-3xl glass p-6">
@@ -291,10 +488,47 @@ export default function DashboardPage() {
 
           <aside className="space-y-6">
             <ProfileCompletion completionData={profileCompletion} />
-            <RecentActivity activities={recentActivity} />
+            <RecentActivity 
+              activities={filteredActivity} 
+              filter={activityFilter}
+              onFilterChange={setActivityFilter}
+            />
           </aside>
         </div>
       </div>
+      
+      {/* Logout Confirmation Dialog */}
+      {showLogoutConfirm && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="logout-dialog-title"
+        >
+          <div className="w-full max-w-md rounded-2xl bg-surface p-6 shadow-glow">
+            <h2 id="logout-dialog-title" className="text-lg font-heading font-bold text-foreground mb-2">
+              Confirm Logout
+            </h2>
+            <p className="text-sm text-muted mb-6">
+              Are you sure you want to logout? You will need to sign in again to access your dashboard.
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={cancelLogout}
+                className="px-4 py-2 rounded-xl border border-border bg-surface-elevated text-sm font-semibold text-foreground hover:bg-surface transition focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 rounded-xl bg-red-500 text-white text-sm font-semibold hover:bg-red-600 transition focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </DashboardLayout>
   );
 }
@@ -318,26 +552,33 @@ function ActionButton({ href, label, icon: Icon, className }: { href: Route; lab
   );
 }
 
-function ProjectCard({ project }: { project: any }) {
+function ProjectCard({ project, priority = false }: { project: Project; priority?: boolean }) {
   return (
-    <div className="group relative overflow-hidden rounded-xl border border-border bg-surface p-4 transition-all hover:border-primary/50 hover:shadow-glow">
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 opacity-0 transition-opacity group-hover:opacity-100" />
+    <div className="group relative overflow-hidden rounded-xl border border-border bg-surface p-4 transition-all hover:border-primary/50 hover:shadow-glow" role="article">
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 opacity-0 transition-opacity group-hover:opacity-100" aria-hidden="true" />
       <div className="relative">
         <div className="mb-4 flex items-center justify-between">
           <span className="rounded-md bg-primary/20 px-2 py-1 text-[10px] font-heading font-bold text-primary">{project.category || project.domain || "AI"}</span>
-          <span className="text-accent"><Star className="h-3.5 w-3.5 fill-accent" /></span>
+          <span className="text-accent" aria-hidden="true"><Star className="h-3.5 w-3.5 fill-accent" /></span>
         </div>
         <h4 className="line-clamp-1 text-sm font-heading font-bold text-foreground group-hover:text-primary transition-colors">{project.title}</h4>
         <p className="mt-2 line-clamp-2 min-h-[32px] text-xs text-muted">{project.description}</p>
         <div className="mt-5 flex flex-wrap items-center gap-3 text-xs text-muted">
-          <span className="flex items-center gap-1 text-accent"><Star className="h-3.5 w-3.5 fill-accent" /> {project.github_stars || project.stars || project.likes_count || 0}</span>
-          <span className="flex items-center gap-1"><Eye className="h-3.5 w-3.5" /> {(project.views_count || 0).toLocaleString()}</span>
-          <span className="flex items-center gap-1"><Heart className="h-3.5 w-3.5" /> {project.bookmarks_count || 0}</span>
-          <span className="flex items-center gap-1"><GitFork className="h-3.5 w-3.5" /> {project.forks || 0}</span>
+          <span className="flex items-center gap-1 text-accent" title="Stars"><Star className="h-3.5 w-3.5 fill-accent" aria-hidden="true" /> {project.github_stars || project.stars || project.likes_count || 0}</span>
+          <span className="flex items-center gap-1" title="Views"><Eye className="h-3.5 w-3.5" aria-hidden="true" /> {(project.views_count || 0).toLocaleString()}</span>
+          <span className="flex items-center gap-1" title="Bookmarks"><Heart className="h-3.5 w-3.5" aria-hidden="true" /> {project.bookmarks_count || 0}</span>
+          <span className="flex items-center gap-1" title="Forks"><GitFork className="h-3.5 w-3.5" aria-hidden="true" /> {project.forks || 0}</span>
         </div>
         <div className="mt-4 flex items-center justify-between text-[11px] text-muted-foreground">
-          <span>Updated {project.updated_at ? new Date(project.updated_at).toLocaleDateString() : "recently"}</span>
-          <button className="rounded-md p-1 text-muted hover:bg-surface-elevated hover:text-foreground transition"><Pencil className="h-3.5 w-3.5" /></button>
+          <time dateTime={project.updated_at}>Updated {project.updated_at ? new Date(project.updated_at).toLocaleDateString() : "recently"}</time>
+          <Link 
+            href={`/profile/projects`}
+            className="rounded-md p-1 text-muted hover:bg-surface-elevated hover:text-foreground transition"
+            aria-label={`Edit ${project.title}`}
+            title="Edit project"
+          >
+            <Pencil className="h-3.5 w-3.5" />
+          </Link>
         </div>
       </div>
     </div>
@@ -393,7 +634,7 @@ function ProfileCompletion({ completionData }: { completionData?: any }) {
   );
 }
 
-function RecentActivity({ activities }: { activities?: any[] }) {
+function RecentActivity({ activities, filter, onFilterChange }: { activities?: any[]; filter?: string; onFilterChange?: (filter: string) => void }) {
   const iconMap: Record<string, any> = {
     Eye,
     Heart,
@@ -402,10 +643,10 @@ function RecentActivity({ activities }: { activities?: any[] }) {
   };
   
   const defaultEvents = [
-    { icon: Eye, text: "Your project Smart Traffic Management got 34 new views", time: "2 hours ago" },
-    { icon: Heart, text: "You received 12 new likes on NCC Buddy", time: "5 hours ago" },
-    { icon: Users, text: "New follower Rahul Singh started following you", time: "1 day ago" },
-    { icon: TrendingUp, text: "Hospital Management System got featured", time: "2 days ago" },
+    { icon: Eye, text: "Your project Smart Traffic Management got 34 new views", time: "2 hours ago", type: 'project_view' },
+    { icon: Heart, text: "You received 12 new likes on NCC Buddy", time: "5 hours ago", type: 'project_like' },
+    { icon: Users, text: "New follower Rahul Singh started following you", time: "1 day ago", type: 'new_follower' },
+    { icon: TrendingUp, text: "Hospital Management System got featured", time: "2 days ago", type: 'project_featured' },
   ];
   
   const events = activities && activities.length > 0 
@@ -413,24 +654,48 @@ function RecentActivity({ activities }: { activities?: any[] }) {
         icon: iconMap[activity.icon] || TrendingUp,
         text: activity.text,
         time: activity.time,
+        type: activity.type,
       }))
     : defaultEvents;
   
+  const activityTypes = ['all', 'project_view', 'project_like', 'new_follower', 'project_featured'];
+  
   return (
     <section className="rounded-3xl glass p-6">
-      <h3 className="mb-4 font-heading font-bold text-foreground">Recent Activity</h3>
+      <div className="mb-4 flex items-center justify-between">
+        <h3 className="font-heading font-bold text-foreground">Recent Activity</h3>
+        {onFilterChange && (
+          <select
+            value={filter}
+            onChange={(e) => onFilterChange(e.target.value)}
+            className="text-xs rounded-lg border border-border bg-surface px-2 py-1 text-foreground outline-none focus:border-primary"
+          >
+            <option value="all">All</option>
+            <option value="project_view">Views</option>
+            <option value="project_like">Likes</option>
+            <option value="new_follower">Followers</option>
+            <option value="project_featured">Featured</option>
+          </select>
+        )}
+      </div>
       <div className="space-y-3">
-        {events.map((event, index) => (
-          <div key={index} className="flex gap-3 rounded-xl bg-surface p-3 transition hover:border-primary/50 hover:shadow-glow">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/15 text-primary">
-              <event.icon className="h-4 w-4" />
+        {events.length > 0 ? (
+          events.map((event, index) => (
+            <div key={index} className="flex gap-3 rounded-xl bg-surface p-3 transition hover:border-primary/50 hover:shadow-glow">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/15 text-primary">
+                <event.icon className="h-4 w-4" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-xs text-foreground line-clamp-2">{event.text}</p>
+                <p className="mt-1 text-[10px] text-muted">{event.time}</p>
+              </div>
             </div>
-            <div>
-              <p className="text-xs text-foreground">{event.text}</p>
-              <p className="mt-1 text-[10px] text-muted">{event.time}</p>
-            </div>
- </div>
-        ))}
+          ))
+        ) : (
+          <div className="text-center py-4">
+            <p className="text-xs text-muted">No recent activity</p>
+          </div>
+        )}
       </div>
       <Link href="/profile" className="mt-4 block text-center text-xs font-heading font-semibold text-primary hover:text-accent transition-colors">View All Activity</Link>
     </section>

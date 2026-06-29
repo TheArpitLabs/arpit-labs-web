@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabase/server";
 import { projectSchema } from "@/lib/validation/project.schema";
 import { handleDatabaseError } from "@/lib/errors";
-import { getUserFromRequest } from "@/lib/auth";
+import { getUserFromRequest } from "@/lib/auth/auth";
+import { logger } from '@/lib/logger';
 
 // GET /api/projects - List all projects with filters
 export async function GET(request: NextRequest) {
@@ -96,7 +97,7 @@ export async function GET(request: NextRequest) {
       } 
     });
   } catch (error) {
-    console.error('Error in GET /api/projects:', error);
+    logger.error('Error in GET /api/projects:', error);
     return NextResponse.json(
       { error: 'Failed to fetch projects' },
       { status: 500 }
@@ -136,7 +137,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ data }, { status: 201 });
   } catch (error) {
-    console.error('Error in POST /api/projects:', error);
+    logger.error('Error in POST /api/projects:', error);
     if (error instanceof Error && error.name === 'ZodError') {
       return NextResponse.json(
         { error: 'Validation error', details: error },

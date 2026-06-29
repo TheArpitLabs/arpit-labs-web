@@ -1,5 +1,6 @@
 import { supabaseServer } from "@/lib/supabase/server";
 import { assertKnowledgeFeature } from "../knowledge-ecosystem/feature-flags";
+import { logger } from '@/lib/logger';
 
 export interface Trend {
   id: string;
@@ -359,7 +360,7 @@ export class TrendIntelligenceEngine {
       .single();
 
     if (error) {
-      console.error("Failed to store trend:", error);
+      logger.error("Failed to store trend:", error);
       throw error;
     }
 

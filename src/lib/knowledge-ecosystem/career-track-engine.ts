@@ -1,5 +1,6 @@
 import { supabaseServer } from "@/lib/supabase/server";
 import { assertKnowledgeFeature } from "./feature-flags";
+import { logger } from '@/lib/logger';
 
 export interface CareerTrack {
   id: string;
@@ -138,7 +139,7 @@ export class CareerTrackEngine {
       .single();
 
     if (error) {
-      console.error("Failed to upsert career track:", error);
+      logger.error("Failed to upsert career track:", error);
       throw error;
     }
 

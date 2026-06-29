@@ -1,6 +1,7 @@
 import { labsRepository } from "@/lib/repositories/labs.repository";
 import Link from "next/link";
 import { BarChart3 } from "lucide-react";
+import { logger } from '@/lib/logger';
 
 export const metadata = {
   title: "Labs | Arpit Labs",
@@ -12,7 +13,7 @@ export default async function LabsPage() {
   try {
     labs = await labsRepository.getAll(true);
   } catch (error) {
-    console.error("Error fetching labs:", error);
+    logger.error("Error fetching labs:", error);
     labs = [];
   }
 

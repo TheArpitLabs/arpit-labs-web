@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { RefreshCw } from 'lucide-react';
+import { logger } from '@/lib/logger';
 
 export default function ResearchIntelligenceDashboard() {
   const [papers, setPapers] = useState<any[]>([]);
@@ -25,7 +26,7 @@ export default function ResearchIntelligenceDashboard() {
       const data = await response.json();
       setPapers(data.data || []);
     } catch (error) {
-      console.error('Error fetching papers:', error);
+      logger.error('Error fetching papers:', error);
     } finally {
       setLoading(false);
     }
@@ -55,7 +56,7 @@ export default function ResearchIntelligenceDashboard() {
       alert('Paper indexed successfully');
       fetchPapers();
     } catch (error) {
-      console.error('Error indexing paper:', error);
+      logger.error('Error indexing paper:', error);
       alert('Failed to index paper');
     }
   };

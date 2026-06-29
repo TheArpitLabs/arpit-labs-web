@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabase/server";
-import { getUserFromRequest } from "@/lib/auth";
+import { getUserFromRequest } from "@/lib/auth/auth";
 import { handleDatabaseError } from "@/lib/errors";
 import { getUserAchievements, trackAchievementByType, checkAndCompleteAchievements } from "@/lib/gamification/achievement-system";
 import { getUserStatsForBadges } from "@/lib/gamification/badge-system";
+import { logger } from '@/lib/logger';
 
 // GET /api/gamification/user-achievements - Get user's achievement progress
 export async function GET(request: NextRequest) {
@@ -20,7 +21,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ data: achievements });
   } catch (error) {
-    console.error('Error in GET /api/gamification/user-achievements:', error);
+    logger.error('Error in GET /api/gamification/user-achievements:', error);
     return NextResponse.json(
       { error: 'Failed to fetch user achievements' },
       { status: 500 }
@@ -53,7 +54,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error in POST /api/gamification/user-achievements:', error);
+    logger.error('Error in POST /api/gamification/user-achievements:', error);
     return NextResponse.json(
       { error: 'Failed to track achievement' },
       { status: 500 }
@@ -84,7 +85,7 @@ export async function PUT(request: NextRequest) {
       totalNewlyCompleted: newlyCompleted.length
     });
   } catch (error) {
-    console.error('Error in PUT /api/gamification/user-achievements:', error);
+    logger.error('Error in PUT /api/gamification/user-achievements:', error);
     return NextResponse.json(
       { error: 'Failed to check achievements' },
       { status: 500 }

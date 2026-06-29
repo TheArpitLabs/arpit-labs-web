@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabase/server";
 import { researchIntelligenceEngine } from "@/lib/intelligence/research-intelligence";
+import { logger } from '@/lib/logger';
 
 export async function GET(request: NextRequest) {
   try {
@@ -72,7 +73,7 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ success: false, error: "Unknown action" }, { status: 400 });
     }
   } catch (error) {
-    console.error("Research API failed:", error);
+    logger.error("Research API failed:", error);
     return NextResponse.json(
       { success: false, error: error instanceof Error ? error.message : "Research API failed" },
       { status: 500 }
@@ -122,7 +123,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ success: false, error: "Unknown action" }, { status: 400 });
     }
   } catch (error) {
-    console.error("Research API POST failed:", error);
+    logger.error("Research API POST failed:", error);
     return NextResponse.json(
       { success: false, error: error instanceof Error ? error.message : "Research API POST failed" },
       { status: 500 }

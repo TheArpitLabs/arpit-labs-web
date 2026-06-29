@@ -13,6 +13,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
+import { logger } from '@/lib/logger';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
@@ -115,7 +116,7 @@ export default function EngineeringPage() {
         setDomains(transformedDomains);
         setFilteredDomains(transformedDomains);
       } catch (err) {
-        console.error('Error fetching domains:', err);
+        logger.error('Error fetching domains:', err);
         setError('Failed to load engineering domains');
       } finally {
         setLoading(false);

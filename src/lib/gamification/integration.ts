@@ -1,9 +1,10 @@
 // Gamification Integration - Helper functions to integrate gamification with existing features
 
-import { getUserFromRequest } from '@/lib/auth';
+import { getUserFromRequest } from '@/lib/auth/auth';
 import { POINT_VALUES } from './points';
 import { trackAchievementByType } from './achievement-system';
 import { checkAndAwardBadges, getUserStatsForBadges } from './badge-system';
+import { logger } from '@/lib/logger';
 
 /**
  * Award points for content viewing
@@ -40,7 +41,7 @@ export async function awardPointsForContentView(
       await checkAndAwardBadges(user.id, userStats);
     }
   } catch (error) {
-    console.error('Error awarding points for content view:', error);
+    logger.error('Error awarding points for content view:', error);
   }
 }
 
@@ -79,7 +80,7 @@ export async function awardPointsForContentSave(
       await checkAndAwardBadges(user.id, userStats);
     }
   } catch (error) {
-    console.error('Error awarding points for content save:', error);
+    logger.error('Error awarding points for content save:', error);
   }
 }
 
@@ -117,7 +118,7 @@ export async function awardPointsForNewsletterSubscription(
       await checkAndAwardBadges(user.id, userStats);
     }
   } catch (error) {
-    console.error('Error awarding points for newsletter subscription:', error);
+    logger.error('Error awarding points for newsletter subscription:', error);
   }
 }
 
@@ -155,7 +156,7 @@ export async function awardPointsForContactForm(
       await checkAndAwardBadges(user.id, userStats);
     }
   } catch (error) {
-    console.error('Error awarding points for contact form:', error);
+    logger.error('Error awarding points for contact form:', error);
   }
 }
 
@@ -194,7 +195,7 @@ export async function awardPointsForProjectCompletion(
       await checkAndAwardBadges(user.id, userStats);
     }
   } catch (error) {
-    console.error('Error awarding points for project completion:', error);
+    logger.error('Error awarding points for project completion:', error);
   }
 }
 
@@ -233,7 +234,7 @@ export async function awardPointsForExperimentCompletion(
       await checkAndAwardBadges(user.id, userStats);
     }
   } catch (error) {
-    console.error('Error awarding points for experiment completion:', error);
+    logger.error('Error awarding points for experiment completion:', error);
   }
 }
 
@@ -253,6 +254,6 @@ export async function recordDailyLogin(request: Request) {
       }
     });
   } catch (error) {
-    console.error('Error recording daily login:', error);
+    logger.error('Error recording daily login:', error);
   }
 }

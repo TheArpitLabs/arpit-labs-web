@@ -8,6 +8,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Users, Star, GitFork } from 'lucide-react';
+import { logger } from '@/lib/logger';
 
 export default function PublicContributorDashboard() {
   const [contributors, setContributors] = useState<any[]>([]);
@@ -24,7 +25,7 @@ export default function PublicContributorDashboard() {
       const data = await response.json();
       setContributors(data.data || []);
     } catch (error) {
-      console.error('Error fetching contributors:', error);
+      logger.error('Error fetching contributors:', error);
     } finally {
       setLoading(false);
     }

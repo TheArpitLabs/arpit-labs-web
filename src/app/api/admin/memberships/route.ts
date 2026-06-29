@@ -16,8 +16,9 @@ export async function PATCH(request: Request) {
 
 /*
 // ORIGINAL IMPLEMENTATION (Commented out - re-enable when payments are restored)
-import { getAdminUserFromRequest } from "@/lib/auth";
+import { getAdminUserFromRequest } from "@/lib/auth/auth";
 import { membershipRepository } from "@/lib/repositories/membership.repository";
+import { logger } from '@/lib/logger';
 
 export async function PATCH(request: Request) {
   const adminUser = await getAdminUserFromRequest(request);
@@ -45,7 +46,7 @@ export async function PATCH(request: Request) {
 
     return NextResponse.json({ success: true, plan });
   } catch (error) {
-    console.error("Failed to update membership plan:", error);
+    logger.error("Failed to update membership plan:", error);
     return NextResponse.json({ success: false, error: "Unable to update plan" }, { status: 500 });
   }
 }

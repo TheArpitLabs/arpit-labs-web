@@ -6,6 +6,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getModerationEngine } from '@/lib/acquisition/moderation/moderation-engine';
+import { logger } from '@/lib/logger';
 
 // GET /api/admin/acquisition/moderation - Get moderation queue and stats
 export async function GET(request: NextRequest) {
@@ -38,7 +39,7 @@ export async function GET(request: NextRequest) {
       }
     });
   } catch (error) {
-    console.error('Error getting moderation data:', error);
+    logger.error('Error getting moderation data:', error);
     return NextResponse.json({
       success: false,
       error: 'Failed to get moderation data'
@@ -86,7 +87,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ success: false, error: 'Invalid action' }, { status: 400 });
     }
   } catch (error) {
-    console.error('Error in moderation POST:', error);
+    logger.error('Error in moderation POST:', error);
     return NextResponse.json({
       success: false,
       error: 'Failed to process moderation request'

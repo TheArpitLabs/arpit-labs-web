@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Course, CourseModule, CourseWithProgress, UserCourseProgress } from '@/types/content';
+import { logger } from '@/lib/logger';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
@@ -16,7 +17,7 @@ export const coursesRepository = {
     const { data, error } = await query.order('created_at', { ascending: false });
     
     if (error) {
-      console.error('Error fetching courses:', error);
+      logger.error('Error fetching courses:', error);
       throw error;
     }
     
@@ -32,7 +33,7 @@ export const coursesRepository = {
       .order('created_at', { ascending: false });
     
     if (error) {
-      console.error('Error fetching courses by category:', error);
+      logger.error('Error fetching courses by category:', error);
       throw error;
     }
     
@@ -47,7 +48,7 @@ export const coursesRepository = {
       .single();
     
     if (error && error.code !== 'PGRST116') {
-      console.error('Error fetching course:', error);
+      logger.error('Error fetching course:', error);
     }
     
     return data || null;
@@ -61,7 +62,7 @@ export const coursesRepository = {
       .single();
     
     if (error && error.code !== 'PGRST116') {
-      console.error('Error fetching course:', error);
+      logger.error('Error fetching course:', error);
     }
     
     return data || null;
@@ -75,7 +76,7 @@ export const coursesRepository = {
       .single();
     
     if (error) {
-      console.error('Error creating course:', error);
+      logger.error('Error creating course:', error);
       throw error;
     }
     
@@ -91,7 +92,7 @@ export const coursesRepository = {
       .single();
     
     if (error) {
-      console.error('Error updating course:', error);
+      logger.error('Error updating course:', error);
       throw error;
     }
     
@@ -105,7 +106,7 @@ export const coursesRepository = {
       .eq('id', id);
     
     if (error) {
-      console.error('Error deleting course:', error);
+      logger.error('Error deleting course:', error);
       throw error;
     }
   },
@@ -120,7 +121,7 @@ export const courseModulesRepository = {
       .order('order_index', { ascending: true });
     
     if (error) {
-      console.error('Error fetching course modules:', error);
+      logger.error('Error fetching course modules:', error);
       throw error;
     }
     
@@ -135,7 +136,7 @@ export const courseModulesRepository = {
       .single();
     
     if (error) {
-      console.error('Error creating course module:', error);
+      logger.error('Error creating course module:', error);
       throw error;
     }
     
@@ -151,7 +152,7 @@ export const courseModulesRepository = {
       .single();
     
     if (error) {
-      console.error('Error updating course module:', error);
+      logger.error('Error updating course module:', error);
       throw error;
     }
     
@@ -165,7 +166,7 @@ export const courseModulesRepository = {
       .eq('id', id);
     
     if (error) {
-      console.error('Error deleting course module:', error);
+      logger.error('Error deleting course module:', error);
       throw error;
     }
   },
@@ -179,7 +180,7 @@ export const userCourseProgressRepository = {
       .eq('user_id', userId);
     
     if (error) {
-      console.error('Error fetching user course progress:', error);
+      logger.error('Error fetching user course progress:', error);
       throw error;
     }
     
@@ -195,7 +196,7 @@ export const userCourseProgressRepository = {
       .single();
     
     if (error && error.code !== 'PGRST116') {
-      console.error('Error fetching user course progress:', error);
+      logger.error('Error fetching user course progress:', error);
     }
     
     return data || null;
@@ -214,7 +215,7 @@ export const userCourseProgressRepository = {
       .single();
     
     if (error) {
-      console.error('Error upserting user course progress:', error);
+      logger.error('Error upserting user course progress:', error);
       throw error;
     }
     

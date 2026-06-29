@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { newsletterRepository } from "@/lib/repositories/newsletter.repository";
-import { requireAdmin } from "@/lib/auth";
+import { requireAdmin } from "@/lib/auth/auth";
 
 export async function GET() {
   try {

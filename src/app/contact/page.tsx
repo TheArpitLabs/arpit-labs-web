@@ -8,9 +8,9 @@ import { createPageMetadata } from "@/lib/seo";
 
 export const metadata = createPageMetadata({
   title: "Contact",
-  description: "Get in touch with Arpit Labs for collaborations, inquiries, or just to talk about engineering.",
+  description: "Get in touch with Axiora for collaborations, inquiries, or just to talk about engineering.",
   path: "/contact",
-  keywords: ["Contact", "Engineering Collaboration", "Arpit Labs"],
+  keywords: ["Contact", "Engineering Collaboration", "Axiora"],
 });
 
 export default function ContactPage() {
@@ -45,13 +45,13 @@ export default function ContactPage() {
               </div>
 
               <div className="grid gap-4">
-                <a href="mailto:contact@arpitlabs.com" className="group flex items-center gap-4 rounded-[1.75rem] border border-border/70 bg-surface/50 p-5 transition hover:border-primary/50 dark:border-slate-800 dark:bg-slate-900/50">
+                <a href="mailto:contact@axiora.com" className="group flex items-center gap-4 rounded-[1.75rem] border border-border/70 bg-surface/50 p-5 transition hover:border-primary/50 dark:border-slate-800 dark:bg-slate-900/50">
                   <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary transition group-hover:bg-primary group-hover:text-white">
                     <Mail size={20} />
                   </div>
                   <div>
                     <p className="text-xs font-bold uppercase tracking-widest text-muted">Email</p>
-                    <p className="text-foreground">contact@arpitlabs.com</p>
+                    <p className="text-foreground">contact@axiora.com</p>
                   </div>
                 </a>
 
@@ -70,9 +70,9 @@ export default function ContactPage() {
                 <h3 className="text-lg font-bold text-foreground">Follow the Lab</h3>
                 <div className="flex gap-4">
                   {[
-                    { icon: <Github size={20} />, href: "https://github.com/arpit-labs", label: "GitHub" },
-                    { icon: <Linkedin size={20} />, href: "https://linkedin.com/in/arpit-labs", label: "LinkedIn" },
-                    { icon: <Globe size={20} />, href: "https://arpit-labs.com", label: "Website" },
+                    { icon: <Github size={20} />, href: "https://github.com/axiora", label: "GitHub" },
+                    { icon: <Linkedin size={20} />, href: "https://linkedin.com/in/axiora", label: "LinkedIn" },
+                    { icon: <Globe size={20} />, href: "https://axiora.com", label: "Website" },
                   ].map((social, i) => (
                     <a
                       key={i}

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseServer } from '@/lib/supabase/server';
+import { logger } from '@/lib/logger';
 
 /**
  * GET /api/admin/discovery/quality
@@ -15,7 +16,7 @@ export async function GET(request: NextRequest) {
       .not('quality_grade', 'is', null);
 
     if (projectsError) {
-      console.error('Error fetching quality data:', projectsError);
+      logger.error('Error fetching quality data:', projectsError);
       return NextResponse.json(
         { error: 'Failed to fetch quality data' },
         { status: 500 }
@@ -74,7 +75,7 @@ export async function GET(request: NextRequest) {
       total_scored: scoredCount,
     });
   } catch (error) {
-    console.error('Error in quality API:', error);
+    logger.error('Error in quality API:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

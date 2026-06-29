@@ -1,6 +1,7 @@
 import { Shield, TrendingUp, Star, XCircle, CheckCircle, AlertCircle } from "lucide-react";
 import { headers } from "next/headers";
 import { Suspense } from "react";
+import { logger } from '@/lib/logger';
 
 export default function DiscoveryQualityPage() {
   return (
@@ -114,7 +115,7 @@ async function fetchQualityStatistics() {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Failed to fetch quality statistics:', error);
+    logger.error('Failed to fetch quality statistics:', error);
     return {
       average_score: 0,
       excellent: 0,
@@ -132,7 +133,7 @@ async function fetchTopRepositories() {
     const data = await response.json();
     return data.repositories || [];
   } catch (error) {
-    console.error('Failed to fetch top repositories:', error);
+    logger.error('Failed to fetch top repositories:', error);
     return [];
   }
 }
@@ -143,7 +144,7 @@ async function fetchBottomRepositories() {
     const data = await response.json();
     return data.repositories || [];
   } catch (error) {
-    console.error('Failed to fetch bottom repositories:', error);
+    logger.error('Failed to fetch bottom repositories:', error);
     return [];
   }
 }

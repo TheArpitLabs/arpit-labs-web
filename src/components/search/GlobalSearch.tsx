@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Search, X, Filter, Clock, TrendingUp, Loader2 } from "lucide-react";
+import { logger } from '@/lib/logger';
 
 interface GlobalSearchProps {
   placeholder?: string;
@@ -66,7 +67,7 @@ export function GlobalSearch({ placeholder = "Search projects, research, resourc
         setSuggestions(data.suggestions);
       }
     } catch (error) {
-      console.error("Failed to fetch suggestions:", error);
+      logger.error("Failed to fetch suggestions:", error);
     }
   };
 
@@ -98,7 +99,7 @@ export function GlobalSearch({ placeholder = "Search projects, research, resourc
         localStorage.setItem("recentSearches", JSON.stringify(newRecent));
       }
     } catch (error) {
-      console.error("Search failed:", error);
+      logger.error("Search failed:", error);
     } finally {
       setIsSearching(false);
     }

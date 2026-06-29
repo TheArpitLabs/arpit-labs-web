@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { User, MapPin, Briefcase, Linkedin, Twitter, Youtube, Instagram, Globe, Github, Save, X, Plus, Trash2 } from "lucide-react";
+import { logger } from '@/lib/logger';
 
 interface Profile {
   id: string;
@@ -113,7 +114,7 @@ export function ProfileCustomization({ profile, onProfileUpdate }: ProfileCustom
 
       onProfileUpdate(formData);
     } catch (error) {
-      console.error("Error saving profile:", error);
+      logger.error("Error saving profile:", error);
     } finally {
       setSaving(false);
     }

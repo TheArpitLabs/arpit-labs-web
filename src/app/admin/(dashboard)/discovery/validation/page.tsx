@@ -1,6 +1,7 @@
 import { Shield, CheckCircle, XCircle, Clock, AlertTriangle, TrendingUp, FileText, BarChart3 } from "lucide-react";
 import { headers } from "next/headers";
 import { Suspense } from "react";
+import { logger } from '@/lib/logger';
 
 export default function ValidationDashboardPage() {
   return (
@@ -196,7 +197,7 @@ async function fetchValidationOverview() {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Failed to fetch validation overview:', error);
+    logger.error('Failed to fetch validation overview:', error);
     return {
       total: 0,
       passed: 0,
@@ -215,7 +216,7 @@ async function fetchRecentValidations() {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Failed to fetch recent validations:', error);
+    logger.error('Failed to fetch recent validations:', error);
     return {
       recent_validations: [],
     };
@@ -228,7 +229,7 @@ async function fetchCommonErrors() {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Failed to fetch common errors:', error);
+    logger.error('Failed to fetch common errors:', error);
     return {
       common_errors: [],
       total_errors: 0,

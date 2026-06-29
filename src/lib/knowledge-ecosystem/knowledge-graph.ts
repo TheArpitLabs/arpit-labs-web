@@ -1,6 +1,7 @@
 import { supabaseServer } from "@/lib/supabase/server";
 import { assertKnowledgeFeature } from "./feature-flags";
 import { tokenize, uniqueKeywords } from "./text";
+import { logger } from '@/lib/logger';
 
 export interface GraphEntity {
   id: string;
@@ -140,7 +141,7 @@ export class KnowledgeGraphEngine {
       .single();
 
     if (error) {
-      console.error("Failed to upsert entity:", error);
+      logger.error("Failed to upsert entity:", error);
       throw error;
     }
 
@@ -170,7 +171,7 @@ export class KnowledgeGraphEngine {
       .single();
 
     if (error) {
-      console.error("Failed to create relationship:", error);
+      logger.error("Failed to create relationship:", error);
       throw error;
     }
 

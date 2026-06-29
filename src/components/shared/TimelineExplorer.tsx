@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { Award, GraduationCap, MapPin, Milestone, Sparkles, Trophy, Briefcase } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/utils";
 import { JourneyEntryType, JourneyItem } from "@/types/content";
 
 interface TimelineExplorerProps {

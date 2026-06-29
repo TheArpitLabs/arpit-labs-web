@@ -2,6 +2,7 @@ import { supabaseServer } from "@/lib/supabase/server";
 import { Experiment } from "@/types/content";
 import { ExperimentInput } from "@/lib/validation/experiment.schema";
 import { handleDatabaseError } from "@/lib/errors";
+import { logger } from '@/lib/logger';
 
 export const experimentsRepository = {
   async getExperiments(filters?: { published?: boolean; status?: string; search?: string }) {
@@ -23,7 +24,7 @@ export const experimentsRepository = {
     const { data, error } = await query;
 
     if (error) {
-      console.error("Database error in getExperiments:", error);
+      logger.error("Database error in getExperiments:", error);
       throw handleDatabaseError(error);
     }
     return data ?? [];
@@ -38,7 +39,7 @@ export const experimentsRepository = {
       .single();
 
     if (error) {
-      console.error("Database error in getExperimentBySlug:", error);
+      logger.error("Database error in getExperimentBySlug:", error);
       throw handleDatabaseError(error);
     }
     return data;
@@ -52,7 +53,7 @@ export const experimentsRepository = {
       .single();
 
     if (error) {
-      console.error("Database error in createExperiment:", error);
+      logger.error("Database error in createExperiment:", error);
       throw handleDatabaseError(error);
     }
     return data;
@@ -67,7 +68,7 @@ export const experimentsRepository = {
       .single();
 
     if (error) {
-      console.error("Database error in updateExperiment:", error);
+      logger.error("Database error in updateExperiment:", error);
       throw handleDatabaseError(error);
     }
     return data;
@@ -76,7 +77,7 @@ export const experimentsRepository = {
   async deleteExperiment(id: string) {
     const { error } = await supabaseServer.from("experiments").delete().eq("id", id);
     if (error) {
-      console.error("Database error in deleteExperiment:", error);
+      logger.error("Database error in deleteExperiment:", error);
       throw handleDatabaseError(error);
     }
     return true;

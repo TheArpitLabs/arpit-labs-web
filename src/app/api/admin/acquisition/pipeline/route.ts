@@ -6,6 +6,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getPipelineOrchestrator } from '@/lib/acquisition/orchestration/pipeline-orchestrator';
+import { logger } from '@/lib/logger';
 
 // GET /api/admin/acquisition/pipeline - Get pipeline status and stats
 export async function GET(request: NextRequest) {
@@ -32,7 +33,7 @@ export async function GET(request: NextRequest) {
       }
     });
   } catch (error) {
-    console.error('Error getting pipeline status:', error);
+    logger.error('Error getting pipeline status:', error);
     return NextResponse.json({
       success: false,
       error: 'Failed to get pipeline status'
@@ -77,7 +78,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ success: false, error: 'Invalid action' }, { status: 400 });
     }
   } catch (error) {
-    console.error('Error in pipeline POST:', error);
+    logger.error('Error in pipeline POST:', error);
     return NextResponse.json({
       success: false,
       error: 'Failed to process pipeline request'

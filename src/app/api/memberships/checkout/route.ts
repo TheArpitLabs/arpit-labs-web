@@ -19,6 +19,7 @@ export async function POST(request: Request) {
 import { supabaseServer } from "@/lib/supabase/server";
 import { getPaymentProvider } from "@/lib/payments/payment-provider";
 import { membershipRepository } from "@/lib/repositories/membership.repository";
+import { logger } from '@/lib/logger';
 
 export async function POST(request: Request) {
   const authorization = request.headers.get("authorization")?.replace("Bearer ", "") ?? "";
@@ -93,7 +94,7 @@ export async function POST(request: Request) {
     .single();
 
   if (insertError || !insertedSubscription) {
-    console.error("Failed to create subscription:", insertError);
+    logger.error("Failed to create subscription:", insertError);
     return NextResponse.json({ success: false, error: "Unable to create subscription" }, { status: 500 });
   }
 

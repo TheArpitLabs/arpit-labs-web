@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabase/server";
-import { createAuthenticatedSupabaseClient, getUserTokenFromRequest, getUserFromRequest, getUserRefreshTokenFromRequest } from "@/lib/auth";
+import { createAuthenticatedSupabaseClient, getUserTokenFromRequest, getUserFromRequest, getUserRefreshTokenFromRequest } from "@/lib/auth/auth";
 
 export async function GET(
   request: NextRequest,

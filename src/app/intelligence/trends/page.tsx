@@ -8,6 +8,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { logger } from '@/lib/logger';
 
 export default function PublicTrendDashboard() {
   const [trends, setTrends] = useState<any[]>([]);
@@ -24,7 +25,7 @@ export default function PublicTrendDashboard() {
       const data = await response.json();
       setTrends(data.data || []);
     } catch (error) {
-      console.error('Error fetching trends:', error);
+      logger.error('Error fetching trends:', error);
     } finally {
       setLoading(false);
     }

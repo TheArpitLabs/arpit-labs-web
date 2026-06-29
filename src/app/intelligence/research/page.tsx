@@ -8,6 +8,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { BookOpen, Star, Quote } from 'lucide-react';
+import { logger } from '@/lib/logger';
 
 export default function PublicResearchDashboard() {
   const [papers, setPapers] = useState<any[]>([]);
@@ -24,7 +25,7 @@ export default function PublicResearchDashboard() {
       const data = await response.json();
       setPapers(data.data || []);
     } catch (error) {
-      console.error('Error fetching research papers:', error);
+      logger.error('Error fetching research papers:', error);
     } finally {
       setLoading(false);
     }

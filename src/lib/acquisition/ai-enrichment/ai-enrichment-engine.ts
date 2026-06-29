@@ -6,6 +6,7 @@
 
 import { EnrichmentResult, EnrichmentConfig, EnrichmentTaskType, ExtractedEntity } from './types';
 import { supabaseServer } from '@/lib/supabase/server';
+import { logger } from '@/lib/logger';
 
 export class AIEnrichmentEngine {
   private config: EnrichmentConfig;
@@ -420,7 +421,7 @@ export class AIEnrichmentEngine {
         .insert(tagInserts);
 
       if (tagError) {
-        console.error(`Failed to store AI tags: ${tagError.message}`);
+        logger.error(`Failed to store AI tags: ${tagError.message}`);
       }
     }
 
@@ -437,7 +438,7 @@ export class AIEnrichmentEngine {
         .insert(entityInserts);
 
       if (entityError) {
-        console.error(`Failed to store extracted entities: ${entityError.message}`);
+        logger.error(`Failed to store extracted entities: ${entityError.message}`);
       }
     }
 
@@ -455,7 +456,7 @@ export class AIEnrichmentEngine {
       .eq('id', contentId);
 
     if (updateError) {
-      console.error(`Failed to update queue item with enrichment results: ${updateError.message}`);
+      logger.error(`Failed to update queue item with enrichment results: ${updateError.message}`);
     }
   }
 

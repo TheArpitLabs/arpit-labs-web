@@ -1,7 +1,34 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabase/server";
-import { getUserFromRequest } from "@/lib/auth";
+import { getUserFromRequest } from "@/lib/auth/auth";
 import { handleDatabaseError } from "@/lib/errors";
+import { logger } from '@/lib/logger';
+
+// Constants for profile completion weights
+const COMPLETION_WEIGHTS = {
+  full_name: 20,
+  bio: 15,
+  avatar_url: 15,
+  github_username: 10,
+  linkedin_url: 10,
+  twitter_username: 10,
+  website_url: 10,
+  location: 5,
+  skills: 5,
+} as const;
+
+const REQUIRED_FIELDS = ['full_name', 'bio', 'avatar_url'] as const;
+
+interface ProfileCompletionItem {
+  field: string;
+  completed: boolean;
+  weight: number;
+}
+
+interface ProfileCompletionResponse {
+  percentage: number;
+  items: ProfileCompletionItem[];
+}
 
 // GET /api/user/profile-completion - Get user's profile completion status
 export async function GET(request: NextRequest) {
@@ -17,18 +44,19 @@ export async function GET(request: NextRequest) {
     // Get user profile
     const { data: profile, error: profileError } = await supabaseServer
       .from('profiles')
-      .select('*')
+      .select('full_name, bio, avatar_url, github_username, linkedin_url, twitter_username, website_url, location, skills')
       .eq('id', user.id)
       .single();
 
     if (profileError) {
+      logger.error('Profile fetch error for completion calculation', { error: profileError.message, userId: user.id });
       throw handleDatabaseError(profileError);
     }
 
     // Calculate completion percentage based on various fields
     const completionItems = {
       basicInfo: {
-        completed: !!(profile?.full_name && profile?.username),
+        completed: !!(profile?.full_name),
         label: 'Basic Information',
         weight: 20
       },
@@ -48,7 +76,7 @@ export async function GET(request: NextRequest) {
         weight: 15
       },
       socialLinks: {
-        completed: !!(profile?.github_url || profile?.linkedin_url || profile?.twitter_url),
+        completed: !!(profile?.github_username || profile?.linkedin_url || profile?.twitter_username),
         label: 'Social Links',
         weight: 15
       },
@@ -58,7 +86,7 @@ export async function GET(request: NextRequest) {
         weight: 5
       },
       website: {
-        completed: !!(profile?.website),
+        completed: !!(profile?.website_url),
         label: 'Website',
         weight: 5
       },
@@ -101,7 +129,7 @@ export async function GET(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Error in GET /api/user/profile-completion:', error);
+    logger.error('Error in GET /api/user/profile-completion:', error);
     return NextResponse.json(
       { error: 'Failed to fetch profile completion' },
       { status: 500 }

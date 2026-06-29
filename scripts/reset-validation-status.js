@@ -11,7 +11,7 @@ const supabase = createClient(
 );
 
 async function resetValidationStatus() {
-  console.log('🔄 Resetting validation status for all projects...\n');
+  logger.info('🔄 Resetting validation status for all projects...\n');
 
   // Reset validation status for projects with GitHub URLs
   const { error } = await supabase
@@ -25,9 +25,9 @@ async function resetValidationStatus() {
     .not('github_url', 'is', null);
 
   if (error) {
-    console.error('❌ Error resetting validation status:', error);
+    logger.error('❌ Error resetting validation status:', error);
   } else {
-    console.log('✅ Validation status reset successfully');
+    logger.info('✅ Validation status reset successfully');
   }
 }
 

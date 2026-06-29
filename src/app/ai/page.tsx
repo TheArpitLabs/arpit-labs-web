@@ -15,6 +15,7 @@ import clsx from 'clsx';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { logger } from '@/lib/logger';
 
 interface Message {
   id: string;
@@ -73,7 +74,7 @@ export default function AIPage() {
         }));
         setConversations(hydrated);
       } catch (error) {
-        console.warn('Failed to parse saved conversations', error);
+        logger.warn('Failed to parse saved conversations', error);
       }
     }
 
@@ -88,7 +89,7 @@ export default function AIPage() {
           })),
         });
       } catch (error) {
-        console.warn('Failed to parse saved current conversation', error);
+        logger.warn('Failed to parse saved current conversation', error);
       }
     }
   }, []);
@@ -143,7 +144,7 @@ export default function AIPage() {
         setViewMode('chat');
       }
     } catch (error) {
-      console.error('Failed to start conversation:', error);
+      logger.error('Failed to start conversation:', error);
     } finally {
       setIsLoading(false);
     }
@@ -201,7 +202,7 @@ export default function AIPage() {
         );
       }
     } catch (error) {
-      console.error('Failed to send message:', error);
+      logger.error('Failed to send message:', error);
     } finally {
       setIsLoading(false);
     }
@@ -239,7 +240,7 @@ export default function AIPage() {
             setSearchMessage('No search results found.');
           }
         } catch (error) {
-          console.error('Search failed:', error);
+          logger.error('Search failed:', error);
           setSearchMessage('Search failed. Please try again.');
         } finally {
           setIsSearching(false);

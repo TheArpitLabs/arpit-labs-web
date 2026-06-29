@@ -2,6 +2,7 @@ import { supabaseServer } from "@/lib/supabase/server";
 import { Project } from "@/types/content";
 import { ProjectInput } from "@/lib/validation/project.schema";
 import { handleDatabaseError } from "@/lib/errors";
+import { logger } from '@/lib/logger';
 
 export const projectsRepository = {
   async getProjects(filters?: { 
@@ -50,7 +51,7 @@ export const projectsRepository = {
     const { count: totalCount, error: countError } = await countQuery;
 
     if (countError) {
-      console.error("Database error in getProjects count:", countError);
+      logger.error("Database error in getProjects count:", countError);
       throw handleDatabaseError(countError);
     }
 
@@ -100,7 +101,7 @@ export const projectsRepository = {
     const { data, error } = await query;
 
     if (error) {
-      console.error("Database error in getProjects:", error);
+      logger.error("Database error in getProjects:", error);
       throw handleDatabaseError(error);
     }
 
@@ -127,7 +128,7 @@ export const projectsRepository = {
       .single();
 
     if (error) {
-      console.error("Database error in getProjectBySlug:", error);
+      logger.error("Database error in getProjectBySlug:", error);
       throw handleDatabaseError(error);
     }
     return data;
@@ -141,7 +142,7 @@ export const projectsRepository = {
       .single();
 
     if (error) {
-      console.error("Database error in createProject:", error);
+      logger.error("Database error in createProject:", error);
       throw handleDatabaseError(error);
     }
     return data;
@@ -156,7 +157,7 @@ export const projectsRepository = {
       .single();
 
     if (error) {
-      console.error("Database error in updateProject:", error);
+      logger.error("Database error in updateProject:", error);
       throw handleDatabaseError(error);
     }
     return data;
@@ -165,7 +166,7 @@ export const projectsRepository = {
   async deleteProject(id: string) {
     const { error } = await supabaseServer.from("projects").delete().eq("id", id);
     if (error) {
-      console.error("Database error in deleteProject:", error);
+      logger.error("Database error in deleteProject:", error);
       throw handleDatabaseError(error);
     }
     return true;

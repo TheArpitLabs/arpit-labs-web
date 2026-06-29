@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseServer } from '@/lib/supabase/server';
-import { checkRateLimit } from '@/lib/rate-limit';
-import { sanitizeText } from '@/lib/sanitize';
-import { createAuthenticatedSupabaseClient, getUserTokenFromRequest, getUserRefreshTokenFromRequest } from '@/lib/auth';
+import { checkRateLimit } from '@/lib/rate-limiting';
+import { sanitizeText } from '@/lib/utils/sanitize';
+import { createAuthenticatedSupabaseClient, getUserTokenFromRequest, getUserRefreshTokenFromRequest } from '@/lib/auth/auth';
+import { logger } from '@/lib/logger';
 
 export async function GET(request: NextRequest) {
   try {
@@ -27,13 +28,13 @@ export async function GET(request: NextRequest) {
     const { data, error } = await query;
 
     if (error) {
-      console.error('Community list error:', error);
+      logger.error('Community list error:', error);
       return NextResponse.json({ success: false, error: 'Failed to load posts' }, { status: 500 });
     }
 
     return NextResponse.json({ success: true, posts: data || [] }, { status: 200 });
   } catch (err) {
-    console.error('GET /api/community error', err);
+    logger.error('GET /api/community error', err);
     return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
   }
 }
@@ -80,13 +81,13 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error || !data) {
-      console.error('Failed to create community post:', error);
+      logger.error('Failed to create community post:', error);
       return NextResponse.json({ success: false, error: 'Failed to create post' }, { status: 500 });
     }
 
     return NextResponse.json({ success: true, post: data }, { status: 201 });
   } catch (err) {
-    console.error('POST /api/community error', err);
+    logger.error('POST /api/community error', err);
     return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
   }
 }

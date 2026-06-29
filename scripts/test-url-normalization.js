@@ -50,7 +50,7 @@ function normalizeGithubUrl(url) {
     
     return trimmed;
   } catch (error) {
-    console.error('Error normalizing GitHub URL:', error);
+    logger.error('Error normalizing GitHub URL:', error);
     return url;
   }
 }
@@ -140,7 +140,7 @@ const stressTestVariations = [
 ];
 
 // Run tests
-console.log('🧪 Running GitHub URL Normalization Tests\n');
+logger.info('🧪 Running GitHub URL Normalization Tests\n');
 
 let passed = 0;
 let failed = 0;
@@ -150,20 +150,20 @@ testCases.forEach((test, index) => {
   const success = result === test.expected;
   
   if (success) {
-    console.log(`✅ Test ${index + 1}: ${test.name}`);
+    logger.info(`✅ Test ${index + 1}: ${test.name}`);
     passed++;
   } else {
-    console.log(`❌ Test ${index + 1}: ${test.name}`);
-    console.log(`   Expected: ${test.expected}`);
-    console.log(`   Got: ${result}`);
+    logger.info(`❌ Test ${index + 1}: ${test.name}`);
+    logger.info(`   Expected: ${test.expected}`);
+    logger.info(`   Got: ${result}`);
     failed++;
   }
 });
 
-console.log(`\n📊 Basic Tests: ${passed} passed, ${failed} failed\n`);
+logger.info(`\n📊 Basic Tests: ${passed} passed, ${failed} failed\n`);
 
 // Test extractGitHubUrlParts
-console.log('🧪 Testing URL Parts Extraction\n');
+logger.info('🧪 Testing URL Parts Extraction\n');
 
 const partsTests = [
   {
@@ -191,34 +191,34 @@ partsTests.forEach((test, index) => {
   const success = JSON.stringify(result) === JSON.stringify(test.expected);
   
   if (success) {
-    console.log(`✅ Parts Test ${index + 1}: ${test.name}`);
+    logger.info(`✅ Parts Test ${index + 1}: ${test.name}`);
     partsPassed++;
   } else {
-    console.log(`❌ Parts Test ${index + 1}: ${test.name}`);
-    console.log(`   Expected: ${JSON.stringify(test.expected)}`);
-    console.log(`   Got: ${JSON.stringify(result)}`);
+    logger.info(`❌ Parts Test ${index + 1}: ${test.name}`);
+    logger.info(`   Expected: ${JSON.stringify(test.expected)}`);
+    logger.info(`   Got: ${JSON.stringify(result)}`);
     partsFailed++;
   }
 });
 
-console.log(`\n📊 Parts Tests: ${partsPassed} passed, ${partsFailed} failed\n`);
+logger.info(`\n📊 Parts Tests: ${partsPassed} passed, ${partsFailed} failed\n`);
 
 // Stress test
-console.log('🧪 Running Stress Test\n');
+logger.info('🧪 Running Stress Test\n');
 
 const normalizedStress = stressTestVariations.map(url => normalizeGithubUrl(url));
 const uniqueStress = new Set(normalizedStress);
 
 if (uniqueStress.size === 1) {
-  console.log(`✅ Stress Test: All ${stressTestVariations.length} variations normalize to same result`);
-  console.log(`   Result: ${uniqueStress.values().next().value}`);
+  logger.info(`✅ Stress Test: All ${stressTestVariations.length} variations normalize to same result`);
+  logger.info(`   Result: ${uniqueStress.values().next().value}`);
 } else {
-  console.log(`❌ Stress Test: Variations produced ${uniqueStress.size} different results`);
-  console.log(`   Results:`, Array.from(uniqueStress));
+  logger.info(`❌ Stress Test: Variations produced ${uniqueStress.size} different results`);
+  logger.info(`   Results:`, Array.from(uniqueStress));
 }
 
 // Test areSameRepository
-console.log('\n🧪 Testing Repository Comparison\n');
+logger.info('\n🧪 Testing Repository Comparison\n');
 
 const comparisonTests = [
   {
@@ -255,33 +255,33 @@ comparisonTests.forEach((test, index) => {
   const success = result === test.expected;
   
   if (success) {
-    console.log(`✅ Comparison Test ${index + 1}: ${test.name}`);
+    logger.info(`✅ Comparison Test ${index + 1}: ${test.name}`);
     comparisonPassed++;
   } else {
-    console.log(`❌ Comparison Test ${index + 1}: ${test.name}`);
-    console.log(`   Expected: ${test.expected}`);
-    console.log(`   Got: ${result}`);
+    logger.info(`❌ Comparison Test ${index + 1}: ${test.name}`);
+    logger.info(`   Expected: ${test.expected}`);
+    logger.info(`   Got: ${result}`);
     comparisonFailed++;
   }
 });
 
-console.log(`\n📊 Comparison Tests: ${comparisonPassed} passed, ${comparisonFailed} failed\n`);
+logger.info(`\n📊 Comparison Tests: ${comparisonPassed} passed, ${comparisonFailed} failed\n`);
 
 // Final summary
 const totalPassed = passed + partsPassed + comparisonPassed;
 const totalFailed = failed + partsFailed + comparisonFailed;
 const totalTests = totalPassed + totalFailed;
 
-console.log('🎯 Final Summary:');
-console.log(`   Total Tests: ${totalTests}`);
-console.log(`   Passed: ${totalPassed}`);
-console.log(`   Failed: ${totalFailed}`);
-console.log(`   Success Rate: ${totalTests > 0 ? Math.round((totalPassed / totalTests) * 100) : 0}%`);
+logger.info('🎯 Final Summary:');
+logger.info(`   Total Tests: ${totalTests}`);
+logger.info(`   Passed: ${totalPassed}`);
+logger.info(`   Failed: ${totalFailed}`);
+logger.info(`   Success Rate: ${totalTests > 0 ? Math.round((totalPassed / totalTests) * 100) : 0}%`);
 
 if (totalFailed === 0) {
-  console.log('\n✅ All tests passed!');
+  logger.info('\n✅ All tests passed!');
   process.exit(0);
 } else {
-  console.log('\n❌ Some tests failed.');
+  logger.info('\n❌ Some tests failed.');
   process.exit(1);
 }

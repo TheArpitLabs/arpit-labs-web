@@ -5,6 +5,7 @@
  */
 
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { logger } from '@/lib/logger';
 import { 
   UserProfile, 
   RecommendationContext, 
@@ -78,7 +79,7 @@ class BaseRecommendationEngine implements RecommendationEngine {
         updatedAt: new Date(data.updated_at)
       };
     } catch (error) {
-      console.error('Error getting user profile:', error);
+      logger.error('Error getting user profile:', error);
       return null;
     }
   }
@@ -95,7 +96,7 @@ class BaseRecommendationEngine implements RecommendationEngine {
           onConflict: 'user_id'
         });
     } catch (error) {
-      console.error('Error updating user profile:', error);
+      logger.error('Error updating user profile:', error);
     }
   }
 
@@ -158,7 +159,7 @@ class BaseRecommendationEngine implements RecommendationEngine {
       });
 
     } catch (error) {
-      console.error('Error in updateUserProfile:', error);
+      logger.error('Error in updateUserProfile:', error);
       throw error;
     }
   }
@@ -244,7 +245,7 @@ class BaseRecommendationEngine implements RecommendationEngine {
       return response;
 
     } catch (error) {
-      console.error('Error in getRecommendations:', error);
+      logger.error('Error in getRecommendations:', error);
       throw error;
     }
   }
@@ -325,7 +326,7 @@ class BaseRecommendationEngine implements RecommendationEngine {
         .sort((a, b) => b.score - a.score);
 
     } catch (error) {
-      console.error('Error in collaborativeFiltering:', error);
+      logger.error('Error in collaborativeFiltering:', error);
       return [];
     }
   }
@@ -400,7 +401,7 @@ class BaseRecommendationEngine implements RecommendationEngine {
       );
 
     } catch (error) {
-      console.error('Error in contentBasedFiltering:', error);
+      logger.error('Error in contentBasedFiltering:', error);
       return [];
     }
   }
@@ -472,7 +473,7 @@ class BaseRecommendationEngine implements RecommendationEngine {
       })).sort((a, b) => b.score - a.score);
 
     } catch (error) {
-      console.error('Error in getTrendingContent:', error);
+      logger.error('Error in getTrendingContent:', error);
       return [];
     }
   }
@@ -522,7 +523,7 @@ class BaseRecommendationEngine implements RecommendationEngine {
       return similarities;
 
     } catch (error) {
-      console.error('Error in getSimilarContent:', error);
+      logger.error('Error in getSimilarContent:', error);
       return [];
     }
   }

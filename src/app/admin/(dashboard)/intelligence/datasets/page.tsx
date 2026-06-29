@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { RefreshCw } from 'lucide-react';
+import { logger } from '@/lib/logger';
 
 export default function DatasetIntelligenceDashboard() {
   const [datasets, setDatasets] = useState<any[]>([]);
@@ -25,7 +26,7 @@ export default function DatasetIntelligenceDashboard() {
       const data = await response.json();
       setDatasets(data.data || []);
     } catch (error) {
-      console.error('Error fetching datasets:', error);
+      logger.error('Error fetching datasets:', error);
     } finally {
       setLoading(false);
     }
@@ -55,7 +56,7 @@ export default function DatasetIntelligenceDashboard() {
       alert('Dataset indexed successfully');
       fetchDatasets();
     } catch (error) {
-      console.error('Error indexing dataset:', error);
+      logger.error('Error indexing dataset:', error);
       alert('Failed to index dataset');
     }
   };

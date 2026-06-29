@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { RefreshCw } from 'lucide-react';
+import { logger } from '@/lib/logger';
 
 export default function TrendIntelligenceDashboard() {
   const [trends, setTrends] = useState<any[]>([]);
@@ -25,7 +26,7 @@ export default function TrendIntelligenceDashboard() {
       const data = await response.json();
       setTrends(data.data || []);
     } catch (error) {
-      console.error('Error fetching trends:', error);
+      logger.error('Error fetching trends:', error);
     } finally {
       setLoading(false);
     }
@@ -45,7 +46,7 @@ export default function TrendIntelligenceDashboard() {
       alert('Analysis triggered successfully');
       fetchTrends();
     } catch (error) {
-      console.error('Error triggering analysis:', error);
+      logger.error('Error triggering analysis:', error);
       alert('Failed to trigger analysis');
     }
   };

@@ -11,6 +11,7 @@
 
 import { createHash } from 'crypto';
 import { supabaseServer } from '@/lib/supabase/server';
+import { logger } from '@/lib/logger';
 
 // ============================================================================
 // TYPES
@@ -189,7 +190,7 @@ export async function getImmutableRepositoryId(
       return await getGitLabRepositoryId(normalizedUrl);
     }
   } catch (error) {
-    console.error('Error fetching immutable repository ID:', error);
+    logger.error('Error fetching immutable repository ID:', error);
     return { repositoryId: null, error: String(error) };
   }
 
@@ -379,7 +380,7 @@ export async function checkSemanticSimilarity(
 
     return { similarity: maxSimilarity, matchedEntityId, matchedEntityType };
   } catch (error) {
-    console.error('Error checking semantic similarity:', error);
+    logger.error('Error checking semantic similarity:', error);
     return { similarity: 0 };
   }
 }
@@ -452,7 +453,7 @@ export async function aggregateCrossSources(
         });
     }
   } catch (error) {
-    console.error('Error aggregating cross-sources:', error);
+    logger.error('Error aggregating cross-sources:', error);
   }
 }
 

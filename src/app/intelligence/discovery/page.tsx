@@ -8,6 +8,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Globe, Sparkles, CheckCircle } from 'lucide-react';
+import { logger } from '@/lib/logger';
 
 export default function PublicDiscoveryDashboard() {
   const [discoveries, setDiscoveries] = useState<any[]>([]);
@@ -24,7 +25,7 @@ export default function PublicDiscoveryDashboard() {
       const data = await response.json();
       setDiscoveries(data.data || []);
     } catch (error) {
-      console.error('Error fetching discoveries:', error);
+      logger.error('Error fetching discoveries:', error);
     } finally {
       setLoading(false);
     }

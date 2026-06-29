@@ -1,6 +1,6 @@
 import { Container } from "@/components/layout/Container";
 import { Footer } from "@/components/layout/Footer";
-import { getCurrentWorkspace } from "@/lib/saas";
+import { getCurrentWorkspace } from "@/lib/utils/saas";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { notFound } from "next/navigation";

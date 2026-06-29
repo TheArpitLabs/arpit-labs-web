@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: '/private/',
     },
-    sitemap: 'https://arpitlabs.example/sitemap.xml',
+    sitemap: 'https://axiora.com/sitemap.xml',
   };
 }

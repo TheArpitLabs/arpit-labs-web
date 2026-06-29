@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { Play, Square, RefreshCw, Database, FileText, AlertCircle, CheckCircle, Clock, XCircle, Settings, ThumbsUp, ThumbsDown, ExternalLink, Star, GitFork } from "lucide-react";
+import { logger } from '@/lib/logger';
 
 interface PendingProject {
   id: string;
@@ -90,10 +91,10 @@ export function ProjectDiscoveryEngine() {
       if (data.success) {
         setPendingProjects(data.projects || []);
       } else {
-        console.error("Failed to fetch pending projects:", data.error);
+        logger.error("Failed to fetch pending projects:", data.error);
       }
     } catch (error) {
-      console.error("Failed to fetch pending projects:", error);
+      logger.error("Failed to fetch pending projects:", error);
     } finally {
       setPendingLoading(false);
     }

@@ -1,6 +1,7 @@
 import { supabaseServer } from "@/lib/supabase/server";
 import { ProductFeature } from "@/types/content";
 import { handleDatabaseError } from "@/lib/errors";
+import { logger } from '@/lib/logger';
 
 export const productFeaturesRepository = {
   async getFeaturesByProductId(productId: string) {
@@ -11,7 +12,7 @@ export const productFeaturesRepository = {
       .order("created_at", { ascending: true });
 
     if (error) {
-      console.error("Database error in getFeaturesByProductId:", error);
+      logger.error("Database error in getFeaturesByProductId:", error);
       throw handleDatabaseError(error);
     }
 
@@ -25,7 +26,7 @@ export const productFeaturesRepository = {
       .eq("product_id", productId);
 
     if (deleteError) {
-      console.error("Database error in replaceFeatures delete:", deleteError);
+      logger.error("Database error in replaceFeatures delete:", deleteError);
       throw handleDatabaseError(deleteError);
     }
 
@@ -45,7 +46,7 @@ export const productFeaturesRepository = {
       .select();
 
     if (error) {
-      console.error("Database error in replaceFeatures insert:", error);
+      logger.error("Database error in replaceFeatures insert:", error);
       throw handleDatabaseError(error);
     }
 

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabase/server";
 import { contributorIntelligenceEngine } from "@/lib/intelligence/contributor-intelligence";
+import { logger } from '@/lib/logger';
 
 export async function GET(request: NextRequest) {
   try {
@@ -62,7 +63,7 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ success: false, error: "Unknown action" }, { status: 400 });
     }
   } catch (error) {
-    console.error("Contributors API failed:", error);
+    logger.error("Contributors API failed:", error);
     return NextResponse.json(
       { success: false, error: error instanceof Error ? error.message : "Contributors API failed" },
       { status: 500 }
@@ -128,7 +129,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ success: false, error: "Unknown action" }, { status: 400 });
     }
   } catch (error) {
-    console.error("Contributors API POST failed:", error);
+    logger.error("Contributors API POST failed:", error);
     return NextResponse.json(
       { success: false, error: error instanceof Error ? error.message : "Contributors API POST failed" },
       { status: 500 }

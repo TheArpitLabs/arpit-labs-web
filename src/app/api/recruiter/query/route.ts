@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { semanticSearchService } from '@/lib/ai-services';
 import { membershipRepository } from '@/lib/repositories/membership.repository';
+import { logger } from '@/lib/logger';
 
 interface RecruiterQueryResult {
   answer: string;
@@ -47,7 +48,7 @@ async function generateAnswer(question: string, contextEntries: Array<{ title: s
 
   if (!response.ok) {
     const text = await response.text();
-    console.error('OpenAI recruiter answer failed:', response.status, text);
+    logger.error(`OpenAI recruiter answer failed: ${response.status} - ${text}`);
     return contextEntries.length
       ? `I found these references but could not generate a final answer: ${contextText}`
       : 'Unable to generate an answer at this time.';
@@ -92,7 +93,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, ...response }, { status: 200 });
   } catch (error) {
-    console.error('Recruiter query failed:', error);
+    logger.error('Recruiter query failed:', error);
     return NextResponse.json(
       { success: false, error: error instanceof Error ? error.message : 'Query failed' },
       { status: 500 }

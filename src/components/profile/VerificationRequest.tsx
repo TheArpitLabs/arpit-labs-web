@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle, Mail, Link2, FileText, Loader2, AlertCircle, Send, Clock, XCircle } from "lucide-react";
 import { supabaseClient } from "@/lib/supabase/client";
+import { logger } from '@/lib/logger';
 
 interface VerificationRequestProps {
   profile: any;
@@ -78,7 +79,7 @@ export function VerificationRequest({ profile, onRequestSubmitted }: Verificatio
       setSuccess(true);
       if (onRequestSubmitted) onRequestSubmitted();
     } catch (err) {
-      console.error("Error submitting verification request:", err);
+      logger.error("Error submitting verification request:", err);
       setError("Failed to submit verification request");
     } finally {
       setLoading(false);

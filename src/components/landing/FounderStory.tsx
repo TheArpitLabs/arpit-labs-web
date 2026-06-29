@@ -7,7 +7,7 @@ import Link from "next/link";
 const journeyMilestones = [
   { year: "2020", title: "Engineering Foundation", description: "Began exploration of embedded systems and IoT protocols while building hardware prototypes", icon: Lightbulb },
   { year: "2022", title: "Software Integration", description: "Expanded into full-stack development and AI/ML research, publishing initial open-source projects", icon: Code2 },
-  { year: "2024", title: "Platform Launch", description: "Founded Arpit Labs as a unified platform for hardware, software, and AI engineering projects", icon: Rocket },
+  { year: "2024", title: "Platform Launch", description: "Founded Axiora as a unified platform for hardware, software, and AI engineering projects", icon: Rocket },
   { year: "2026", title: "Ecosystem Growth", description: "Building comprehensive engineering resources and community for hands-on learning", icon: Target },
 ];
 
@@ -20,20 +20,20 @@ const coreValues = [
 
 export function FounderStory() {
   return (
-    <section className="py-24">
+    <section className="py-12">
       {/* Header */}
       <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="mb-20 text-center"
+          className="mb-10 text-center"
         >
-          <p className="mb-4 text-sm uppercase tracking-[0.28em] text-muted">Founder Story</p>
-          <h2 className="mb-6 font-heading text-section-title font-bold">
+          <p className="mb-2 text-sm uppercase tracking-[0.28em] text-muted">Founder Story</p>
+          <h2 className="mb-4 font-heading text-3xl font-bold sm:text-4xl">
             Building the Future of Engineering
           </h2>
-          <p className="mx-auto max-w-3xl text-lg text-muted">
+          <p className="mx-auto max-w-3xl text-base text-muted">
             From hardware prototypes to AI-powered systems, follow Arpit Kumar&apos;s journey in creating a platform that bridges the gap between academic learning and industry-ready engineering.
           </p>
         </motion.div>

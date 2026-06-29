@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { RefreshCw } from 'lucide-react';
+import { logger } from '@/lib/logger';
 
 export default function CollaborationMarketplaceDashboard() {
   const [opportunities, setOpportunities] = useState<any[]>([]);
@@ -25,7 +26,7 @@ export default function CollaborationMarketplaceDashboard() {
       const data = await response.json();
       setOpportunities(data.data || []);
     } catch (error) {
-      console.error('Error fetching opportunities:', error);
+      logger.error('Error fetching opportunities:', error);
     } finally {
       setLoading(false);
     }
@@ -46,7 +47,7 @@ export default function CollaborationMarketplaceDashboard() {
       alert('Opportunity created successfully');
       fetchOpportunities();
     } catch (error) {
-      console.error('Error creating opportunity:', error);
+      logger.error('Error creating opportunity:', error);
       alert('Failed to create opportunity');
     }
   };

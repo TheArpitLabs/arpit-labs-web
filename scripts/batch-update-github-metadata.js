@@ -19,10 +19,10 @@ function extractOwnerRepo(githubUrl) {
 }
 
 async function batchUpdateGitHubMetadata() {
-  console.log('='.repeat(80));
-  console.log('BATCH UPDATE GITHUB METADATA');
-  console.log('='.repeat(80));
-  console.log('');
+  logger.info('='.repeat(80));
+  logger.info('BATCH UPDATE GITHUB METADATA');
+  logger.info('='.repeat(80));
+  logger.info('');
 
   const octokit = new Octokit({
     auth: process.env.GITHUB_TOKEN,
@@ -37,22 +37,22 @@ async function batchUpdateGitHubMetadata() {
     .is('github_repository_id', null);
 
   if (error) {
-    console.error('❌ Error fetching projects:', error);
+    logger.error('❌ Error fetching projects:', error);
     return;
   }
 
-  console.log(`Found ${projects.length} projects to update\n`);
+  logger.info(`Found ${projects.length} projects to update\n`);
 
   let successCount = 0;
   let failCount = 0;
 
   for (const project of projects) {
     try {
-      console.log(`Processing: ${project.title} (${project.github_url})`);
+      logger.info(`Processing: ${project.title} (${project.github_url})`);
       
       const ownerRepo = extractOwnerRepo(project.github_url);
       if (!ownerRepo) {
-        console.log(`  ⚠️  Could not extract owner/repo from URL`);
+        logger.info(`  ⚠️  Could not extract owner/repo from URL`);
         failCount++;
         continue;
       }
@@ -86,10 +86,10 @@ async function batchUpdateGitHubMetadata() {
         .eq('id', project.id);
 
       if (updateError) {
-        console.log(`  ❌ Error updating: ${updateError.message}`);
+        logger.info(`  ❌ Error updating: ${updateError.message}`);
         failCount++;
       } else {
-        console.log(`  ✓ Updated: stars=${repo.stargazers_count}, topics=${repo.topics?.length || 0}`);
+        logger.info(`  ✓ Updated: stars=${repo.stargazers_count}, topics=${repo.topics?.length || 0}`);
         successCount++;
       }
 
@@ -97,18 +97,18 @@ async function batchUpdateGitHubMetadata() {
       await new Promise(resolve => setTimeout(resolve, 1000));
 
     } catch (error) {
-      console.log(`  ❌ Error: ${error.message}`);
+      logger.info(`  ❌ Error: ${error.message}`);
       failCount++;
     }
   }
 
-  console.log('');
-  console.log('='.repeat(80));
-  console.log('BATCH UPDATE COMPLETE');
-  console.log('='.repeat(80));
-  console.log(`Success: ${successCount}`);
-  console.log(`Failed: ${failCount}`);
-  console.log(`Total: ${projects.length}`);
+  logger.info('');
+  logger.info('='.repeat(80));
+  logger.info('BATCH UPDATE COMPLETE');
+  logger.info('='.repeat(80));
+  logger.info(`Success: ${successCount}`);
+  logger.info(`Failed: ${failCount}`);
+  logger.info(`Total: ${projects.length}`);
 }
 
 batchUpdateGitHubMetadata().catch(console.error);

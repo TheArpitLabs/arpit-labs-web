@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Eye, EyeOff, Globe, Lock, User, Check, Loader2, AlertCircle } from "lucide-react";
 import { supabaseClient } from "@/lib/supabase/client";
+import { logger } from '@/lib/logger';
 
 interface ProfileVisibilitySettingsProps {
   profile: any;
@@ -42,14 +43,14 @@ export function ProfileVisibilitySettings({ profile, onProfileUpdate }: ProfileV
         .single();
 
       if (error && error.code !== "PGRST116") {
-        console.error("Error checking username:", error);
+        logger.error("Error checking username:", error);
         setUsernameAvailable(null);
         return;
       }
 
       setUsernameAvailable(!data);
     } catch (err) {
-      console.error("Error checking username:", err);
+      logger.error("Error checking username:", err);
       setUsernameAvailable(null);
     } finally {
       setCheckingUsername(false);
@@ -130,7 +131,7 @@ export function ProfileVisibilitySettings({ profile, onProfileUpdate }: ProfileV
 
       setTimeout(() => setSaveSuccess(false), 3000);
     } catch (err) {
-      console.error("Error updating profile visibility:", err);
+      logger.error("Error updating profile visibility:", err);
       setError("Failed to update profile settings");
     } finally {
       setIsSaving(false);

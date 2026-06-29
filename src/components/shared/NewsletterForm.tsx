@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { newsletterSchema, NewsletterFormInput } from "@/lib/validation/newsletter.schema";
 import { subscribeNewsletter } from "@/lib/actions/server-actions";
 import { Loader2, CheckCircle2, AlertCircle } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/utils";
 
 export function NewsletterForm() {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");

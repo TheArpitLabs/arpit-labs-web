@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { enhancedRecommendationEngine } from "@/lib/knowledge-ecosystem/enhanced-recommendations";
+import { logger } from '@/lib/logger';
 
 export async function GET(request: NextRequest) {
   try {
@@ -45,7 +46,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ success: true, result });
   } catch (error) {
-    console.error("Recommendations failed:", error);
+    logger.error("Recommendations failed:", error);
     return NextResponse.json(
       { success: false, error: error instanceof Error ? error.message : "Recommendations failed" },
       { status: 500 }

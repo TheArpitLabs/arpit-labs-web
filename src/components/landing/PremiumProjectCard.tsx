@@ -34,11 +34,11 @@ export function PremiumProjectCard({ project, index }: PremiumProjectCardProps) 
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.5, delay: index * 0.1 }}
-        whileHover={{ y: -8 }}
-        className="group relative h-full overflow-hidden rounded-xl border border-border bg-card p-1 transition-all duration-300 hover:border-primary/40 hover:shadow-2xl"
+        whileHover={{ y: -4 }}
+        className="group relative h-full overflow-hidden rounded-lg border border-border bg-card p-0.5 transition-all duration-300 hover:border-primary/40 hover:shadow-lg"
       >
         {/* Cover Image */}
-        <div className="relative aspect-video overflow-hidden rounded-xl bg-surface">
+        <div className="relative aspect-video overflow-hidden rounded-lg bg-surface">
           {project.cover_image ? (
             <Image
               src={project.cover_image}
@@ -65,8 +65,8 @@ export function PremiumProjectCard({ project, index }: PremiumProjectCardProps) 
 
           {/* Status Badge */}
           {project.status && (
-            <div className="absolute left-4 top-4">
-              <span className="rounded-full bg-gradient-to-r from-primary to-accent px-3 py-1 text-xs font-bold text-white shadow-lg">
+            <div className="absolute left-3 top-3">
+              <span className="rounded-full bg-gradient-to-r from-primary to-accent px-2 py-0.5 text-[10px] font-bold text-white shadow-md">
                 {project.status}
               </span>
             </div>
@@ -74,8 +74,8 @@ export function PremiumProjectCard({ project, index }: PremiumProjectCardProps) 
 
           {/* Category Badge */}
           {project.category && (
-            <div className="absolute right-4 top-4">
-              <span className="rounded-full glass px-3 py-1 text-xs font-semibold text-foreground">
+            <div className="absolute right-3 top-3">
+              <span className="rounded-full glass px-2 py-0.5 text-[10px] font-semibold text-foreground">
                 {categoryLabel}
               </span>
             </div>
@@ -83,50 +83,33 @@ export function PremiumProjectCard({ project, index }: PremiumProjectCardProps) 
         </div>
 
         {/* Content */}
-        <div className="p-5">
-          {/* Tags */}
-          <div className="mb-4 flex flex-wrap gap-2">
-            {project.tags?.slice(0, 3).map((tag) => (
-              <Badge key={tag} variant="outline" className="text-xs">
-                {tag}
-              </Badge>
-            ))}
-          </div>
-
+        <div className="p-4">
           {/* Title */}
-          <h3 className="mb-3 text-xl font-heading font-bold text-foreground group-hover:text-primary transition-colors line-clamp-2">
+          <h3 className="mb-2 text-base font-heading font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-1">
             {project.title}
           </h3>
 
           {/* Description */}
-          <p className="mb-4 line-clamp-2 text-base text-muted">
+          <p className="mb-3 line-clamp-2 text-xs text-muted">
             {project.description}
           </p>
 
-          {/* Author */}
-          {project.author && (
-            <div className="mb-4 flex items-center gap-2 text-sm text-muted">
-              <User size={14} />
-              <span>{project.author}</span>
-            </div>
-          )}
-
           {/* Stats */}
-          <div className="flex items-center justify-between border-t border-border/70 pt-4">
-            <div className="flex items-center gap-4 text-sm text-muted">
-              <div className="flex items-center gap-1.5">
-                <Eye size={14} />
+          <div className="flex items-center justify-between border-t border-border/70 pt-3">
+            <div className="flex items-center gap-3 text-xs text-muted">
+              <div className="flex items-center gap-1">
+                <Eye size={12} />
                 <span>{(project.views_count || 0).toLocaleString()}</span>
               </div>
-              <div className="flex items-center gap-1.5">
-                <Heart size={14} />
+              <div className="flex items-center gap-1">
+                <Heart size={12} />
                 <span>{(project.likes_count || 0).toLocaleString()}</span>
               </div>
             </div>
             
-            <div className="flex items-center gap-2 text-sm font-semibold text-primary opacity-0 transition-opacity group-hover:opacity-100">
+            <div className="flex items-center gap-1 text-xs font-semibold text-primary opacity-0 transition-opacity group-hover:opacity-100">
               View
-              <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
+              <ArrowRight size={12} className="transition-transform group-hover:translate-x-1" />
             </div>
           </div>
         </div>

@@ -4,6 +4,9 @@ interface LogContext {
   [key: string]: unknown;
 }
 
+// Allow unknown to be passed as context for flexibility
+type LogContextInput = LogContext | unknown;
+
 class Logger {
   private isDevelopment: boolean;
 
@@ -17,24 +20,24 @@ class Logger {
     return `[${timestamp}] [${level.toUpperCase()}] ${message}${contextStr}`;
   }
 
-  debug(message: string, context?: LogContext): void {
+  debug(message: string, context?: LogContextInput): void {
     if (this.isDevelopment) {
-      console.debug(this.formatMessage('debug', message, context));
+      console.debug(this.formatMessage('debug', message, context as LogContext | undefined));
     }
   }
 
-  info(message: string, context?: LogContext): void {
+  info(message: string, context?: LogContextInput): void {
     if (this.isDevelopment) {
-      console.info(this.formatMessage('info', message, context));
+      console.info(this.formatMessage('info', message, context as LogContext | undefined));
     }
   }
 
-  warn(message: string, context?: LogContext): void {
-    console.warn(this.formatMessage('warn', message, context));
+  warn(message: string, context?: LogContextInput): void {
+    console.warn(this.formatMessage('warn', message, context as LogContext | undefined));
   }
 
-  error(message: string, context?: LogContext): void {
-    console.error(this.formatMessage('error', message, context));
+  error(message: string, context?: LogContextInput): void {
+    console.error(this.formatMessage('error', message, context as LogContext | undefined));
   }
 }
 

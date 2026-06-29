@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/utils";
 import { Sparkles, Star, Diamond, CircuitBoard, Cpu, Zap } from "lucide-react";
 import { animationConfig, prefersReducedMotion, isMobile } from "@/lib/animations/config";
 

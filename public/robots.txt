@@ -1,13 +1,73 @@
-# Arpit Labs robots.txt
-# Allow all crawlers to access the site
+# Axiora robots.txt
+# Optimized for search engine crawling
 
+# Global settings
 User-agent: *
 Allow: /
 
-# Disallow admin areas
+# Disallow sensitive and private areas
 Disallow: /admin/
 Disallow: /account/
 Disallow: /api/
+Disallow: /auth/
+Disallow: /dashboard/
+Disallow: /creator/
+Disallow: /recruiter/
+Disallow: /settings/
 
-# Sitemap location
-Sitemap: https://arpit-labs.com/sitemap.xml
+# Disallow search and filter parameters to prevent duplicate content
+Disallow: /*?search=*
+Disallow: /*?filter=*
+Disallow: /*?sort=*
+Disallow: /*?page=*
+
+# Disallow temporary and test routes
+Disallow: /test/
+Disallow: /dev/
+Disallow: /staging/
+
+# Disallow authentication endpoints
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
+Disallow: /reset-password
+
+# Disallow API endpoints
+Disallow: /api/
+Disallow: /_next/
+Disallow: /static/
+
+# Allow specific bots with custom rules
+User-agent: Googlebot
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Crawl-delay: 1
+
+User-agent: Bingbot
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Crawl-delay: 1
+
+User-agent: Slurp
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Crawl-delay: 1
+
+# Disallow aggressive crawlers
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+# Sitemap locations
+Sitemap: https://axiora.com/sitemap.xml
+Sitemap: https://axiora.com/sitemap-pages.xml
+Sitemap: https://axiora.com/sitemap-projects.xml
+Sitemap: https://axiora.com/sitemap-engineering.xml

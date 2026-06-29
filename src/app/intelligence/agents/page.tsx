@@ -8,6 +8,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Bot, Zap, CheckCircle } from 'lucide-react';
+import { logger } from '@/lib/logger';
 
 export default function PublicAgentDashboard() {
   const [agents, setAgents] = useState<any[]>([]);
@@ -24,7 +25,7 @@ export default function PublicAgentDashboard() {
       const data = await response.json();
       setAgents(data.data || []);
     } catch (error) {
-      console.error('Error fetching agents:', error);
+      logger.error('Error fetching agents:', error);
     } finally {
       setLoading(false);
     }

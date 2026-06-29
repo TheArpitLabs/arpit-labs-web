@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { RefreshCw } from 'lucide-react';
+import { logger } from '@/lib/logger';
 
 export default function DiscoveryEngineDashboard() {
   const [items, setItems] = useState<any[]>([]);
@@ -25,7 +26,7 @@ export default function DiscoveryEngineDashboard() {
       const data = await response.json();
       setItems(data.data || []);
     } catch (error) {
-      console.error('Error fetching items:', error);
+      logger.error('Error fetching items:', error);
     } finally {
       setLoading(false);
     }
@@ -44,7 +45,7 @@ export default function DiscoveryEngineDashboard() {
       alert('Pipeline triggered successfully');
       fetchItems();
     } catch (error) {
-      console.error('Error triggering pipeline:', error);
+      logger.error('Error triggering pipeline:', error);
       alert('Failed to trigger pipeline');
     }
   };

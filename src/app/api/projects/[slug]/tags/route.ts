@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getUserFromRequest, getAdminUserFromRequest } from "@/lib/auth";
+import { getUserFromRequest, getAdminUserFromRequest } from "@/lib/auth/auth";
 import { tagsRepository } from "@/lib/repositories/tags.repository";
 import { projectsRepository } from "@/lib/repositories/projects.repository";
 import { z } from "zod";
+import { logger } from '@/lib/logger';
 
 const addTagSchema = z.object({
   tag: z.string().min(1).max(50),
@@ -34,7 +35,7 @@ export async function GET(
 
     return NextResponse.json({ data: tags });
   } catch (error) {
-    console.error('Error in GET /api/projects/[slug]/tags:', error);
+    logger.error('Error in GET /api/projects/[slug]/tags:', error);
     return NextResponse.json(
       { error: 'Failed to fetch tags' },
       { status: 500 }
@@ -89,7 +90,7 @@ export async function POST(
 
     return NextResponse.json({ data: tag }, { status: 201 });
   } catch (error) {
-    console.error('Error in POST /api/projects/[slug]/tags:', error);
+    logger.error('Error in POST /api/projects/[slug]/tags:', error);
     if (error instanceof Error && error.name === 'ZodError') {
       return NextResponse.json(
         { error: 'Validation error', details: error },
@@ -147,7 +148,7 @@ export async function PUT(
 
     return NextResponse.json({ data: tags });
   } catch (error) {
-    console.error('Error in PUT /api/projects/[slug]/tags:', error);
+    logger.error('Error in PUT /api/projects/[slug]/tags:', error);
     if (error instanceof Error && error.name === 'ZodError') {
       return NextResponse.json(
         { error: 'Validation error', details: error },

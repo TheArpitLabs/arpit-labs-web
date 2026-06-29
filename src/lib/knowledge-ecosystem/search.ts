@@ -2,6 +2,7 @@ import { supabaseServer } from "@/lib/supabase/server";
 import { assertKnowledgeFeature } from "./feature-flags";
 import { jaccardSimilarity, tokenize } from "./text";
 import type { SearchMode, SearchResult } from "./types";
+import { logger } from '@/lib/logger';
 
 export async function hybridKnowledgeSearch(query: string, mode: SearchMode = "hybrid", limit = 10): Promise<SearchResult[]> {
   assertKnowledgeFeature("semanticSearch");
@@ -20,7 +21,7 @@ export async function hybridKnowledgeSearch(query: string, mode: SearchMode = "h
     .from("semantic_search_queries")
     .insert({ query, mode, result_count: results.length });
   if (logError) {
-    console.warn("Semantic search query logging failed:", logError.message);
+    logger.warn("Semantic search query logging failed:", logError.message);
   }
   return results;
 }
@@ -35,7 +36,7 @@ async function keywordSearch(query: string, limit: number): Promise<SearchResult
     .limit(limit);
 
   if (error) {
-    console.warn("Keyword search failed:", error.message);
+    logger.warn("Keyword search failed:", error.message);
     return [];
   }
 
@@ -58,7 +59,7 @@ async function localVectorSearch(query: string, limit: number): Promise<SearchRe
     .limit(80);
 
   if (error) {
-    console.warn("Vector-compatible search failed:", error.message);
+    logger.warn("Vector-compatible search failed:", error.message);
     return [];
   }
 

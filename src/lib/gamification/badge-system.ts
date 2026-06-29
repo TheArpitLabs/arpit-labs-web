@@ -3,6 +3,7 @@
 import { supabaseServer } from "@/lib/supabase/server";
 import { Badge, UserBadge } from "./types";
 import { checkBadgeRequirements } from "./badges";
+import { logger } from '@/lib/logger';
 
 /**
  * Get all available badges
@@ -14,7 +15,7 @@ export async function getAllBadges(): Promise<Badge[]> {
     .order('requirement_value', { ascending: true });
 
   if (error) {
-    console.error('Error fetching badges:', error);
+    logger.error('Error fetching badges:', error);
     return [];
   }
 
@@ -35,7 +36,7 @@ export async function getUserBadges(userId: string): Promise<UserBadge[]> {
     .order('earned_at', { ascending: false });
 
   if (error) {
-    console.error('Error fetching user badges:', error);
+    logger.error('Error fetching user badges:', error);
     return [];
   }
 
@@ -207,7 +208,7 @@ export async function awardBadge(userId: string, badgeId: string): Promise<boole
     });
 
   if (error) {
-    console.error('Error awarding badge:', error);
+    logger.error('Error awarding badge:', error);
     return false;
   }
 

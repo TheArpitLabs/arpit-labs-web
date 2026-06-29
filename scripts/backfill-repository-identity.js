@@ -60,7 +60,7 @@ function normalizeGithubUrl(url) {
     
     return trimmed;
   } catch (error) {
-    console.error('Error normalizing GitHub URL:', error);
+    logger.error('Error normalizing GitHub URL:', error);
     return url;
   }
 }
@@ -86,21 +86,21 @@ async function backfillRepositoryIdentity() {
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   
   // Debug logs to verify environment loading
-  console.log('URL:', process.env.NEXT_PUBLIC_SUPABASE_URL);
-  console.log(
+  logger.info('URL:', process.env.NEXT_PUBLIC_SUPABASE_URL);
+  logger.info(
     'SERVICE KEY:',
     process.env.SUPABASE_SERVICE_ROLE_KEY ? 'FOUND' : 'MISSING'
   );
   
   if (!supabaseUrl || !supabaseKey) {
-    console.error('Missing Supabase credentials');
-    console.error('Required: NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY');
+    logger.error('Missing Supabase credentials');
+    logger.error('Required: NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY');
     process.exit(1);
   }
   
   const supabase = createClient(supabaseUrl, supabaseKey);
   
-  console.log('🔄 Starting repository identity backfill...');
+  logger.info('🔄 Starting repository identity backfill...');
   
   try {
     // Fetch all projects with GitHub URLs
@@ -110,11 +110,11 @@ async function backfillRepositoryIdentity() {
       .not('github_url', 'is', null);
     
     if (error) {
-      console.error('Error fetching projects:', error);
+      logger.error('Error fetching projects:', error);
       process.exit(1);
     }
     
-    console.log(`📊 Found ${projects.length} projects with GitHub URLs`);
+    logger.info(`📊 Found ${projects.length} projects with GitHub URLs`);
     
     let updated = 0;
     let skipped = 0;
@@ -132,7 +132,7 @@ async function backfillRepositoryIdentity() {
         const parts = extractGitHubUrlParts(project.github_url);
         
         if (!parts) {
-          console.warn(`⚠️  Could not extract parts from URL: ${project.github_url}`);
+          logger.warn(`⚠️  Could not extract parts from URL: ${project.github_url}`);
           errors++;
           continue;
         }
@@ -148,25 +148,25 @@ async function backfillRepositoryIdentity() {
           .eq('id', project.id);
         
         if (updateError) {
-          console.error(`❌ Error updating project ${project.id}:`, updateError);
+          logger.error(`❌ Error updating project ${project.id}:`, updateError);
           errors++;
           continue;
         }
         
         updated++;
-        console.log(`✅ Updated: ${parts.owner}/${parts.repo}`);
+        logger.info(`✅ Updated: ${parts.owner}/${parts.repo}`);
         
       } catch (error) {
-        console.error(`❌ Error processing project ${project.id}:`, error);
+        logger.error(`❌ Error processing project ${project.id}:`, error);
         errors++;
       }
     }
     
-    console.log('\n📋 Backfill Summary:');
-    console.log(`✅ Updated: ${updated}`);
-    console.log(`⏭️  Skipped: ${skipped}`);
-    console.log(`❌ Errors: ${errors}`);
-    console.log(`📊 Total: ${projects.length}`);
+    logger.info('\n📋 Backfill Summary:');
+    logger.info(`✅ Updated: ${updated}`);
+    logger.info(`⏭️  Skipped: ${skipped}`);
+    logger.info(`❌ Errors: ${errors}`);
+    logger.info(`📊 Total: ${projects.length}`);
     
     // Get final health statistics
     const { count: totalWithOwner } = await supabase
@@ -179,14 +179,14 @@ async function backfillRepositoryIdentity() {
       .select('*', { count: 'exact', head: true })
       .not('normalized_github_url', 'is', null);
     
-    console.log('\n🏥 Repository Identity Health:');
-    console.log(`📝 Projects with owner: ${totalWithOwner || 0}`);
-    console.log(`🔗 Projects with normalized URL: ${totalWithNormalizedUrl || 0}`);
+    logger.info('\n🏥 Repository Identity Health:');
+    logger.info(`📝 Projects with owner: ${totalWithOwner || 0}`);
+    logger.info(`🔗 Projects with normalized URL: ${totalWithNormalizedUrl || 0}`);
     
-    console.log('\n✅ Backfill completed successfully!');
+    logger.info('\n✅ Backfill completed successfully!');
     
   } catch (error) {
-    console.error('💥 Fatal error during backfill:', error);
+    logger.error('💥 Fatal error during backfill:', error);
     process.exit(1);
   }
 }

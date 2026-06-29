@@ -6,6 +6,7 @@
 
 import { ComplianceResult, ComplianceConfig, ComplianceCheckType, ComplianceStatus } from './types';
 import { supabaseServer } from '@/lib/supabase/server';
+import { logger } from '@/lib/logger';
 
 export class ComplianceEngine {
   private config: ComplianceConfig;
@@ -428,7 +429,7 @@ export class ComplianceEngine {
         });
 
       if (error) {
-        console.error(`Failed to store compliance check: ${error.message}`);
+        logger.error(`Failed to store compliance check: ${error.message}`);
       }
     }
   }

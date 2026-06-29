@@ -8,7 +8,7 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
-  console.error('Missing Supabase credentials. Check your .env.local file.');
+  logger.error('Missing Supabase credentials. Check your .env.local file.');
   process.exit(1);
 }
 
@@ -2050,7 +2050,7 @@ The future of work in engineering and technology is being transformed by AI, rem
 ];
 
 async function populateResearchHub() {
-  console.log('Starting to populate Research Hub with 10 articles and 3 whitepapers...');
+  logger.info('Starting to populate Research Hub with 10 articles and 3 whitepapers...');
   
   let successCount = 0;
   let errorCount = 0;
@@ -2066,7 +2066,7 @@ async function populateResearchHub() {
         .single();
 
       if (existing) {
-        console.log(`⚠️  Research item "${item.title}" already exists, skipping...`);
+        logger.info(`⚠️  Research item "${item.title}" already exists, skipping...`);
         continue;
       }
 
@@ -2093,33 +2093,33 @@ async function populateResearchHub() {
         throw error;
       }
 
-      console.log(`✅ Successfully inserted: ${item.title}`);
+      logger.info(`✅ Successfully inserted: ${item.title}`);
       successCount++;
     } catch (error) {
-      console.error(`❌ Error inserting "${item.title}":`, error.message);
+      logger.error(`❌ Error inserting "${item.title}":`, error.message);
       errorCount++;
       errors.push({ item: item.title, error: error.message });
     }
   }
 
-  console.log('\n========================================');
-  console.log('Population Summary:');
-  console.log('========================================');
-  console.log(`Total items processed: ${researchContent.length}`);
-  console.log(`Successfully inserted: ${successCount}`);
-  console.log(`Skipped (already exists): ${researchContent.length - successCount - errorCount}`);
-  console.log(`Errors: ${errorCount}`);
+  logger.info('\n========================================');
+  logger.info('Population Summary:');
+  logger.info('========================================');
+  logger.info(`Total items processed: ${researchContent.length}`);
+  logger.info(`Successfully inserted: ${successCount}`);
+  logger.info(`Skipped (already exists): ${researchContent.length - successCount - errorCount}`);
+  logger.info(`Errors: ${errorCount}`);
   
   if (errors.length > 0) {
-    console.log('\nErrors:');
+    logger.info('\nErrors:');
     errors.forEach(({ item, error }) => {
-      console.log(`  - ${item}: ${error}`);
+      logger.info(`  - ${item}: ${error}`);
     });
   }
 
-  console.log('\n========================================');
-  console.log('Verification Query:');
-  console.log('========================================');
+  logger.info('\n========================================');
+  logger.info('Verification Query:');
+  logger.info('========================================');
   
   const { data: verification } = await supabase
     .from('lab_notes')
@@ -2127,9 +2127,9 @@ async function populateResearchHub() {
     .in('slug', researchContent.map(i => i.slug));
 
   if (verification) {
-    console.log('\nResearch items by category:');
+    logger.info('\nResearch items by category:');
     verification.forEach(row => {
-      console.log(`  ${row.category}: ${row.count}`);
+      logger.info(`  ${row.category}: ${row.count}`);
     });
   }
 
@@ -2138,15 +2138,15 @@ async function populateResearchHub() {
     .select('*', { count: 'exact', head: true })
     .in('slug', researchContent.map(i => i.slug));
 
-  console.log(`\nTotal research items in database: ${totalCount}`);
+  logger.info(`\nTotal research items in database: ${totalCount}`);
 }
 
 populateResearchHub()
   .then(() => {
-    console.log('\n✅ Research Hub population completed!');
+    logger.info('\n✅ Research Hub population completed!');
     process.exit(0);
   })
   .catch((error) => {
-    console.error('\n❌ Fatal error during population:', error);
+    logger.error('\n❌ Fatal error during population:', error);
     process.exit(1);
   });

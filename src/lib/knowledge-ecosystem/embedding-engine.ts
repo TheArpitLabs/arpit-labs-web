@@ -1,5 +1,6 @@
 import { supabaseServer } from "@/lib/supabase/server";
 import { assertKnowledgeFeature } from "./feature-flags";
+import { logger } from '@/lib/logger';
 
 export interface EmbeddingGenerationResult {
   success: boolean;
@@ -53,7 +54,7 @@ export class EmbeddingEngine {
       const data = await response.json();
       return data?.data?.[0]?.embedding || Array(this.embeddingDimension).fill(0);
     } catch (error) {
-      console.error("Failed to generate embedding:", error);
+      logger.error("Failed to generate embedding:", error);
       throw error;
     }
   }
@@ -88,7 +89,7 @@ export class EmbeddingEngine {
       const data = await response.json();
       return data?.data?.map((d: any) => d.embedding) || [];
     } catch (error) {
-      console.error("Failed to generate batch embeddings:", error);
+      logger.error("Failed to generate batch embeddings:", error);
       throw error;
     }
   }
@@ -237,7 +238,7 @@ export class EmbeddingEngine {
           result.generated++;
         }
       } catch (error) {
-        console.error("Failed to generate batch embeddings:", error);
+        logger.error("Failed to generate batch embeddings:", error);
         result.failed += batch.length;
         result.errors.push(`Batch ${i / this.batchSize}: ${error instanceof Error ? error.message : "Unknown error"}`);
       }

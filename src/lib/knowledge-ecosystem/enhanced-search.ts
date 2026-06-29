@@ -1,6 +1,7 @@
 import { supabaseServer } from "@/lib/supabase/server";
 import { assertKnowledgeFeature } from "./feature-flags";
-import { jaccardSimilarity, tokenize } from "./text";
+import { tokenize } from "./text";
+import { logger } from '@/lib/logger';
 
 interface Project {
   id: string;
@@ -148,8 +149,8 @@ export async function enhancedSearch(options: SearchOptions): Promise<{
 async function keywordSearch(
   query: string,
   limit: number,
-  offset: number,
-  filters: SearchFilters
+  _offset: number,
+  _filters: SearchFilters
 ): Promise<SearchResult[]> {
   const tokens = tokenize(query);
   const patterns = tokens.slice(0, 3).map(t => `%${t}%`);
@@ -188,8 +189,8 @@ async function keywordSearch(
 async function vectorSearch(
   query: string,
   limit: number,
-  offset: number,
-  filters: SearchFilters
+  _offset: number,
+  _filters: SearchFilters
 ): Promise<SearchResult[]> {
   try {
     // Generate query embedding
@@ -244,7 +245,7 @@ async function vectorSearch(
 
     return results;
   } catch (error) {
-    console.error("Vector search failed:", error);
+    logger.error("Vector search failed:", error);
     return [];
   }
 }
@@ -255,8 +256,8 @@ async function vectorSearch(
 async function fullTextSearch(
   query: string,
   limit: number,
-  offset: number,
-  filters: SearchFilters
+  _offset: number,
+  _filters: SearchFilters
 ): Promise<SearchResult[]> {
   try {
     const { data: projects } = await supabaseServer
@@ -286,7 +287,7 @@ async function fullTextSearch(
 
     return results;
   } catch (error) {
-    console.error("Full text search failed:", error);
+    logger.error("Full text search failed:", error);
     return [];
   }
 }
@@ -399,7 +400,7 @@ function applyFilters(results: SearchResult[], filters: SearchFilters): SearchRe
 /**
  * Calculate final scores combining relevance, popularity, and quality
  */
-function calculateFinalScores(results: SearchResult[], query: string): SearchResult[] {
+function calculateFinalScores(results: SearchResult[], _query: string): SearchResult[] {
   return results.map(result => {
     const relevanceWeight = 0.6;
     const popularityWeight = 0.25;
@@ -421,7 +422,6 @@ function calculateFinalScores(results: SearchResult[], query: string): SearchRes
  * Generate search highlights
  */
 function generateHighlights(results: SearchResult[], query: string): SearchResult[] {
-  const queryLower = query.toLowerCase();
   const tokens = tokenize(query);
 
   return results.map(result => {
@@ -468,7 +468,7 @@ function highlightText(text: string, tokens: string[]): string {
 async function generateQueryEmbedding(query: string): Promise<number[]> {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
-    console.warn("OPENAI_API_KEY not set, returning zero vector");
+    logger.warn("OPENAI_API_KEY not set, returning zero vector");
     return Array(1536).fill(0);
   }
 
@@ -492,7 +492,7 @@ async function generateQueryEmbedding(query: string): Promise<number[]> {
     const data = await response.json();
     return data?.data?.[0]?.embedding || Array(1536).fill(0);
   } catch (error) {
-    console.error("Failed to generate embedding:", error);
+    logger.error("Failed to generate embedding:", error);
     return Array(1536).fill(0);
   }
 }
@@ -522,7 +522,7 @@ async function trackSearchAnalytics(
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error("Failed to track search analytics:", error);
+    logger.error("Failed to track search analytics:", error);
   }
 
   return {
@@ -583,7 +583,7 @@ export async function getRecentSearches(userId: string, limit: number = 10): Pro
 
     return (data || []).map((s: SearchHistory) => s.query);
   } catch (error) {
-    console.error("Failed to get recent searches:", error);
+    logger.error("Failed to get recent searches:", error);
     return [];
   }
 }
@@ -599,6 +599,6 @@ export async function saveSearchToHistory(userId: string, query: string): Promis
       created_at: new Date().toISOString(),
     });
   } catch (error) {
-    console.error("Failed to save search to history:", error);
+    logger.error("Failed to save search to history:", error);
   }
 }

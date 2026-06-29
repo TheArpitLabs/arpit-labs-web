@@ -1,6 +1,7 @@
 import { supabaseServer } from "@/lib/supabase/server";
 import { assertKnowledgeFeature } from "./feature-flags";
 import { tokenize, uniqueKeywords } from "./text";
+import { logger } from '@/lib/logger';
 
 export interface Skill {
   id: string;
@@ -166,7 +167,7 @@ export class SkillExtractionEngine {
       .single();
 
     if (error) {
-      console.error("Failed to upsert skill:", error);
+      logger.error("Failed to upsert skill:", error);
       throw error;
     }
 
@@ -251,7 +252,7 @@ export class SkillExtractionEngine {
     });
 
     if (error) {
-      console.error("Failed to create skill-project relationship:", error);
+      logger.error("Failed to create skill-project relationship:", error);
     }
   }
 

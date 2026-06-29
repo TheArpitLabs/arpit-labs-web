@@ -8,7 +8,7 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
-  console.error('Missing Supabase credentials. Check your .env.local file.');
+  logger.error('Missing Supabase credentials. Check your .env.local file.');
   process.exit(1);
 }
 
@@ -864,7 +864,7 @@ const projects = [
 ];
 
 async function populateProjects() {
-  console.log('Starting to populate 30 showcase projects...');
+  logger.info('Starting to populate 30 showcase projects...');
   
   let successCount = 0;
   let errorCount = 0;
@@ -880,7 +880,7 @@ async function populateProjects() {
         .single();
 
       if (existing) {
-        console.log(`⚠️  Project "${project.title}" already exists, skipping...`);
+        logger.info(`⚠️  Project "${project.title}" already exists, skipping...`);
         continue;
       }
 
@@ -909,33 +909,33 @@ async function populateProjects() {
         throw error;
       }
 
-      console.log(`✅ Successfully inserted: ${project.title}`);
+      logger.info(`✅ Successfully inserted: ${project.title}`);
       successCount++;
     } catch (error) {
-      console.error(`❌ Error inserting "${project.title}":`, error.message);
+      logger.error(`❌ Error inserting "${project.title}":`, error.message);
       errorCount++;
       errors.push({ project: project.title, error: error.message });
     }
   }
 
-  console.log('\n========================================');
-  console.log('Population Summary:');
-  console.log('========================================');
-  console.log(`Total projects processed: ${projects.length}`);
-  console.log(`Successfully inserted: ${successCount}`);
-  console.log(`Skipped (already exists): ${projects.length - successCount - errorCount}`);
-  console.log(`Errors: ${errorCount}`);
+  logger.info('\n========================================');
+  logger.info('Population Summary:');
+  logger.info('========================================');
+  logger.info(`Total projects processed: ${projects.length}`);
+  logger.info(`Successfully inserted: ${successCount}`);
+  logger.info(`Skipped (already exists): ${projects.length - successCount - errorCount}`);
+  logger.info(`Errors: ${errorCount}`);
   
   if (errors.length > 0) {
-    console.log('\nErrors:');
+    logger.info('\nErrors:');
     errors.forEach(({ project, error }) => {
-      console.log(`  - ${project}: ${error}`);
+      logger.info(`  - ${project}: ${error}`);
     });
   }
 
-  console.log('\n========================================');
-  console.log('Verification Query:');
-  console.log('========================================');
+  logger.info('\n========================================');
+  logger.info('Verification Query:');
+  logger.info('========================================');
   
   const { data: verification } = await supabase
     .from('projects')
@@ -943,9 +943,9 @@ async function populateProjects() {
     .in('slug', projects.map(p => p.slug));
 
   if (verification) {
-    console.log('\nProjects by category:');
+    logger.info('\nProjects by category:');
     verification.forEach(row => {
-      console.log(`  ${row.category}: ${row.count}`);
+      logger.info(`  ${row.category}: ${row.count}`);
     });
   }
 
@@ -954,15 +954,15 @@ async function populateProjects() {
     .select('*', { count: 'exact', head: true })
     .in('slug', projects.map(p => p.slug));
 
-  console.log(`\nTotal projects in database: ${totalCount}`);
+  logger.info(`\nTotal projects in database: ${totalCount}`);
 }
 
 populateProjects()
   .then(() => {
-    console.log('\n✅ Project population completed!');
+    logger.info('\n✅ Project population completed!');
     process.exit(0);
   })
   .catch((error) => {
-    console.error('\n❌ Fatal error during population:', error);
+    logger.error('\n❌ Fatal error during population:', error);
     process.exit(1);
   });

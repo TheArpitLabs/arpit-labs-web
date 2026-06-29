@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAdminUserFromRequest } from "@/lib/auth";
+import { getAdminUserFromRequest } from "@/lib/auth/auth";
 import { projectsRepository } from "@/lib/repositories/projects.repository";
 import { supabaseServer } from "@/lib/supabase/server";
 

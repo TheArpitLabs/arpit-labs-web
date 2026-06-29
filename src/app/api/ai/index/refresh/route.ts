@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { knowledgeBaseService } from '@/lib/ai-services';
-import { getAdminUserFromRequest } from '@/lib/auth';
+import { getAdminUserFromRequest } from '@/lib/auth/auth';
+import { logger } from '@/lib/logger';
 
 export async function POST(request: Request) {
   try {
@@ -23,7 +24,7 @@ export async function POST(request: Request) {
       { status: 200 }
     );
   } catch (error) {
-    console.error('Failed to refresh knowledge base:', error);
+    logger.error('Failed to refresh knowledge base:', error);
     return NextResponse.json(
       {
         success: false,

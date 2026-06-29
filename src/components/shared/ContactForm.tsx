@@ -7,7 +7,7 @@ import { contactFormSchema, ContactFormInput } from "@/lib/validation/contact.sc
 import { submitContactMessage } from "@/lib/actions/server-actions";
 import { Card } from "@/components/ui/card";
 import { Send, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/utils";
 
 export function ContactForm() {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");

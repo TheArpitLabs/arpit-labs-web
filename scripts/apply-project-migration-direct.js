@@ -13,8 +13,8 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
-  console.error('Error: Missing Supabase credentials in .env.local');
-  console.error('Required: NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY');
+  logger.error('Error: Missing Supabase credentials in .env.local');
+  logger.error('Required: NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY');
   process.exit(1);
 }
 
@@ -26,7 +26,7 @@ async function executeSQL(sql) {
   
   if (error) {
     // If exec_sql doesn't exist, we'll need to handle this differently
-    console.log('Note: exec_sql function not available, skipping direct execution');
+    logger.info('Note: exec_sql function not available, skipping direct execution');
     return { success: false, error: error.message };
   }
   
@@ -34,20 +34,20 @@ async function executeSQL(sql) {
 }
 
 async function applyMigration() {
-  console.log('Applying Universal Project System migration...');
-  console.log(`Supabase URL: ${supabaseUrl}`);
-  console.log('');
+  logger.info('Applying Universal Project System migration...');
+  logger.info(`Supabase URL: ${supabaseUrl}`);
+  logger.info('');
 
   // Read the migration file
   const migrationPath = path.join(__dirname, '../supabase/migrations/20260708_phase2b_universal_project_system.sql');
   const migrationSQL = fs.readFileSync(migrationPath, 'utf8');
 
-  console.log('Migration SQL loaded. Attempting to apply...');
-  console.log('');
+  logger.info('Migration SQL loaded. Attempting to apply...');
+  logger.info('');
   
   // Since we can't execute arbitrary SQL easily via the client,
   // we'll verify the current state and provide instructions
-  console.log('Checking current database state...');
+  logger.info('Checking current database state...');
   
   // Check if new columns exist
   const { data: projectColumns, error: columnError } = await supabase
@@ -56,27 +56,27 @@ async function applyMigration() {
     .limit(1);
   
   if (columnError) {
-    console.log('✗ New columns not found in projects table');
-    console.log('  Error:', columnError.message);
-    console.log('');
-    console.log('Migration needs to be applied manually.');
-    console.log('');
-    console.log('Steps to apply migration:');
-    console.log('1. Go to your Supabase project dashboard: https://supabase.com/dashboard');
-    console.log('2. Navigate to SQL Editor');
-    console.log('3. Create a new query');
-    console.log('4. Paste the contents of: ' + migrationPath);
-    console.log('5. Run the query');
-    console.log('');
-    console.log('The migration will:');
-    console.log('- Add new columns to projects table');
-    console.log('- Create project_media, project_contributors, project_tags tables');
-    console.log('- Create indexes for performance');
-    console.log('- Set up RLS policies');
-    console.log('- Create storage buckets');
+    logger.info('✗ New columns not found in projects table');
+    logger.info('  Error:', columnError.message);
+    logger.info('');
+    logger.info('Migration needs to be applied manually.');
+    logger.info('');
+    logger.info('Steps to apply migration:');
+    logger.info('1. Go to your Supabase project dashboard: https://supabase.com/dashboard');
+    logger.info('2. Navigate to SQL Editor');
+    logger.info('3. Create a new query');
+    logger.info('4. Paste the contents of: ' + migrationPath);
+    logger.info('5. Run the query');
+    logger.info('');
+    logger.info('The migration will:');
+    logger.info('- Add new columns to projects table');
+    logger.info('- Create project_media, project_contributors, project_tags tables');
+    logger.info('- Create indexes for performance');
+    logger.info('- Set up RLS policies');
+    logger.info('- Create storage buckets');
   } else {
-    console.log('✓ New columns already exist in projects table');
-    console.log('✓ Migration appears to be applied');
+    logger.info('✓ New columns already exist in projects table');
+    logger.info('✓ Migration appears to be applied');
   }
   
   // Check if new tables exist
@@ -85,9 +85,9 @@ async function applyMigration() {
   for (const table of tables) {
     const { error: tableError } = await supabase.from(table).select('*').limit(1);
     if (tableError) {
-      console.log(`✗ Table ${table} does not exist or is not accessible`);
+      logger.info(`✗ Table ${table} does not exist or is not accessible`);
     } else {
-      console.log(`✓ Table ${table} exists`);
+      logger.info(`✓ Table ${table} exists`);
     }
   }
 }

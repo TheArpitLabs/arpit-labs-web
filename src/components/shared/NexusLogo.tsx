@@ -2,18 +2,19 @@ import Image from "next/image";
 
 interface NexusLogoProps {
   className?: string;
-  size?: number;
 }
 
-export function NexusLogo({ className, size = 120 }: NexusLogoProps) {
+export function NexusLogo({ className }: NexusLogoProps) {
   return (
     <Image 
-      src="/favicon.svg" 
-      alt="Arpit Labs Logo" 
-      width={size} 
-      height={size} 
+      src="/logo.png" 
+      alt="Axiora Logo"
+      width={120} 
+      height={120} 
       className={className}
       priority
+      style={{ objectFit: 'contain' }}
+      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
     />
   );
 }

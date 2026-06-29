@@ -12,6 +12,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
+import { logger } from '@/lib/logger';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
@@ -114,7 +115,7 @@ export default function DomainResearchPage({ params }: { params: Promise<{ domai
         setResearchPapers(transformedPapers);
 
       } catch (err) {
-        console.error('Error fetching research papers:', err);
+        logger.error('Error fetching research papers:', err);
         setError('Failed to load research papers');
       } finally {
         setLoading(false);

@@ -13,6 +13,7 @@ import { motion } from "framer-motion";
 import React, { use, useEffect, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 import { useSearchParams } from "next/navigation";
+import { logger } from '@/lib/logger';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
@@ -156,7 +157,7 @@ function SubdomainPageContent({ domainSlug, subdomainSlug }: { domainSlug: strin
         setDatasets(datasetsData || []);
 
       } catch (err) {
-        console.error('Error fetching subdomain data:', err);
+        logger.error('Error fetching subdomain data:', err);
         setError('Failed to load subdomain data');
       } finally {
         setLoading(false);

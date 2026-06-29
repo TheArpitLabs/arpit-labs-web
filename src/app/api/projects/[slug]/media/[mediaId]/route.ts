@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getUserFromRequest, getAdminUserFromRequest } from "@/lib/auth";
+import { getUserFromRequest, getAdminUserFromRequest } from "@/lib/auth/auth";
 import { mediaRepository } from "@/lib/repositories/media.repository";
 import { projectsRepository } from "@/lib/repositories/projects.repository";
 import { z } from "zod";
+import { logger } from '@/lib/logger';
 
 const updateMediaSchema = z.object({
   file_url: z.string().url().optional(),
@@ -53,7 +54,7 @@ export async function DELETE(
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error in DELETE /api/projects/[slug]/media/[mediaId]:', error);
+    logger.error('Error in DELETE /api/projects/[slug]/media/[mediaId]:', error);
     return NextResponse.json(
       { error: 'Failed to remove media' },
       { status: 500 }
@@ -105,7 +106,7 @@ export async function PATCH(
 
     return NextResponse.json({ data: media });
   } catch (error) {
-    console.error('Error in PATCH /api/projects/[slug]/media/[mediaId]:', error);
+    logger.error('Error in PATCH /api/projects/[slug]/media/[mediaId]:', error);
     if (error instanceof Error && error.name === 'ZodError') {
       return NextResponse.json(
         { error: 'Validation error', details: error },

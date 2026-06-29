@@ -95,20 +95,20 @@ const resourceTypes = [
 
 export function MarketplaceResourcesSection() {
   return (
-    <section className="py-24">
+    <section className="py-10">
       {/* Header */}
       <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="mb-16 text-center"
+          className="mb-6 text-center"
         >
-          <p className="mb-4 text-sm uppercase tracking-[0.28em] text-muted">Marketplace Resources</p>
-          <h2 className="mb-6 font-heading text-section-title font-bold">
+          <p className="mb-2 text-xs uppercase tracking-[0.28em] text-muted">Marketplace Resources</p>
+          <h2 className="mb-3 font-heading text-2xl font-bold sm:text-3xl">
             Engineering Resource Hub
           </h2>
-          <p className="mx-auto max-w-3xl text-lg text-muted">
+          <p className="mx-auto max-w-2xl text-sm text-muted">
             Access premium resources, templates, starter kits, and learning materials to accelerate your engineering projects and skill development.
           </p>
         </motion.div>
@@ -119,14 +119,14 @@ export function MarketplaceResourcesSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="mb-20"
+          className="mb-12"
         >
-          <div className="mb-12">
-            <h3 className="text-2xl font-heading font-bold text-foreground">Resource Categories</h3>
-            <p className="mt-2 text-muted">Explore resources by type and use case</p>
+          <div className="mb-8">
+            <h3 className="text-xl font-heading font-bold text-foreground">Resource Categories</h3>
+            <p className="mt-1 text-sm text-muted">Explore resources by type and use case</p>
           </div>
 
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {resourceCategories.map((category, index) => (
               <Link key={category.name} href="/marketplace">
                 <motion.div
@@ -134,25 +134,25 @@ export function MarketplaceResourcesSection() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
-                  whileHover={{ y: -8, scale: 1.02 }}
-                  className="group relative h-full rounded-3xl glass p-6 transition-all duration-300 hover:shadow-2xl"
+                  whileHover={{ y: -4, scale: 1.02 }}
+                  className="group relative h-full rounded-2xl glass p-5 transition-all duration-300 hover:shadow-lg"
                 >
-                  <div className={`absolute inset-0 rounded-3xl bg-gradient-to-br ${category.gradient} opacity-0 transition-opacity duration-300 group-hover:opacity-100`} />
+                  <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${category.gradient} opacity-0 transition-opacity duration-300 group-hover:opacity-100`} />
                   
                   <div className="relative h-full">
                     <motion.div
                       whileHover={{ scale: 1.1, rotate: 5 }}
                       transition={{ duration: 0.3 }}
-                      className={`mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${category.iconGradient} text-white shadow-lg`}
+                      className={`mb-3 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br ${category.iconGradient} text-white shadow-md`}
                     >
-                      <category.icon size={24} />
+                      <category.icon size={20} />
                     </motion.div>
                     
-                    <h4 className="mb-2 text-lg font-heading font-bold text-foreground group-hover:text-primary transition-colors">
+                    <h4 className="mb-2 text-sm font-heading font-semibold text-foreground group-hover:text-primary transition-colors">
                       {category.name}
                     </h4>
                     
-                    <p className="mb-4 text-sm text-muted leading-relaxed line-clamp-2">
+                    <p className="mb-3 text-xs text-muted leading-relaxed line-clamp-2">
                       {category.description}
                     </p>
                     
@@ -173,23 +173,23 @@ export function MarketplaceResourcesSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="mb-20"
+          className="mb-12"
         >
-          <div className="mb-12 flex items-center justify-between">
+          <div className="mb-8 flex items-center justify-between">
             <div>
-              <h3 className="text-2xl font-heading font-bold text-foreground">Featured Resources</h3>
-              <p className="mt-2 text-muted">Top downloads and highly-rated resources</p>
+              <h3 className="text-xl font-heading font-bold text-foreground">Featured Resources</h3>
+              <p className="mt-1 text-sm text-muted">Top downloads and highly-rated resources</p>
             </div>
             <Link 
               href="/marketplace"
-              className="hidden sm:flex items-center gap-2 text-sm font-semibold text-primary hover:gap-4 transition-all"
+              className="hidden sm:flex items-center gap-2 text-xs font-semibold text-primary hover:gap-4 transition-all"
             >
               Browse All Resources
               <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
             </Link>
           </div>
 
-          <div className="grid gap-6 lg:grid-cols-3">
+          <div className="grid gap-4 lg:grid-cols-3">
             {featuredResources.map((resource, index) => (
               <motion.div
                 key={resource.title}
@@ -197,47 +197,47 @@ export function MarketplaceResourcesSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                whileHover={{ y: -8 }}
-                className="relative overflow-hidden rounded-3xl glass p-6 transition-all duration-300 hover:shadow-2xl"
+                whileHover={{ y: -4 }}
+                className="relative overflow-hidden rounded-2xl glass p-5 transition-all duration-300 hover:shadow-lg"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 opacity-0 transition-opacity duration-300 hover:opacity-100" />
                 <div className="relative">
-                  <div className="mb-4 flex items-center justify-between">
-                    <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
+                  <div className="mb-3 flex items-center justify-between">
+                    <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
                       {resource.category}
                     </span>
-                    <span className="rounded-full bg-success/10 px-3 py-1 text-xs font-semibold text-success">
+                    <span className="rounded-full bg-success/10 px-2 py-0.5 text-[10px] font-semibold text-success">
                       ⭐ {resource.rating}
                     </span>
                   </div>
                   
-                  <h4 className="mb-3 text-lg font-heading font-bold text-foreground line-clamp-2">
+                  <h4 className="mb-2 text-sm font-heading font-bold text-foreground line-clamp-2">
                     {resource.title}
                   </h4>
                   
-                  <p className="mb-4 text-sm text-muted leading-relaxed line-clamp-3">
+                  <p className="mb-3 text-xs text-muted leading-relaxed line-clamp-2">
                     {resource.description}
                   </p>
                   
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-xs text-muted">
-                      <Download size={12} />
+                    <div className="flex items-center gap-1 text-[10px] text-muted">
+                      <Download size={10} />
                       <span>{resource.downloads} downloads</span>
                     </div>
-                    <span className="text-xs font-semibold text-muted">{resource.type}</span>
+                    <span className="text-[10px] font-semibold text-muted">{resource.type}</span>
                   </div>
                 </div>
               </motion.div>
             ))}
           </div>
 
-          <div className="mt-6 sm:hidden">
+          <div className="mt-4 sm:hidden">
             <Link 
               href="/marketplace"
-              className="flex items-center justify-center gap-2 text-sm font-semibold text-primary"
+              className="flex items-center justify-center gap-2 text-xs font-semibold text-primary"
             >
               Browse All Resources
-              <ArrowRight size={16} />
+              <ArrowRight size={14} />
             </Link>
           </div>
         </motion.div>
@@ -249,12 +249,12 @@ export function MarketplaceResourcesSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <div className="mb-12">
-            <h3 className="text-2xl font-heading font-bold text-foreground">Resource Types</h3>
-            <p className="mt-2 text-muted">Different formats for various engineering needs</p>
+          <div className="mb-8">
+            <h3 className="text-xl font-heading font-bold text-foreground">Resource Types</h3>
+            <p className="mt-1 text-sm text-muted">Different formats for various engineering needs</p>
           </div>
 
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {resourceTypes.map((type, index) => (
               <motion.div
                 key={type.title}
@@ -262,27 +262,27 @@ export function MarketplaceResourcesSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                whileHover={{ y: -8 }}
-                className="relative overflow-hidden rounded-3xl glass p-6 transition-all duration-300 hover:shadow-2xl"
+                whileHover={{ y: -4 }}
+                className="relative overflow-hidden rounded-2xl glass p-5 transition-all duration-300 hover:shadow-lg"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-accent/5 to-primary/5 opacity-0 transition-opacity duration-300 hover:opacity-100" />
                 <div className="relative">
-                  <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary/10 to-accent/10 text-primary">
-                    <type.icon size={24} />
+                  <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-primary/10 to-accent/10 text-primary">
+                    <type.icon size={20} />
                   </div>
                   
-                  <h4 className="mb-2 text-lg font-heading font-bold text-foreground line-clamp-1">
+                  <h4 className="mb-2 text-sm font-heading font-bold text-foreground line-clamp-1">
                     {type.title}
                   </h4>
                   
-                  <p className="mb-4 text-sm text-muted leading-relaxed line-clamp-2">
+                  <p className="mb-3 text-xs text-muted leading-relaxed line-clamp-2">
                     {type.description}
                   </p>
                   
-                  <div className="text-2xl font-heading font-bold bg-gradient-to-r from-foreground to-muted bg-clip-text text-transparent">
+                  <div className="text-xl font-heading font-bold bg-gradient-to-r from-foreground to-muted bg-clip-text text-transparent">
                     {type.count}
                   </div>
-                  <p className="text-xs text-muted">Available</p>
+                  <p className="text-[10px] text-muted">Available</p>
                 </div>
               </motion.div>
             ))}
@@ -295,29 +295,29 @@ export function MarketplaceResourcesSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="mt-20"
+          className="mt-12"
         >
-          <div className="relative overflow-hidden rounded-3xl glass p-12 text-center">
+          <div className="relative overflow-hidden rounded-2xl glass p-8 text-center">
             <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-accent/5" />
             <div className="relative">
-              <div className="mx-auto mb-6 inline-flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-accent/20">
-                <ShoppingBag className="h-8 w-8 text-primary" />
+              <div className="mx-auto mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-accent/20">
+                <ShoppingBag className="h-6 w-6 text-primary" />
               </div>
-              <h3 className="mb-4 text-3xl font-heading font-bold text-foreground">Explore the Marketplace</h3>
-              <p className="mb-8 max-w-2xl mx-auto text-lg text-muted">
+              <h3 className="mb-3 text-xl font-heading font-bold text-foreground">Explore the Marketplace</h3>
+              <p className="mb-6 max-w-xl mx-auto text-sm text-muted">
                 Discover thousands of resources to accelerate your engineering projects and enhance your skills.
               </p>
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-center">
                 <Link
                   href="/marketplace"
-                  className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-primary to-accent px-6 py-3 text-sm font-semibold text-white shadow-glow transition hover:opacity-90 group"
+                  className="inline-flex items-center justify-center rounded-lg bg-gradient-to-r from-primary to-accent px-5 py-2.5 text-xs font-semibold text-white shadow-glow transition hover:opacity-90 group"
                 >
                   Browse Marketplace
                   <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Link>
                 <Link
                   href="/marketplace?filter=free"
-                  className="inline-flex items-center justify-center rounded-xl border border-border bg-surface px-6 py-3 text-sm font-semibold text-foreground transition hover:bg-surface-elevated hover:border-primary/50"
+                  className="inline-flex items-center justify-center rounded-lg border border-border bg-surface px-5 py-2.5 text-xs font-semibold text-foreground transition hover:bg-surface-elevated hover:border-primary/50"
                 >
                   View Free Resources
                 </Link>

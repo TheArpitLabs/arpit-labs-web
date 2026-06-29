@@ -1,7 +1,7 @@
 import { MotionProps } from "framer-motion";
 
 /**
- * Centralized animation configuration for Arpit Labs
+ * Centralized animation configuration for Axiora
  * Ensures consistent timing and easing across all animations
  */
 

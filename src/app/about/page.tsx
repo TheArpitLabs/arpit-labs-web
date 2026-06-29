@@ -10,9 +10,9 @@ import { createPageMetadata } from "@/lib/seo";
 
 export const metadata = createPageMetadata({
   title: "About",
-  description: "Learn about the founder story, mission, vision, engineering philosophy, and technology stack behind Arpit Labs.",
+  description: "Learn about the founder story, mission, vision, engineering philosophy, and technology stack behind Axiora.",
   path: "/about",
-  keywords: ["About Arpit Labs", "Founder Story", "Mission", "Vision", "Engineering Philosophy"],
+  keywords: ["About Axiora", "Founder Story", "Mission", "Vision", "Engineering Philosophy"],
 });
 
 const coreValues = [
@@ -53,7 +53,7 @@ const researchInterests = [
 ];
 
 const careerGoals = [
-  { title: "Build Industry-Leading Platform", description: "Transform Arpit Labs into a premier engineering education platform serving 100,000+ engineers worldwide." },
+  { title: "Build Industry-Leading Platform", description: "Transform Axiora into a premier AI-powered innovation platform serving 100,000+ engineers worldwide." },
   { title: "Advance Open Source Ecosystem", description: "Contribute significantly to open source projects and build tools that benefit the global engineering community." },
   { title: "Bridge Academic-Industry Gap", description: "Create educational resources that effectively bridge the gap between academic knowledge and industry requirements." },
   { title: "Foster Engineering Community", description: "Build a vibrant community of engineers who collaborate, share knowledge, and push the boundaries of technology." }
@@ -74,13 +74,13 @@ export default function AboutPage() {
         <Container>
           <div className="mx-auto max-w-4xl text-center">
             <Badge variant="outline" className="mb-6 px-4 py-1.5 text-sm uppercase tracking-widest">
-              About Arpit Labs
+              About Axiora
             </Badge>
             <h1 className="text-5xl font-bold leading-tight tracking-tight text-foreground md:text-6xl">
               Where systems thinking meets <span className="text-primary">creative engineering.</span>
             </h1>
             <p className="mt-8 text-xl leading-relaxed text-muted">
-              Arpit Labs is a personal research and engineering studio dedicated to exploring the intersection of AI, IoT, and high-performance software.
+              Axiora is an AI-powered innovation platform dedicated to exploring the intersection of AI, IoT, and high-performance software.
             </p>
           </div>
         </Container>
@@ -96,7 +96,7 @@ export default function AboutPage() {
                   I&apos;m Arpit Kumar, an engineer driven by the curiosity of how things work—from the silicon in a microcontroller to the distributed systems in the cloud. My journey began with a fascination for embedded systems and has evolved into building comprehensive AI-powered solutions.
                 </p>
                 <p className="text-lg text-muted">
-                  With a background in both hardware and software engineering, I founded Arpit Labs to serve as a digital sandbox for experiments that push the boundaries of what&apos;s possible when these worlds collide. I believe in learning by building, failing fast, and sharing knowledge openly.
+                  With a background in both hardware and software engineering, I founded Axiora to serve as a digital innovation platform for experiments that push the boundaries of what&apos;s possible when these worlds collide. I believe in learning by building, failing fast, and sharing knowledge openly.
                 </p>
                 <p className="text-lg text-muted">
                   My mission is to democratize access to industry-grade engineering education by providing real-world projects, comprehensive documentation, and AI-powered learning tools that bridge the gap between academic knowledge and professional excellence.
@@ -164,7 +164,7 @@ export default function AboutPage() {
           <div className="rounded-[2.5rem] border border-border/70 bg-surface/50 p-12 dark:border-slate-800 dark:bg-slate-900/50">
             <div className="mb-12 text-center">
               <h2 className="text-3xl font-bold text-foreground">Technology Stack</h2>
-              <p className="mt-4 text-muted">A look into the tools and technologies used at Arpit Labs.</p>
+              <p className="mt-4 text-muted">A look into the tools and technologies used at Axiora.</p>
             </div>
             <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
               {technologies.map((tech) => (
@@ -262,7 +262,7 @@ export default function AboutPage() {
         <AnimatedSection className="mt-32">
           <div className="text-center">
             <h2 className="text-3xl font-bold text-foreground">Career Goals</h2>
-            <p className="mt-4 text-muted">Vision for the future of Arpit Labs and engineering education.</p>
+            <p className="mt-4 text-muted">Vision for the future of Axiora and AI-powered innovation.</p>
           </div>
           <div className="mt-12 grid gap-6 md:grid-cols-2">
             {careerGoals.map((goal, index) => (
@@ -289,7 +289,7 @@ export default function AboutPage() {
             </div>
             <div className="mt-12 flex flex-wrap justify-center gap-6">
               <a
-                href="https://github.com/arpit-labs"
+                href="https://github.com/axiora"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-3 rounded-2xl border border-border/70 bg-surface px-6 py-4 text-foreground transition hover:border-primary hover:bg-primary/5 dark:border-slate-700 dark:bg-slate-900"
@@ -316,7 +316,7 @@ export default function AboutPage() {
                 <span className="font-medium">Twitter</span>
               </a>
               <a
-                href="mailto:hello@arpit-labs.com"
+                href="mailto:hello@axiora.com"
                 className="flex items-center gap-3 rounded-2xl border border-border/70 bg-surface px-6 py-4 text-foreground transition hover:border-primary hover:bg-primary/5 dark:border-slate-700 dark:bg-slate-900"
               >
                 <Mail className="h-5 w-5" />

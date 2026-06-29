@@ -38,7 +38,7 @@ const communityTypes = [
   },
   {
     title: "Startups",
-    description: "Early-stage startups leveraging Arpit Labs resources for rapid prototyping and development",
+    description: "Early-stage startups leveraging Axiora resources for rapid prototyping and development",
     icon: Rocket,
     color: "from-orange-500/10 to-red-500/10",
     iconColor: "from-orange-500 to-red-500",
@@ -69,20 +69,20 @@ const testimonials = [
 
 export function CommunitySection() {
   return (
-    <section className="py-24">
+    <section className="py-12">
       {/* Header */}
       <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="mb-16 text-center"
+          className="mb-8 text-center"
         >
-          <p className="mb-4 text-sm uppercase tracking-[0.28em] text-muted">Community</p>
-          <h2 className="mb-6 font-heading text-section-title font-bold">
+          <p className="mb-2 text-sm uppercase tracking-[0.28em] text-muted">Community</p>
+          <h2 className="mb-4 font-heading text-3xl font-bold sm:text-4xl">
             Join a Global Engineering Network
           </h2>
-          <p className="mx-auto max-w-3xl text-lg text-muted">
+          <p className="mx-auto max-w-3xl text-base text-muted">
             Connect with students, researchers, developers, and innovators from around the world who are building the future of technology.
           </p>
         </motion.div>
@@ -175,8 +175,7 @@ export function CommunitySection() {
           </div>
         </motion.div>
 
-        {/* Testimonials */}
-        <motion.div
+        {/* <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -216,7 +215,7 @@ export function CommunitySection() {
               </motion.div>
             ))}
           </div>
-        </motion.div>
+        </motion.div> */}
 
         {/* CTA */}
         <motion.div

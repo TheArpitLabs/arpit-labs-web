@@ -1,4 +1,5 @@
 import { supabaseServer } from "@/lib/supabase/server";
+import { logger } from '@/lib/logger';
 
 interface CacheEntry {
   data: any;
@@ -85,7 +86,7 @@ export class RecommendationCacheService {
     });
 
     if (error) {
-      console.error("Failed to cache recommendations in database:", error);
+      logger.error("Failed to cache recommendations in database:", error);
     }
   }
 
@@ -144,7 +145,7 @@ export class RecommendationCacheService {
       .eq("entity_type", entityType);
 
     if (error) {
-      console.error("Failed to clear cache from database:", error);
+      logger.error("Failed to clear cache from database:", error);
     }
   }
 
@@ -158,7 +159,7 @@ export class RecommendationCacheService {
       .lt("expires_at", new Date().toISOString());
 
     if (error) {
-      console.error("Failed to clear expired cache entries:", error);
+      logger.error("Failed to clear expired cache entries:", error);
     }
   }
 

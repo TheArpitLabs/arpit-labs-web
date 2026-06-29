@@ -208,7 +208,7 @@ export default function DomainLandingPageContent({ domainSlug }: { domainSlug: s
         setTopContributors([]);
 
       } catch (err) {
-        console.error('Error fetching domain data:', err);
+        logger.error('Error fetching domain data:', err);
         setError('Failed to load domain data');
       } finally {
         setLoading(false);

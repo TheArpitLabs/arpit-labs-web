@@ -8,7 +8,7 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
-  console.error('Missing Supabase credentials. Check your .env.local file.');
+  logger.error('Missing Supabase credentials. Check your .env.local file.');
   process.exit(1);
 }
 
@@ -529,7 +529,7 @@ Help us build a better community for everyone. Your feedback is invaluable!`,
 ];
 
 async function populateCommunityHub() {
-  console.log('Starting to populate Community Hub with 20 posts (10 discussions, 5 challenges, 5 announcements)...');
+  logger.info('Starting to populate Community Hub with 20 posts (10 discussions, 5 challenges, 5 announcements)...');
   
   // Get a user ID (first profile)
   const { data: profiles } = await supabase
@@ -540,7 +540,7 @@ async function populateCommunityHub() {
   const userId = profiles && profiles.length > 0 ? profiles[0].id : null;
 
   if (!userId) {
-    console.error('No profiles found in database. Please create at least one profile first.');
+    logger.error('No profiles found in database. Please create at least one profile first.');
     process.exit(1);
   }
 
@@ -558,7 +558,7 @@ async function populateCommunityHub() {
         .single();
 
       if (existing) {
-        console.log(`⚠️  Post "${post.title}" already exists, skipping...`);
+        logger.info(`⚠️  Post "${post.title}" already exists, skipping...`);
         continue;
       }
 
@@ -586,33 +586,33 @@ async function populateCommunityHub() {
       }
 
       const postType = post.post_type.charAt(0).toUpperCase() + post.post_type.slice(1);
-      console.log(`✅ Successfully inserted ${postType}: ${post.title}`);
+      logger.info(`✅ Successfully inserted ${postType}: ${post.title}`);
       successCount++;
     } catch (error) {
-      console.error(`❌ Error inserting "${post.title}":`, error.message);
+      logger.error(`❌ Error inserting "${post.title}":`, error.message);
       errorCount++;
       errors.push({ post: post.title, error: error.message });
     }
   }
 
-  console.log('\n========================================');
-  console.log('Population Summary:');
-  console.log('========================================');
-  console.log(`Total posts processed: ${communityPosts.length}`);
-  console.log(`Successfully inserted: ${successCount}`);
-  console.log(`Skipped (already exists): ${communityPosts.length - successCount - errorCount}`);
-  console.log(`Errors: ${errorCount}`);
+  logger.info('\n========================================');
+  logger.info('Population Summary:');
+  logger.info('========================================');
+  logger.info(`Total posts processed: ${communityPosts.length}`);
+  logger.info(`Successfully inserted: ${successCount}`);
+  logger.info(`Skipped (already exists): ${communityPosts.length - successCount - errorCount}`);
+  logger.info(`Errors: ${errorCount}`);
   
   if (errors.length > 0) {
-    console.log('\nErrors:');
+    logger.info('\nErrors:');
     errors.forEach(({ post, error }) => {
-      console.log(`  - ${post}: ${error}`);
+      logger.info(`  - ${post}: ${error}`);
     });
   }
 
-  console.log('\n========================================');
-  console.log('Verification Query:');
-  console.log('========================================');
+  logger.info('\n========================================');
+  logger.info('Verification Query:');
+  logger.info('========================================');
   
   const { data: verification } = await supabase
     .from('community_posts')
@@ -620,9 +620,9 @@ async function populateCommunityHub() {
     .in('slug', communityPosts.map(p => p.slug));
 
   if (verification) {
-    console.log('\nPosts by category:');
+    logger.info('\nPosts by category:');
     verification.forEach(row => {
-      console.log(`  ${row.category}: ${row.title} (${row.upvotes} upvotes, ${row.views} views)`);
+      logger.info(`  ${row.category}: ${row.title} (${row.upvotes} upvotes, ${row.views} views)`);
     });
   }
 
@@ -630,15 +630,15 @@ async function populateCommunityHub() {
     .from('community_posts')
     .select('*', { count: 'exact', head: true });
 
-  console.log(`\nTotal community posts in database: ${totalCount}`);
+  logger.info(`\nTotal community posts in database: ${totalCount}`);
 }
 
 populateCommunityHub()
   .then(() => {
-    console.log('\n✅ Community Hub population completed!');
+    logger.info('\n✅ Community Hub population completed!');
     process.exit(0);
   })
   .catch((error) => {
-    console.error('\n❌ Fatal error during population:', error);
+    logger.error('\n❌ Fatal error during population:', error);
     process.exit(1);
   });

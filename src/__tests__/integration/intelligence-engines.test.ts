@@ -3,24 +3,26 @@
  * Run this script to validate all intelligence engine APIs are working
  */
 
+import { logger } from '@/lib/logger';
+
 async function validateAPI(url: string, description: string) {
   try {
     const response = await fetch(url);
     if (response.ok) {
-      console.log(`✅ ${description}: OK`);
+      logger.info(`✅ ${description}: OK`);
       return true;
     } else {
-      console.log(`❌ ${description}: FAILED (${response.status})`);
+      logger.info(`❌ ${description}: FAILED (${response.status})`);
       return false;
     }
   } catch (error) {
-    console.log(`❌ ${description}: ERROR`);
+    logger.info(`❌ ${description}: ERROR`);
     return false;
   }
 }
 
 export async function validateIntelligenceEngines() {
-  console.log('\n=== Validating Intelligence Engines (E8-E15) ===\n');
+  logger.info('\n=== Validating Intelligence Engines (E8-E15) ===\n');
   
   const results = [];
   
@@ -58,7 +60,7 @@ export async function validateIntelligenceEngines() {
   
   const passed = results.filter(r => r).length;
   const total = results.length;
-  console.log(`\n=== Results: ${passed}/${total} APIs validated ===\n`);
+  logger.info(`\n=== Results: ${passed}/${total} APIs validated ===\n`);
   
   return passed === total;
 }

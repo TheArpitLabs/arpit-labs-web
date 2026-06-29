@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { RefreshCw } from 'lucide-react';
+import { logger } from '@/lib/logger';
 
 export default function ContributorIntelligenceDashboard() {
   const [contributors, setContributors] = useState<any[]>([]);
@@ -25,7 +26,7 @@ export default function ContributorIntelligenceDashboard() {
       const data = await response.json();
       setContributors(data.data || []);
     } catch (error) {
-      console.error('Error fetching contributors:', error);
+      logger.error('Error fetching contributors:', error);
     } finally {
       setLoading(false);
     }
@@ -44,7 +45,7 @@ export default function ContributorIntelligenceDashboard() {
       alert('Sync triggered successfully');
       fetchContributors();
     } catch (error) {
-      console.error('Error triggering sync:', error);
+      logger.error('Error triggering sync:', error);
       alert('Failed to trigger sync');
     }
   };

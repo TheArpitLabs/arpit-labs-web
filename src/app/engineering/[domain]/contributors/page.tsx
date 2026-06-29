@@ -12,6 +12,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import React, { use, useEffect, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
+import { logger } from '@/lib/logger';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
@@ -124,7 +125,7 @@ function DomainContributorsPageContent({ domainSlug }: { domainSlug: string }) {
         setContributors(transformedContributors);
 
       } catch (err) {
-        console.error('Error fetching contributors:', err);
+        logger.error('Error fetching contributors:', err);
         setError('Failed to load contributors');
       } finally {
         setLoading(false);

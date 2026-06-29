@@ -2,34 +2,36 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { seoConfig } from "@/lib/seo";
 import { AppShell } from "@/components/layout/AppShell";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { GlobalErrorHandler } from "@/components/GlobalErrorHandler";
 
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: {
-    default: "Arpit Labs | Engineering Discovery Platform",
-    template: "%s | Arpit Labs"
+    default: "Axiora",
+    template: "%s | Axiora"
   },
-  description: "A world-class engineering discovery platform. Explore AI, IoT, Software, Hardware, and Cybersecurity projects. Build resilient systems through systems thinking.",
-  keywords: ["Arpit Labs", "Engineering", "AI", "IoT", "Hardware", "Software", "Cybersecurity", "Projects", "Discovery"],
+  description: "AI-powered innovation platform for projects, research, community, courses, marketplace, and autonomous discovery.",
+  keywords: ["Axiora", "AI", "Innovation", "Projects", "Research", "Community", "Courses", "Marketplace", "Discovery"],
   metadataBase: new URL(seoConfig.siteUrl),
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "Arpit Labs",
-    description: "A world-class engineering discovery platform. Explore projects, research, and collaborate with engineers worldwide.",
+    title: "Axiora",
+    description: "AI-powered innovation platform for projects, research, community, courses, marketplace, and autonomous discovery.",
     url: seoConfig.siteUrl,
-    siteName: "Arpit Labs",
+    siteName: "Axiora",
     locale: "en_US",
     type: "website",
     images: [{ url: seoConfig.defaultImage }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Arpit Labs",
-    description: "A world-class engineering discovery platform. Explore projects, research, and collaborate with engineers worldwide.",
-    creator: "@arpitlabs",
+    title: "Axiora",
+    description: "AI-powered innovation platform for projects, research, community, courses, marketplace, and autonomous discovery.",
+    creator: "@axiora",
     images: [seoConfig.defaultImage],
   },
   icons: {
@@ -47,9 +49,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           Skip to main content
         </a>
-        <AppShell>
-          {children}
-        </AppShell>
+        <GlobalErrorHandler />
+        <ErrorBoundary>
+          <AppShell>
+            {children}
+          </AppShell>
+        </ErrorBoundary>
       </body>
     </html>
   );

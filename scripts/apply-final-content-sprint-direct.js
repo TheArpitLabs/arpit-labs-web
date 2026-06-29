@@ -13,8 +13,8 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
-  console.error('Error: Missing Supabase credentials in .env.local');
-  console.error('Required: NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY');
+  logger.error('Error: Missing Supabase credentials in .env.local');
+  logger.error('Required: NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY');
   process.exit(1);
 }
 
@@ -28,7 +28,7 @@ async function getFirstProfileId() {
     .limit(1);
   
   if (error || !data || data.length === 0) {
-    console.log('Warning: No profiles found. Using placeholder ID.');
+    logger.info('Warning: No profiles found. Using placeholder ID.');
     return '00000000-0000-0000-0000-000000000000';
   }
   
@@ -37,7 +37,7 @@ async function getFirstProfileId() {
 
 // Insert projects
 async function insertProjects(profileId) {
-  console.log('Inserting projects...');
+  logger.info('Inserting projects...');
   
   const projects = [
     {
@@ -76,9 +76,9 @@ async function insertProjects(profileId) {
   for (const project of projects) {
     const { error } = await supabase.from('projects').insert(project);
     if (error) {
-      console.log(`  ✗ Failed to insert ${project.title}: ${error.message}`);
+      logger.info(`  ✗ Failed to insert ${project.title}: ${error.message}`);
     } else {
-      console.log(`  ✓ Inserted: ${project.title}`);
+      logger.info(`  ✓ Inserted: ${project.title}`);
       successCount++;
     }
   }
@@ -88,7 +88,7 @@ async function insertProjects(profileId) {
 
 // Insert marketplace categories and items
 async function insertMarketplaceItems(profileId) {
-  console.log('Inserting marketplace categories and items...');
+  logger.info('Inserting marketplace categories and items...');
   
   const categories = [
     { name: 'Arduino Templates', slug: 'arduino-templates' },
@@ -106,14 +106,14 @@ async function insertMarketplaceItems(profileId) {
     const { data: existing } = await supabase.from('marketplace_categories').select('id').eq('slug', category.slug).single();
     
     if (existing) {
-      console.log(`  ⊙ Category already exists: ${category.name}`);
+      logger.info(`  ⊙ Category already exists: ${category.name}`);
       categoryMap[category.slug] = existing.id;
     } else {
       const { data, error } = await supabase.from('marketplace_categories').insert(category).select();
       if (error) {
-        console.log(`  ✗ Failed to insert category ${category.name}: ${error.message}`);
+        logger.info(`  ✗ Failed to insert category ${category.name}: ${error.message}`);
       } else {
-        console.log(`  ✓ Inserted category: ${category.name}`);
+        logger.info(`  ✓ Inserted category: ${category.name}`);
         categoryMap[category.slug] = data[0].id;
       }
     }
@@ -204,9 +204,9 @@ async function insertMarketplaceItems(profileId) {
     if (!item.category_id) continue;
     const { error } = await supabase.from('marketplace_items').insert({ ...item, seller_id: profileId });
     if (error) {
-      console.log(`  ✗ Failed to insert ${item.title}: ${error.message}`);
+      logger.info(`  ✗ Failed to insert ${item.title}: ${error.message}`);
     } else {
-      console.log(`  ✓ Inserted: ${item.title}`);
+      logger.info(`  ✓ Inserted: ${item.title}`);
       successCount++;
     }
   }
@@ -216,7 +216,7 @@ async function insertMarketplaceItems(profileId) {
 
 // Insert research papers
 async function insertResearchPapers() {
-  console.log('Inserting research papers...');
+  logger.info('Inserting research papers...');
   
   const papers = [
     {
@@ -287,14 +287,14 @@ async function insertResearchPapers() {
     const { data: existing } = await supabase.from('research_papers').select('id').eq('slug', paper.slug).single();
     
     if (existing) {
-      console.log(`  ⊙ Paper already exists: ${paper.title}`);
+      logger.info(`  ⊙ Paper already exists: ${paper.title}`);
       successCount++;
     } else {
       const { error } = await supabase.from('research_papers').insert(paper);
       if (error) {
-        console.log(`  ✗ Failed to insert ${paper.title}: ${error.message}`);
+        logger.info(`  ✗ Failed to insert ${paper.title}: ${error.message}`);
       } else {
-        console.log(`  ✓ Inserted: ${paper.title}`);
+        logger.info(`  ✓ Inserted: ${paper.title}`);
         successCount++;
       }
     }
@@ -305,7 +305,7 @@ async function insertResearchPapers() {
 
 // Insert community posts
 async function insertCommunityPosts(profileId) {
-  console.log('Inserting community posts...');
+  logger.info('Inserting community posts...');
   
   const posts = [
     {
@@ -365,14 +365,14 @@ async function insertCommunityPosts(profileId) {
     const { data: existing } = await supabase.from('community_posts').select('id').eq('slug', post.slug).single();
     
     if (existing) {
-      console.log(`  ⊙ Post already exists: ${post.title}`);
+      logger.info(`  ⊙ Post already exists: ${post.title}`);
       successCount++;
     } else {
       const { error } = await supabase.from('community_posts').insert({ ...post, user_id: profileId });
       if (error) {
-        console.log(`  ✗ Failed to insert ${post.title}: ${error.message}`);
+        logger.info(`  ✗ Failed to insert ${post.title}: ${error.message}`);
       } else {
-        console.log(`  ✓ Inserted: ${post.title}`);
+        logger.info(`  ✓ Inserted: ${post.title}`);
         successCount++;
       }
     }
@@ -382,46 +382,46 @@ async function insertCommunityPosts(profileId) {
 }
 
 async function applyAllContent() {
-  console.log('========================================');
-  console.log('FINAL CONTENT SPRINT - Direct Insert');
-  console.log('========================================');
-  console.log('');
-  console.log(`Supabase URL: ${supabaseUrl}`);
-  console.log('');
+  logger.info('========================================');
+  logger.info('FINAL CONTENT SPRINT - Direct Insert');
+  logger.info('========================================');
+  logger.info('');
+  logger.info(`Supabase URL: ${supabaseUrl}`);
+  logger.info('');
 
   const profileId = await getFirstProfileId();
-  console.log(`Using profile ID: ${profileId}`);
-  console.log('');
+  logger.info(`Using profile ID: ${profileId}`);
+  logger.info('');
 
   let totalSuccess = 0;
   
   totalSuccess += await insertProjects(profileId);
-  console.log('');
+  logger.info('');
   
   totalSuccess += await insertMarketplaceItems(profileId);
-  console.log('');
+  logger.info('');
   
   totalSuccess += await insertResearchPapers();
-  console.log('');
+  logger.info('');
   
   totalSuccess += await insertCommunityPosts(profileId);
-  console.log('');
+  logger.info('');
 
-  console.log('========================================');
-  console.log(`Content insertion complete! (${totalSuccess} items)`);
-  console.log('========================================');
-  console.log('');
-  console.log('Content added:');
-  console.log('  - 5 complete projects');
-  console.log('  - 7 marketplace categories');
-  console.log('  - 7 marketplace items');
-  console.log('  - 6 research papers');
-  console.log('  - 7 community posts');
-  console.log('');
-  console.log('Next steps:');
-  console.log('1. Restart your dev server: npm run dev');
-  console.log('2. Verify content appears in the application');
-  console.log('3. Check /projects, /marketplace, /research, /community');
+  logger.info('========================================');
+  logger.info(`Content insertion complete! (${totalSuccess} items)`);
+  logger.info('========================================');
+  logger.info('');
+  logger.info('Content added:');
+  logger.info('  - 5 complete projects');
+  logger.info('  - 7 marketplace categories');
+  logger.info('  - 7 marketplace items');
+  logger.info('  - 6 research papers');
+  logger.info('  - 7 community posts');
+  logger.info('');
+  logger.info('Next steps:');
+  logger.info('1. Restart your dev server: npm run dev');
+  logger.info('2. Verify content appears in the application');
+  logger.info('3. Check /projects, /marketplace, /research, /community');
 }
 
 applyAllContent().catch(console.error);

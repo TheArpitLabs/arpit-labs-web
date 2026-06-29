@@ -2,6 +2,7 @@ import { supabaseServer } from "@/lib/supabase/server";
 import type { FeatureAccess, MembershipFeatureKey, MembershipPlan, UserSubscription } from "@/types/membership";
 import { handleDatabaseError } from "@/lib/errors";
 import { canAccessFeature } from "@/lib/memberships";
+import { logger } from '@/lib/logger';
 
 function getBearerToken(request: Request) {
   return request.headers.get("authorization")?.replace("Bearer ", "") ?? "";
@@ -88,7 +89,7 @@ export const membershipRepository = {
   async getAllPlans(): Promise<MembershipPlan[]> {
     const { data, error } = await supabaseServer.from("membership_plans").select("*").order("created_at", { ascending: true });
     if (error) {
-      console.error("Database error in getAllPlans:", error);
+      logger.error("Database error in getAllPlans:", error);
       throw handleDatabaseError(error);
     }
     return data ?? [];
@@ -97,7 +98,7 @@ export const membershipRepository = {
   async getPlanBySlug(slug: string): Promise<MembershipPlan | null> {
     const { data, error } = await supabaseServer.from("membership_plans").select("*").eq("slug", slug).single();
     if (error && error.code !== "PGRST116") {
-      console.error("Database error in getPlanBySlug:", error);
+      logger.error("Database error in getPlanBySlug:", error);
       throw handleDatabaseError(error);
     }
     return data || null;
@@ -106,7 +107,7 @@ export const membershipRepository = {
   async getPlanById(planId: string): Promise<MembershipPlan | null> {
     const { data, error } = await supabaseServer.from("membership_plans").select("*").eq("id", planId).single();
     if (error && error.code !== "PGRST116") {
-      console.error("Database error in getPlanById:", error);
+      logger.error("Database error in getPlanById:", error);
       throw handleDatabaseError(error);
     }
     return data || null;
@@ -123,7 +124,7 @@ export const membershipRepository = {
       .single();
 
     if (error && error.code !== "PGRST116") {
-      console.error("Database error in getActiveSubscriptionByUser:", error);
+      logger.error("Database error in getActiveSubscriptionByUser:", error);
       throw handleDatabaseError(error);
     }
     return data || null;
@@ -137,7 +138,7 @@ export const membershipRepository = {
       .order("created_at", { ascending: false });
 
     if (error) {
-      console.error("Database error in getSubscriptionsByUser:", error);
+      logger.error("Database error in getSubscriptionsByUser:", error);
       throw handleDatabaseError(error);
     }
     return data ?? [];
@@ -150,7 +151,7 @@ export const membershipRepository = {
       .order("created_at", { ascending: false });
 
     if (error) {
-      console.error("Database error in getAllSubscriptions:", error);
+      logger.error("Database error in getAllSubscriptions:", error);
       throw handleDatabaseError(error);
     }
     return data ?? [];
@@ -163,7 +164,7 @@ export const membershipRepository = {
       .eq("plan_id", planId);
 
     if (error) {
-      console.error("Database error in getFeatureAccess:", error);
+      logger.error("Database error in getFeatureAccess:", error);
       throw handleDatabaseError(error);
     }
     return data ?? [];
@@ -178,7 +179,7 @@ export const membershipRepository = {
       .single();
 
     if (error) {
-      console.error("Database error in updatePlan:", error);
+      logger.error("Database error in updatePlan:", error);
       throw handleDatabaseError(error);
     }
     return data;

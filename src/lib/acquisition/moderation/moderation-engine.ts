@@ -5,6 +5,7 @@
  */
 
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { logger } from '@/lib/logger';
 import { 
   ModerationPolicy, 
   ModerationRule, 
@@ -52,7 +53,7 @@ class BaseModerationEngine implements ModerationEngine {
         .order('priority', { ascending: false });
 
       if (error) {
-        console.error('Error loading policies:', error);
+        logger.error('Error loading policies:', error);
         return;
       }
 
@@ -86,7 +87,7 @@ class BaseModerationEngine implements ModerationEngine {
       });
 
     } catch (error) {
-      console.error('Error loading policies:', error);
+      logger.error('Error loading policies:', error);
     }
   }
 
@@ -164,7 +165,7 @@ class BaseModerationEngine implements ModerationEngine {
       return result;
 
     } catch (error) {
-      console.error('Error in moderateContent:', error);
+      logger.error('Error in moderateContent:', error);
       throw error;
     }
   }
@@ -261,7 +262,7 @@ class BaseModerationEngine implements ModerationEngine {
       return { flagged: false, message: '', confidence: 0 };
 
     } catch (error) {
-      console.error('Error in ML rule:', error);
+      logger.error('Error in ML rule:', error);
       return { flagged: false, message: '', confidence: 0 };
     }
   }
@@ -314,7 +315,7 @@ class BaseModerationEngine implements ModerationEngine {
       return { flagged: false, message: '', confidence: 0 };
 
     } catch (error) {
-      console.error('Error in custom rule:', error);
+      logger.error('Error in custom rule:', error);
       return { flagged: false, message: '', confidence: 0 };
     }
   }
@@ -349,7 +350,7 @@ class BaseModerationEngine implements ModerationEngine {
         });
 
     } catch (error) {
-      console.error('Error storing moderation result:', error);
+      logger.error('Error storing moderation result:', error);
     }
   }
 
@@ -367,7 +368,7 @@ class BaseModerationEngine implements ModerationEngine {
         });
 
     } catch (error) {
-      console.error('Error adding to moderation queue:', error);
+      logger.error('Error adding to moderation queue:', error);
     }
   }
 
@@ -399,7 +400,7 @@ class BaseModerationEngine implements ModerationEngine {
         .eq('content_id', contentId);
 
     } catch (error) {
-      console.error('Error in reviewContent:', error);
+      logger.error('Error in reviewContent:', error);
       throw error;
     }
   }
@@ -415,7 +416,7 @@ class BaseModerationEngine implements ModerationEngine {
         .limit(limit);
 
       if (error) {
-        console.error('Error getting moderation queue:', error);
+        logger.error('Error getting moderation queue:', error);
         return [];
       }
 
@@ -431,7 +432,7 @@ class BaseModerationEngine implements ModerationEngine {
       }));
 
     } catch (error) {
-      console.error('Error in getModerationQueue:', error);
+      logger.error('Error in getModerationQueue:', error);
       return [];
     }
   }
@@ -453,7 +454,7 @@ class BaseModerationEngine implements ModerationEngine {
         .single();
 
       if (error) {
-        console.error('Error creating policy:', error);
+        logger.error('Error creating policy:', error);
         throw error;
       }
 
@@ -474,7 +475,7 @@ class BaseModerationEngine implements ModerationEngine {
       return newPolicy;
 
     } catch (error) {
-      console.error('Error in createPolicy:', error);
+      logger.error('Error in createPolicy:', error);
       throw error;
     }
   }
@@ -493,7 +494,7 @@ class BaseModerationEngine implements ModerationEngine {
       await this.loadPolicies();
 
     } catch (error) {
-      console.error('Error in updatePolicy:', error);
+      logger.error('Error in updatePolicy:', error);
       throw error;
     }
   }
@@ -509,7 +510,7 @@ class BaseModerationEngine implements ModerationEngine {
       await this.loadPolicies();
 
     } catch (error) {
-      console.error('Error in deletePolicy:', error);
+      logger.error('Error in deletePolicy:', error);
       throw error;
     }
   }
@@ -530,7 +531,7 @@ class BaseModerationEngine implements ModerationEngine {
         .select('status');
 
       if (error) {
-        console.error('Error getting moderation stats:', error);
+        logger.error('Error getting moderation stats:', error);
         return { totalModerated: 0, approved: 0, rejected: 0, flagged: 0, pending: 0 };
       }
 
@@ -554,7 +555,7 @@ class BaseModerationEngine implements ModerationEngine {
       return stats;
 
     } catch (error) {
-      console.error('Error in getModerationStats:', error);
+      logger.error('Error in getModerationStats:', error);
       return { totalModerated: 0, approved: 0, rejected: 0, flagged: 0, pending: 0 };
     }
   }

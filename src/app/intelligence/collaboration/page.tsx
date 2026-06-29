@@ -8,6 +8,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Users, Handshake, Clock } from 'lucide-react';
+import { logger } from '@/lib/logger';
 
 export default function PublicCollaborationDashboard() {
   const [collaborations, setCollaborations] = useState<any[]>([]);
@@ -24,7 +25,7 @@ export default function PublicCollaborationDashboard() {
       const data = await response.json();
       setCollaborations(data.data || []);
     } catch (error) {
-      console.error('Error fetching collaborations:', error);
+      logger.error('Error fetching collaborations:', error);
     } finally {
       setLoading(false);
     }

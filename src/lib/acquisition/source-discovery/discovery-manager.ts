@@ -18,6 +18,7 @@ import {
   ContentProvider,
 } from './types';
 import { supabaseServer } from '@/lib/supabase/server';
+import { logger } from '@/lib/logger';
 
 export class DiscoveryManager {
   private connectors: Map<ContentProvider, SourceConnector> = new Map();
@@ -219,7 +220,7 @@ export class DiscoveryManager {
       .eq('id', sourceId);
 
     if (error) {
-      console.error(`Failed to update source sync time: ${error.message}`);
+      logger.error(`Failed to update source sync time: ${error.message}`);
     }
   }
 
@@ -277,7 +278,7 @@ export class DiscoveryManager {
   private async queueSingleItem(item: any): Promise<void> {
     const connector = this.getConnector(item.provider_type as ContentProvider);
     if (!connector) {
-      console.error(`No connector for provider: ${item.provider_type}`);
+      logger.error(`No connector for provider: ${item.provider_type}`);
       return;
     }
 
@@ -324,7 +325,7 @@ export class DiscoveryManager {
         .eq('id', item.id);
 
     } catch (error) {
-      console.error(`Failed to queue item ${item.id}:`, error);
+      logger.error(`Failed to queue item ${item.id}:`, error);
       
       await supabaseServer
         .from('discovered_content')

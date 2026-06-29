@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Lab } from '@/types/content';
+import { logger } from '@/lib/logger';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
@@ -16,7 +17,7 @@ export const labsRepository = {
     const { data, error } = await query.order('created_at', { ascending: false });
     
     if (error) {
-      console.error('Error fetching labs:', error);
+      logger.error('Error fetching labs:', error);
       throw error;
     }
     
@@ -32,7 +33,7 @@ export const labsRepository = {
       .order('created_at', { ascending: false });
     
     if (error) {
-      console.error('Error fetching labs by category:', error);
+      logger.error('Error fetching labs by category:', error);
       throw error;
     }
     
@@ -47,7 +48,7 @@ export const labsRepository = {
       .single();
     
     if (error && error.code !== 'PGRST116') {
-      console.error('Error fetching lab:', error);
+      logger.error('Error fetching lab:', error);
     }
     
     return data || null;
@@ -61,7 +62,7 @@ export const labsRepository = {
       .single();
     
     if (error && error.code !== 'PGRST116') {
-      console.error('Error fetching lab:', error);
+      logger.error('Error fetching lab:', error);
     }
     
     return data || null;
@@ -75,7 +76,7 @@ export const labsRepository = {
       .single();
     
     if (error) {
-      console.error('Error creating lab:', error);
+      logger.error('Error creating lab:', error);
       throw error;
     }
     
@@ -91,7 +92,7 @@ export const labsRepository = {
       .single();
     
     if (error) {
-      console.error('Error updating lab:', error);
+      logger.error('Error updating lab:', error);
       throw error;
     }
     
@@ -105,7 +106,7 @@ export const labsRepository = {
       .eq('id', id);
     
     if (error) {
-      console.error('Error deleting lab:', error);
+      logger.error('Error deleting lab:', error);
       throw error;
     }
   },

@@ -48,13 +48,19 @@ export class AIChatService {
   private maxTokens: number = 2000;
 
   private conversationHistory: Map<string, AIConversation> = new Map();
+  private semanticSearchService?: any; // Will be set via dependency injection
 
-  constructor() {
+  constructor(semanticSearchService?: any) {
+    this.semanticSearchService = semanticSearchService;
     this.initializeAI();
   }
 
   private initializeAI() {
     logger.debug('AI Chat Service initialized');
+  }
+
+  setSemanticSearchService(service: any) {
+    this.semanticSearchService = service;
   }
 
   /**
@@ -180,9 +186,7 @@ export class AIChatService {
   private async searchKnowledgeBase(query: string, topic: string): Promise<string[]> {
     try {
       // Use semantic search service to retrieve relevant chunks
-      // semanticSearchService instance is created at module export time below
-      // @ts-ignore
-      const results = typeof semanticSearchService !== 'undefined' ? await semanticSearchService.search(query, 3) : null;
+      const results = this.semanticSearchService ? await this.semanticSearchService.search(query, 3) : null;
 
       if (Array.isArray(results) && results.length > 0) {
         return results.map((r: { preview?: string; chunk?: string }) => r.preview || r.chunk || '');
@@ -1664,7 +1668,7 @@ export class RecruiterAssistantService {
 // ============================================================================
 
 export const semanticSearchService = new SemanticSearchService();
-export const aiChatService = new AIChatService();
+export const aiChatService = new AIChatService(semanticSearchService);
 export const knowledgeBaseService = new KnowledgeBaseService();
 export const contentGenerationService = new ContentGenerationService();
 export const analyticsService = new AnalyticsService();

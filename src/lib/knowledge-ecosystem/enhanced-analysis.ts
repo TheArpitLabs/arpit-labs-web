@@ -1,7 +1,6 @@
 import { supabaseServer } from "@/lib/supabase/server";
 import { assertKnowledgeFeature } from "./feature-flags";
-import { normalizeText, uniqueKeywords, inferDifficulty } from "./text";
-import type { AcquisitionCandidate } from "./types";
+import { normalizeText, inferDifficulty } from "./text";
 
 interface QueueItemMetadata {
   languages?: Record<string, number>;
@@ -159,7 +158,7 @@ export async function analyzeProjectEnhanced(queueItemId: string): Promise<Enhan
   }
 }
 
-function generateExecutiveSummary(queueItem: QueueItem, text: string): string {
+function generateExecutiveSummary(queueItem: QueueItem, _text: string): string {
   const title = queueItem.title || "This project";
   const description = queueItem.description || "";
   const provider = queueItem.provider || "GitHub";
@@ -168,10 +167,10 @@ function generateExecutiveSummary(queueItem: QueueItem, text: string): string {
     return `${title} is a ${provider} repository that ${description.toLowerCase()}. This project provides practical implementation of engineering concepts and can serve as a valuable learning resource for developers and students.`;
   }
   
-  return `${title} is a ${provider} repository that has been imported into the Arpit Labs platform. The project contains code and documentation that can be studied to understand practical engineering implementations and best practices.`;
+  return `${title} is a ${provider} repository that has been imported into the Axiora platform. The project contains code and documentation that can be studied to understand practical engineering implementations and best practices.`;
 }
 
-function generateTechnicalSummary(queueItem: QueueItem, text: string): string {
+function generateTechnicalSummary(queueItem: QueueItem, _text: string): string {
   const languages = queueItem.metadata?.languages || [];
   const topics = queueItem.metadata?.topics || [];
   const stars = queueItem.metadata?.stars || 0;
@@ -198,7 +197,7 @@ function generateTechnicalSummary(queueItem: QueueItem, text: string): string {
   return summary;
 }
 
-function generateEngineeringOverview(queueItem: QueueItem, text: string): string {
+function generateEngineeringOverview(queueItem: QueueItem, _text: string): string {
   const title = queueItem.title || "The project";
   const hasReadme = queueItem.raw_content && queueItem.raw_content.length > 100;
   
@@ -248,7 +247,7 @@ function detectTechStack(normalizedText: string, metadata: QueueItemMetadata): E
   return detected;
 }
 
-function assessDifficulty(normalizedText: string, metadata: QueueItemMetadata): "beginner" | "intermediate" | "advanced" | "expert" {
+function assessDifficulty(normalizedText: string, _metadata: QueueItemMetadata): "beginner" | "intermediate" | "advanced" | "expert" {
   // Use existing difficulty inference as baseline
   const baseline = inferDifficulty(normalizedText);
   

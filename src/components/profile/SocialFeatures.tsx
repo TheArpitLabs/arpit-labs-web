@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Heart, MessageSquare, Share2, UserPlus, UserMinus, Send, Reply, Trash2 } from "lucide-react";
+import { logger } from '@/lib/logger';
 
 interface SocialFeaturesProps {
   profileId: string;
@@ -104,7 +105,7 @@ export function SocialFeatures({ profileId, currentUserId }: SocialFeaturesProps
         setComments(commentsWithReplies);
       }
     } catch (error) {
-      console.error("Error loading social data:", error);
+      logger.error("Error loading social data:", error);
     } finally {
       setLoading(false);
     }
@@ -134,7 +135,7 @@ export function SocialFeatures({ profileId, currentUserId }: SocialFeaturesProps
         setFollowersCount(followersCount + 1);
       }
     } catch (error) {
-      console.error("Error toggling follow:", error);
+      logger.error("Error toggling follow:", error);
     }
   };
 
@@ -158,7 +159,7 @@ export function SocialFeatures({ profileId, currentUserId }: SocialFeaturesProps
         setLikesCount(likesCount + 1);
       }
     } catch (error) {
-      console.error("Error toggling like:", error);
+      logger.error("Error toggling like:", error);
     }
   };
 
@@ -177,7 +178,7 @@ export function SocialFeatures({ profileId, currentUserId }: SocialFeaturesProps
         navigator.clipboard.writeText(shareUrl);
       }
     } catch (error) {
-      console.error("Error sharing:", error);
+      logger.error("Error sharing:", error);
     }
   };
 
@@ -200,7 +201,7 @@ export function SocialFeatures({ profileId, currentUserId }: SocialFeaturesProps
         setNewComment("");
       }
     } catch (error) {
-      console.error("Error adding comment:", error);
+      logger.error("Error adding comment:", error);
     }
   };
 
@@ -233,7 +234,7 @@ export function SocialFeatures({ profileId, currentUserId }: SocialFeaturesProps
         setReplyingTo(null);
       }
     } catch (error) {
-      console.error("Error adding reply:", error);
+      logger.error("Error adding reply:", error);
     }
   };
 
@@ -249,7 +250,7 @@ export function SocialFeatures({ profileId, currentUserId }: SocialFeaturesProps
 
       setComments(comments.filter(c => c.id !== commentId));
     } catch (error) {
-      console.error("Error deleting comment:", error);
+      logger.error("Error deleting comment:", error);
     }
   };
 

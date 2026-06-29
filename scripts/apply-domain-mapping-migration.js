@@ -9,7 +9,7 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
-  console.error('Missing Supabase credentials. Check your .env.local file.');
+  logger.error('Missing Supabase credentials. Check your .env.local file.');
   process.exit(1);
 }
 
@@ -36,28 +36,28 @@ async function executeSQLViaManagementAPI(sql) {
 }
 
 async function applyMigration() {
-  console.log('🚀 Applying Content Domain Mapping Migration via Management API');
-  console.log('===========================================');
+  logger.info('🚀 Applying Content Domain Mapping Migration via Management API');
+  logger.info('===========================================');
 
   try {
     // Read the migration file
     const migrationPath = path.join(__dirname, '../supabase/migrations/20260615_populate_content_domain_mapping.sql');
     const migrationSQL = fs.readFileSync(migrationPath, 'utf8');
 
-    console.log('Executing migration SQL...');
+    logger.info('Executing migration SQL...');
     const result = await executeSQLViaManagementAPI(migrationSQL);
-    console.log('✅ Migration applied successfully:', result);
-    console.log('');
-    console.log('Projects should now be visible on engineering domain landing pages.');
+    logger.info('✅ Migration applied successfully:', result);
+    logger.info('');
+    logger.info('Projects should now be visible on engineering domain landing pages.');
 
   } catch (error) {
-    console.error('Error applying migration:', error.message);
-    console.log('\n⚠️  Management API approach failed.');
-    console.log('Please apply the migration manually using:');
-    console.log('  1. Supabase Dashboard: SQL Editor');
-    console.log('  2. Navigate to: https://app.supabase.com/project/' + projectRef + '/sql/new');
-    console.log('  3. Paste the contents of: supabase/migrations/20260615_populate_content_domain_mapping.sql');
-    console.log('  4. Click "Run" to execute');
+    logger.error('Error applying migration:', error.message);
+    logger.info('\n⚠️  Management API approach failed.');
+    logger.info('Please apply the migration manually using:');
+    logger.info('  1. Supabase Dashboard: SQL Editor');
+    logger.info('  2. Navigate to: https://app.supabase.com/project/' + projectRef + '/sql/new');
+    logger.info('  3. Paste the contents of: supabase/migrations/20260615_populate_content_domain_mapping.sql');
+    logger.info('  4. Click "Run" to execute');
     process.exit(1);
   }
 }

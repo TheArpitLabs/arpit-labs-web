@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { CheckCircle, XCircle, Rocket, Loader2 } from "lucide-react";
+import { logger } from '@/lib/logger';
 
 interface AcquisitionActionsProps {
   item: any;
@@ -26,7 +27,7 @@ export function AcquisitionActions({ item }: AcquisitionActionsProps) {
 
       window.location.reload();
     } catch (error) {
-      console.error("Action failed:", error);
+      logger.error("Action failed:", error);
       alert(error instanceof Error ? error.message : "Action failed");
     } finally {
       setLoading(null);

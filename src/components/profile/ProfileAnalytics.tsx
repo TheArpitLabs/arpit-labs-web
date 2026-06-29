@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { supabaseClient } from "@/lib/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Eye, Users, Heart, MessageSquare, Share2, TrendingUp, Calendar } from "lucide-react";
+import { logger } from '@/lib/logger';
 
 interface ProfileAnalyticsProps {
   profileId: string;
@@ -36,7 +37,7 @@ export function ProfileAnalytics({ profileId, isOwner = false }: ProfileAnalytic
 
       setAnalytics(data);
     } catch (error) {
-      console.error("Error loading analytics:", error);
+      logger.error("Error loading analytics:", error);
     } finally {
       setLoading(false);
     }
@@ -46,7 +47,7 @@ export function ProfileAnalytics({ profileId, isOwner = false }: ProfileAnalytic
     try {
       await supabaseClient.rpc("increment_profile_view", { profile_id: profileId });
     } catch (error) {
-      console.error("Error tracking view:", error);
+      logger.error("Error tracking view:", error);
     }
   }, [profileId]);
 

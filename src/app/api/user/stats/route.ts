@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabase/server";
-import { getUserFromRequest } from "@/lib/auth";
+import { getUserFromRequest } from "@/lib/auth/auth";
 import { handleDatabaseError } from "@/lib/errors";
+import { logger } from '@/lib/logger';
 
 // GET /api/user/stats - Get user statistics
 export async function GET(request: NextRequest) {
@@ -14,10 +15,10 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Get user's projects
+    // Get user's projects with optimized query
     const { data: projects, error: projectsError } = await supabaseServer
       .from('projects')
-      .select('*')
+      .select('id, title, status, views_count, likes_count, github_stars, updated_at')
       .eq('owner_id', user.id);
 
     if (projectsError) {
@@ -63,7 +64,7 @@ export async function GET(request: NextRequest) {
       (followersCount * 5)
     );
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       data: {
         engineeringScore,
         totalProjects: projects?.length || 0,
@@ -77,9 +78,15 @@ export async function GET(request: NextRequest) {
         profileViews,
       }
     });
+    
+    // Add caching headers
+    response.headers.set('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=600');
+    response.headers.set('CDN-Cache-Control', 'public, s-maxage=300');
+    
+    return response;
 
   } catch (error) {
-    console.error('Error in GET /api/user/stats:', error);
+    logger.error('Error in GET /api/user/stats:', error);
     return NextResponse.json(
       { error: 'Failed to fetch user stats' },
       { status: 500 }

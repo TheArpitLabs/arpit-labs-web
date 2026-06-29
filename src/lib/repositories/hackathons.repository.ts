@@ -2,6 +2,7 @@ import { supabaseServer } from "@/lib/supabase/server";
 import { Hackathon, HackathonSubmission, HackathonTeam, HackathonTeamMember } from "@/types/content";
 import { HackathonInput, HackathonTeamInput, HackathonSubmissionInput } from "@/lib/validation/hackathon.schema";
 import { handleDatabaseError } from "@/lib/errors";
+import { logger } from '@/lib/logger';
 
 export const hackathonsRepository = {
   async getHackathons() {
@@ -11,7 +12,7 @@ export const hackathonsRepository = {
       .order("start_date", { ascending: true });
 
     if (error) {
-      console.error("Database error in getHackathons:", error);
+      logger.error("Database error in getHackathons:", error);
       throw handleDatabaseError(error);
     }
 
@@ -27,7 +28,7 @@ export const hackathonsRepository = {
       .single();
 
     if (error) {
-      console.error("Database error in getHackathonBySlug:", error);
+      logger.error("Database error in getHackathonBySlug:", error);
       throw handleDatabaseError(error);
     }
 
@@ -42,7 +43,7 @@ export const hackathonsRepository = {
       .order("created_at", { ascending: false });
 
     if (error) {
-      console.error("Database error in getHackathonTeams:", error);
+      logger.error("Database error in getHackathonTeams:", error);
       throw handleDatabaseError(error);
     }
 
@@ -57,7 +58,7 @@ export const hackathonsRepository = {
       .order("id", { ascending: true });
 
     if (error) {
-      console.error("Database error in getHackathonTeamMembers:", error);
+      logger.error("Database error in getHackathonTeamMembers:", error);
       throw handleDatabaseError(error);
     }
 
@@ -72,7 +73,7 @@ export const hackathonsRepository = {
       .order("submitted_at", { ascending: false });
 
     if (error) {
-      console.error("Database error in getHackathonSubmissions:", error);
+      logger.error("Database error in getHackathonSubmissions:", error);
       throw handleDatabaseError(error);
     }
 
@@ -89,7 +90,7 @@ export const hackathonsRepository = {
     const { data, error } = await query.limit(20);
 
     if (error) {
-      console.error("Database error in getLeaderboard:", error);
+      logger.error("Database error in getLeaderboard:", error);
       throw handleDatabaseError(error);
     }
 
@@ -99,7 +100,7 @@ export const hackathonsRepository = {
   async createHackathon(payload: HackathonInput) {
     const { data, error } = await supabaseServer.from("hackathons").insert(payload).select().single();
     if (error) {
-      console.error("Database error in createHackathon:", error);
+      logger.error("Database error in createHackathon:", error);
       throw handleDatabaseError(error);
     }
     return data as Hackathon;
@@ -114,7 +115,7 @@ export const hackathonsRepository = {
       .single();
 
     if (error) {
-      console.error("Database error in updateHackathon:", error);
+      logger.error("Database error in updateHackathon:", error);
       throw handleDatabaseError(error);
     }
     return data as Hackathon;
@@ -123,7 +124,7 @@ export const hackathonsRepository = {
   async deleteHackathon(id: string) {
     const { error } = await supabaseServer.from("hackathons").delete().eq("id", id);
     if (error) {
-      console.error("Database error in deleteHackathon:", error);
+      logger.error("Database error in deleteHackathon:", error);
       throw handleDatabaseError(error);
     }
     return true;
@@ -132,7 +133,7 @@ export const hackathonsRepository = {
   async createHackathonTeam(payload: HackathonTeamInput) {
     const { data, error } = await supabaseServer.from("hackathon_teams").insert(payload).select().single();
     if (error) {
-      console.error("Database error in createHackathonTeam:", error);
+      logger.error("Database error in createHackathonTeam:", error);
       throw handleDatabaseError(error);
     }
     return data as HackathonTeam;
@@ -146,7 +147,7 @@ export const hackathonsRepository = {
       .single();
 
     if (error) {
-      console.error("Database error in addTeamMember:", error);
+      logger.error("Database error in addTeamMember:", error);
       throw handleDatabaseError(error);
     }
     return data as HackathonTeamMember;
@@ -159,7 +160,7 @@ export const hackathonsRepository = {
       .match({ team_id: teamId, user_id: userId });
 
     if (error) {
-      console.error("Database error in removeTeamMember:", error);
+      logger.error("Database error in removeTeamMember:", error);
       throw handleDatabaseError(error);
     }
     return true;
@@ -173,7 +174,7 @@ export const hackathonsRepository = {
       .single();
 
     if (error) {
-      console.error("Database error in createHackathonSubmission:", error);
+      logger.error("Database error in createHackathonSubmission:", error);
       throw handleDatabaseError(error);
     }
     return data as HackathonSubmission;
@@ -188,7 +189,7 @@ export const hackathonsRepository = {
       .single();
 
     if (error) {
-      console.error("Database error in updateSubmissionScore:", error);
+      logger.error("Database error in updateSubmissionScore:", error);
       throw handleDatabaseError(error);
     }
     return data as HackathonSubmission;

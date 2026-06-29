@@ -7,7 +7,7 @@ const testimonials = [
   {
     name: "Sarah Chen",
     role: "ML Engineer at Google",
-    content: "Arpit Labs' AI explanations helped me understand machine learning completely. The learning path was incredible and practical. I've recommended this platform to my entire team.",
+    content: "Axiora's AI explanations helped me understand machine learning completely. The learning path was incredible and practical. I've recommended this platform to my entire team.",
     rating: 5,
     avatar: "SC"
   },
@@ -21,14 +21,14 @@ const testimonials = [
   {
     name: "Alex Rivera",
     role: "IoT Specialist at Tesla",
-    content: "Found my dream job through Arpit Labs projects! The hands-on experience with IoT systems made all the difference in interviews. Real-world projects matter.",
+    content: "Found my dream job through Axiora projects! The hands-on experience with IoT systems made all the difference in interviews. Real-world projects matter.",
     rating: 5,
     avatar: "AR"
   },
   {
     name: "Priya Sharma",
     role: "CS Student, IIT Delhi",
-    content: "Arpit Labs transformed my understanding of AI. The projects are industry-grade and the documentation is exceptional. My professors were impressed by my portfolio.",
+    content: "Axiora transformed my understanding of AI. The projects are industry-grade and the documentation is exceptional. My professors were impressed by my portfolio.",
     rating: 5,
     avatar: "PS"
   },

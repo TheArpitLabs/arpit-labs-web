@@ -8,15 +8,15 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
-  console.error('Missing Supabase credentials. Check your .env.local file.');
+  logger.error('Missing Supabase credentials. Check your .env.local file.');
   process.exit(1);
 }
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 async function applyMigration() {
-  console.log('🚀 Applying Content Domain Mapping Migration via Supabase Client');
-  console.log('===========================================');
+  logger.info('🚀 Applying Content Domain Mapping Migration via Supabase Client');
+  logger.info('===========================================');
 
   try {
     // Get domain IDs
@@ -30,7 +30,7 @@ async function applyMigration() {
     const domainMap = {};
     domains.forEach(d => domainMap[d.slug] = d.id);
 
-    console.log('Found domains:', Object.keys(domainMap));
+    logger.info('Found domains:', Object.keys(domainMap));
 
     // Get subdomain IDs
     const { data: subdomains, error: subdomainsError } = await supabase
@@ -43,7 +43,7 @@ async function applyMigration() {
     const subdomainMap = {};
     subdomains.forEach(s => subdomainMap[s.slug] = s.id);
 
-    console.log('Found subdomains:', Object.keys(subdomainMap));
+    logger.info('Found subdomains:', Object.keys(subdomainMap));
 
     // Get project IDs
     const { data: projects, error: projectsError } = await supabase
@@ -62,7 +62,7 @@ async function applyMigration() {
     const projectMap = {};
     projects.forEach(p => projectMap[p.slug] = p.id);
 
-    console.log('Found projects:', Object.keys(projectMap));
+    logger.info('Found projects:', Object.keys(projectMap));
 
     // Create mappings
     const mappings = [
@@ -103,7 +103,7 @@ async function applyMigration() {
       }
     ];
 
-    console.log('Inserting mappings...');
+    logger.info('Inserting mappings...');
 
     for (const mapping of mappings) {
       const { error: insertError } = await supabase
@@ -111,14 +111,14 @@ async function applyMigration() {
         .insert(mapping);
 
       if (insertError) {
-        console.error('Error inserting mapping:', insertError);
+        logger.error('Error inserting mapping:', insertError);
       } else {
-        console.log('✓ Inserted mapping for project:', mapping.content_id);
+        logger.info('✓ Inserted mapping for project:', mapping.content_id);
       }
     }
 
     // Update domain counts
-    console.log('Updating domain project counts...');
+    logger.info('Updating domain project counts...');
     
     for (const domainSlug of ['iot-embedded-systems', 'software-development', 'robotics']) {
       const { count, error: countError } = await supabase
@@ -128,7 +128,7 @@ async function applyMigration() {
         .eq('domain_id', domainMap[domainSlug]);
 
       if (countError) {
-        console.error('Error counting projects for', domainSlug, ':', countError);
+        logger.error('Error counting projects for', domainSlug, ':', countError);
       } else {
         const { error: updateError } = await supabase
           .from('engineering_domains')
@@ -136,25 +136,25 @@ async function applyMigration() {
           .eq('id', domainMap[domainSlug]);
 
         if (updateError) {
-          console.error('Error updating count for', domainSlug, ':', updateError);
+          logger.error('Error updating count for', domainSlug, ':', updateError);
         } else {
-          console.log(`✓ Updated ${domainSlug} with ${count} projects`);
+          logger.info(`✓ Updated ${domainSlug} with ${count} projects`);
         }
       }
     }
 
-    console.log('✅ Migration applied successfully');
-    console.log('');
-    console.log('Projects should now be visible on engineering domain landing pages.');
+    logger.info('✅ Migration applied successfully');
+    logger.info('');
+    logger.info('Projects should now be visible on engineering domain landing pages.');
 
   } catch (error) {
-    console.error('Error applying migration:', error.message);
-    console.log('\n⚠️  Supabase client approach failed.');
-    console.log('Please apply the migration manually using:');
-    console.log('  1. Supabase Dashboard: SQL Editor');
-    console.log('  2. Navigate to: https://app.supabase.com/project/' + supabaseUrl.replace('https://', '').split('.')[0] + '/sql/new');
-    console.log('  3. Paste the contents of: supabase/migrations/20260615_populate_content_domain_mapping.sql');
-    console.log('  4. Click "Run" to execute');
+    logger.error('Error applying migration:', error.message);
+    logger.info('\n⚠️  Supabase client approach failed.');
+    logger.info('Please apply the migration manually using:');
+    logger.info('  1. Supabase Dashboard: SQL Editor');
+    logger.info('  2. Navigate to: https://app.supabase.com/project/' + supabaseUrl.replace('https://', '').split('.')[0] + '/sql/new');
+    logger.info('  3. Paste the contents of: supabase/migrations/20260615_populate_content_domain_mapping.sql');
+    logger.info('  4. Click "Run" to execute');
     process.exit(1);
   }
 }

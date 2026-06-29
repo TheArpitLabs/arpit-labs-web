@@ -3,7 +3,7 @@ import { Container } from "@/components/layout/Container";
 import { Footer } from "@/components/layout/Footer";
 import { BadgeGrid } from "@/components/gamification/BadgeGrid";
 import { supabaseServer } from "@/lib/supabase/server";
-import { getCurrentUser } from "@/lib/auth";
+import { getCurrentUser } from "@/lib/auth/auth";
 import { createPageMetadata } from "@/lib/seo";
 import { Award } from "lucide-react";
 

@@ -12,6 +12,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import React, { use, useEffect, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
+import { logger } from '@/lib/logger';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
@@ -114,7 +115,7 @@ function DomainDatasetsPageContent({ domainSlug }: { domainSlug: string }) {
         setDatasets(transformedDatasets);
 
       } catch (err) {
-        console.error('Error fetching datasets:', err);
+        logger.error('Error fetching datasets:', err);
         setError('Failed to load datasets');
       } finally {
         setLoading(false);

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { logger } from '@/lib/logger';
 
 async function callOpenAI(prompt: string) {
   const apiKey = process.env.OPENAI_API_KEY;
@@ -67,7 +68,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: false, error: 'Unknown type' }, { status: 400 });
   } catch (err: any) {
-    console.error('AI helper error', err);
+    logger.error('AI helper error', err);
     return NextResponse.json({ success: false, error: err.message || 'Server error' }, { status: 500 });
   }
 }

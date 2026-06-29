@@ -1,6 +1,7 @@
 import { roadmapsRepository } from "@/lib/repositories/roadmaps.repository";
 import Link from "next/link";
 import { Map } from "lucide-react";
+import { logger } from '@/lib/logger';
 
 export const metadata = {
   title: "Learning Roadmaps | Arpit Labs",
@@ -12,7 +13,7 @@ export default async function RoadmapsPage() {
   try {
     roadmaps = await roadmapsRepository.getAll(true);
   } catch (error) {
-    console.error("Error fetching roadmaps:", error);
+    logger.error("Error fetching roadmaps:", error);
     roadmaps = [];
   }
 

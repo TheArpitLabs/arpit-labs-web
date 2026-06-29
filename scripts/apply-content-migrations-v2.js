@@ -11,8 +11,8 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
-  console.error('Error: Missing Supabase credentials in .env.local');
-  console.error('Required: NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY');
+  logger.error('Error: Missing Supabase credentials in .env.local');
+  logger.error('Required: NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY');
   process.exit(1);
 }
 
@@ -26,7 +26,7 @@ const migrations = [
 ];
 
 async function applyMigration(migrationFile) {
-  console.log(`Applying ${migrationFile}...`);
+  logger.info(`Applying ${migrationFile}...`);
   
   const migrationPath = path.join(__dirname, '../supabase/migrations', migrationFile);
   const migrationSQL = fs.readFileSync(migrationPath, 'utf8');
@@ -43,35 +43,35 @@ async function applyMigration(migrationFile) {
     });
 
     if (response.ok) {
-      console.log(`  ✓ Success`);
+      logger.info(`  ✓ Success`);
     } else {
       const error = await response.text();
-      console.log(`  Note: ${error} (may be expected for DDL operations)`);
+      logger.info(`  Note: ${error} (may be expected for DDL operations)`);
     }
   } catch (err) {
-    console.log(`  Note: ${err.message} (may be expected for DDL operations)`);
+    logger.info(`  Note: ${err.message} (may be expected for DDL operations)`);
   }
 }
 
 async function applyAllMigrations() {
-  console.log('Applying content database migrations...');
-  console.log(`Supabase URL: ${supabaseUrl}`);
-  console.log('');
-  console.log('Migrations to apply:');
-  migrations.forEach(m => console.log(`  - ${m}`));
-  console.log('');
+  logger.info('Applying content database migrations...');
+  logger.info(`Supabase URL: ${supabaseUrl}`);
+  logger.info('');
+  logger.info('Migrations to apply:');
+  migrations.forEach(m => logger.info(`  - ${m}`));
+  logger.info('');
 
   for (const migration of migrations) {
     await applyMigration(migration);
-    console.log('');
+    logger.info('');
   }
 
-  console.log('Migration process complete!');
-  console.log('');
-  console.log('Next steps:');
-  console.log('1. Restart your dev server: npm run dev');
-  console.log('2. Access admin dashboard to populate content');
-  console.log('3. Test the routes: /research, /university, /products, /marketplace');
+  logger.info('Migration process complete!');
+  logger.info('');
+  logger.info('Next steps:');
+  logger.info('1. Restart your dev server: npm run dev');
+  logger.info('2. Access admin dashboard to populate content');
+  logger.info('3. Test the routes: /research, /university, /products, /marketplace');
 }
 
 applyAllMigrations().catch(console.error);

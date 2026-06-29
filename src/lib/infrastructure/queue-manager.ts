@@ -124,7 +124,7 @@ class QueueManager {
         
         await new Promise(resolve => setTimeout(resolve, 1000));
       } catch (error) {
-        console.error('[QueueManager] Error in process loop:', error);
+        logger.error('[QueueManager] Error in process loop:', error);
         await new Promise(resolve => setTimeout(resolve, 5000));
       }
     }
@@ -137,7 +137,7 @@ class QueueManager {
     const handler = this.handlers.get(job.type);
     
     if (!handler) {
-      console.error(`[QueueManager] No handler for job type: ${job.type}`);
+      logger.error(`[QueueManager] No handler for job type: ${job.type}`);
       job.status = 'failed';
       job.error = 'No handler registered';
       return;

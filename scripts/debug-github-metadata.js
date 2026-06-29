@@ -22,15 +22,15 @@ const TEST_REPOS = [
 async function debugGitHubMetadata() {
   const token = process.env.GITHUB_TOKEN;
   if (!token) {
-    console.error("GITHUB_TOKEN environment variable is not set");
+    logger.error("GITHUB_TOKEN environment variable is not set");
     process.exit(1);
   }
 
-  console.log("=".repeat(80));
-  console.log("GITHUB METADATA DEBUG SCRIPT");
-  console.log("=".repeat(80));
-  console.log(`Token: ${token ? "Loaded" : "Missing"}`);
-  console.log("");
+  logger.info("=".repeat(80));
+  logger.info("GITHUB METADATA DEBUG SCRIPT");
+  logger.info("=".repeat(80));
+  logger.info(`Token: ${token ? "Loaded" : "Missing"}`);
+  logger.info("");
 
   const octokit = new Octokit({
     auth: token,
@@ -38,16 +38,16 @@ async function debugGitHubMetadata() {
   });
 
   for (const { owner, repo } of TEST_REPOS) {
-    console.log("-".repeat(80));
-    console.log(`Testing: ${owner}/${repo}`);
-    console.log("-".repeat(80));
+    logger.info("-".repeat(80));
+    logger.info(`Testing: ${owner}/${repo}`);
+    logger.info("-".repeat(80));
 
     try {
       // Test 1: Get repository details (standard REST API)
-      console.log("\n1. Standard REST API (octokit.repos.get):");
+      logger.info("\n1. Standard REST API (octokit.repos.get):");
       const { data: repoData } = await octokit.repos.get({ owner, repo });
       
-      console.log({
+      logger.info({
         name: repoData.name,
         full_name: repoData.full_name,
         stargazers_count: repoData.stargazers_count,
@@ -61,18 +61,18 @@ async function debugGitHubMetadata() {
       });
 
       // Test 2: Get languages
-      console.log("\n2. Languages:");
+      logger.info("\n2. Languages:");
       const { data: languages } = await octokit.repos.listLanguages({ owner, repo });
       const languageNames = Object.keys(languages);
-      console.log({ languages: languageNames, count: languageNames.length });
+      logger.info({ languages: languageNames, count: languageNames.length });
 
       // Test 3: Get contributors
-      console.log("\n3. Contributors:");
+      logger.info("\n3. Contributors:");
       const { data: contributors } = await octokit.repos.listContributors({ owner, repo, per_page: 100 });
-      console.log({ count: contributors.length });
+      logger.info({ count: contributors.length });
 
       // Test 4: Simulate the mapped payload (as createGitHubProjectInsertPayload would create)
-      console.log("\n4. Simulated Database Payload:");
+      logger.info("\n4. Simulated Database Payload:");
       const simulatedPayload = {
         github_stars: repoData.stargazers_count || 0,
         repository_topics: repoData.topics || [],
@@ -84,37 +84,37 @@ async function debugGitHubMetadata() {
         github_repository_id: repoData.id,
       };
       
-      console.log(simulatedPayload);
+      logger.info(simulatedPayload);
 
       // Test 5: Check if topics array is empty
-      console.log("\n5. Topics Analysis:");
+      logger.info("\n5. Topics Analysis:");
       if (!repoData.topics || repoData.topics.length === 0) {
-        console.warn("⚠️  WARNING: topics array is empty or undefined!");
-        console.warn("   This suggests the GitHub API is not returning topics.");
-        console.warn("   The REST API may require special accept headers for topics.");
+        logger.warn("⚠️  WARNING: topics array is empty or undefined!");
+        logger.warn("   This suggests the GitHub API is not returning topics.");
+        logger.warn("   The REST API may require special accept headers for topics.");
       } else {
-        console.log(`✓ Topics found: ${repoData.topics.join(", ")}`);
+        logger.info(`✓ Topics found: ${repoData.topics.join(", ")}`);
       }
 
       // Test 6: Check if stars are zero
-      console.log("\n6. Stars Analysis:");
+      logger.info("\n6. Stars Analysis:");
       if (repoData.stargazers_count === 0) {
-        console.warn("⚠️  WARNING: stargazers_count is 0!");
-        console.warn("   This repository should have many stars.");
+        logger.warn("⚠️  WARNING: stargazers_count is 0!");
+        logger.warn("   This repository should have many stars.");
       } else {
-        console.log(`✓ Stars: ${repoData.stargazers_count.toLocaleString()}`);
+        logger.info(`✓ Stars: ${repoData.stargazers_count.toLocaleString()}`);
       }
 
     } catch (error) {
-      console.error(`Error fetching ${owner}/${repo}:`, error.message);
+      logger.error(`Error fetching ${owner}/${repo}:`, error.message);
     }
 
-    console.log("\n");
+    logger.info("\n");
   }
 
-  console.log("=".repeat(80));
-  console.log("DEBUG COMPLETE");
-  console.log("=".repeat(80));
+  logger.info("=".repeat(80));
+  logger.info("DEBUG COMPLETE");
+  logger.info("=".repeat(80));
 }
 
 debugGitHubMetadata().catch(console.error);

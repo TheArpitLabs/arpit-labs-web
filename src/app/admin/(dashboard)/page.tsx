@@ -113,7 +113,7 @@ export default async function AdminDashboardPage() {
 
   return (
     <div className="mx-auto max-w-[1500px]">
-      <AdminTopbar title="Admin Dashboard" subtitle="Control. Manage. Scale." />
+      <AdminTopbar title="Axiora Admin" subtitle="Control. Manage. Scale." />
 
       <div className="space-y-5">
         <section>

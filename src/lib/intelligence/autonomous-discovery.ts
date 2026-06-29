@@ -1,5 +1,6 @@
 import { supabaseServer } from "@/lib/supabase/server";
 import { assertKnowledgeFeature } from "../knowledge-ecosystem/feature-flags";
+import { logger } from '@/lib/logger';
 
 export interface DiscoverySource {
   id: string;
@@ -820,7 +821,7 @@ export class AutonomousDiscoveryEngine {
           await this.queueItem(item.id);
         }
       } catch (error) {
-        console.error(`Error processing item ${item.id}:`, error);
+        logger.error(`Error processing item ${item.id}:`, error);
       }
     }
   }

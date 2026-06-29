@@ -6,7 +6,7 @@ import Link from "next/link";
 
 export function LaunchCTA() {
   return (
-    <section className="relative py-32">
+    <section className="relative py-16">
       {/* Background gradients */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute left-0 top-0 h-[600px] w-[600px] rounded-full bg-primary/10 blur-3xl" />
@@ -28,9 +28,9 @@ export function LaunchCTA() {
             whileInView={{ scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="mx-auto mb-8 inline-flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-accent/20"
+            className="mx-auto mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-accent/20"
           >
-            <Rocket className="h-10 w-10 text-primary" />
+            <Rocket className="h-8 w-8 text-primary" />
           </motion.div>
 
           {/* Headline */}
@@ -39,7 +39,7 @@ export function LaunchCTA() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="mb-6 font-heading text-hero font-bold text-gradient"
+            className="mb-4 font-heading text-4xl font-bold text-gradient sm:text-5xl"
           >
             Build The Future With Arpit Labs
           </motion.h1>
@@ -50,7 +50,7 @@ export function LaunchCTA() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="mx-auto mb-12 max-w-3xl text-xl text-muted"
+            className="mx-auto mb-8 max-w-3xl text-lg text-muted"
           >
             Join thousands of engineers, researchers, and innovators who are already building the next generation of AI, IoT, and software systems.
           </motion.p>

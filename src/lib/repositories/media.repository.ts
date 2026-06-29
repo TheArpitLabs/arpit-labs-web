@@ -1,5 +1,6 @@
 import { supabaseServer } from "@/lib/supabase/server";
 import { handleDatabaseError } from "@/lib/errors";
+import { logger } from '@/lib/logger';
 
 export interface MediaInput {
   project_id: string;
@@ -29,7 +30,7 @@ export const mediaRepository = {
     const { data, error } = await query;
 
     if (error) {
-      console.error("Database error in getMedia:", error);
+      logger.error("Database error in getMedia:", error);
       throw handleDatabaseError(error);
     }
     return data ?? [];
@@ -53,7 +54,7 @@ export const mediaRepository = {
       .single();
 
     if (error) {
-      console.error("Database error in addMedia:", error);
+      logger.error("Database error in addMedia:", error);
       throw handleDatabaseError(error);
     }
     return data;
@@ -66,7 +67,7 @@ export const mediaRepository = {
       .eq("id", mediaId);
 
     if (error) {
-      console.error("Database error in removeMedia:", error);
+      logger.error("Database error in removeMedia:", error);
       throw handleDatabaseError(error);
     }
     return true;
@@ -81,7 +82,7 @@ export const mediaRepository = {
       .single();
 
     if (error) {
-      console.error("Database error in updateMedia:", error);
+      logger.error("Database error in updateMedia:", error);
       throw handleDatabaseError(error);
     }
     return data;
@@ -100,7 +101,7 @@ export const mediaRepository = {
     // Check for errors
     for (const result of results) {
       if (result.error) {
-        console.error("Database error in reorderMedia:", result.error);
+        logger.error("Database error in reorderMedia:", result.error);
         throw handleDatabaseError(result.error);
       }
     }

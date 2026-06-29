@@ -2,6 +2,7 @@ import { supabaseServer } from "@/lib/supabase/server";
 import { Product } from "@/types/content";
 import { ProductInput } from "@/lib/validation/product.schema";
 import { handleDatabaseError } from "@/lib/errors";
+import { logger } from '@/lib/logger';
 
 export const productsRepository = {
   async getProducts(filters?: { published?: boolean; featured?: boolean; search?: string; category?: string }) {
@@ -30,7 +31,7 @@ export const productsRepository = {
     const { data, error } = await query;
 
     if (error) {
-      console.error("Database error in getProducts:", error);
+      logger.error("Database error in getProducts:", error);
       throw handleDatabaseError(error);
     }
 
@@ -50,7 +51,7 @@ export const productsRepository = {
       .single();
 
     if (error) {
-      console.error("Database error in getProductById:", error);
+      logger.error("Database error in getProductById:", error);
       throw handleDatabaseError(error);
     }
 
@@ -70,7 +71,7 @@ export const productsRepository = {
       .single();
 
     if (error) {
-      console.error("Database error in getProductBySlug:", error);
+      logger.error("Database error in getProductBySlug:", error);
       throw handleDatabaseError(error);
     }
 
@@ -85,7 +86,7 @@ export const productsRepository = {
       .single();
 
     if (error) {
-      console.error("Database error in createProduct:", error);
+      logger.error("Database error in createProduct:", error);
       throw handleDatabaseError(error);
     }
 
@@ -101,7 +102,7 @@ export const productsRepository = {
       .single();
 
     if (error) {
-      console.error("Database error in updateProduct:", error);
+      logger.error("Database error in updateProduct:", error);
       throw handleDatabaseError(error);
     }
 
@@ -112,7 +113,7 @@ export const productsRepository = {
     const { error } = await supabaseServer.from("products").delete().eq("id", id);
 
     if (error) {
-      console.error("Database error in deleteProduct:", error);
+      logger.error("Database error in deleteProduct:", error);
       throw handleDatabaseError(error);
     }
 

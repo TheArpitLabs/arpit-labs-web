@@ -6,6 +6,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { logger } from '@/lib/logger';
 
 // GET /api/admin/acquisition/analytics - Get comprehensive analytics
 export async function GET(request: NextRequest) {
@@ -144,7 +145,7 @@ export async function GET(request: NextRequest) {
       }
     });
   } catch (error) {
-    console.error('Error getting analytics:', error);
+    logger.error('Error getting analytics:', error);
     return NextResponse.json({
       success: false,
       error: 'Failed to get analytics'

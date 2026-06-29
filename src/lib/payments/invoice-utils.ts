@@ -20,10 +20,10 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<Buffer> {
 
   // Header
   doc.setFontSize(20);
-  doc.text("ARPIT LABS", 14, 22);
+  doc.text("AXIORA", 14, 22);
   doc.setFontSize(10);
   doc.text("Innovation & Technology Platform", 14, 28);
-  doc.text("Email: hello@arpitlabs.com", 14, 33);
+  doc.text("Email: hello@axiora.com", 14, 33);
 
   doc.setFontSize(16);
   doc.text("INVOICE", 140, 22);
@@ -62,7 +62,7 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<Buffer> {
   // Footer
   doc.setFontSize(8);
   doc.text("Thank you for your business!", 14, finalY + 20);
-  doc.text("Arpit Labs - Building the future of Tech Learning.", 14, finalY + 25);
+  doc.text("Axiora - Building the future of AI Innovation.", 14, finalY + 25);
 
   return Buffer.from(doc.output("arraybuffer"));
 }

@@ -8,7 +8,7 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
-  console.error('Missing Supabase credentials. Check your .env.local file.');
+  logger.error('Missing Supabase credentials. Check your .env.local file.');
   process.exit(1);
 }
 
@@ -35,8 +35,8 @@ async function executeSQLViaManagementAPI(sql) {
 }
 
 async function applyMigration() {
-  console.log('🚀 Adding count columns to engineering_domains table');
-  console.log('===========================================');
+  logger.info('🚀 Adding count columns to engineering_domains table');
+  logger.info('===========================================');
 
   try {
     // First, add the columns using Management API
@@ -50,9 +50,9 @@ async function applyMigration() {
       ADD COLUMN IF NOT EXISTS total_hackathons integer DEFAULT 0
     `;
 
-    console.log('Adding count columns via Management API...');
+    logger.info('Adding count columns via Management API...');
     await executeSQLViaManagementAPI(alterSQL);
-    console.log('✓ Added count columns to engineering_domains table');
+    logger.info('✓ Added count columns to engineering_domains table');
 
     // Get all domains
     const { data: domains, error: domainsError } = await supabase
@@ -61,7 +61,7 @@ async function applyMigration() {
 
     if (domainsError) throw domainsError;
 
-    console.log(`Found ${domains.length} domains`);
+    logger.info(`Found ${domains.length} domains`);
 
     // Update counts for each domain
     for (const domain of domains) {
@@ -72,7 +72,7 @@ async function applyMigration() {
         .eq('domain_id', domain.id);
 
       if (projectError) {
-        console.error('Error counting projects for', domain.slug, ':', projectError);
+        logger.error('Error counting projects for', domain.slug, ':', projectError);
       } else {
         const { error: updateError } = await supabase
           .from('engineering_domains')
@@ -80,25 +80,25 @@ async function applyMigration() {
           .eq('id', domain.id);
 
         if (updateError) {
-          console.error('Error updating project count for', domain.slug, ':', updateError);
+          logger.error('Error updating project count for', domain.slug, ':', updateError);
         } else {
-          console.log(`✓ Updated ${domain.name} with ${projectCount || 0} projects`);
+          logger.info(`✓ Updated ${domain.name} with ${projectCount || 0} projects`);
         }
       }
     }
 
-    console.log('✅ Migration applied successfully');
-    console.log('');
-    console.log('Domain counts have been updated. Projects should now be visible.');
+    logger.info('✅ Migration applied successfully');
+    logger.info('');
+    logger.info('Domain counts have been updated. Projects should now be visible.');
 
   } catch (error) {
-    console.error('Error applying migration:', error.message);
-    console.log('\n⚠️  Migration failed.');
-    console.log('Please apply the migration manually using:');
-    console.log('  1. Supabase Dashboard: SQL Editor');
-    console.log('  2. Navigate to: https://app.supabase.com/project/' + projectRef + '/sql/new');
-    console.log('  3. Paste the contents of: supabase/migrations/20260615_add_domain_counts_columns.sql');
-    console.log('  4. Click "Run" to execute');
+    logger.error('Error applying migration:', error.message);
+    logger.info('\n⚠️  Migration failed.');
+    logger.info('Please apply the migration manually using:');
+    logger.info('  1. Supabase Dashboard: SQL Editor');
+    logger.info('  2. Navigate to: https://app.supabase.com/project/' + projectRef + '/sql/new');
+    logger.info('  3. Paste the contents of: supabase/migrations/20260615_add_domain_counts_columns.sql');
+    logger.info('  4. Click "Run" to execute');
     process.exit(1);
   }
 }

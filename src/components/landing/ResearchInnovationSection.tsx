@@ -83,20 +83,20 @@ const innovationHighlights = [
 
 export function ResearchInnovationSection() {
   return (
-    <section className="py-24">
+    <section className="py-10">
       {/* Header */}
       <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="mb-16 text-center"
+          className="mb-6 text-center"
         >
-          <p className="mb-4 text-sm uppercase tracking-[0.28em] text-muted">Research & Innovation</p>
-          <h2 className="mb-6 text-section-title">
+          <p className="mb-2 text-xs uppercase tracking-[0.28em] text-muted">Research & Innovation</p>
+          <h2 className="mb-3 text-2xl font-bold sm:text-3xl">
             Engineering Knowledge Hub
           </h2>
-          <p className="mx-auto max-w-3xl text-lg text-muted">
+          <p className="mx-auto max-w-2xl text-sm text-muted">
             Explore cutting-edge research papers, technical publications, and innovative projects pushing the boundaries of AI, IoT, and emerging technologies.
           </p>
         </motion.div>
@@ -107,14 +107,14 @@ export function ResearchInnovationSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="mb-20"
+          className="mb-12"
         >
-          <div className="mb-12">
-            <h3 className="text-2xl font-heading font-bold text-foreground">Research Categories</h3>
-            <p className="mt-2 text-muted">Explore research across key engineering domains</p>
+          <div className="mb-8">
+            <h3 className="text-xl font-heading font-bold text-foreground">Research Categories</h3>
+            <p className="mt-1 text-sm text-muted">Explore research across key engineering domains</p>
           </div>
 
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {researchCategories.map((category, index) => (
               <Link key={category.name} href="/research">
                 <motion.div
@@ -122,25 +122,25 @@ export function ResearchInnovationSection() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
-                  whileHover={{ y: -8, scale: 1.02 }}
-                  className="group relative h-full rounded-3xl glass p-6 transition-all duration-300 hover:shadow-2xl"
+                  whileHover={{ y: -4, scale: 1.02 }}
+                  className="group relative h-full rounded-2xl glass p-5 transition-all duration-300 hover:shadow-lg"
                 >
-                  <div className={`absolute inset-0 rounded-3xl bg-gradient-to-br ${category.gradient} opacity-0 transition-opacity duration-300 group-hover:opacity-100`} />
+                  <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${category.gradient} opacity-0 transition-opacity duration-300 group-hover:opacity-100`} />
                   
                   <div className="relative h-full">
                     <motion.div
                       whileHover={{ scale: 1.1, rotate: 5 }}
                       transition={{ duration: 0.3 }}
-                      className={`mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${category.iconGradient} text-white shadow-lg`}
+                      className={`mb-3 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br ${category.iconGradient} text-white shadow-md`}
                     >
-                      <category.icon size={24} />
+                      <category.icon size={20} />
                     </motion.div>
                     
-                    <h4 className="mb-2 text-lg font-heading font-bold text-foreground group-hover:text-primary transition-colors">
+                    <h4 className="mb-2 text-sm font-heading font-semibold text-foreground group-hover:text-primary transition-colors">
                       {category.name}
                     </h4>
                     
-                    <p className="mb-4 text-sm text-muted leading-relaxed line-clamp-2">
+                    <p className="mb-3 text-xs text-muted leading-relaxed line-clamp-2">
                       {category.description}
                     </p>
                     
@@ -161,23 +161,23 @@ export function ResearchInnovationSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="mb-20"
+          className="mb-12"
         >
-          <div className="mb-12 flex items-center justify-between">
+          <div className="mb-8 flex items-center justify-between">
             <div>
-              <h3 className="text-2xl font-bold text-foreground">Featured Research</h3>
-              <p className="mt-2 text-muted">Latest publications and technical papers</p>
+              <h3 className="text-xl font-bold text-foreground">Featured Research</h3>
+              <p className="mt-1 text-sm text-muted">Latest publications and technical papers</p>
             </div>
             <Link 
               href="/research"
-              className="hidden sm:flex items-center gap-2 text-sm font-semibold text-primary hover:gap-4 transition-all"
+              className="hidden sm:flex items-center gap-2 text-xs font-semibold text-primary hover:gap-4 transition-all"
             >
               View All Research
               <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
             </Link>
           </div>
 
-          <div className="grid gap-6 lg:grid-cols-3">
+          <div className="grid gap-4 lg:grid-cols-3">
             {featuredResearch.map((research, index) => (
               <motion.div
                 key={research.title}
@@ -185,31 +185,31 @@ export function ResearchInnovationSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                whileHover={{ y: -8 }}
-                className="relative overflow-hidden rounded-3xl glass p-6 transition-all duration-300 hover:shadow-2xl"
+                whileHover={{ y: -4 }}
+                className="relative overflow-hidden rounded-2xl glass p-5 transition-all duration-300 hover:shadow-lg"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5 opacity-0 transition-opacity duration-300 hover:opacity-100" />
                 <div className="relative">
-                  <div className="mb-4 flex items-center justify-between">
-                    <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
+                  <div className="mb-3 flex items-center justify-between">
+                    <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
                       {research.category}
                     </span>
-                    <span className="text-xs text-muted">{research.date}</span>
+                    <span className="text-[10px] text-muted">{research.date}</span>
                   </div>
                   
-                  <h4 className="mb-3 text-lg font-bold text-foreground line-clamp-2">
+                  <h4 className="mb-2 text-sm font-bold text-foreground line-clamp-2">
                     {research.title}
                   </h4>
                   
-                  <p className="mb-4 text-sm text-muted leading-relaxed line-clamp-3">
+                  <p className="mb-3 text-xs text-muted leading-relaxed line-clamp-2">
                     {research.excerpt}
                   </p>
                   
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold text-muted">{research.type}</span>
-                    <div className="flex items-center gap-2 text-xs font-semibold text-primary">
+                    <span className="text-[10px] font-semibold text-muted">{research.type}</span>
+                    <div className="flex items-center gap-1 text-[10px] font-semibold text-primary">
                       Read More
-                      <ArrowRight size={12} />
+                      <ArrowRight size={10} />
                     </div>
                   </div>
                 </div>
@@ -217,13 +217,13 @@ export function ResearchInnovationSection() {
             ))}
           </div>
 
-          <div className="mt-6 sm:hidden">
+          <div className="mt-4 sm:hidden">
             <Link 
               href="/research"
-              className="flex items-center justify-center gap-2 text-sm font-semibold text-primary"
+              className="flex items-center justify-center gap-2 text-xs font-semibold text-primary"
             >
               View All Research
-              <ArrowRight size={16} />
+              <ArrowRight size={14} />
             </Link>
           </div>
         </motion.div>
@@ -235,12 +235,12 @@ export function ResearchInnovationSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <div className="mb-12">
-            <h3 className="text-2xl font-bold text-foreground">Innovation Highlights</h3>
-            <p className="mt-2 text-muted">Cutting-edge projects and experimental prototypes</p>
+          <div className="mb-8">
+            <h3 className="text-xl font-bold text-foreground">Innovation Highlights</h3>
+            <p className="mt-1 text-sm text-muted">Cutting-edge projects and experimental prototypes</p>
           </div>
 
-          <div className="grid gap-6 lg:grid-cols-3">
+          <div className="grid gap-4 lg:grid-cols-3">
             {innovationHighlights.map((highlight, index) => (
               <motion.div
                 key={highlight.title}
@@ -248,25 +248,25 @@ export function ResearchInnovationSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                whileHover={{ y: -8 }}
-                className="relative overflow-hidden rounded-3xl glass p-6 transition-all duration-300 hover:shadow-2xl"
+                whileHover={{ y: -4 }}
+                className="relative overflow-hidden rounded-2xl glass p-5 transition-all duration-300 hover:shadow-lg"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-secondary/5 to-primary/5 opacity-0 transition-opacity duration-300 hover:opacity-100" />
                 <div className="relative">
-                  <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary/10 to-secondary/10 text-primary">
-                    <Lightbulb size={24} />
+                  <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-primary/10 to-secondary/10 text-primary">
+                    <Lightbulb size={20} />
                   </div>
                   
-                  <h4 className="mb-3 text-lg font-bold text-foreground line-clamp-1">
+                  <h4 className="mb-2 text-sm font-bold text-foreground line-clamp-1">
                     {highlight.title}
                   </h4>
                   
-                  <p className="mb-4 text-sm text-muted leading-relaxed line-clamp-3">
+                  <p className="mb-3 text-xs text-muted leading-relaxed line-clamp-2">
                     {highlight.description}
                   </p>
                   
                   <div className="flex items-center justify-between">
-                    <span className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                    <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${
                       highlight.status === 'Released' 
                         ? 'bg-success/10 text-success' 
                         : highlight.status === 'Beta'
@@ -288,16 +288,16 @@ export function ResearchInnovationSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="mt-20"
+          className="mt-12"
         >
-          <div className="relative overflow-hidden rounded-3xl glass p-12 text-center">
+          <div className="relative overflow-hidden rounded-2xl glass p-8 text-center">
             <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-secondary/5" />
             <div className="relative">
-              <div className="mx-auto mb-6 inline-flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-secondary/20">
-                <BookOpen className="h-8 w-8 text-primary" />
+              <div className="mx-auto mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-secondary/20">
+                <BookOpen className="h-6 w-6 text-primary" />
               </div>
-              <h3 className="mb-4 text-3xl font-bold text-foreground">Explore Our Research</h3>
-              <p className="mb-8 max-w-2xl mx-auto text-lg text-muted">
+              <h3 className="mb-3 text-xl font-bold text-foreground">Explore Our Research</h3>
+              <p className="mb-6 max-w-xl mx-auto text-sm text-muted">
                 Dive deep into technical papers, case studies, and innovative projects shaping the future of engineering.
               </p>
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-center">

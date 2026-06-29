@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getUserFromRequest, getAdminUserFromRequest } from "@/lib/auth";
+import { getUserFromRequest, getAdminUserFromRequest } from "@/lib/auth/auth";
 import { contributorsRepository } from "@/lib/repositories/contributors.repository";
 import { projectsRepository } from "@/lib/repositories/projects.repository";
 import { z } from "zod";
+import { logger } from '@/lib/logger';
 
 const addContributorSchema = z.object({
   user_id: z.string().uuid(),
@@ -32,7 +33,7 @@ export async function GET(
 
     return NextResponse.json({ data: contributors });
   } catch (error) {
-    console.error('Error in GET /api/projects/[slug]/contributors:', error);
+    logger.error('Error in GET /api/projects/[slug]/contributors:', error);
     return NextResponse.json(
       { error: 'Failed to fetch contributors' },
       { status: 500 }
@@ -89,7 +90,7 @@ export async function POST(
 
     return NextResponse.json({ data: contributor }, { status: 201 });
   } catch (error) {
-    console.error('Error in POST /api/projects/[slug]/contributors:', error);
+    logger.error('Error in POST /api/projects/[slug]/contributors:', error);
     if (error instanceof Error && error.name === 'ZodError') {
       return NextResponse.json(
         { error: 'Validation error', details: error },

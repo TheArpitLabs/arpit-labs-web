@@ -2,6 +2,7 @@ import { supabaseServer } from "@/lib/supabase/server";
 import { assertKnowledgeFeature } from "./feature-flags";
 import { learningPathGenerator } from "./learning-path-generator";
 import { careerTrackEngine } from "./career-track-engine";
+import { logger } from '@/lib/logger';
 
 export interface LearningRecommendation {
   id: string;
@@ -257,7 +258,7 @@ export class AILearningAdvisor {
       .single();
 
     if (error) {
-      console.error("Failed to store recommendation:", error);
+      logger.error("Failed to store recommendation:", error);
       throw error;
     }
 

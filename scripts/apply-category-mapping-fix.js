@@ -5,14 +5,14 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
-  console.error('Missing Supabase credentials in .env.local');
+  logger.error('Missing Supabase credentials in .env.local');
   process.exit(1);
 }
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 async function applyMigration() {
-  console.log('Applying category_domain_mapping schema fix...');
+  logger.info('Applying category_domain_mapping schema fix...');
   
   const migrationSQL = `
 -- Fix Category Domain Mapping Schema
@@ -82,11 +82,11 @@ create policy "Admins can manage category domain mappings" on category_domain_ma
     const { data, error } = await supabase.rpc('exec_sql', { sql: migrationSQL });
     
     if (error) {
-      console.error('Error applying migration:', error);
+      logger.error('Error applying migration:', error);
       throw error;
     }
     
-    console.log('Migration applied successfully!');
+    logger.info('Migration applied successfully!');
     
     // Verify the results
     const { data: domains, error: verifyError } = await supabase
@@ -101,24 +101,24 @@ create policy "Admins can manage category domain mappings" on category_domain_ma
       `);
     
     if (verifyError) {
-      console.error('Error verifying migration:', verifyError);
+      logger.error('Error verifying migration:', verifyError);
     } else {
-      console.log('\n=== Verification Results ===');
+      logger.info('\n=== Verification Results ===');
       domains.forEach(domain => {
         const categories = domain.category_domain_mapping?.map(m => m.category) || [];
-        console.log(`${domain.name} (${domain.slug}): ${categories.length} categories`);
+        logger.info(`${domain.name} (${domain.slug}): ${categories.length} categories`);
         if (categories.length > 0) {
-          console.log(`  Categories: ${categories.join(', ')}`);
+          logger.info(`  Categories: ${categories.join(', ')}`);
         }
       });
     }
     
   } catch (error) {
-    console.error('Failed to apply migration:', error);
-    console.log('\nPlease apply the migration manually via Supabase dashboard:');
-    console.log('1. Go to https://supabase.com/dashboard/project/lxbtuwltzljmnwxbygcl/sql/new');
-    console.log('2. Copy contents of supabase/migrations/20260615_fix_category_domain_mapping_schema.sql');
-    console.log('3. Paste and run the SQL');
+    logger.error('Failed to apply migration:', error);
+    logger.info('\nPlease apply the migration manually via Supabase dashboard:');
+    logger.info('1. Go to https://supabase.com/dashboard/project/lxbtuwltzljmnwxbygcl/sql/new');
+    logger.info('2. Copy contents of supabase/migrations/20260615_fix_category_domain_mapping_schema.sql');
+    logger.info('3. Paste and run the SQL');
     process.exit(1);
   }
 }

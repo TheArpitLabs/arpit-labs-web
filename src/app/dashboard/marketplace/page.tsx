@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import { marketplaceRepository } from "@/lib/repositories/marketplace.repository";
-import { requireUser } from "@/lib/auth";
+import { requireUser } from "@/lib/auth/auth";
 import { Container } from "@/components/layout/Container";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";

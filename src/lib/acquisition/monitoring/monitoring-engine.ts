@@ -14,6 +14,7 @@ import {
   MonitoringConfig,
   PerformanceMetrics 
 } from './types';
+import { logger } from '@/lib/logger';
 
 export interface MonitoringEngine {
   recordMetric(metric: Omit<Metric, 'timestamp'>): Promise<void>;
@@ -145,12 +146,12 @@ class BaseMonitoringEngine implements MonitoringEngine {
         })));
 
       if (error) {
-        console.error('Error flushing metrics:', error);
+        logger.error('Error flushing metrics:', { error });
       } else {
         this.metricsBuffer = [];
       }
     } catch (error) {
-      console.error('Error flushing metrics:', error);
+      logger.error('Error flushing metrics:', { error });
     }
   }
 
@@ -175,11 +176,23 @@ class BaseMonitoringEngine implements MonitoringEngine {
       await this.flushLogs();
     }
 
-    // Also log to console
-    const consoleMethod = entry.level === 'error' ? console.error : 
-                         entry.level === 'warn' ? console.warn :
-                         entry.level === 'debug' ? console.debug : console.log;
-    consoleMethod(`[${entry.component}] ${entry.message}`, entry.metadata || '');
+    // Also log to console via logger
+    const logMessage = `[${entry.component}] ${entry.message}`;
+    const logContext = entry.metadata || {};
+    
+    switch (entry.level) {
+      case 'error':
+        logger.error(logMessage, logContext);
+        break;
+      case 'warn':
+        logger.warn(logMessage, logContext);
+        break;
+      case 'debug':
+        logger.debug(logMessage, logContext);
+        break;
+      default:
+        logger.info(logMessage, logContext);
+    }
   }
 
   private async flushLogs(): Promise<void> {
@@ -198,12 +211,12 @@ class BaseMonitoringEngine implements MonitoringEngine {
         })));
 
       if (error) {
-        console.error('Error flushing logs:', error);
+        logger.error('Error flushing logs:', { error });
       } else {
         this.logsBuffer = [];
       }
     } catch (error) {
-      console.error('Error flushing logs:', error);
+      logger.error('Error flushing logs:', { error });
     }
   }
 
@@ -421,10 +434,10 @@ class BaseMonitoringEngine implements MonitoringEngine {
         });
 
       if (error) {
-        console.error('Error creating alert:', error);
+        logger.error('Error creating alert:', { error });
       }
     } catch (error) {
-      console.error('Error creating alert:', error);
+      logger.error('Error creating alert:', { error });
     }
   }
 
@@ -442,7 +455,7 @@ class BaseMonitoringEngine implements MonitoringEngine {
           await this.createAlert(alert);
         }
       } catch (error) {
-        console.error(`Error evaluating alert rule ${ruleName}:`, error);
+        logger.error(`Error evaluating alert rule ${ruleName}:`, { error });
       }
     }
   }
@@ -457,7 +470,7 @@ class BaseMonitoringEngine implements MonitoringEngine {
         })
         .eq('id', alertId);
     } catch (error) {
-      console.error('Error resolving alert:', error);
+      logger.error('Error resolving alert:', { error });
       throw error;
     }
   }
@@ -482,7 +495,7 @@ class BaseMonitoringEngine implements MonitoringEngine {
       const { data, error } = await query;
 
       if (error) {
-        console.error('Error getting metrics:', error);
+        logger.error('Error getting metrics:', { error });
         return [];
       }
 
@@ -495,7 +508,7 @@ class BaseMonitoringEngine implements MonitoringEngine {
       }));
 
     } catch (error) {
-      console.error('Error in getMetrics:', error);
+      logger.error('Error in getMetrics:', { error });
       return [];
     }
   }
@@ -519,7 +532,7 @@ class BaseMonitoringEngine implements MonitoringEngine {
       const { data, error } = await query;
 
       if (error) {
-        console.error('Error getting logs:', error);
+        logger.error('Error getting logs:', { error });
         return [];
       }
 
@@ -533,7 +546,7 @@ class BaseMonitoringEngine implements MonitoringEngine {
       }));
 
     } catch (error) {
-      console.error('Error in getLogs:', error);
+      logger.error('Error in getLogs:', { error });
       return [];
     }
   }
@@ -553,7 +566,7 @@ class BaseMonitoringEngine implements MonitoringEngine {
       const { data, error } = await query;
 
       if (error) {
-        console.error('Error getting alerts:', error);
+        logger.error('Error getting alerts:', { error });
         return [];
       }
 
@@ -569,7 +582,7 @@ class BaseMonitoringEngine implements MonitoringEngine {
       }));
 
     } catch (error) {
-      console.error('Error in getAlerts:', error);
+      logger.error('Error in getAlerts:', { error });
       return [];
     }
   }
@@ -607,7 +620,7 @@ class BaseMonitoringEngine implements MonitoringEngine {
         .lt('timestamp', logsCutoff.toISOString());
 
     } catch (error) {
-      console.error('Error during cleanup:', error);
+      logger.error('Error during cleanup:', { error });
     }
   }
 }

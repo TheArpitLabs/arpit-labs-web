@@ -13,6 +13,8 @@
  * - Restrictive / Strong Copyleft (GPL-2.0, GPL-3.0, AGPL-3.0, SSPL): Auto-reject
  */
 
+import { logger } from '@/lib/logger';
+
 // ============================================================================
 // SPDX LICENSE TEMPLATES (Simplified subset of 500+)
 // ============================================================================
@@ -592,7 +594,7 @@ function detectLicenseFromManifest(manifestContent: string, type: 'npm' | 'cargo
       }
     }
   } catch (error) {
-    console.error('Error parsing manifest:', error);
+    logger.error('Error parsing manifest:', error);
   }
 
   return {

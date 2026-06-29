@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Roadmap } from '@/types/content';
+import { logger } from '@/lib/logger';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
@@ -16,7 +17,7 @@ export const roadmapsRepository = {
     const { data, error } = await query.order('created_at', { ascending: false });
     
     if (error) {
-      console.error('Error fetching roadmaps:', error);
+      logger.error('Error fetching roadmaps:', error);
       throw error;
     }
     
@@ -32,7 +33,7 @@ export const roadmapsRepository = {
       .order('created_at', { ascending: false });
     
     if (error) {
-      console.error('Error fetching roadmaps by category:', error);
+      logger.error('Error fetching roadmaps by category:', error);
       throw error;
     }
     
@@ -47,7 +48,7 @@ export const roadmapsRepository = {
       .single();
     
     if (error && error.code !== 'PGRST116') {
-      console.error('Error fetching roadmap:', error);
+      logger.error('Error fetching roadmap:', error);
     }
     
     return data || null;
@@ -61,7 +62,7 @@ export const roadmapsRepository = {
       .single();
     
     if (error && error.code !== 'PGRST116') {
-      console.error('Error fetching roadmap:', error);
+      logger.error('Error fetching roadmap:', error);
     }
     
     return data || null;
@@ -75,7 +76,7 @@ export const roadmapsRepository = {
       .single();
     
     if (error) {
-      console.error('Error creating roadmap:', error);
+      logger.error('Error creating roadmap:', error);
       throw error;
     }
     
@@ -91,7 +92,7 @@ export const roadmapsRepository = {
       .single();
     
     if (error) {
-      console.error('Error updating roadmap:', error);
+      logger.error('Error updating roadmap:', error);
       throw error;
     }
     
@@ -105,7 +106,7 @@ export const roadmapsRepository = {
       .eq('id', id);
     
     if (error) {
-      console.error('Error deleting roadmap:', error);
+      logger.error('Error deleting roadmap:', error);
       throw error;
     }
   },

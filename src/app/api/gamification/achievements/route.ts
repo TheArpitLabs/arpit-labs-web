@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabase/server";
 import { handleDatabaseError } from "@/lib/errors";
 import { getAllAchievements } from "@/lib/gamification/achievement-system";
+import { logger } from '@/lib/logger';
 
 // GET /api/gamification/achievements - Get all available achievements
 export async function GET(request: NextRequest) {
@@ -31,7 +32,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ data: data || [] });
   } catch (error) {
-    console.error('Error in GET /api/gamification/achievements:', error);
+    logger.error('Error in GET /api/gamification/achievements:', error);
     return NextResponse.json(
       { error: 'Failed to fetch achievements' },
       { status: 500 }

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { supabaseClient } from "@/lib/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -15,11 +15,23 @@ import { ProfileEndorsements } from "@/components/profile/ProfileEndorsements";
 import { VerificationRequest } from "@/components/profile/VerificationRequest";
 import { User, Settings, Shield, Award, Trophy, MessageSquare, ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { logger } from '@/lib/logger';
 
 export default function ProfileSettingsPage() {
   const [profile, setProfile] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"basic" | "visibility" | "badges" | "achievements" | "endorsements" | "verification">("basic");
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const tabPanelRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  const tabs = [
+    { id: "basic", label: "Basic Info", icon: User },
+    { id: "visibility", label: "Visibility", icon: Settings },
+    { id: "badges", label: "Badges", icon: Award },
+    { id: "achievements", label: "Achievements", icon: Trophy },
+    { id: "endorsements", label: "Endorsements", icon: MessageSquare },
+    { id: "verification", label: "Verification", icon: Shield },
+  ] as const;
 
   useEffect(() => {
     loadProfile();
@@ -40,7 +52,7 @@ export default function ProfileSettingsPage() {
       if (error) throw error;
       setProfile(p);
     } catch (error) {
-      console.error("Error loading profile:", error);
+      logger.error("Error loading profile:", error);
     } finally {
       setLoading(false);
     }
@@ -49,6 +61,32 @@ export default function ProfileSettingsPage() {
   const handleProfileUpdate = (updatedProfile: any) => {
     setProfile(updatedProfile);
   };
+
+  const handleTabChange = useCallback((tabId: string, index: number) => {
+    setActiveTab(tabId as any);
+    tabRefs.current[index]?.focus();
+    tabPanelRefs.current[index]?.focus();
+  }, []);
+
+  const handleTabKeyDown = useCallback((e: React.KeyboardEvent, index: number, tabId: string) => {
+    const tabIds = tabs.map(t => t.id);
+    
+    if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      const nextIndex = (index + 1) % tabIds.length;
+      handleTabChange(tabIds[nextIndex], nextIndex);
+    } else if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      const prevIndex = (index - 1 + tabIds.length) % tabIds.length;
+      handleTabChange(tabIds[prevIndex], prevIndex);
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      handleTabChange(tabIds[0], 0);
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      handleTabChange(tabIds[tabIds.length - 1], tabIds.length - 1);
+    }
+  }, [handleTabChange]);
 
   if (loading) {
     return (
@@ -83,15 +121,6 @@ export default function ProfileSettingsPage() {
       </main>
     );
   }
-
-  const tabs = [
-    { id: "basic", label: "Basic Info", icon: User },
-    { id: "visibility", label: "Visibility", icon: Settings },
-    { id: "badges", label: "Badges", icon: Award },
-    { id: "achievements", label: "Achievements", icon: Trophy },
-    { id: "endorsements", label: "Endorsements", icon: MessageSquare },
-    { id: "verification", label: "Verification", icon: Shield },
-  ] as const;
 
   return (
     <main className="min-h-screen bg-background">
@@ -152,21 +181,28 @@ export default function ProfileSettingsPage() {
         </Card>
 
         {/* Tabs */}
-        <div className="mb-6 border-b border-border">
+        <div className="mb-6 border-b border-border" role="tablist" aria-label="Profile settings tabs">
           <div className="flex gap-4 overflow-x-auto">
-            {tabs.map((tab) => {
+            {tabs.map((tab, index) => {
               const Icon = tab.icon;
               return (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 px-4 py-3 border-b-2 transition ${
+                  ref={(el) => { tabRefs.current[index] = el; }}
+                  onClick={() => handleTabChange(tab.id, index)}
+                  onKeyDown={(e) => handleTabKeyDown(e, index, tab.id)}
+                  role="tab"
+                  aria-selected={activeTab === tab.id}
+                  aria-controls={`${tab.id}-panel`}
+                  id={`${tab.id}-tab`}
+                  tabIndex={activeTab === tab.id ? 0 : -1}
+                  className={`flex items-center gap-2 px-4 py-3 border-b-2 transition focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${
                     activeTab === tab.id
                       ? "border-primary text-primary"
                       : "border-transparent text-muted hover:text-foreground"
                   }`}
                 >
-                  <Icon className="h-4 w-4" />
+                  <Icon className="h-4 w-4" aria-hidden="true" />
                   {tab.label}
                 </button>
               );
@@ -177,27 +213,75 @@ export default function ProfileSettingsPage() {
         {/* Tab Content */}
         <div className="space-y-6">
           {activeTab === "basic" && (
-            <ProfileCustomization profile={profile} onProfileUpdate={handleProfileUpdate} />
+            <div
+              ref={(el) => { tabPanelRefs.current[0] = el; }}
+              role="tabpanel"
+              id="basic-panel"
+              aria-labelledby="basic-tab"
+              tabIndex={0}
+            >
+              <ProfileCustomization profile={profile} onProfileUpdate={handleProfileUpdate} />
+            </div>
           )}
 
           {activeTab === "visibility" && (
-            <ProfileVisibilitySettings profile={profile} onProfileUpdate={handleProfileUpdate} />
+            <div
+              ref={(el) => { tabPanelRefs.current[1] = el; }}
+              role="tabpanel"
+              id="visibility-panel"
+              aria-labelledby="visibility-tab"
+              tabIndex={0}
+            >
+              <ProfileVisibilitySettings profile={profile} onProfileUpdate={handleProfileUpdate} />
+            </div>
           )}
 
           {activeTab === "badges" && (
-            <ProfileBadges profile={profile} isOwnProfile={true} />
+            <div
+              ref={(el) => { tabPanelRefs.current[2] = el; }}
+              role="tabpanel"
+              id="badges-panel"
+              aria-labelledby="badges-tab"
+              tabIndex={0}
+            >
+              <ProfileBadges profile={profile} isOwnProfile={true} />
+            </div>
           )}
 
           {activeTab === "achievements" && (
-            <ProfileAchievements profile={profile} isOwnProfile={true} />
+            <div
+              ref={(el) => { tabPanelRefs.current[3] = el; }}
+              role="tabpanel"
+              id="achievements-panel"
+              aria-labelledby="achievements-tab"
+              tabIndex={0}
+            >
+              <ProfileAchievements profile={profile} isOwnProfile={true} />
+            </div>
           )}
 
           {activeTab === "endorsements" && (
-            <ProfileEndorsements profile={profile} currentUserId={profile.id} />
+            <div
+              ref={(el) => { tabPanelRefs.current[4] = el; }}
+              role="tabpanel"
+              id="endorsements-panel"
+              aria-labelledby="endorsements-tab"
+              tabIndex={0}
+            >
+              <ProfileEndorsements profile={profile} currentUserId={profile.id} />
+            </div>
           )}
 
           {activeTab === "verification" && (
-            <VerificationRequest profile={profile} onRequestSubmitted={loadProfile} />
+            <div
+              ref={(el) => { tabPanelRefs.current[5] = el; }}
+              role="tabpanel"
+              id="verification-panel"
+              aria-labelledby="verification-tab"
+              tabIndex={0}
+            >
+              <VerificationRequest profile={profile} onRequestSubmitted={loadProfile} />
+            </div>
           )}
         </div>
       </div>

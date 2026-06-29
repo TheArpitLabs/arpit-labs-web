@@ -3,17 +3,19 @@
  * Optional integration - requires RESEND_API_KEY environment variable
  */
 
+import { logger } from '@/lib/logger';
+
 let resend: any = null;
 
 try {
   const Resend = require('resend').Resend;
   resend = new Resend(process.env.RESEND_API_KEY);
 } catch (error) {
-  console.warn('Resend email service not configured. Email functionality will be disabled.');
+  logger.warn('Resend email service not configured. Email functionality will be disabled.');
 }
 
-const FROM_EMAIL = process.env.NEXT_PUBLIC_FROM_EMAIL || 'noreply@arpit-labs.com';
-const ADMIN_EMAIL = process.env.ADMIN_EMAILS?.split(',')[0] || 'admin@arpit-labs.com';
+const FROM_EMAIL = process.env.NEXT_PUBLIC_FROM_EMAIL || 'noreply@axiora.com';
+const ADMIN_EMAIL = process.env.ADMIN_EMAILS?.split(',')[0] || 'admin@axiora.com';
 
 export interface ContactEmailPayload {
   name: string;
@@ -68,7 +70,7 @@ export async function sendContactFormEmail(data: ContactEmailPayload) {
 
     return { success: true };
   } catch (error) {
-    console.error('Failed to send contact email:', error);
+    logger.error('Failed to send contact email:', error);
     throw error;
   }
 }
@@ -78,10 +80,10 @@ export async function sendNewsletterWelcomeEmail(data: NewsletterEmailPayload) {
     await resend.emails.send({
       from: FROM_EMAIL,
       to: data.email,
-      subject: 'Welcome to Arpit Labs Newsletter!',
+      subject: 'Welcome to Axiora Newsletter!',
       html: `
         <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 600px;">
-          <h1 style="color: #0a0e27;">Welcome to Arpit Labs!</h1>
+          <h1 style="color: #0a0e27;">Welcome to Axiora!</h1>
           <p>Thank you for subscribing to our newsletter, ${data.name || 'subscriber'}!</p>
           
           <h3>What to expect:</h3>
@@ -102,7 +104,7 @@ export async function sendNewsletterWelcomeEmail(data: NewsletterEmailPayload) {
 
     return { success: true };
   } catch (error) {
-    console.error('Failed to send newsletter email:', error);
+    logger.error('Failed to send newsletter email:', error);
     throw error;
   }
 }
@@ -120,7 +122,7 @@ export async function sendAdminNotificationEmail(
     await resend.emails.send({
       from: FROM_EMAIL,
       to: ADMIN_EMAIL,
-      subject: `[Arpit Labs Admin] ${subject}`,
+      subject: `[Axiora Admin] ${subject}`,
       html: `
         <div style="font-family: Arial, sans-serif; padding: 20px;">
           <h2>${escapeHtml(subject)}</h2>
@@ -132,7 +134,7 @@ export async function sendAdminNotificationEmail(
 
     return { success: true };
   } catch (error) {
-    console.error('Failed to send admin notification:', error);
+    logger.error('Failed to send admin notification:', error);
     throw error;
   }
 }
@@ -166,7 +168,7 @@ export async function sendBulkNewsletter(
 
     return { successful, failed, total: emails.length };
   } catch (error) {
-    console.error('Failed to send bulk newsletter:', error);
+    logger.error('Failed to send bulk newsletter:', error);
     throw error;
   }
 }

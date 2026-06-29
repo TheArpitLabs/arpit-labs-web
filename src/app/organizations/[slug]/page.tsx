@@ -1,6 +1,6 @@
 import { Container } from "@/components/layout/Container";
 import { Footer } from "@/components/layout/Footer";
-import { getCurrentOrganization } from "@/lib/saas";
+import { getCurrentOrganization } from "@/lib/utils/saas";
 import { createWorkspaceAction, inviteMemberAction, removeMemberAction } from "@/lib/actions/saas-actions";
 import { AdminSubmitButton } from "@/components/admin/AdminSubmitButton";
 import { Badge } from "@/components/ui/badge";

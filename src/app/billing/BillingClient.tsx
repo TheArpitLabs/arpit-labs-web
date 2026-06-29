@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { supabaseClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
-import { analytics } from "@/lib/analytics";
+import { analytics } from "@/lib/analytics/analytics";
 import { formatPrice, membershipPlans, membershipPlanSlugs } from "@/lib/memberships";
 import type { MembershipPlan, UserSubscription } from "@/types/membership";
 

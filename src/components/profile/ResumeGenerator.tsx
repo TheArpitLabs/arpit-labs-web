@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Download, FileText, Loader2, Check } from "lucide-react";
 import { supabaseClient } from "@/lib/supabase/client";
+import { logger } from '@/lib/logger';
 
 interface Profile {
   full_name?: string;
@@ -177,7 +178,7 @@ export function ResumeGenerator({
 
       setGenerated(true);
     } catch (error) {
-      console.error("Error generating resume:", error);
+      logger.error("Error generating resume:", error);
     } finally {
       setIsGenerating(false);
     }

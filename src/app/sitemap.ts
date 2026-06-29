@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next';
 import { getProjects, getLabNotes } from '@/lib/actions/server-actions';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://arpitlabs.example';
+  const baseUrl = 'https://axiora.com';
   const staticUrls = [
     '',
     '/about',

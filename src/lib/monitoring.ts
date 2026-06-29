@@ -7,18 +7,22 @@ import { logger } from '@/lib/logger';
 
 let Sentry: any = null;
 
-try {
-  Sentry = require("@sentry/nextjs");
-} catch (error) {
-  console.warn('Sentry error monitoring not configured.');
-}
+// Dynamic import to avoid require() style import
+void (async () => {
+  try {
+    const sentryModule = await import("@sentry/nextjs");
+    Sentry = sentryModule.default || sentryModule;
+  } catch {
+    logger.warn('Sentry error monitoring not configured.');
+  }
+})();
 
 const SENTRY_DSN = process.env.NEXT_PUBLIC_SENTRY_DSN;
 const ENVIRONMENT = process.env.NODE_ENV || 'development';
 
 export function initializeSentry() {
   if (!SENTRY_DSN || !Sentry) {
-    console.warn('SENTRY_DSN not configured or Sentry not installed');
+    logger.warn('SENTRY_DSN not configured or Sentry not installed');
     return;
   }
 
@@ -42,7 +46,7 @@ export function captureException(error: Error, context?: Record<string, any>) {
   if (Sentry) {
     Sentry.captureException(error, { extra: context });
   } else {
-    console.error('Exception:', error, context);
+    logger.error('Exception:', { error, context });
   }
 }
 
@@ -82,7 +86,7 @@ export function addBreadcrumb(
       level,
     });
   } else {
-    console.debug(`[${category}]`, message);
+    logger.debug(`[${category}]`, message);
   }
 }
 

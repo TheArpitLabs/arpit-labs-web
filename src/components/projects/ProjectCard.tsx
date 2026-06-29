@@ -58,7 +58,7 @@ export function ProjectCard({ project, index, variant = "glass", authorMap }: Pr
                   <div className="rounded-xl border border-white/10 bg-white/10 p-2 text-blue-100 backdrop-blur">
                     <Code2 className="h-5 w-5" />
                   </div>
-                  <NexusLogo className="h-9 w-9 text-white/35" />
+                  <NexusLogo className="h-10 w-10 text-white/35" />
                 </div>
                 <div className="relative">
                   <p className="text-xs font-semibold uppercase tracking-[0.22em] text-blue-100/80">{categoryLabel}</p>

@@ -1,6 +1,7 @@
 import { supabaseServer } from "@/lib/supabase/server";
 import { NewsletterSubscriber } from "@/types/content";
 import { handleDatabaseError } from "@/lib/errors";
+import { logger } from '@/lib/logger';
 
 export const newsletterRepository = {
   async subscribeNewsletter(email: string) {
@@ -11,7 +12,7 @@ export const newsletterRepository = {
       .single();
 
     if (error) {
-      console.error("Database error in subscribeNewsletter:", error);
+      logger.error("Database error in subscribeNewsletter:", error);
       throw handleDatabaseError(error);
     }
     return data;
@@ -24,7 +25,7 @@ export const newsletterRepository = {
       .order("subscribed_at", { ascending: false });
 
     if (error) {
-      console.error("Database error in getSubscribers:", error);
+      logger.error("Database error in getSubscribers:", error);
       throw handleDatabaseError(error);
     }
     return data ?? [];
@@ -33,7 +34,7 @@ export const newsletterRepository = {
   async deleteSubscriber(id: string) {
     const { error } = await supabaseServer.from("newsletter_subscribers").delete().eq("id", id);
     if (error) {
-      console.error("Database error in deleteSubscriber:", error);
+      logger.error("Database error in deleteSubscriber:", error);
       throw handleDatabaseError(error);
     }
     return true;

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getExperiments, getJourneyTimeline, getProjects } from '@/lib/actions/server-actions';
 import { Experiment, JourneyItem, Project } from '@/types/content';
 import { membershipRepository } from '@/lib/repositories/membership.repository';
+import { logger } from '@/lib/logger';
 
 interface RecruiterReport {
   resumeSummary: string;
@@ -196,7 +197,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ success: true, report }, { status: 200 });
   } catch (error) {
-    console.error('Failed to build recruiter report:', error);
+    logger.error('Failed to build recruiter report:', error);
     return NextResponse.json(
       {
         success: false,

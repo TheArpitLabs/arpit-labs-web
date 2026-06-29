@@ -7,6 +7,7 @@
 import { createHash } from 'crypto';
 import { DeduplicationResult, DeduplicationConfig, ContentComparison } from './types';
 import { supabaseServer } from '@/lib/supabase/server';
+import { logger } from '@/lib/logger';
 
 export class DeduplicationEngine {
   private config: DeduplicationConfig;
@@ -321,7 +322,7 @@ export class DeduplicationEngine {
       });
 
     if (error) {
-      console.error(`Failed to store content hash: ${error.message}`);
+      logger.error(`Failed to store content hash: ${error.message}`);
     }
   }
 
@@ -338,7 +339,7 @@ export class DeduplicationEngine {
       .eq('content_hash', contentHash);
 
     if (error) {
-      console.error(`Failed to update content hash occurrence: ${error.message}`);
+      logger.error(`Failed to update content hash occurrence: ${error.message}`);
     }
   }
 
@@ -389,7 +390,7 @@ export class DeduplicationEngine {
       });
 
     if (error) {
-      console.error(`Failed to add cluster member: ${error.message}`);
+      logger.error(`Failed to add cluster member: ${error.message}`);
     }
 
     // Update cluster member count
@@ -405,7 +406,7 @@ export class DeduplicationEngine {
     });
 
     if (error) {
-      console.error(`Failed to update cluster member count: ${error.message}`);
+      logger.error(`Failed to update cluster member count: ${error.message}`);
     }
   }
 

@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { contentGenerationService } from '@/lib/ai-services';
-import { getUserFromRequest } from '@/lib/auth';
+import { getUserFromRequest } from '@/lib/auth/auth';
+import { logger } from '@/lib/logger';
 
 const enhanceSchema = z.object({
   sourceType: z.enum(['project', 'blog', 'experiment']),
@@ -25,7 +26,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, enhancement }, { status: 200 });
   } catch (error) {
-    console.error('Error enhancing content:', error);
+    logger.error('Error enhancing content:', error);
     return NextResponse.json(
       { success: false, error: error instanceof Error ? error.message : 'Failed to enhance content' },
       { status: 500 }

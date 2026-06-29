@@ -6,6 +6,7 @@
  */
 
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { logger } from '@/lib/logger';
 
 export interface LaunchReadinessCheck {
   id: string;
@@ -607,7 +608,7 @@ class LaunchReadinessEngine {
         };
       });
     } catch (error) {
-      console.error('Error getting domain launch statuses:', error);
+      logger.error('Error getting domain launch statuses:', error);
       return [];
     }
   }
@@ -718,7 +719,7 @@ class LaunchReadinessEngine {
         estimatedCompletionDays
       };
     } catch (error) {
-      console.error('Error getting content population metrics:', error);
+      logger.error('Error getting content population metrics:', error);
       return {
         totalDomains: 0,
         totalProjects: 0,

@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, MotionProps } from "framer-motion";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/utils";
 import { variants, transitions, getMotionProps, animationConfig } from "@/lib/animations/config";
 
 interface StaggerContainerProps extends MotionProps {

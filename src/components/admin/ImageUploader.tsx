@@ -3,7 +3,7 @@
 import React, { useState, useRef } from "react";
 import Image from "next/image";
 import { Upload, X, Loader2, Image as ImageIcon } from "lucide-react";
-import { uploadFileToBucket } from "@/lib/admin-storage";
+import { uploadFileToBucket } from "@/lib/utils/admin-storage";
 import { Button } from "@/components/ui/button";
 
 interface ImageUploaderProps {

@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAdminUserFromRequest } from "@/lib/auth";
+import { getAdminUserFromRequest } from "@/lib/auth/auth";
 import { supabaseServer } from "@/lib/supabase/server";
-import { githubRateLimitService } from "@/lib/github-rate-limit.service";
-import { githubCircuitBreaker } from "@/lib/github-circuit-breaker";
-import { githubApiRecovery } from "@/lib/github-api-recovery";
+import { githubRateLimitService } from "@/lib/github/github-rate-limit.service";
+import { githubCircuitBreaker } from "@/lib/github/github-circuit-breaker";
+import { githubApiRecovery } from "@/lib/github/github-api-recovery";
+import { logger } from '@/lib/logger';
 
 // GET /api/admin/discovery/health - Check discovery system health
 export async function GET(request: NextRequest) {
@@ -116,7 +117,7 @@ export async function GET(request: NextRequest) {
       data: healthData,
     });
   } catch (error) {
-    console.error("Discovery health check failed:", error);
+    logger.error("Discovery health check failed:", error);
     return NextResponse.json(
       { 
         success: false, 

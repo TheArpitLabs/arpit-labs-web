@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabase/server";
 import { handleDatabaseError } from "@/lib/errors";
-import { getUserFromRequest, getAdminUserFromRequest } from "@/lib/auth";
+import { getUserFromRequest, getAdminUserFromRequest } from "@/lib/auth/auth";
 import { projectSchema } from "@/lib/validation/project.schema";
 import { projectsRepository } from "@/lib/repositories/projects.repository";
+import { logger } from '@/lib/logger';
 
 // GET /api/projects/[slug] - Get single project by slug
 export async function GET(
@@ -32,7 +33,7 @@ export async function GET(
 
     return NextResponse.json({ data });
   } catch (error) {
-    console.error('Error in GET /api/projects/[slug]:', error);
+    logger.error('Error in GET /api/projects/[slug]:', error);
     return NextResponse.json(
       { error: 'Failed to fetch project' },
       { status: 500 }
@@ -84,7 +85,7 @@ export async function PUT(
 
     return NextResponse.json({ data: updatedProject });
   } catch (error) {
-    console.error('Error in PUT /api/projects/[slug]:', error);
+    logger.error('Error in PUT /api/projects/[slug]:', error);
     if (error instanceof Error && error.name === 'ZodError') {
       return NextResponse.json(
         { error: 'Validation error', details: error },
@@ -145,7 +146,7 @@ export async function PATCH(
 
     return NextResponse.json({ data: updatedProject });
   } catch (error) {
-    console.error('Error in PATCH /api/projects/[slug]:', error);
+    logger.error('Error in PATCH /api/projects/[slug]:', error);
     if (error instanceof Error && error.name === 'ZodError') {
       return NextResponse.json(
         { error: 'Validation error', details: error },
@@ -200,7 +201,7 @@ export async function DELETE(
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error in DELETE /api/projects/[slug]:', error);
+    logger.error('Error in DELETE /api/projects/[slug]:', error);
     return NextResponse.json(
       { error: 'Failed to delete project' },
       { status: 500 }

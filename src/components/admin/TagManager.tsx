@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { X, Plus, Tag as TagIcon } from "lucide-react";
 import { tagsRepository } from "@/lib/repositories/tags.repository";
+import { logger } from '@/lib/logger';
 
 interface ProjectTag {
   id: string;
@@ -30,7 +31,7 @@ export function TagManager({ projectId, projectSlug, isOwner }: TagManagerProps)
       const data = await tagsRepository.getTags(projectId);
       setTags(data);
     } catch (error) {
-      console.error('Error loading tags:', error);
+      logger.error('Error loading tags:', error);
     } finally {
       setLoading(false);
     }
@@ -54,7 +55,7 @@ export function TagManager({ projectId, projectSlug, isOwner }: TagManagerProps)
       setNewTag("");
       loadTags();
     } catch (error) {
-      console.error('Error adding tag:', error);
+      logger.error('Error adding tag:', error);
       alert('Failed to add tag. Please try again.');
     } finally {
       setAdding(false);
@@ -66,7 +67,7 @@ export function TagManager({ projectId, projectSlug, isOwner }: TagManagerProps)
       await tagsRepository.removeTag(projectId, tag);
       loadTags();
     } catch (error) {
-      console.error('Error removing tag:', error);
+      logger.error('Error removing tag:', error);
       alert('Failed to remove tag.');
     }
   };

@@ -1,6 +1,7 @@
 import { supabaseServer } from "@/lib/supabase/server";
 import { assertKnowledgeFeature } from "./feature-flags";
 import { jaccardSimilarity } from "./text";
+import { logger } from '@/lib/logger';
 
 interface Project {
   id: string;
@@ -478,7 +479,7 @@ export class EnhancedRecommendationEngine {
     );
 
     if (error) {
-      console.error("Failed to store recommendations:", error);
+      logger.error("Failed to store recommendations:", error);
     }
   }
 
@@ -513,7 +514,7 @@ export class EnhancedRecommendationEngine {
     });
 
     if (error) {
-      console.error("Failed to cache recommendations:", error);
+      logger.error("Failed to cache recommendations:", error);
     }
   }
 }

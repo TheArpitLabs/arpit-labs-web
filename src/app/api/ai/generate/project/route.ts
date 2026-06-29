@@ -7,7 +7,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { contentGenerationService } from '@/lib/ai-services';
 import { membershipRepository } from '@/lib/repositories/membership.repository';
-import { getUserFromRequest } from '@/lib/auth';
+import { getUserFromRequest } from '@/lib/auth/auth';
+import { logger } from '@/lib/logger';
 
 export async function POST(request: NextRequest) {
   try {
@@ -47,7 +48,7 @@ export async function POST(request: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
-    console.error('Error generating project:', error);
+    logger.error('Error generating project:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to generate project' },
       { status: 500 }

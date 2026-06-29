@@ -11,14 +11,14 @@ import {
   LayoutDashboard,
   ListChecks,
   LogOut,
-  Rocket,
   Search,
   Settings,
   ShieldCheck,
   ShoppingCart,
   Users,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/utils";
+import { NexusLogo } from "@/components/shared/NexusLogo";
 
 const navigationItems: Array<{
   href: Route;
@@ -49,8 +49,8 @@ export function AdminSidebar({ pathname }: AdminSidebarProps) {
   return (
     <aside className="flex h-screen flex-col p-4">
       <Link href="/admin" className="mb-5 flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600/15 text-blue-400 ring-1 ring-blue-400/30">
-          <Rocket size={20} />
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600/15 ring-1 ring-blue-400/30">
+          <NexusLogo className="h-8 w-8" />
         </div>
         <div>
           <p className="text-sm font-black uppercase tracking-wide text-white">Arpit Labs</p>

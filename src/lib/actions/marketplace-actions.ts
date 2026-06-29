@@ -1,7 +1,7 @@
 "use server";
 
 import { supabaseServer } from "@/lib/supabase/server";
-import { getAdminSession, getUserSession, requireAdmin, requireUser } from "@/lib/auth";
+import { getAdminSession, getUserSession, requireAdmin, requireUser } from "@/lib/auth/auth";
 import { marketplaceItemSchema } from "@/lib/validation/marketplace.schema";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -106,21 +106,21 @@ export async function purchaseItemAction(itemId: string) {
   const user = await requireUser();
   const supabase = supabaseServer;
 
-  const { data: item, error: itemError } = await supabase
+  const { data: itemData, error: itemError } = await supabase
     .from("marketplace_items")
     .select("price, currency")
     .eq("id", itemId)
     .single();
 
-  if (itemError || !item) throw new Error("Item not found");
+  if (itemError || !itemData) throw new Error("Item not found");
 
   const { error: orderError } = await supabase
     .from("marketplace_orders")
     .insert({
       user_id: user.id,
       item_id: itemId,
-      amount: item.price,
-      currency: item.currency,
+      amount: itemData.price,
+      currency: itemData.currency,
       status: "completed",
     });
 
@@ -129,7 +129,7 @@ export async function purchaseItemAction(itemId: string) {
   // Update sales count and revenue
   await supabase.rpc("increment_marketplace_sales", {
     item_id: itemId,
-    amount: item.price,
+    amount: itemData.price,
   });
 
   revalidatePath("/dashboard/marketplace");

@@ -1,5 +1,6 @@
 import { supabaseServer } from "@/lib/supabase/server";
 import { assertKnowledgeFeature } from "./feature-flags";
+import { logger } from '@/lib/logger';
 
 export interface Prerequisite {
   id: string;
@@ -50,7 +51,7 @@ export class PrerequisiteEngine {
       .single();
 
     if (error) {
-      console.error("Failed to define prerequisite:", error);
+      logger.error("Failed to define prerequisite:", error);
       throw error;
     }
 

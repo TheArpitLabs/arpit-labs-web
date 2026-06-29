@@ -6,6 +6,7 @@ import { GraduationCap, Award, CheckCircle2, ArrowRight, ShieldCheck, Zap } from
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import type { Certification } from "@/types/content";
+import { logger } from '@/lib/logger';
 
 export const dynamic = "force-dynamic";
 
@@ -15,7 +16,7 @@ export default async function UniversityPage() {
   try {
     certifications = await ecosystemRepository.getCertifications();
   } catch (error) {
-    console.error("Failed to load certifications:", error);
+    logger.error("Failed to load certifications:", error);
   }
 
   return (

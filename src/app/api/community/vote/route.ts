@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseServer } from '@/lib/supabase/server';
-import { checkRateLimit } from '@/lib/rate-limit';
-import { sanitizeText } from '@/lib/sanitize';
-import { createAuthenticatedSupabaseClient, getUserTokenFromRequest, getUserRefreshTokenFromRequest } from '@/lib/auth';
+import { checkRateLimit } from '@/lib/rate-limiting';
+import { sanitizeText } from '@/lib/utils/sanitize';
+import { createAuthenticatedSupabaseClient, getUserTokenFromRequest, getUserRefreshTokenFromRequest } from '@/lib/auth/auth';
+import { logger } from '@/lib/logger';
 
 export async function POST(request: NextRequest) {
   try {
@@ -52,7 +53,7 @@ export async function POST(request: NextRequest) {
       .select()
       .single();
     if (error) {
-      console.error('Failed to insert vote', error);
+      logger.error('Failed to insert vote', error);
       return NextResponse.json({ success: false, error: 'Failed to vote' }, { status: 500 });
     }
 
@@ -64,7 +65,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, vote: data }, { status: 201 });
   } catch (err) {
-    console.error('POST /api/community/vote error', err);
+    logger.error('POST /api/community/vote error', err);
     return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
   }
 }

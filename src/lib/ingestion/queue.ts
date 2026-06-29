@@ -154,7 +154,7 @@ export class IngestionQueueManager {
    */
   async startWorker(processor: (job: Job) => Promise<void>): Promise<void> {
     if (this.worker) {
-      console.warn('Worker is already running');
+      logger.warn('Worker is already running');
       return;
     }
 
@@ -181,7 +181,7 @@ export class IngestionQueueManager {
         try {
           await processor(job);
         } catch (error) {
-          console.error(`Job ${job.id} failed:`, error);
+          logger.error(`Job ${job.id} failed:`, error);
           
           // Check if it's a rate limit error
           if (this.isRateLimitError(error)) {
@@ -199,11 +199,11 @@ export class IngestionQueueManager {
     });
 
     this.worker.on('failed', (job: Job | undefined, error: Error) => {
-      console.error(`Job ${job?.id} failed:`, error.message);
+      logger.error(`Job ${job?.id} failed:`, error.message);
     });
 
     this.worker.on('error', (error: Error) => {
-      console.error('Worker error:', error);
+      logger.error('Worker error:', error);
     });
   }
 
@@ -212,7 +212,7 @@ export class IngestionQueueManager {
    */
   async stopWorker(): Promise<void> {
     if (!this.worker) {
-      console.warn('No worker is running');
+      logger.warn('No worker is running');
       return;
     }
 
@@ -365,7 +365,7 @@ export async function validateRedisConnection(config: QueueConfig['connection'])
     await redis.quit();
     return true;
   } catch (error) {
-    console.error('Redis connection failed:', error);
+    logger.error('Redis connection failed:', error);
     return false;
   }
 }

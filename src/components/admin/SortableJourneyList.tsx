@@ -23,6 +23,7 @@ import Link from "next/link";
 import { deleteJourneyEntryAction } from "@/lib/actions/admin-actions";
 import { journeyRepository } from "@/lib/repositories/journey.repository";
 import { JourneyItem } from "@/types/content";
+import { logger } from '@/lib/logger';
 
 interface SortableItemProps {
   item: JourneyItem;
@@ -150,7 +151,7 @@ export function SortableJourneyList({ initialItems }: SortableJourneyListProps) 
       
       if (!response.ok) throw new Error("Failed to save order");
     } catch (err) {
-      console.error(err);
+      logger.error(err instanceof Error ? err.message : String(err));
       // Revert items on error?
     } finally {
       setIsSaving(false);

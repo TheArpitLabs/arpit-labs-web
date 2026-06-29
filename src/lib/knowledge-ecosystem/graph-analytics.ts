@@ -1,5 +1,6 @@
 import { supabaseServer } from "@/lib/supabase/server";
 import { assertKnowledgeFeature } from "./feature-flags";
+import { logger } from '@/lib/logger';
 
 export interface GraphMetrics {
   nodeCount: number;
@@ -134,7 +135,7 @@ export class GraphAnalyticsEngine {
     });
 
     if (error) {
-      console.error("Failed to record metric:", error);
+      logger.error("Failed to record metric:", error);
     }
   }
 

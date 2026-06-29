@@ -2,6 +2,7 @@ import { supabaseServer } from "@/lib/supabase/server";
 import { JourneyItem } from "@/types/content";
 import { JourneyInput } from "@/lib/validation/journey.schema";
 import { handleDatabaseError } from "@/lib/errors";
+import { logger } from '@/lib/logger';
 
 export const journeyRepository = {
   async getJourneyTimeline() {
@@ -12,7 +13,7 @@ export const journeyRepository = {
       .order("year", { ascending: false });
 
     if (error) {
-      console.error("Database error in getJourneyTimeline:", error);
+      logger.error("Database error in getJourneyTimeline:", error);
       throw handleDatabaseError(error);
     }
     return data ?? [];
@@ -26,7 +27,7 @@ export const journeyRepository = {
       .single();
 
     if (error) {
-      console.error("Database error in createJourneyEntry:", error);
+      logger.error("Database error in createJourneyEntry:", error);
       throw handleDatabaseError(error);
     }
     return data;
@@ -41,7 +42,7 @@ export const journeyRepository = {
       .single();
 
     if (error) {
-      console.error("Database error in updateJourneyEntry:", error);
+      logger.error("Database error in updateJourneyEntry:", error);
       throw handleDatabaseError(error);
     }
     return data;
@@ -50,7 +51,7 @@ export const journeyRepository = {
   async deleteJourneyEntry(id: string) {
     const { error } = await supabaseServer.from("journey").delete().eq("id", id);
     if (error) {
-      console.error("Database error in deleteJourneyEntry:", error);
+      logger.error("Database error in deleteJourneyEntry:", error);
       throw handleDatabaseError(error);
     }
     return true;

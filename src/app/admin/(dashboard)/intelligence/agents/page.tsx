@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { RefreshCw } from 'lucide-react';
+import { logger } from '@/lib/logger';
 
 export default function AgenticAISystemDashboard() {
   const [agents, setAgents] = useState<any[]>([]);
@@ -25,7 +26,7 @@ export default function AgenticAISystemDashboard() {
       const data = await response.json();
       setAgents(data.data || []);
     } catch (error) {
-      console.error('Error fetching agents:', error);
+      logger.error('Error fetching agents:', error);
     } finally {
       setLoading(false);
     }
@@ -46,7 +47,7 @@ export default function AgenticAISystemDashboard() {
       alert('Agent created successfully');
       fetchAgents();
     } catch (error) {
-      console.error('Error creating agent:', error);
+      logger.error('Error creating agent:', error);
       alert('Failed to create agent');
     }
   };

@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getUserFromRequest, getAdminUserFromRequest } from "@/lib/auth";
+import { getUserFromRequest, getAdminUserFromRequest } from "@/lib/auth/auth";
 import { tagsRepository } from "@/lib/repositories/tags.repository";
 import { projectsRepository } from "@/lib/repositories/projects.repository";
+import { logger } from '@/lib/logger';
 
 // DELETE /api/projects/[slug]/tags/[tag] - Remove single tag
 export async function DELETE(
@@ -44,7 +45,7 @@ export async function DELETE(
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error in DELETE /api/projects/[slug]/tags/[tag]:', error);
+    logger.error('Error in DELETE /api/projects/[slug]/tags/[tag]:', error);
     return NextResponse.json(
       { error: 'Failed to remove tag' },
       { status: 500 }

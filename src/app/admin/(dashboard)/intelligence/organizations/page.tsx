@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { RefreshCw } from 'lucide-react';
+import { logger } from '@/lib/logger';
 
 export default function OrganizationIntelligenceDashboard() {
   const [organizations, setOrganizations] = useState<any[]>([]);
@@ -25,7 +26,7 @@ export default function OrganizationIntelligenceDashboard() {
       const data = await response.json();
       setOrganizations(data.data || []);
     } catch (error) {
-      console.error('Error fetching organizations:', error);
+      logger.error('Error fetching organizations:', error);
     } finally {
       setLoading(false);
     }
@@ -55,7 +56,7 @@ export default function OrganizationIntelligenceDashboard() {
       alert('Organization indexed successfully');
       fetchOrganizations();
     } catch (error) {
-      console.error('Error indexing organization:', error);
+      logger.error('Error indexing organization:', error);
       alert('Failed to index organization');
     }
   };

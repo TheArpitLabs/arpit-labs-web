@@ -2,6 +2,7 @@ import Image from "next/image";
 import { coursesRepository } from "@/lib/repositories/courses.repository";
 import Link from "next/link";
 import { Clock, BarChart3 } from "lucide-react";
+import { logger } from '@/lib/logger';
 
 export const metadata = {
   title: "Courses | Arpit Labs",
@@ -13,7 +14,7 @@ export default async function CoursesPage() {
   try {
     courses = await coursesRepository.getAll(true);
   } catch (error) {
-    console.error("Error fetching courses:", error);
+    logger.error("Error fetching courses:", error);
     courses = [];
   }
 

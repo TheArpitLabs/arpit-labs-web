@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabase/server";
-import { getUserFromRequest } from "@/lib/auth";
+import { getUserFromRequest } from "@/lib/auth/auth";
 import { handleDatabaseError } from "@/lib/errors";
 import { validatePointValue } from "@/lib/gamification";
+import { logger } from '@/lib/logger';
 
 // POST /api/gamification/award-points - Award points to user
 export async function POST(request: NextRequest) {
@@ -73,7 +74,7 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Error in POST /api/gamification/award-points:', error);
+    logger.error('Error in POST /api/gamification/award-points:', error);
     return NextResponse.json(
       { error: 'Failed to award points' },
       { status: 500 }

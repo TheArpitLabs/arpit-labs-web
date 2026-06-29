@@ -17,6 +17,7 @@ import { ResumeGenerator } from "@/components/profile/ResumeGenerator";
 import { SocialFeatures } from "@/components/profile/SocialFeatures";
 import { ProfileAnalytics } from "@/components/profile/ProfileAnalytics";
 import { notFound } from "next/navigation";
+import { logger } from '@/lib/logger';
 
 interface Profile {
   id: string;
@@ -184,7 +185,7 @@ export default function PublicProfilePage({ params }: PublicProfilePageProps) {
           });
         }
       } catch (error) {
-        console.error("Error loading public profile:", error);
+        logger.error("Error loading public profile:", error);
         if (mounted) {
           setNotFound(true);
           setLoading(false);
@@ -199,7 +200,7 @@ export default function PublicProfilePage({ params }: PublicProfilePageProps) {
       setUsername(resolvedParams.username);
       loadPublicProfile(resolvedParams.username);
     }).catch((error) => {
-      console.error("Error resolving params:", error);
+      logger.error("Error resolving params:", error);
       if (mounted) {
         setNotFound(true);
         setLoading(false);

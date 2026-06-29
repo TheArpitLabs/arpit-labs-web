@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import crypto from "crypto";
 import { supabaseServer } from "@/lib/supabase/server";
+import { logger } from '@/lib/logger';
 
 const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET!;
 
@@ -14,7 +15,7 @@ export async function POST(req: Request) {
     .digest("hex");
 
   if (signature !== expectedSignature) {
-    console.error("Razorpay webhook signature verification failed");
+    logger.error("Razorpay webhook signature verification failed");
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
@@ -77,7 +78,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ received: true });
   } catch (error) {
-    console.error("Razorpay webhook processing error:", error);
+    logger.error("Razorpay webhook processing error:", error);
     return NextResponse.json({ error: "Webhook handler failed" }, { status: 500 });
   }
 }

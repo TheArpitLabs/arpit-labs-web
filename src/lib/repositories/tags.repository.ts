@@ -1,5 +1,6 @@
 import { supabaseServer } from "@/lib/supabase/server";
 import { handleDatabaseError } from "@/lib/errors";
+import { logger } from '@/lib/logger';
 
 export interface TagInput {
   project_id: string;
@@ -15,7 +16,7 @@ export const tagsRepository = {
       .order("tag", { ascending: true });
 
     if (error) {
-      console.error("Database error in getTags:", error);
+      logger.error("Database error in getTags:", error);
       throw handleDatabaseError(error);
     }
     return data ?? [];
@@ -32,7 +33,7 @@ export const tagsRepository = {
       .single();
 
     if (error) {
-      console.error("Database error in addTag:", error);
+      logger.error("Database error in addTag:", error);
       throw handleDatabaseError(error);
     }
     return data;
@@ -46,7 +47,7 @@ export const tagsRepository = {
       .eq("tag", tag);
 
     if (error) {
-      console.error("Database error in removeTag:", error);
+      logger.error("Database error in removeTag:", error);
       throw handleDatabaseError(error);
     }
     return true;
@@ -64,7 +65,7 @@ export const tagsRepository = {
       .select();
 
     if (error) {
-      console.error("Database error in addTags:", error);
+      logger.error("Database error in addTags:", error);
       throw handleDatabaseError(error);
     }
     return data ?? [];
@@ -78,7 +79,7 @@ export const tagsRepository = {
       .in("tag", tags);
 
     if (error) {
-      console.error("Database error in removeTags:", error);
+      logger.error("Database error in removeTags:", error);
       throw handleDatabaseError(error);
     }
     return true;
@@ -104,7 +105,7 @@ export const tagsRepository = {
         .select();
 
       if (error) {
-        console.error("Database error in replaceTags:", error);
+        logger.error("Database error in replaceTags:", error);
         throw handleDatabaseError(error);
       }
       return data ?? [];

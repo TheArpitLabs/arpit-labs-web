@@ -57,24 +57,24 @@ const platformFeatures = [
 
 export function PremiumPlatformGrid() {
   return (
-    <section className="py-24">
+    <section className="py-12">
       <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="mb-16 text-center"
+          className="mb-8 text-center"
         >
-          <p className="mb-4 text-sm uppercase tracking-[0.28em] text-muted">Platform</p>
-          <h2 className="mb-6 font-heading text-section-title font-bold">
+          <p className="mb-2 text-xs uppercase tracking-[0.28em] text-muted">Platform</p>
+          <h2 className="mb-3 font-heading text-2xl font-bold sm:text-3xl">
             Explore the Ecosystem
           </h2>
-          <p className="mx-auto max-w-3xl text-lg text-muted">
+          <p className="mx-auto max-w-2xl text-sm text-muted">
             From research to marketplace, discover the full suite of tools and communities driving innovation at Arpit Labs.
           </p>
         </motion.div>
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {platformFeatures.map((feature, index) => (
             <Link key={feature.title} href={feature.href as any}>
               <motion.div
@@ -82,32 +82,32 @@ export function PremiumPlatformGrid() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                whileHover={{ y: -8, scale: 1.02 }}
-                className="group relative h-full rounded-3xl glass p-8 transition-all duration-300 hover:shadow-2xl"
+                whileHover={{ y: -4, scale: 1.02 }}
+                className="group relative h-full rounded-2xl glass p-6 transition-all duration-300 hover:shadow-lg"
               >
                 {/* Gradient overlay on hover */}
-                <div className={`absolute inset-0 rounded-3xl bg-gradient-to-br ${feature.gradient} opacity-0 transition-opacity duration-300 group-hover:opacity-100`} />
+                <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${feature.gradient} opacity-0 transition-opacity duration-300 group-hover:opacity-100`} />
                 
                 <div className="relative h-full">
                   <motion.div
                     whileHover={{ scale: 1.1, rotate: 5 }}
                     transition={{ duration: 0.3 }}
-                    className={`mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br ${feature.iconGradient} text-white shadow-lg`}
+                    className={`mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${feature.iconGradient} text-white shadow-md`}
                   >
-                    <feature.icon size={32} />
+                    <feature.icon size={24} />
                   </motion.div>
                   
-                  <h3 className="mb-4 text-2xl font-heading font-bold text-foreground group-hover:text-primary transition-colors">
+                  <h3 className="mb-3 text-lg font-heading font-bold text-foreground group-hover:text-primary transition-colors">
                     {feature.title}
                   </h3>
                   
-                  <p className="mb-6 text-base text-muted leading-relaxed">
+                  <p className="mb-4 text-sm text-muted leading-relaxed">
                     {feature.description}
                   </p>
                   
-                  <div className="flex items-center gap-2 text-sm font-semibold text-primary group-hover:gap-4 transition-all">
+                  <div className="flex items-center gap-2 text-xs font-semibold text-primary group-hover:gap-4 transition-all">
                     Explore
-                    <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+                    <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
                   </div>
                 </div>
               </motion.div>

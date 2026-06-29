@@ -1,5 +1,6 @@
 import { supabaseServer } from "@/lib/supabase/server";
 import { handleDatabaseError } from "@/lib/errors";
+import { logger } from '@/lib/logger';
 
 export interface ContributorInput {
   project_id: string;
@@ -25,7 +26,7 @@ export const contributorsRepository = {
       .order("joined_at", { ascending: false });
 
     if (error) {
-      console.error("Database error in getContributors:", error);
+      logger.error("Database error in getContributors:", error);
       throw handleDatabaseError(error);
     }
     return data ?? [];
@@ -52,7 +53,7 @@ export const contributorsRepository = {
       .single();
 
     if (error) {
-      console.error("Database error in addContributor:", error);
+      logger.error("Database error in addContributor:", error);
       throw handleDatabaseError(error);
     }
     return data;
@@ -66,7 +67,7 @@ export const contributorsRepository = {
       .eq("user_id", userId);
 
     if (error) {
-      console.error("Database error in removeContributor:", error);
+      logger.error("Database error in removeContributor:", error);
       throw handleDatabaseError(error);
     }
     return true;
@@ -90,7 +91,7 @@ export const contributorsRepository = {
       .single();
 
     if (error) {
-      console.error("Database error in updateContributorRole:", error);
+      logger.error("Database error in updateContributorRole:", error);
       throw handleDatabaseError(error);
     }
     return data;
@@ -110,7 +111,7 @@ export const contributorsRepository = {
       if (error.code === 'PGRST116') {
         return false;
       }
-      console.error("Database error in isContributor:", error);
+      logger.error("Database error in isContributor:", error);
       throw handleDatabaseError(error);
     }
     return !!data;

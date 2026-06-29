@@ -8,7 +8,7 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
-  console.error('Missing Supabase credentials. Check your .env.local file.');
+  logger.error('Missing Supabase credentials. Check your .env.local file.');
   process.exit(1);
 }
 
@@ -40,8 +40,8 @@ async function executeSQL(sql) {
 }
 
 async function applyMigration() {
-  console.log('� Applying Engineering Domain Ecosystem Migration');
-  console.log('===========================================');
+  logger.info('� Applying Engineering Domain Ecosystem Migration');
+  logger.info('===========================================');
 
   try {
     // First, check if tables already exist
@@ -51,12 +51,12 @@ async function applyMigration() {
       .limit(1);
 
     if (!domainsError && domainsCheck) {
-      console.log('✅ Engineering domain tables already exist');
-      console.log('Skipping migration...');
+      logger.info('✅ Engineering domain tables already exist');
+      logger.info('Skipping migration...');
       return;
     }
 
-    console.log('Tables do not exist. Creating engineering domain ecosystem...');
+    logger.info('Tables do not exist. Creating engineering domain ecosystem...');
 
     // Create the tables using the REST API SQL execution
     const createDomainsSQL = `
@@ -99,10 +99,10 @@ async function applyMigration() {
     // Try to execute SQL via REST API
     try {
       await executeSQL(createDomainsSQL);
-      console.log('✅ Created engineering_domains table');
+      logger.info('✅ Created engineering_domains table');
     } catch (error) {
-      console.log('⚠️  Could not create table via REST API:', error.message);
-      console.log('Using alternative approach...');
+      logger.info('⚠️  Could not create table via REST API:', error.message);
+      logger.info('Using alternative approach...');
     }
 
     // Use the Supabase client to insert data directly
@@ -123,19 +123,19 @@ async function applyMigration() {
         .insert(domain);
       
       if (error) {
-        console.log(`⚠️  Could not insert domain ${domain.name}:`, error.message);
+        logger.info(`⚠️  Could not insert domain ${domain.name}:`, error.message);
       } else {
-        console.log(`✅ Inserted domain: ${domain.name}`);
+        logger.info(`✅ Inserted domain: ${domain.name}`);
       }
     }
 
-    console.log('\n⚠️  Migration partially applied via REST API.');
-    console.log('Some DDL operations may require manual execution via:');
-    console.log('  1. Supabase Dashboard: SQL Editor');
-    console.log('  2. Migration file: supabase/migrations/20260615_engineering_domain_ecosystem.sql');
+    logger.info('\n⚠️  Migration partially applied via REST API.');
+    logger.info('Some DDL operations may require manual execution via:');
+    logger.info('  1. Supabase Dashboard: SQL Editor');
+    logger.info('  2. Migration file: supabase/migrations/20260615_engineering_domain_ecosystem.sql');
 
   } catch (error) {
-    console.error('Error applying migration:', error);
+    logger.error('Error applying migration:', error);
     process.exit(1);
   }
 }

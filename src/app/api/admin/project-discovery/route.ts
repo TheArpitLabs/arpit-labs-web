@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAdminUserFromRequest } from "@/lib/auth";
-import { getProjectDiscoveryEngine, ProjectCategory, ProjectDiscoveryConfig } from "@/lib/project-discovery/project-discovery-engine";
+import { getAdminUserFromRequest } from "@/lib/auth/auth";
+import { getProjectDiscoveryEngine, ProjectCategory, ProjectDiscoveryConfig } from "@/lib/discovery/project-discovery/project-discovery-engine";
+import { logger } from '@/lib/logger';
 
 export async function GET(request: NextRequest) {
   const admin = await getAdminUserFromRequest(request);
@@ -137,6 +138,6 @@ async function startDiscoveryInBackground(
   try {
     await engine.startDiscovery(config);
   } catch (error) {
-    console.error("Background discovery failed:", error);
+    logger.error("Background discovery failed:", error);
   }
 }

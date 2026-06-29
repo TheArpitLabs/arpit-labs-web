@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseServer } from '@/lib/supabase/server';
-import { sanitizeText } from '@/lib/sanitize';
-import { checkRateLimit } from '@/lib/rate-limit';
-import { createAuthenticatedSupabaseClient, getAdminUserFromRequest, getUserTokenFromRequest, getUserRefreshTokenFromRequest } from '@/lib/auth';
+import { sanitizeText } from '@/lib/utils/sanitize';
+import { checkRateLimit } from '@/lib/rate-limiting';
+import { createAuthenticatedSupabaseClient, getAdminUserFromRequest, getUserTokenFromRequest, getUserRefreshTokenFromRequest } from '@/lib/auth/auth';
+import { logger } from '@/lib/logger';
 
 export async function GET(request: NextRequest, { params }: any) {
   try {
@@ -25,7 +26,7 @@ export async function GET(request: NextRequest, { params }: any) {
 
     return NextResponse.json({ success: true, post: data }, { status: 200 });
   } catch (err) {
-    console.error('GET /api/community/[slug] error', err);
+    logger.error('GET /api/community/[slug] error', err);
     return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
   }
 }
@@ -74,13 +75,13 @@ export async function PUT(request: NextRequest, { params }: any) {
       .single();
 
     if (error) {
-      console.error('Failed to update post:', error);
+      logger.error('Failed to update post:', error);
       return NextResponse.json({ success: false, error: 'Failed to update' }, { status: 500 });
     }
 
     return NextResponse.json({ success: true, post: data }, { status: 200 });
   } catch (err) {
-    console.error('PUT /api/community/[slug] error', err);
+    logger.error('PUT /api/community/[slug] error', err);
     return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
   }
 }
@@ -110,13 +111,13 @@ export async function DELETE(request: NextRequest, { params }: any) {
       .delete()
       .eq('slug', slug);
     if (error) {
-      console.error('Failed to delete post', error);
+      logger.error('Failed to delete post', error);
       return NextResponse.json({ success: false, error: 'Failed to delete' }, { status: 500 });
     }
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (err) {
-    console.error('DELETE /api/community/[slug] error', err);
+    logger.error('DELETE /api/community/[slug] error', err);
     return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
   }
 }

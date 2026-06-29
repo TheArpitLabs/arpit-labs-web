@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Award, Shield, Star, Zap, Trophy, Crown, Flame, Sparkles, Loader2, AlertCircle } from "lucide-react";
 import { supabaseClient } from "@/lib/supabase/client";
+import { logger } from '@/lib/logger';
 
 interface ProfileBadgesProps {
   profile: any;
@@ -44,7 +45,7 @@ export function ProfileBadges({ profile, isOwnProfile = false }: ProfileBadgesPr
       if (error) throw error;
       setBadges(data || []);
     } catch (err) {
-      console.error("Error fetching badges:", err);
+      logger.error("Error fetching badges:", err);
       setError("Failed to load badges");
     } finally {
       setLoading(false);

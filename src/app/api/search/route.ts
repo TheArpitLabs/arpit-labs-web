@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { enhancedSearch, getSearchSuggestions, saveSearchToHistory } from "@/lib/knowledge-ecosystem/enhanced-search";
 import type { SearchOptions, SearchFilters } from "@/lib/knowledge-ecosystem/enhanced-search";
+import { logger } from '@/lib/logger';
 
 export async function GET(request: NextRequest) {
   try {
@@ -50,7 +51,7 @@ export async function GET(request: NextRequest) {
       analytics,
     });
   } catch (error) {
-    console.error("Search failed:", error);
+    logger.error("Search failed:", error);
     return NextResponse.json(
       { success: false, error: error instanceof Error ? error.message : "Search failed" },
       { status: 500 }
@@ -73,7 +74,7 @@ export async function POST(request: NextRequest) {
       { status: 400 }
     );
   } catch (error) {
-    console.error("Search action failed:", error);
+    logger.error("Search action failed:", error);
     return NextResponse.json(
       { success: false, error: error instanceof Error ? error.message : "Search action failed" },
       { status: 500 }

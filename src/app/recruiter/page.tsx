@@ -6,7 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { DownloadIcon, LinkIcon } from 'lucide-react';
 import { supabaseClient } from '@/lib/supabase/client';
-import { analytics } from '@/lib/analytics';
+import { analytics } from '@/lib/analytics/analytics';
+import { logger } from '@/lib/logger';
 
 interface RecruiterData {
   resumeSummary: string;
@@ -83,7 +84,7 @@ export default function RecruiterPage() {
       setData(payload.report as RecruiterData);
       analytics.featureUsage('recruiter_assistant', 'premium');
     } catch (error) {
-      console.error('Failed to fetch recruiter data:', error);
+      logger.error('Failed to fetch recruiter data:', error);
     } finally {
       setIsLoading(false);
     }
@@ -122,7 +123,7 @@ export default function RecruiterPage() {
       analytics.aiUsageByPlan('recruiter_assistant', 'premium');
     } catch (error) {
       setQueryError(error instanceof Error ? error.message : 'Something went wrong');
-      console.error(error);
+      logger.error(error instanceof Error ? error.message : String(error));
     } finally {
       setQueryLoading(false);
     }

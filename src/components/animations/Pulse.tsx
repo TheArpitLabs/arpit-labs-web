@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, MotionProps } from "framer-motion";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/utils";
 import { getMotionProps, animationConfig, prefersReducedMotion, isMobile } from "@/lib/animations/config";
 
 interface PulseProps extends MotionProps {

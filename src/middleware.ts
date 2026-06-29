@@ -1,11 +1,39 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
-import { adminAccessCookieName, userAccessCookieName } from "@/lib/auth-constants";
+import { NextResponse, type NextRequest } from "next/server";
+import { adminAccessCookieName, userAccessCookieName } from "@/lib/auth/auth-constants";
 import { createClient } from "@supabase/supabase-js";
 import { getUserRole } from "@/lib/auth/admin";
+import { logger } from '@/lib/logger';
+import { validateCSRFToken } from '@/lib/csrf';
 
 export default async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // Add security headers to all responses
+  const response = NextResponse.next();
+
+  // Content Security Policy
+  response.headers.set(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://cdn.jsdelivr.net https://js.stripe.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; img-src 'self' data: https://*.supabase.co https://*.githubusercontent.com https://cdn.jsdelivr.net; font-src 'self' https://cdn.jsdelivr.net; connect-src 'self' https://*.supabase.co https://api.stripe.com https://github.com; frame-src 'self' https://js.stripe.com; media-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; block-all-mixed-content; upgrade-insecure-requests;"
+  );
+
+  // Strict Transport Security
+  response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+
+  // X-Frame-Options
+  response.headers.set('X-Frame-Options', 'DENY');
+
+  // X-Content-Type-Options
+  response.headers.set('X-Content-Type-Options', 'nosniff');
+
+  // X-XSS-Protection
+  response.headers.set('X-XSS-Protection', '1; mode=block');
+
+  // Referrer Policy
+  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+
+  // Permissions Policy
+  response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
 
   // 1. Admin Auth Logic - verify admin role, not just token presence
   if (pathname.startsWith("/admin") && !pathname.startsWith("/admin/login")) {
@@ -39,13 +67,13 @@ export default async function middleware(request: NextRequest) {
       }
     } catch (error) {
       // Log error but redirect to login on any failure
-      console.error('Middleware auth error:', error);
+      logger.error('Middleware auth error:', error);
       const loginUrl = new URL("/admin/login", request.url);
       loginUrl.searchParams.set("redirectTo", pathname);
       return NextResponse.redirect(loginUrl);
     }
 
-    return NextResponse.next();
+    return response;
   }
 
   // 2. Redirect admin users from /dashboard to /admin
@@ -72,12 +100,39 @@ export default async function middleware(request: NextRequest) {
     }
   }
 
-  // 3. Skip middleware for API routes, static files, and admin routes
-  if (pathname.startsWith("/api") || pathname.includes(".")) {
-    return NextResponse.next();
+  // 3. CSRF Protection for API routes
+  if (pathname.startsWith("/api")) {
+    // Skip CSRF for GET, HEAD, OPTIONS requests (safe methods)
+    const method = request.method.toUpperCase();
+    if (['GET', 'HEAD', 'OPTIONS'].includes(method)) {
+      return response;
+    }
+
+    // Skip CSRF for the csrf endpoint itself
+    if (pathname === "/api/csrf") {
+      return response;
+    }
+
+    // Validate CSRF token for state-changing methods
+    const csrfToken = request.headers.get('x-csrf-token');
+    const isValid = await validateCSRFToken(csrfToken);
+
+    if (!isValid) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid CSRF token' },
+        { status: 403 }
+      );
+    }
+
+    return response;
   }
 
-  // 4. Handle locale-prefixed routes - redirect to non-prefixed (for backward compatibility)
+  // 4. Skip middleware for static files
+  if (pathname.includes(".")) {
+    return response;
+  }
+
+  // 5. Handle locale-prefixed routes - redirect to non-prefixed (for backward compatibility)
   const localePrefixMatch = pathname.match(/^\/(en|hi)(?:\/|$)/);
   if (localePrefixMatch) {
     const newPath = pathname.replace(/^\/(en|hi)/, '') || '/';
@@ -85,8 +140,8 @@ export default async function middleware(request: NextRequest) {
     return NextResponse.redirect(redirectUrl);
   }
 
-  // 5. Allow all other routes to pass through without locale prefixing
-  return NextResponse.next();
+  // 6. Allow all other routes to pass through without locale prefixing
+  return response;
 }
 
 export const config = {

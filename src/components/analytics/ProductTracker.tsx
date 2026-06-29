@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { analytics } from "@/lib/analytics";
+import { analytics } from "@/lib/analytics/analytics";
 
 interface ProductTrackerProps {
   slug: string;

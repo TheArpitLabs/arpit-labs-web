@@ -5,7 +5,7 @@ import { Brain, Cpu, Shield, Wifi, Code2 } from "lucide-react";
 import { NexusLogo } from "@/components/shared/NexusLogo";
 import { DottedPath } from "@/components/shared/DottedPath";
 import { Pulse, Orbit, OrbitNode } from "@/components/animations";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/utils";
 
 const ecosystemItems = [
   { title: "AI & ML", icon: Brain, x: "10%", y: "10%" },

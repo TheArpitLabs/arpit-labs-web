@@ -104,7 +104,7 @@ class BasePipelineOrchestrator implements PipelineOrchestrator {
         .not('schedule', 'is', null);
 
       if (error) {
-        console.error('Error loading scheduled jobs:', error);
+        logger.error('Error loading scheduled jobs:', { error });
         return;
       }
 
@@ -115,7 +115,7 @@ class BasePipelineOrchestrator implements PipelineOrchestrator {
       });
 
     } catch (error) {
-      console.error('Error loading scheduled jobs:', error);
+      logger.error('Error loading scheduled jobs:', { error });
     }
   }
 
@@ -172,7 +172,7 @@ class BasePipelineOrchestrator implements PipelineOrchestrator {
         // Schedule next heartbeat
         setTimeout(heartbeat, this.config.heartbeatInterval);
       } catch (error) {
-        console.error('Heartbeat error:', error);
+        logger.error('Heartbeat error:', { error });
       }
     };
 
@@ -210,7 +210,7 @@ class BasePipelineOrchestrator implements PipelineOrchestrator {
         .single();
 
       if (error) {
-        console.error('Error scheduling job:', error);
+        logger.error('Error scheduling job:', { error });
         throw error;
       }
 
@@ -242,7 +242,7 @@ class BasePipelineOrchestrator implements PipelineOrchestrator {
       return newJob;
 
     } catch (error) {
-      console.error('Error in scheduleJob:', error);
+      logger.error('Error in scheduleJob:', { error });
       throw error;
     }
   }
@@ -285,7 +285,7 @@ class BasePipelineOrchestrator implements PipelineOrchestrator {
       await this.completeJob(jobId, result);
 
     } catch (error) {
-      console.error(`Error executing job ${jobId}:`, error);
+      logger.error(`Error executing job ${jobId}:`, { error });
       await this.failJob(jobId, error instanceof Error ? error.message : 'Unknown error');
     } finally {
       this.activeJobs.delete(jobId);
@@ -626,7 +626,7 @@ class BasePipelineOrchestrator implements PipelineOrchestrator {
       this.activeJobs.delete(jobId);
 
     } catch (error) {
-      console.error('Error cancelling job:', error);
+      logger.error('Error cancelling job:', { error });
       throw error;
     }
   }
@@ -661,7 +661,7 @@ class BasePipelineOrchestrator implements PipelineOrchestrator {
       };
 
     } catch (error) {
-      console.error('Error getting job status:', error);
+      logger.error('Error getting job status:', { error });
       return null;
     }
   }
@@ -676,7 +676,7 @@ class BasePipelineOrchestrator implements PipelineOrchestrator {
         .order('created_at', { ascending: true });
 
       if (error) {
-        console.error('Error getting active jobs:', error);
+        logger.error('Error getting active jobs:', { error });
         return [];
       }
 
@@ -698,7 +698,7 @@ class BasePipelineOrchestrator implements PipelineOrchestrator {
       }));
 
     } catch (error) {
-      console.error('Error in getActiveJobs:', error);
+      logger.error('Error in getActiveJobs:', { error });
       return [];
     }
   }
@@ -776,7 +776,7 @@ class BasePipelineOrchestrator implements PipelineOrchestrator {
       await this.executeJob(jobId);
 
     } catch (error) {
-      console.error('Error retrying job:', error);
+      logger.error('Error retrying job:', { error });
       throw error;
     }
   }
@@ -800,7 +800,7 @@ class BasePipelineOrchestrator implements PipelineOrchestrator {
         .eq('id', jobId);
 
     } catch (error) {
-      console.error('Error updating job status:', error);
+      logger.error('Error updating job status:', { error });
       throw error;
     }
   }
@@ -819,7 +819,7 @@ class BasePipelineOrchestrator implements PipelineOrchestrator {
         .eq('id', jobId);
 
     } catch (error) {
-      console.error('Error completing job:', error);
+      logger.error('Error completing job:', { error });
       throw error;
     }
   }
@@ -837,7 +837,7 @@ class BasePipelineOrchestrator implements PipelineOrchestrator {
         .eq('id', jobId);
 
     } catch (error) {
-      console.error('Error failing job:', error);
+      logger.error('Error failing job:', { error });
       throw error;
     }
   }
@@ -849,7 +849,7 @@ class BasePipelineOrchestrator implements PipelineOrchestrator {
         .select('status');
 
       if (error) {
-        console.error('Error getting pipeline stats:', error);
+        logger.error('Error getting pipeline stats:', { error });
         return { totalJobs: 0, running: 0, completed: 0, failed: 0 };
       }
 
@@ -871,7 +871,7 @@ class BasePipelineOrchestrator implements PipelineOrchestrator {
       return stats;
 
     } catch (error) {
-      console.error('Error in getPipelineStats:', error);
+      logger.error('Error in getPipelineStats:', { error });
       return { totalJobs: 0, running: 0, completed: 0, failed: 0 };
     }
   }

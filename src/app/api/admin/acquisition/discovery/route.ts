@@ -6,6 +6,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getDiscoveryManager } from '@/lib/acquisition/source-discovery/discovery-manager';
+import { logger } from '@/lib/logger';
 
 // GET /api/admin/acquisition/discovery - Get discovery sources and status
 export async function GET(request: NextRequest) {
@@ -21,7 +22,7 @@ export async function GET(request: NextRequest) {
       }
     });
   } catch (error) {
-    console.error('Error getting discovery sources:', error);
+    logger.error('Error getting discovery sources:', error);
     return NextResponse.json({
       success: false,
       error: 'Failed to get discovery sources'
@@ -47,7 +48,7 @@ export async function POST(request: NextRequest) {
       data: result
     });
   } catch (error) {
-    console.error('Error running discovery:', error);
+    logger.error('Error running discovery:', error);
     return NextResponse.json({
       success: false,
       error: 'Failed to run discovery'

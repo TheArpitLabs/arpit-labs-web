@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabase/server";
-import { getUserFromRequest } from "@/lib/auth";
+import { getUserFromRequest } from "@/lib/auth/auth";
 import { handleDatabaseError } from "@/lib/errors";
 import { getStreakMilestone, getStreakBonus } from "@/lib/gamification";
 import { POINT_VALUES } from "@/lib/gamification/points";
+import { logger } from '@/lib/logger';
 
 // POST /api/gamification/daily-login - Record daily login for streaks
 export async function POST(request: NextRequest) {
@@ -97,7 +98,7 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Error in POST /api/gamification/daily-login:', error);
+    logger.error('Error in POST /api/gamification/daily-login:', error);
     return NextResponse.json(
       { error: 'Failed to record daily login' },
       { status: 500 }

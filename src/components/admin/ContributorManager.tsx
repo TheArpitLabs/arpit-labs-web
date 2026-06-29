@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { X, Plus, User as UserIcon, Shield } from "lucide-react";
 import { contributorsRepository } from "@/lib/repositories/contributors.repository";
+import { logger } from '@/lib/logger';
 
 interface Contributor {
   id: string;
@@ -40,7 +41,7 @@ export function ContributorManager({ projectId, projectSlug, isOwner }: Contribu
       const data = await contributorsRepository.getContributors(projectId);
       setContributors(data);
     } catch (error) {
-      console.error('Error loading contributors:', error);
+      logger.error('Error loading contributors:', error);
     } finally {
       setLoading(false);
     }
@@ -78,7 +79,7 @@ export function ContributorManager({ projectId, projectSlug, isOwner }: Contribu
       setNewContributorRole('contributor');
       loadContributors();
     } catch (error) {
-      console.error('Error adding contributor:', error);
+      logger.error('Error adding contributor:', error);
       alert('Failed to add contributor. Please check the email and try again.');
     } finally {
       setAdding(false);
@@ -92,7 +93,7 @@ export function ContributorManager({ projectId, projectSlug, isOwner }: Contribu
       await contributorsRepository.removeContributor(projectId, userId);
       loadContributors();
     } catch (error) {
-      console.error('Error removing contributor:', error);
+      logger.error('Error removing contributor:', error);
       alert('Failed to remove contributor.');
     }
   };
@@ -102,7 +103,7 @@ export function ContributorManager({ projectId, projectSlug, isOwner }: Contribu
       await contributorsRepository.updateContributorRole(projectId, userId, newRole);
       loadContributors();
     } catch (error) {
-      console.error('Error updating role:', error);
+      logger.error('Error updating role:', error);
       alert('Failed to update role.');
     }
   };

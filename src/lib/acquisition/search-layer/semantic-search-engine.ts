@@ -5,6 +5,7 @@
  */
 
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { logger } from '@/lib/logger';
 import { 
   ContentEmbedding, 
   SearchQuery, 
@@ -159,7 +160,7 @@ class BaseSemanticSearchEngine implements SemanticSearchEngine {
         });
 
       if (error) {
-        console.error('Error indexing content:', error);
+        logger.error('Error indexing content:', error);
         throw error;
       }
 
@@ -177,7 +178,7 @@ class BaseSemanticSearchEngine implements SemanticSearchEngine {
         });
 
     } catch (error) {
-      console.error('Error in indexContent:', error);
+      logger.error('Error in indexContent:', error);
       throw error;
     }
   }
@@ -258,7 +259,7 @@ class BaseSemanticSearchEngine implements SemanticSearchEngine {
       const { data: embeddings, error } = await dbQuery;
 
       if (error) {
-        console.error('Error searching embeddings:', error);
+        logger.error('Error searching embeddings:', error);
         throw error;
       }
 
@@ -313,7 +314,7 @@ class BaseSemanticSearchEngine implements SemanticSearchEngine {
       return searchResults;
 
     } catch (error) {
-      console.error('Error in search:', error);
+      logger.error('Error in search:', error);
       throw error;
     }
   }
@@ -355,7 +356,7 @@ class BaseSemanticSearchEngine implements SemanticSearchEngine {
       return searchResults;
 
     } catch (error) {
-      console.error('Error in hybridSearch:', error);
+      logger.error('Error in hybridSearch:', error);
       throw error;
     }
   }
@@ -380,7 +381,7 @@ class BaseSemanticSearchEngine implements SemanticSearchEngine {
       const { data: results, error, count } = await dbQuery;
 
       if (error) {
-        console.error('Error in keyword search:', error);
+        logger.error('Error in keyword search:', error);
         throw error;
       }
 
@@ -415,7 +416,7 @@ class BaseSemanticSearchEngine implements SemanticSearchEngine {
       };
 
     } catch (error) {
-      console.error('Error in keywordSearch:', error);
+      logger.error('Error in keywordSearch:', error);
       return {
         results: [],
         total: 0,
@@ -493,7 +494,7 @@ class BaseSemanticSearchEngine implements SemanticSearchEngine {
       }
 
     } catch (error) {
-      console.error('Error deleting from index:', error);
+      logger.error('Error deleting from index:', error);
       throw error;
     }
   }
@@ -510,7 +511,7 @@ class BaseSemanticSearchEngine implements SemanticSearchEngine {
         .select('content_type');
 
       if (error) {
-        console.error('Error getting index stats:', error);
+        logger.error('Error getting index stats:', error);
         throw error;
       }
 
@@ -525,7 +526,7 @@ class BaseSemanticSearchEngine implements SemanticSearchEngine {
       };
 
     } catch (error) {
-      console.error('Error in getIndexStats:', error);
+      logger.error('Error in getIndexStats:', error);
       return { totalIndexed: 0, byType: {} };
     }
   }

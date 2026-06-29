@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, MotionProps } from "framer-motion";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/utils";
 import { transitions, getMotionProps, animationConfig } from "@/lib/animations/config";
 
 interface HoverLiftProps extends MotionProps {

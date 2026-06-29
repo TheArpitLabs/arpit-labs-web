@@ -1,8 +1,9 @@
 import { supabaseServer } from "@/lib/supabase/server";
 import { assertKnowledgeFeature } from "./feature-flags";
 import { normalizeRepositoryUrl, extractRepositoryId } from "./url-normalization";
-import { contentHash, jaccardSimilarity, normalizeText } from "./text";
+import { contentHash, jaccardSimilarity } from "./text";
 import type { AcquisitionCandidate } from "./types";
+import { logger } from '@/lib/logger';
 
 export interface DuplicateCheckResult {
   isDuplicate: boolean;
@@ -119,7 +120,7 @@ async function checkNormalizedUrl(normalizedUrl: any): Promise<DuplicateSignal> 
 /**
  * Check repository ID for renamed/moved repositories
  */
-async function checkRepositoryId(repositoryId: string, provider: string): Promise<DuplicateSignal> {
+async function checkRepositoryId(repositoryId: string, _provider: string): Promise<DuplicateSignal> {
   if (!repositoryId) {
     return {
       type: "repository_id",
@@ -438,7 +439,7 @@ export async function storeDuplicateCheck(queueItemId: string, result: Duplicate
     });
 
   if (error) {
-    console.error("Failed to store duplicate check:", error);
+    logger.error("Failed to store duplicate check:", error);
   }
 }
 
@@ -453,7 +454,7 @@ export async function getDuplicateChecks(queueItemId: string): Promise<any[]> {
     .order("checked_at", { ascending: false });
 
   if (error) {
-    console.error("Failed to get duplicate checks:", error);
+    logger.error("Failed to get duplicate checks:", error);
     return [];
   }
 
@@ -476,7 +477,7 @@ export async function resolveCrossSource(primaryQueueItemId: string, secondaryQu
       .eq("id", secondaryId);
 
     if (error) {
-      console.error("Failed to merge duplicate:", error);
+      logger.error("Failed to merge duplicate:", error);
     }
   }
 
@@ -490,6 +491,6 @@ export async function resolveCrossSource(primaryQueueItemId: string, secondaryQu
     });
 
   if (sourceError) {
-    console.error("Failed to store project sources:", sourceError);
+    logger.error("Failed to store project sources:", sourceError);
   }
 }

@@ -132,7 +132,7 @@ class BackgroundJobScheduler {
           job.lastRun = now;
           job.nextRun = new Date(Date.now() + job.interval);
         } catch (error) {
-          console.error(`[BackgroundJobScheduler] Job ${name} failed:`, error);
+          logger.error(`[BackgroundJobScheduler] Job ${name} failed:`, error);
         }
       }
     }

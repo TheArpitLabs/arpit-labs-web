@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { Network, Cpu, Users, Building2, FileText, Database, BookOpen, ChevronRight, Loader2 } from "lucide-react";
+import { logger } from '@/lib/logger';
 
 interface ProjectKnowledgeViewProps {
   projectId: string;
@@ -57,7 +58,7 @@ export function ProjectKnowledgeView({ projectId, projectSlug }: ProjectKnowledg
 
       setGraphData({ technologies, domains, contributors, organizations, research, datasets });
     } catch (error) {
-      console.error("Failed to fetch graph data:", error);
+      logger.error("Failed to fetch graph data:", error);
     } finally {
       setLoading(false);
     }

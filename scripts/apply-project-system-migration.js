@@ -13,44 +13,44 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
-  console.error('Error: Missing Supabase credentials in .env.local');
-  console.error('Required: NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY');
+  logger.error('Error: Missing Supabase credentials in .env.local');
+  logger.error('Required: NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY');
   process.exit(1);
 }
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 async function applyMigration() {
-  console.log('Applying Universal Project System migration...');
-  console.log(`Supabase URL: ${supabaseUrl}`);
-  console.log('');
+  logger.info('Applying Universal Project System migration...');
+  logger.info(`Supabase URL: ${supabaseUrl}`);
+  logger.info('');
 
   // Read the migration file
   const migrationPath = path.join(__dirname, '../supabase/migrations/20260708_phase2b_universal_project_system.sql');
   const migrationSQL = fs.readFileSync(migrationPath, 'utf8');
 
-  console.log('Migration SQL loaded successfully');
-  console.log('Please apply this migration manually in the Supabase SQL Editor:');
-  console.log('');
-  console.log('1. Go to your Supabase project dashboard');
-  console.log('2. Navigate to SQL Editor');
-  console.log('3. Create a new query');
-  console.log('4. Paste the contents of:');
-  console.log(`   ${migrationPath}`);
-  console.log('5. Run the query');
-  console.log('');
-  console.log('Alternatively, use the Supabase CLI:');
-  console.log('  supabase db push');
-  console.log('');
+  logger.info('Migration SQL loaded successfully');
+  logger.info('Please apply this migration manually in the Supabase SQL Editor:');
+  logger.info('');
+  logger.info('1. Go to your Supabase project dashboard');
+  logger.info('2. Navigate to SQL Editor');
+  logger.info('3. Create a new query');
+  logger.info('4. Paste the contents of:');
+  logger.info(`   ${migrationPath}`);
+  logger.info('5. Run the query');
+  logger.info('');
+  logger.info('Alternatively, use the Supabase CLI:');
+  logger.info('  supabase db push');
+  logger.info('');
   
   // For now, let's just verify the connection
   const { data, error } = await supabase.from('projects').select('count').single();
   
   if (error) {
-    console.error('Error connecting to database:', error.message);
+    logger.error('Error connecting to database:', error.message);
   } else {
-    console.log('✓ Database connection successful');
-    console.log('✓ Projects table exists');
+    logger.info('✓ Database connection successful');
+    logger.info('✓ Projects table exists');
   }
 }
 

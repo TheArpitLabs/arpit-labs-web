@@ -14,6 +14,7 @@ import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
 import { User, Mail, Calendar, FolderOpen, Search, MessageSquare, Bookmark, Award, Code2, TrendingUp, Users, Activity, Loader2, Heart, Star, Flame, Trophy, Settings } from "lucide-react";
 import { ProfileVisibilitySettings } from "@/components/profile/ProfileVisibilitySettings";
+import { logger } from '@/lib/logger';
 
 export default function ProfilePage() {
   const [user, setUser] = useState<any | null>(null);
@@ -55,7 +56,7 @@ export default function ProfilePage() {
           }
         }
       } catch (error) {
-        console.error("Error loading profile data:", error);
+        logger.error("Error loading profile data:", error);
       } finally {
         if (mounted) setLoading(false);
       }
@@ -87,7 +88,7 @@ export default function ProfilePage() {
             setUserAchievements(ua ?? []);
           }
         } catch (error) {
-          console.error("Error loading profile data on auth change:", error);
+          logger.error("Error loading profile data on auth change:", error);
         }
       } else {
         if (mounted) {

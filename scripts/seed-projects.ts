@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import * as dotenv from 'dotenv';
+import { logger } from '@/lib/logger';
 
 // Load environment variables from .env.local
 dotenv.config({ path: '.env.local' });
@@ -98,7 +99,7 @@ const projects = [
 ];
 
 async function seedProjects() {
-  console.log('Starting to seed projects...');
+  logger.info('Starting to seed projects...');
   
   for (const project of projects) {
     try {
@@ -110,7 +111,7 @@ async function seedProjects() {
         .single();
       
       if (existing) {
-        console.log(`Project "${project.title}" already exists, skipping...`);
+        logger.info(`Project "${project.title}" already exists, skipping...`);
         continue;
       }
       
@@ -121,16 +122,16 @@ async function seedProjects() {
         .single();
       
       if (error) {
-        console.error(`Error inserting project "${project.title}":`, error);
+        logger.error(`Error inserting project "${project.title}":`, error);
       } else {
-        console.log(`✓ Successfully created project: "${project.title}"`);
+        logger.info(`✓ Successfully created project: "${project.title}"`);
       }
     } catch (err) {
-      console.error(`Error processing project "${project.title}":`, err);
+      logger.error(`Error processing project "${project.title}":`, err);
     }
   }
   
-  console.log('Project seeding complete!');
+  logger.info('Project seeding complete!');
 }
 
 seedProjects().catch(console.error);

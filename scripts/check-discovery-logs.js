@@ -11,7 +11,7 @@ const supabase = createClient(
 );
 
 async function checkDiscoveryLogs() {
-  console.log('🔍 Checking discovery logs and GitHub imported projects...\n');
+  logger.info('🔍 Checking discovery logs and GitHub imported projects...\n');
 
   // Check discovery_runs table
   const { data: discoveryRuns, error: runsError } = await supabase
@@ -21,25 +21,25 @@ async function checkDiscoveryLogs() {
     .limit(5);
 
   if (runsError) {
-    console.error('❌ Error fetching discovery runs:', runsError);
+    logger.error('❌ Error fetching discovery runs:', runsError);
   } else if (discoveryRuns && discoveryRuns.length > 0) {
-    console.log('📊 Recent Discovery Runs:\n');
+    logger.info('📊 Recent Discovery Runs:\n');
     for (const run of discoveryRuns) {
-      console.log(`   - Run ID: ${run.id}`);
-      console.log(`     Status: ${run.status}`);
-      console.log(`     Categories: ${run.categories_processed?.join(', ') || 'None'}`);
-      console.log(`     Fetched: ${run.total_fetched}`);
-      console.log(`     Inserted: ${run.total_inserted}`);
-      console.log(`     Skipped: ${run.total_skipped}`);
-      console.log(`     Failed: ${run.total_failed}`);
-      console.log(`     Created: ${run.created_at}`);
-      console.log('');
+      logger.info(`   - Run ID: ${run.id}`);
+      logger.info(`     Status: ${run.status}`);
+      logger.info(`     Categories: ${run.categories_processed?.join(', ') || 'None'}`);
+      logger.info(`     Fetched: ${run.total_fetched}`);
+      logger.info(`     Inserted: ${run.total_inserted}`);
+      logger.info(`     Skipped: ${run.total_skipped}`);
+      logger.info(`     Failed: ${run.total_failed}`);
+      logger.info(`     Created: ${run.created_at}`);
+      logger.info('');
     }
   } else {
-    console.log('⚠️  No discovery runs found\n');
+    logger.info('⚠️  No discovery runs found\n');
   }
 
-  console.log('───────────────────────────────────────────────────────────────\n');
+  logger.info('───────────────────────────────────────────────────────────────\n');
 
   // Check for projects that have GitHub repository ID (indicates GitHub import)
   const { data: githubProjects, error: githubError } = await supabase
@@ -49,26 +49,26 @@ async function checkDiscoveryLogs() {
     .limit(10);
 
   if (githubError) {
-    console.error('❌ Error fetching GitHub projects:', githubError);
+    logger.error('❌ Error fetching GitHub projects:', githubError);
   } else if (githubProjects && githubProjects.length > 0) {
-    console.log('📊 Projects with GitHub Repository ID (likely imported via discovery):\n');
+    logger.info('📊 Projects with GitHub Repository ID (likely imported via discovery):\n');
     for (const project of githubProjects) {
-      console.log(`   - ${project.title}`);
-      console.log(`     URL: ${project.github_url}`);
-      console.log(`     Stars: ${project.github_stars}`);
-      console.log(`     Topics: ${project.repository_topics?.length || 0} topics`);
-      console.log(`     Owner: ${project.github_owner}`);
-      console.log(`     Forks: ${project.forks}`);
-      console.log(`     Contributors: ${project.contributors_count}`);
-      console.log(`     Last commit: ${project.last_commit_at}`);
-      console.log(`     Repo ID: ${project.github_repository_id}`);
-      console.log('');
+      logger.info(`   - ${project.title}`);
+      logger.info(`     URL: ${project.github_url}`);
+      logger.info(`     Stars: ${project.github_stars}`);
+      logger.info(`     Topics: ${project.repository_topics?.length || 0} topics`);
+      logger.info(`     Owner: ${project.github_owner}`);
+      logger.info(`     Forks: ${project.forks}`);
+      logger.info(`     Contributors: ${project.contributors_count}`);
+      logger.info(`     Last commit: ${project.last_commit_at}`);
+      logger.info(`     Repo ID: ${project.github_repository_id}`);
+      logger.info('');
     }
   } else {
-    console.log('⚠️  No projects found with GitHub repository ID\n');
+    logger.info('⚠️  No projects found with GitHub repository ID\n');
   }
 
-  console.log('───────────────────────────────────────────────────────────────\n');
+  logger.info('───────────────────────────────────────────────────────────────\n');
 
   // Count total projects
   const { count: totalProjects, error: countError } = await supabase
@@ -76,7 +76,7 @@ async function checkDiscoveryLogs() {
     .select('*', { count: 'exact', head: true });
 
   if (!countError) {
-    console.log(`📈 Total projects in database: ${totalProjects}`);
+    logger.info(`📈 Total projects in database: ${totalProjects}`);
   }
 
   // Count projects with GitHub metadata
@@ -86,7 +86,7 @@ async function checkDiscoveryLogs() {
     .not('github_repository_id', 'is', null);
 
   if (!metadataError) {
-    console.log(`📈 Projects with GitHub metadata: ${projectsWithMetadata}`);
+    logger.info(`📈 Projects with GitHub metadata: ${projectsWithMetadata}`);
   }
 
   // Count projects without GitHub metadata but with GitHub URL
@@ -97,7 +97,7 @@ async function checkDiscoveryLogs() {
     .is('github_repository_id', null);
 
   if (!noMetadataError) {
-    console.log(`📈 Projects with GitHub URL but no metadata: ${projectsWithoutMetadata}`);
+    logger.info(`📈 Projects with GitHub URL but no metadata: ${projectsWithoutMetadata}`);
   }
 }
 

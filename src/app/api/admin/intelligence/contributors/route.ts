@@ -5,9 +5,10 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { checkRateLimit } from '@/lib/rate-limit';
+import { checkRateLimit } from '@/lib/rate-limiting';
 import { audit } from '@/lib/infrastructure/audit-logger';
 import { featureFlags } from '@/lib/infrastructure/feature-flags';
+import { logger } from '@/lib/logger';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -74,7 +75,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ data });
   } catch (error) {
-    console.error('Error fetching contributors:', error);
+    logger.error('Error fetching contributors:', error);
     return NextResponse.json({ error: 'Failed to fetch contributors' }, { status: 500 });
   }
 }
@@ -128,7 +129,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, data: result });
   } catch (error) {
-    console.error('Error in contributor API:', error);
+    logger.error('Error in contributor API:', error);
     return NextResponse.json({ error: 'Failed to process request' }, { status: 500 });
   }
 }

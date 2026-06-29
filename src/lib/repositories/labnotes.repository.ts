@@ -2,6 +2,7 @@ import { supabaseServer } from "@/lib/supabase/server";
 import { LabNote } from "@/types/content";
 import { LabNoteInput } from "@/lib/validation/labnote.schema";
 import { handleDatabaseError } from "@/lib/errors";
+import { logger } from '@/lib/logger';
 
 export const labNotesRepository = {
   async getLabNotes(filters?: { published?: boolean; search?: string; category?: string }) {
@@ -23,7 +24,7 @@ export const labNotesRepository = {
     const { data, error } = await query;
 
     if (error) {
-      console.error("Database error in getLabNotes:", error);
+      logger.error("Database error in getLabNotes:", error);
       throw handleDatabaseError(error);
     }
     return data ?? [];
@@ -38,7 +39,7 @@ export const labNotesRepository = {
       .single();
 
     if (error) {
-      console.error("Database error in getLabNoteBySlug:", error);
+      logger.error("Database error in getLabNoteBySlug:", error);
       throw handleDatabaseError(error);
     }
     return data;
@@ -52,7 +53,7 @@ export const labNotesRepository = {
       .single();
 
     if (error) {
-      console.error("Database error in createLabNote:", error);
+      logger.error("Database error in createLabNote:", error);
       throw handleDatabaseError(error);
     }
     return data;
@@ -67,7 +68,7 @@ export const labNotesRepository = {
       .single();
 
     if (error) {
-      console.error("Database error in updateLabNote:", error);
+      logger.error("Database error in updateLabNote:", error);
       throw handleDatabaseError(error);
     }
     return data;
@@ -76,7 +77,7 @@ export const labNotesRepository = {
   async deleteLabNote(id: string) {
     const { error } = await supabaseServer.from("lab_notes").delete().eq("id", id);
     if (error) {
-      console.error("Database error in deleteLabNote:", error);
+      logger.error("Database error in deleteLabNote:", error);
       throw handleDatabaseError(error);
     }
     return true;

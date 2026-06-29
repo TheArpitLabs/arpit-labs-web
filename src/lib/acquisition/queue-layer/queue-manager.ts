@@ -118,7 +118,7 @@ export class QueueManager {
     });
 
     worker.on('failed', (job: Job | undefined, error: Error) => {
-      console.error(`Job ${job?.id} in queue ${queueName} failed:`, error);
+      logger.error(`Job ${job?.id} in queue ${queueName} failed:`, error);
     });
 
     this.workers.set(queueName, worker);
@@ -387,7 +387,7 @@ export class QueueManager {
       });
 
     if (error) {
-      console.error(`Failed to store job in database: ${error.message}`);
+      logger.error(`Failed to store job in database: ${error.message}`);
     }
   }
 
@@ -417,7 +417,7 @@ export class QueueManager {
       .eq('job_id', jobId);
 
     if (error) {
-      console.error(`Failed to update job status in database: ${error.message}`);
+      logger.error(`Failed to update job status in database: ${error.message}`);
     }
   }
 

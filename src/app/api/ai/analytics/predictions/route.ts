@@ -6,7 +6,8 @@
 
 import { NextResponse } from 'next/server';
 import { analyticsService } from '@/lib/ai-services';
-import { getUserFromRequest } from '@/lib/auth';
+import { getUserFromRequest } from '@/lib/auth/auth';
+import { logger } from '@/lib/logger';
 
 export async function GET(request: Request) {
   try {
@@ -32,7 +33,7 @@ export async function GET(request: Request) {
       { status: 200 }
     );
   } catch (error) {
-    console.error('Error fetching analytics predictions:', error);
+    logger.error('Error fetching analytics predictions:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to fetch predictions' },
       { status: 500 }

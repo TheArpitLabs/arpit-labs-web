@@ -5,8 +5,9 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { checkRateLimit } from '@/lib/rate-limit';
+import { checkRateLimit } from '@/lib/rate-limiting';
 import { featureFlags } from '@/lib/infrastructure/feature-flags';
+import { logger } from '@/lib/logger';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -63,7 +64,7 @@ export async function GET(request: NextRequest) {
       }
     });
   } catch (error) {
-    console.error('Error fetching public organizations:', error);
+    logger.error('Error fetching public organizations:', error);
     return NextResponse.json({ error: 'Failed to fetch organizations' }, { status: 500 });
   }
 }

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAdminUserFromRequest } from "@/lib/auth";
+import { getAdminUserFromRequest } from "@/lib/auth/auth";
 import { supabaseServer } from "@/lib/supabase/server";
+import { logger } from '@/lib/logger';
 
 export async function GET(request: NextRequest) {
   const admin = await getAdminUserFromRequest(request);
@@ -29,7 +30,7 @@ export async function GET(request: NextRequest) {
       .eq("status", status);
 
     if (countError) {
-      console.error("Error counting pending projects:", countError);
+      logger.error("Error counting pending projects:", countError);
     }
 
     return NextResponse.json({

@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { logger } from '@/lib/logger';
 import {
   buildGitHubProjectTags,
   classifyGitHubRepository,
@@ -124,4 +125,4 @@ assert.equal(payload.published, false, "discovered projects are not auto-publish
 assert.equal(payload.featured, false, "discovered projects are not auto-featured");
 assert.equal(payload.owner_id, null, "discovered projects are not assigned to a user account");
 
-console.log("GitHub discovery engine tests passed");
+logger.info("GitHub discovery engine tests passed");

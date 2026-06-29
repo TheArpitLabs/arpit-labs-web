@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getRelatedKnowledge } from "@/lib/knowledge-ecosystem";
+import { logger } from '@/lib/logger';
 
 export async function POST(request: NextRequest) {
   try {
@@ -11,7 +12,7 @@ export async function POST(request: NextRequest) {
     const recommendations = await getRelatedKnowledge(entityType, entityId, limit);
     return NextResponse.json({ success: true, recommendations });
   } catch (error) {
-    console.error("Knowledge recommendations failed:", error);
+    logger.error("Knowledge recommendations failed:", error);
     return NextResponse.json({ success: false, error: "Knowledge recommendations failed" }, { status: 500 });
   }
 }

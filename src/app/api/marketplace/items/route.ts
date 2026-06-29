@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { marketplaceRepository } from "@/lib/repositories/marketplace.repository";
+import { logger } from '@/lib/logger';
 
 export async function GET(request: Request) {
   try {
@@ -16,7 +17,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json(items);
   } catch (error) {
-    console.error("Error fetching marketplace items:", error);
+    logger.error("Error fetching marketplace items:", error);
     return NextResponse.json(
       { error: "Failed to fetch marketplace items" },
       { status: 500 }

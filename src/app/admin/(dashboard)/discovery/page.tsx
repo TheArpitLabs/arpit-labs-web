@@ -2,6 +2,7 @@ import { Globe, Search, CheckCircle, Clock, XCircle, AlertCircle, PlayCircle, Da
 import { headers } from "next/headers";
 import { Suspense } from "react";
 import { ProjectDiscoveryEngine } from "@/components/admin/ProjectDiscoveryEngine";
+import { logger } from '@/lib/logger';
 
 export default function DiscoveryAdminPage() {
   return (
@@ -161,7 +162,7 @@ async function fetchPipelineStatistics() {
     const response = await fetch(`${await getAppOrigin()}/api/discovery?action=pipeline-stats`, { cache: "no-store" });
     const data = await response.json();
     
-    console.log('Pipeline stats API response:', {
+    logger.info('Pipeline stats API response:', {
       success: data.success,
       result: data.result,
       isArray: Array.isArray(data.result),
@@ -180,10 +181,10 @@ async function fetchPipelineStatistics() {
     }
     
     // Handle null, undefined, or invalid responses
-    console.warn('Pipeline stats returned non-array value:', result);
+    logger.warn('Pipeline stats returned non-array value:', result);
     return [];
   } catch (error) {
-    console.error('Failed to fetch pipeline statistics:', error);
+    logger.error('Failed to fetch pipeline statistics:', error);
     return [];
   }
 }
@@ -195,7 +196,7 @@ async function fetchDiscoverySources() {
     const result = data.result;
     return Array.isArray(result) ? result : [];
   } catch (error) {
-    console.error('Failed to fetch discovery sources:', error);
+    logger.error('Failed to fetch discovery sources:', error);
     return [];
   }
 }
@@ -207,7 +208,7 @@ async function fetchDiscoveredItems(status: string) {
     const result = data.result;
     return Array.isArray(result) ? result : [];
   } catch (error) {
-    console.error('Failed to fetch discovered items:', error);
+    logger.error('Failed to fetch discovered items:', error);
     return [];
   }
 }
@@ -218,7 +219,7 @@ async function fetchQualityStatistics() {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Failed to fetch quality statistics:', error);
+    logger.error('Failed to fetch quality statistics:', error);
     return {
       average_score: 0,
       excellent: 0,

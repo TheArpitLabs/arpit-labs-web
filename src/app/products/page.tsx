@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Product } from "@/types/content";
 import Link from "next/link";
 import Image from "next/image";
+import { logger } from '@/lib/logger';
 
 export const metadata = {
   title: "Products | Arpit Labs",
@@ -17,7 +18,7 @@ export default async function ProductsPage() {
   try {
     products = await productsRepository.getProducts({ published: true });
   } catch (error) {
-    console.error("Error fetching products:", error);
+    logger.error("Error fetching products:", error);
     products = [];
   }
 

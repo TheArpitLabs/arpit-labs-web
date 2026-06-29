@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabase/server";
 import { datasetIntelligenceEngine } from "@/lib/intelligence/dataset-intelligence";
+import { logger } from '@/lib/logger';
 
 export async function GET(request: NextRequest) {
   try {
@@ -58,7 +59,7 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ success: false, error: "Unknown action" }, { status: 400 });
     }
   } catch (error) {
-    console.error("Datasets API failed:", error);
+    logger.error("Datasets API failed:", error);
     return NextResponse.json(
       { success: false, error: error instanceof Error ? error.message : "Datasets API failed" },
       { status: 500 }
@@ -92,7 +93,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ success: false, error: "Unknown action" }, { status: 400 });
     }
   } catch (error) {
-    console.error("Datasets API POST failed:", error);
+    logger.error("Datasets API POST failed:", error);
     return NextResponse.json(
       { success: false, error: error instanceof Error ? error.message : "Datasets API POST failed" },
       { status: 500 }

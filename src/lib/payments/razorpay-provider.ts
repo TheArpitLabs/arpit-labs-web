@@ -1,5 +1,6 @@
 import Razorpay from "razorpay";
 import type { CheckoutSessionPayload, CheckoutSessionResult, PaymentProvider } from "@/lib/payments/payment-provider";
+import { logger } from '@/lib/logger';
 
 const razorpayKeyId = process.env.RAZORPAY_KEY_ID;
 const razorpayKeySecret = process.env.RAZORPAY_KEY_SECRET;
@@ -14,7 +15,7 @@ export const RazorpayProvider: PaymentProvider = {
   providerName: "razorpay",
   async createCheckoutSession(payload: CheckoutSessionPayload): Promise<CheckoutSessionResult> {
     if (!razorpay) {
-      console.error("Razorpay client is not configured. RAZORPAY_KEY_ID or RAZORPAY_KEY_SECRET is missing.");
+      logger.error("Razorpay client is not configured. RAZORPAY_KEY_ID or RAZORPAY_KEY_SECRET is missing.");
       return {
         success: false,
         provider: "razorpay",
@@ -46,7 +47,7 @@ export const RazorpayProvider: PaymentProvider = {
         sessionId: order.id as string,
       };
     } catch (error) {
-      console.error("Razorpay Order Error:", error);
+      logger.error("Razorpay Order Error:", error);
       return {
         success: false,
         provider: "razorpay",

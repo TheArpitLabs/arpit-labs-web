@@ -3,13 +3,19 @@
  * Rate limiting, CSRF protection, input sanitization
  */
 
+import { logger } from '@/lib/logger';
+
 let DOMPurify: any = null;
 
-try {
-  DOMPurify = require('isomorphic-dompurify');
-} catch (error) {
-  console.warn('DOMPurify not available, input sanitization will be limited.');
-}
+// Dynamic import to avoid require() style import
+void (async () => {
+  try {
+    const dompurifyModule = await import('isomorphic-dompurify');
+    DOMPurify = dompurifyModule.default || dompurifyModule;
+  } catch {
+    logger.warn('DOMPurify not available, input sanitization will be limited.');
+  }
+})();
 
 // Simple fallback if DOMPurify is not available
 function fallbackSanitize(input: string): string {
