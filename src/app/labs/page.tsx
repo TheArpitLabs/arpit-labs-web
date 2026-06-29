@@ -1,11 +1,12 @@
-import { labsRepository } from "@/lib/repositories/labs.repository";
-import Link from "next/link";
-import { BarChart3 } from "lucide-react";
+import { labsRepository } from '@/lib/repositories/labs.repository';
+import Link from 'next/link';
+import { BarChart3 } from 'lucide-react';
 import { logger } from '@/lib/logger';
 
 export const metadata = {
-  title: "Labs | Arpit Labs",
-  description: "Hands-on practical labs to apply your skills in IoT, AI, Cybersecurity, and Web Development",
+  title: 'Labs | Axiora',
+  description:
+    'Hands-on practical labs to apply your skills in IoT, AI, Cybersecurity, and Web Development',
 };
 
 export default async function LabsPage() {
@@ -13,22 +14,21 @@ export default async function LabsPage() {
   try {
     labs = await labsRepository.getAll(true);
   } catch (error) {
-    logger.error("Error fetching labs:", error);
+    logger.error('Error fetching labs:', error);
     labs = [];
   }
 
-  const categories = Array.from(new Set(labs.map(l => l.category)));
+  const categories = Array.from(new Set(labs.map((l) => l.category)));
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-background to-background/80">
       {/* Header */}
       <div className="border-b border-border/40 px-4 py-12 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
-          <h1 className="text-4xl font-bold tracking-tight text-foreground">
-            Hands-On Labs
-          </h1>
+          <h1 className="text-4xl font-bold tracking-tight text-foreground">Hands-On Labs</h1>
           <p className="mt-4 text-lg text-muted">
-            Get practical experience with real-world projects and challenges across multiple domains.
+            Get practical experience with real-world projects and challenges across multiple
+            domains.
           </p>
         </div>
       </div>
@@ -40,7 +40,7 @@ export default async function LabsPage() {
             <>
               {/* Category Sections */}
               {categories.map((category) => {
-                const categoryLabs = labs.filter(l => l.category === category);
+                const categoryLabs = labs.filter((l) => l.category === category);
                 return (
                   <div key={category} className="mb-16">
                     <h2 className="text-2xl font-bold text-foreground mb-8">{category}</h2>
@@ -55,9 +55,7 @@ export default async function LabsPage() {
                             <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">
                               {lab.title}
                             </h3>
-                            <p className="text-sm text-muted line-clamp-3">
-                              {lab.description}
-                            </p>
+                            <p className="text-sm text-muted line-clamp-3">{lab.description}</p>
 
                             <div className="flex items-center gap-4 text-xs text-muted pt-2 border-t border-border/20">
                               <div className="flex items-center gap-1">

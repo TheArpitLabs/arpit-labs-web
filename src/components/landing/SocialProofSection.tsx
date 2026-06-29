@@ -1,41 +1,44 @@
-"use client";
+'use client';
 
-import { motion } from "framer-motion";
-import { Award, Trophy, Target, Zap, Star } from "lucide-react";
+import { motion } from 'framer-motion';
+import { Award, Trophy, Target, Zap, Star } from 'lucide-react';
 
 const achievements = [
-  { icon: Award, label: "Engineering Focus", value: "AI + IoT", description: "Core domains" },
-  { icon: Trophy, label: "Projects Published", value: "5+", description: "Production systems" },
-  { icon: Target, label: "Research Papers", value: "6+", description: "Technical publications" },
-  { icon: Zap, label: "Resources Available", value: "20+", description: "Engineering assets" },
+  { icon: Award, label: 'Engineering Focus', value: 'AI + IoT', description: 'Core domains' },
+  { icon: Trophy, label: 'Projects Published', value: '5+', description: 'Production systems' },
+  { icon: Target, label: 'Research Papers', value: '6+', description: 'Technical publications' },
+  { icon: Zap, label: 'Resources Available', value: '20+', description: 'Engineering assets' },
 ];
 
 const testimonials = [
   {
-    name: "Sarah Chen",
-    role: "ML Engineer at Google",
-    content: "Arpit Labs' AI explanations helped me understand machine learning completely. The learning path was incredible and practical.",
-    rating: 5
+    name: 'Sarah Chen',
+    role: 'ML Engineer at Google',
+    content:
+      "Axiora' AI explanations helped me understand machine learning completely. The learning path was incredible and practical.",
+    rating: 5,
   },
   {
-    name: "Rahul Sharma",
-    role: "Systems Engineer",
-    content: "Started contributing during college, now building real systems! The project documentation and community support are unmatched.",
-    rating: 5
+    name: 'Rahul Sharma',
+    role: 'Systems Engineer',
+    content:
+      'Started contributing during college, now building real systems! The project documentation and community support are unmatched.',
+    rating: 5,
   },
   {
-    name: "Alex Rivera",
-    role: "IoT Specialist at Tesla",
-    content: "Found my dream job through Arpit Labs projects! The hands-on experience with IoT systems made all the difference in interviews.",
-    rating: 5
-  }
+    name: 'Alex Rivera',
+    role: 'IoT Specialist at Tesla',
+    content:
+      'Found my dream job through Axiora projects! The hands-on experience with IoT systems made all the difference in interviews.',
+    rating: 5,
+  },
 ];
 
 const milestones = [
-  { year: "2023", title: "Platform Launch", description: "Started with 10 projects" },
-  { year: "2024", title: "Community Growth", description: "Reached 1,000+ members" },
-  { year: "2025", title: "AI Integration", description: "Added AI-powered tools" },
-  { year: "2026", title: "Global Expansion", description: "Worldwide engineering network" },
+  { year: '2023', title: 'Platform Launch', description: 'Started with 10 projects' },
+  { year: '2024', title: 'Community Growth', description: 'Reached 1,000+ members' },
+  { year: '2025', title: 'AI Integration', description: 'Added AI-powered tools' },
+  { year: '2026', title: 'Global Expansion', description: 'Worldwide engineering network' },
 ];
 
 export function SocialProofSection() {
@@ -76,7 +79,9 @@ export function SocialProofSection() {
                   <div className="mb-2 text-5xl font-heading font-bold bg-gradient-to-r from-foreground to-muted bg-clip-text text-transparent">
                     {achievement.value}
                   </div>
-                  <p className="mb-1 text-lg font-heading font-semibold text-foreground">{achievement.label}</p>
+                  <p className="mb-1 text-lg font-heading font-semibold text-foreground">
+                    {achievement.label}
+                  </p>
                   <p className="text-sm text-muted">{achievement.description}</p>
                 </div>
               </motion.div>
@@ -127,7 +132,9 @@ export function SocialProofSection() {
                       </span>
                     </div>
                     <div>
-                      <p className="font-heading font-semibold text-foreground">{testimonial.name}</p>
+                      <p className="font-heading font-semibold text-foreground">
+                        {testimonial.name}
+                      </p>
                       <p className="text-sm text-muted">{testimonial.role}</p>
                     </div>
                   </div>
@@ -146,9 +153,7 @@ export function SocialProofSection() {
         >
           <div className="mb-12 text-center">
             <p className="mb-4 text-sm uppercase tracking-[0.28em] text-muted">Journey</p>
-            <h2 className="mb-6 font-heading text-section-title font-bold">
-              Our Evolution
-            </h2>
+            <h2 className="mb-6 font-heading text-section-title font-bold">Our Evolution</h2>
           </div>
 
           <div className="relative">
@@ -165,21 +170,25 @@ export function SocialProofSection() {
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                   className={`relative flex items-center ${index % 2 === 0 ? 'justify-start' : 'justify-end'}`}
                 >
-                  <div className={`w-5/12 ${index % 2 === 0 ? 'text-right pr-8' : 'text-left pl-8'}`}>
+                  <div
+                    className={`w-5/12 ${index % 2 === 0 ? 'text-right pr-8' : 'text-left pl-8'}`}
+                  >
                     <div className="rounded-2xl glass p-6">
                       <span className="mb-2 inline-block rounded-full bg-gradient-to-r from-primary/10 to-accent/10 px-3 py-1 text-sm font-semibold text-primary">
                         {milestone.year}
                       </span>
-                      <h3 className="mb-2 text-xl font-heading font-bold text-foreground">{milestone.title}</h3>
+                      <h3 className="mb-2 text-xl font-heading font-bold text-foreground">
+                        {milestone.title}
+                      </h3>
                       <p className="text-muted">{milestone.description}</p>
                     </div>
                   </div>
-                  
+
                   {/* Timeline dot */}
                   <div className="absolute left-1/2 flex h-4 w-4 -translate-x-1/2 items-center justify-center rounded-full bg-gradient-to-r from-primary to-accent shadow-lg">
                     <div className="h-2 w-2 rounded-full bg-background" />
                   </div>
-                  
+
                   <div className="w-5/12" />
                 </motion.div>
               ))}

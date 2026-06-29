@@ -1,7 +1,7 @@
 /**
  * Phase 7: AI Service Layer
  * Integrates with OpenAI and vector database patterns
- * 
+ *
  * Features:
  * - AI Chat with knowledge base
  * - Semantic search
@@ -19,7 +19,8 @@ import { logger } from '@/lib/logger';
 
 // Initialize Supabase client
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+const supabaseKey =
+  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // ============================================================================
@@ -167,7 +168,7 @@ export class AIChatService {
     );
 
     const systemPrompt = this.buildSystemPrompt(conversation.topic, knowledgeContext);
-    const messages = conversation.messages.map(msg => ({
+    const messages = conversation.messages.map((msg) => ({
       role: msg.role,
       content: msg.content,
     }));
@@ -186,7 +187,9 @@ export class AIChatService {
   private async searchKnowledgeBase(query: string, topic: string): Promise<string[]> {
     try {
       // Use semantic search service to retrieve relevant chunks
-      const results = this.semanticSearchService ? await this.semanticSearchService.search(query, 3) : null;
+      const results = this.semanticSearchService
+        ? await this.semanticSearchService.search(query, 3)
+        : null;
 
       if (Array.isArray(results) && results.length > 0) {
         return results.map((r: { preview?: string; chunk?: string }) => r.preview || r.chunk || '');
@@ -241,7 +244,10 @@ export class AIChatService {
   /**
    * Call OpenAI API
    */
-  private async callOpenAI(systemPrompt: string, messages: Array<{ role: string; content: string }>): Promise<string> {
+  private async callOpenAI(
+    systemPrompt: string,
+    messages: Array<{ role: string; content: string }>
+  ): Promise<string> {
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
       return this.generateFallbackResponse('general');
@@ -256,10 +262,7 @@ export class AIChatService {
         },
         body: JSON.stringify({
           model: this.model,
-          messages: [
-            { role: 'system', content: systemPrompt },
-            ...messages,
-          ],
+          messages: [{ role: 'system', content: systemPrompt }, ...messages],
           max_tokens: this.maxTokens,
           temperature: this.temperature,
         }),
@@ -282,9 +285,11 @@ export class AIChatService {
    */
   private generateFallbackResponse(topic: string): string {
     const fallbacks: Record<string, string> = {
-      projects: 'I can help you explore various software projects and technical solutions. What would you like to know?',
+      projects:
+        'I can help you explore various software projects and technical solutions. What would you like to know?',
       blog: 'I can discuss blog articles on various technical topics. What interests you?',
-      experiments: 'I can explain experiments and research concepts. What would you like to explore?',
+      experiments:
+        'I can explain experiments and research concepts. What would you like to explore?',
       general: 'I am an AI assistant ready to help. How can I assist you today?',
     };
 
@@ -308,9 +313,12 @@ export class AIChatService {
     }
 
     try {
-      await supabase.from('ai_conversations').update({
-        updated_at: new Date().toISOString(),
-      }).eq('id', conversationId);
+      await supabase
+        .from('ai_conversations')
+        .update({
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', conversationId);
     } catch (error) {
       logger.error('Failed to save conversation', { error });
     }
@@ -597,13 +605,7 @@ export class KnowledgeBaseService {
   }
 
   private buildLabNoteContent(note: LabNote): string {
-    return [
-      note.title,
-      note.excerpt,
-      note.content,
-      note.category,
-      note.tags?.join(', '),
-    ]
+    return [note.title, note.excerpt, note.content, note.category, note.tags?.join(', ')]
       .filter(Boolean)
       .join(' ');
   }
@@ -736,23 +738,25 @@ export class SemanticSearchService {
       const rows = Array.isArray(rpc.data) ? rpc.data : [];
 
       // 3) Map RPC results to SearchResult
-      const results: SearchResult[] = rows.map((r: {
-        id: string;
-        title?: string;
-        metadata?: { title?: string; url?: string };
-        content_type?: string;
-        content_id: string;
-        similarity?: number;
-        chunk?: string;
-      }) => ({
-        id: r.id,
-        title: r.title || (r.metadata && r.metadata.title) || 'Untitled',
-        sourceType: r.content_type || 'unknown',
-        sourceId: r.content_id,
-        similarity: r.similarity || 0,
-        preview: (r.chunk || '').substring(0, 200),
-        url: r.metadata?.url || '#',
-      }));
+      const results: SearchResult[] = rows.map(
+        (r: {
+          id: string;
+          title?: string;
+          metadata?: { title?: string; url?: string };
+          content_type?: string;
+          content_id: string;
+          similarity?: number;
+          chunk?: string;
+        }) => ({
+          id: r.id,
+          title: r.title || (r.metadata && r.metadata.title) || 'Untitled',
+          sourceType: r.content_type || 'unknown',
+          sourceId: r.content_id,
+          similarity: r.similarity || 0,
+          preview: (r.chunk || '').substring(0, 200),
+          url: r.metadata?.url || '#',
+        })
+      );
 
       return results;
     } catch (error) {
@@ -765,12 +769,17 @@ export class SemanticSearchService {
    * Calculate similarity between query and text (simple keyword-based)
    */
   private calculateSimilarity(query: string, text: string): number {
-    const queryWords = query.toLowerCase().split(/\s+/).filter(w => w.length > 2);
+    const queryWords = query
+      .toLowerCase()
+      .split(/\s+/)
+      .filter((w) => w.length > 2);
     const textWords = text.toLowerCase().split(/\s+/);
 
     if (queryWords.length === 0) return 0;
 
-    const matches = queryWords.filter(qw => textWords.some(tw => tw.includes(qw) || qw.includes(tw))).length;
+    const matches = queryWords.filter((qw) =>
+      textWords.some((tw) => tw.includes(qw) || qw.includes(tw))
+    ).length;
 
     return matches / queryWords.length;
   }
@@ -818,15 +827,17 @@ export class SemanticSearchService {
   /**
    * Enrich search results with metadata
    */
-  private async enrichResults(results: Array<{
-    id: string;
-    title?: string;
-    sourceType?: string;
-    sourceId?: string;
-    similarity?: number;
-    preview?: string;
-    url?: string;
-  }>): Promise<SearchResult[]> {
+  private async enrichResults(
+    results: Array<{
+      id: string;
+      title?: string;
+      sourceType?: string;
+      sourceId?: string;
+      similarity?: number;
+      preview?: string;
+      url?: string;
+    }>
+  ): Promise<SearchResult[]> {
     return results.map((r) => ({
       id: r.id,
       title: r.title || 'Untitled',
@@ -912,12 +923,26 @@ export class ContentGenerationService {
     const title = ideas[0]?.replace(/^\d+\.\s*/, '') || `${category} project idea`;
     const description = `A ${category} project idea designed to showcase ${category.toLowerCase()} innovation, practical architecture, and real-world impact.`;
     const generatedTechStack = await this.generateTechStack(description);
-    const techStackPayload: Record<string, string[]> = techStack.length > 0 ? {
-      frontend: techStack.filter((item) => /react|next|vue|angular|svelte/i.test(item)) || generatedTechStack.frontend,
-      backend: techStack.filter((item) => /node|express|fastify|python|django|flask|go|rust|java|spring/i.test(item)) || generatedTechStack.backend,
-      database: techStack.filter((item) => /postgre|mysql|mongo|redis|supabase|sqlite|cassandra/i.test(item)) || generatedTechStack.database,
-      devops: techStack.filter((item) => /docker|kubernetes|terraform|vercel|github actions|aws|gcp|azure/i.test(item)) || generatedTechStack.devops,
-    } : generatedTechStack;
+    const techStackPayload: Record<string, string[]> =
+      techStack.length > 0
+        ? {
+            frontend:
+              techStack.filter((item) => /react|next|vue|angular|svelte/i.test(item)) ||
+              generatedTechStack.frontend,
+            backend:
+              techStack.filter((item) =>
+                /node|express|fastify|python|django|flask|go|rust|java|spring/i.test(item)
+              ) || generatedTechStack.backend,
+            database:
+              techStack.filter((item) =>
+                /postgre|mysql|mongo|redis|supabase|sqlite|cassandra/i.test(item)
+              ) || generatedTechStack.database,
+            devops:
+              techStack.filter((item) =>
+                /docker|kubernetes|terraform|vercel|github actions|aws|gcp|azure/i.test(item)
+              ) || generatedTechStack.devops,
+          }
+        : generatedTechStack;
     const projectDifficulty = difficulty as GeneratedProject['difficulty'];
     const durationMap = {
       beginner: '4-6 weeks',
@@ -929,10 +954,18 @@ export class ContentGenerationService {
       title,
       description,
       techStack: {
-        frontend: techStackPayload.frontend.length ? techStackPayload.frontend : generatedTechStack.frontend,
-        backend: techStackPayload.backend.length ? techStackPayload.backend : generatedTechStack.backend,
-        database: techStackPayload.database.length ? techStackPayload.database : generatedTechStack.database,
-        devops: techStackPayload.devops.length ? techStackPayload.devops : generatedTechStack.devops,
+        frontend: techStackPayload.frontend.length
+          ? techStackPayload.frontend
+          : generatedTechStack.frontend,
+        backend: techStackPayload.backend.length
+          ? techStackPayload.backend
+          : generatedTechStack.backend,
+        database: techStackPayload.database.length
+          ? techStackPayload.database
+          : generatedTechStack.database,
+        devops: techStackPayload.devops.length
+          ? techStackPayload.devops
+          : generatedTechStack.devops,
       },
       difficulty: projectDifficulty,
       estimatedBudget: budget,
@@ -1041,7 +1074,8 @@ export class ContentGenerationService {
           messages: [
             {
               role: 'system',
-              content: 'You are a helpful AI assistant for generating technical content and project ideas.',
+              content:
+                'You are a helpful AI assistant for generating technical content and project ideas.',
             },
             { role: 'user', content: prompt },
           ],
@@ -1079,22 +1113,20 @@ export class ContentGenerationService {
       const recentJourney = await this.fetchRecentJourney();
       const title = `${period.charAt(0).toUpperCase()}${period.slice(1)} AI Newsletter`;
 
-      const prompt = `Create a ${period} Arpit Labs newsletter with highlights, new projects, recent articles, and experiment updates. Use the following source content to build each section.
+      const prompt = `Create a ${period} Axiora newsletter with highlights, new projects, recent articles, and experiment updates. Use the following source content to build each section.
 
 Projects:
-${recentProjects
-        .map((project) => `- ${project.title}: ${project.description}`)
-        .join('\n')}
+${recentProjects.map((project) => `- ${project.title}: ${project.description}`).join('\n')}
 
 Articles:
 ${recentArticles
-        .map((article) => `- ${article.title}: ${article.excerpt || article.description || ''}`)
-        .join('\n')}
+  .map((article) => `- ${article.title}: ${article.excerpt || article.description || ''}`)
+  .join('\n')}
 
 Experiments:
 ${recentExperiments
-        .map((experiment) => `- ${experiment.title}: ${experiment.description}`)
-        .join('\n')}
+  .map((experiment) => `- ${experiment.title}: ${experiment.description}`)
+  .join('\n')}
 
 Journey updates:
 ${recentJourney.map((entry) => `- ${entry.title}: ${entry.description}`).join('\n')}
@@ -1105,27 +1137,68 @@ Return JSON with keys: title, summary, highlights, newProjects, recentArticles, 
       const parsed = this.parseJSON<NewsletterPayload>(aiResponse);
       const newsletter = parsed ?? {
         title,
-        summary: `Your ${period} update from Arpit Labs, including recent projects, articles, and experiments.`,
+        summary: `Your ${period} update from Axiora, including recent projects, articles, and experiments.`,
         highlights: recentProjects.slice(0, 3).map((project) => project.title),
-        newProjects: recentProjects.slice(0, 3).map((project) => ({ title: project.title, summary: project.description, url: project.github_url || undefined })),
-        recentArticles: recentArticles.slice(0, 3).map((article) => ({ title: article.title, summary: article.excerpt || '', url: article.url || undefined })),
-        experimentUpdates: recentExperiments.slice(0, 3).map((experiment) => ({ title: experiment.title, summary: experiment.description, url: experiment.url || undefined })),
+        newProjects: recentProjects
+          .slice(0, 3)
+          .map((project) => ({
+            title: project.title,
+            summary: project.description,
+            url: project.github_url || undefined,
+          })),
+        recentArticles: recentArticles
+          .slice(0, 3)
+          .map((article) => ({
+            title: article.title,
+            summary: article.excerpt || '',
+            url: article.url || undefined,
+          })),
+        experimentUpdates: recentExperiments
+          .slice(0, 3)
+          .map((experiment) => ({
+            title: experiment.title,
+            summary: experiment.description,
+            url: experiment.url || undefined,
+          })),
         newsletterHtml: `<h1>${title}</h1><p>${recentProjects.length} projects, ${recentArticles.length} articles, and ${recentExperiments.length} experiments were reviewed.</p>`,
       };
 
-      await this.createGenerationRecord('newsletter', 'newsletter', null, newsletter, this.estimateTokens(aiResponse), { period });
-      await this.updateJobStatus(job?.id, 'completed', newsletter, null, this.estimateTokens(aiResponse));
+      await this.createGenerationRecord(
+        'newsletter',
+        'newsletter',
+        null,
+        newsletter,
+        this.estimateTokens(aiResponse),
+        { period }
+      );
+      await this.updateJobStatus(
+        job?.id,
+        'completed',
+        newsletter,
+        null,
+        this.estimateTokens(aiResponse)
+      );
       return newsletter;
     } catch (error) {
-      await this.updateJobStatus(job?.id, 'failed', null, error instanceof Error ? error.message : 'Unknown error', null);
+      await this.updateJobStatus(
+        job?.id,
+        'failed',
+        null,
+        error instanceof Error ? error.message : 'Unknown error',
+        null
+      );
       throw error;
     }
   }
 
-  async generateBlogContent(topic: string, category: string, difficulty: 'beginner' | 'intermediate' | 'advanced'): Promise<GeneratedBlogContent> {
+  async generateBlogContent(
+    topic: string,
+    category: string,
+    difficulty: 'beginner' | 'intermediate' | 'advanced'
+  ): Promise<GeneratedBlogContent> {
     const job = await this.createJobRecord('blog', 'running', { topic, category, difficulty });
     try {
-      const prompt = `Generate blog content for Arpit Labs about the topic '${topic}' in the category '${category}'. Create a title, excerpt, full content, meta description, and tags. Use a ${difficulty} developer audience and return JSON with keys title, excerpt, content, metaDescription, tags.`;
+      const prompt = `Generate blog content for Axiora about the topic '${topic}' in the category '${category}'. Create a title, excerpt, full content, meta description, and tags. Use a ${difficulty} developer audience and return JSON with keys title, excerpt, content, metaDescription, tags.`;
       const aiResponse = await this.callOpenAI(prompt);
       const parsed = this.parseJSON<GeneratedBlogContent>(aiResponse);
 
@@ -1133,15 +1206,34 @@ Return JSON with keys: title, summary, highlights, newProjects, recentArticles, 
         title: `${topic} for ${category}`,
         excerpt: `A ${difficulty}-level overview of ${topic} for technical readers.`,
         content: `This article explores ${topic} within the ${category} category. It includes practical guidance, examples, and actionable insights for ${difficulty} engineers.`,
-        metaDescription: `Learn how ${topic} fits into ${category} with a ${difficulty}-level technical approach from Arpit Labs.`,
+        metaDescription: `Learn how ${topic} fits into ${category} with a ${difficulty}-level technical approach from Axiora.`,
         tags: [topic, category, difficulty],
       };
 
-      await this.createGenerationRecord('blog', 'blog', null, content, this.estimateTokens(aiResponse), { topic, category, difficulty });
-      await this.updateJobStatus(job?.id, 'completed', content, null, this.estimateTokens(aiResponse));
+      await this.createGenerationRecord(
+        'blog',
+        'blog',
+        null,
+        content,
+        this.estimateTokens(aiResponse),
+        { topic, category, difficulty }
+      );
+      await this.updateJobStatus(
+        job?.id,
+        'completed',
+        content,
+        null,
+        this.estimateTokens(aiResponse)
+      );
       return content;
     } catch (error) {
-      await this.updateJobStatus(job?.id, 'failed', null, error instanceof Error ? error.message : 'Unknown error', null);
+      await this.updateJobStatus(
+        job?.id,
+        'failed',
+        null,
+        error instanceof Error ? error.message : 'Unknown error',
+        null
+      );
       throw error;
     }
   }
@@ -1169,17 +1261,36 @@ Return JSON with keys linkedin, twitter, announcement, launch.`;
       const parsed = this.parseJSON<GeneratedSocialContent>(aiResponse);
 
       const socialContent = parsed ?? {
-        linkedin: `Introducing ${item.title} — an update from Arpit Labs. ${item.excerpt || item.description || ''}`,
-        twitter: `${item.title} — read the latest update from Arpit Labs. #tech #ai`,
-        announcement: `Announcing ${item.title} from Arpit Labs. Learn more about the latest developments and why it matters.`,
-        launch: `Launching ${item.title}! Explore the new update and see what’s next from Arpit Labs.`,
+        linkedin: `Introducing ${item.title} — an update from Axiora. ${item.excerpt || item.description || ''}`,
+        twitter: `${item.title} — read the latest update from Axiora. #tech #ai`,
+        announcement: `Announcing ${item.title} from Axiora. Learn more about the latest developments and why it matters.`,
+        launch: `Launching ${item.title}! Explore the new update and see what’s next from Axiora.`,
       };
 
-      await this.createGenerationRecord('social', sourceType, sourceId, socialContent, this.estimateTokens(aiResponse), { postType });
-      await this.updateJobStatus(job?.id, 'completed', socialContent, null, this.estimateTokens(aiResponse));
+      await this.createGenerationRecord(
+        'social',
+        sourceType,
+        sourceId,
+        socialContent,
+        this.estimateTokens(aiResponse),
+        { postType }
+      );
+      await this.updateJobStatus(
+        job?.id,
+        'completed',
+        socialContent,
+        null,
+        this.estimateTokens(aiResponse)
+      );
       return socialContent;
     } catch (error) {
-      await this.updateJobStatus(job?.id, 'failed', null, error instanceof Error ? error.message : 'Unknown error', null);
+      await this.updateJobStatus(
+        job?.id,
+        'failed',
+        null,
+        error instanceof Error ? error.message : 'Unknown error',
+        null
+      );
       throw error;
     }
   }
@@ -1198,7 +1309,7 @@ Return JSON with keys linkedin, twitter, announcement, launch.`;
       const contentPrediction = await analyticsService.predictPopularContent();
       const technologyPrediction = await analyticsService.predictTrendingTechnologies();
 
-      const prompt = `Generate a weekly report for Arpit Labs. Include visitor insights, popular projects, popular articles, search trends, and recruiter activity.
+      const prompt = `Generate a weekly report for Axiora. Include visitor insights, popular projects, popular articles, search trends, and recruiter activity.
 
 Metrics:
 - Published projects: ${projectCount}
@@ -1221,11 +1332,18 @@ Return JSON with keys title, visitorInsights, popularProjects, popularArticles, 
       const report = parsed ?? {
         title: 'Weekly AI Insights Report',
         visitorInsights: `Visitor interest is trending toward ${visitorPrediction.predictions.join(', ')}.`,
-        popularProjects: [contentPrediction.predictions[0] || 'AI product', contentPrediction.predictions[1] || 'Developer tools'],
-        popularArticles: [contentPrediction.predictions[0] || 'AI trends', contentPrediction.predictions[1] || 'Platform engineering'],
+        popularProjects: [
+          contentPrediction.predictions[0] || 'AI product',
+          contentPrediction.predictions[1] || 'Developer tools',
+        ],
+        popularArticles: [
+          contentPrediction.predictions[0] || 'AI trends',
+          contentPrediction.predictions[1] || 'Platform engineering',
+        ],
         searchTrends: technologyPrediction.predictions,
         recruiterActivity: `Recruiter engagement remains steady with ${recruiterCount} interactions this week.`,
-        summary: 'This weekly report provides a concise review of performance metrics and content highlights.',
+        summary:
+          'This weekly report provides a concise review of performance metrics and content highlights.',
         reportContent: `Projects: ${projectCount}, Articles: ${articleCount}, Experiments: ${experimentCount}, Recruiter interactions: ${recruiterCount}.`,
         metrics: {
           projectCount,
@@ -1238,16 +1356,38 @@ Return JSON with keys title, visitorInsights, popularProjects, popularArticles, 
         },
       };
 
-      await this.createReportRecord('weekly', 'weekly', report.title, report.summary, report.reportContent, report.metrics);
-      await this.updateJobStatus(job?.id, 'completed', report, null, this.estimateTokens(aiResponse));
+      await this.createReportRecord(
+        'weekly',
+        'weekly',
+        report.title,
+        report.summary,
+        report.reportContent,
+        report.metrics
+      );
+      await this.updateJobStatus(
+        job?.id,
+        'completed',
+        report,
+        null,
+        this.estimateTokens(aiResponse)
+      );
       return report;
     } catch (error) {
-      await this.updateJobStatus(job?.id, 'failed', null, error instanceof Error ? error.message : 'Unknown error', null);
+      await this.updateJobStatus(
+        job?.id,
+        'failed',
+        null,
+        error instanceof Error ? error.message : 'Unknown error',
+        null
+      );
       throw error;
     }
   }
 
-  async enhanceContent(sourceType: 'project' | 'blog' | 'experiment', sourceId: string): Promise<EnhanceContentPayload> {
+  async enhanceContent(
+    sourceType: 'project' | 'blog' | 'experiment',
+    sourceId: string
+  ): Promise<EnhanceContentPayload> {
     const job = await this.createJobRecord('enhancement', 'running', { sourceType, sourceId });
     try {
       const item = await this.fetchSourceItem(sourceType, sourceId);
@@ -1265,8 +1405,8 @@ Return JSON with keys seoDescription, metaTags, openGraph, keywords.`;
       const parsed = this.parseJSON<EnhanceContentPayload>(aiResponse);
 
       const enhancement = parsed ?? {
-        seoDescription: `Learn about ${item.title} at Arpit Labs, with expert insights and practical guidance.`,
-        metaTags: [item.title, sourceType, 'Arpit Labs', 'technical article'],
+        seoDescription: `Learn about ${item.title} at Axiora, with expert insights and practical guidance.`,
+        metaTags: [item.title, sourceType, 'Axiora', 'technical article'],
         openGraph: {
           title: item.title,
           description: item.excerpt || item.description || '',
@@ -1274,17 +1414,41 @@ Return JSON with keys seoDescription, metaTags, openGraph, keywords.`;
         keywords: [item.title, sourceType, 'AI', 'engineering'],
       };
 
-      await this.createGenerationRecord('enhancement', sourceType, sourceId, enhancement, this.estimateTokens(aiResponse), {});
-      await this.updateJobStatus(job?.id, 'completed', enhancement, null, this.estimateTokens(aiResponse));
+      await this.createGenerationRecord(
+        'enhancement',
+        sourceType,
+        sourceId,
+        enhancement,
+        this.estimateTokens(aiResponse),
+        {}
+      );
+      await this.updateJobStatus(
+        job?.id,
+        'completed',
+        enhancement,
+        null,
+        this.estimateTokens(aiResponse)
+      );
       return enhancement;
     } catch (error) {
-      await this.updateJobStatus(job?.id, 'failed', null, error instanceof Error ? error.message : 'Unknown error', null);
+      await this.updateJobStatus(
+        job?.id,
+        'failed',
+        null,
+        error instanceof Error ? error.message : 'Unknown error',
+        null
+      );
       throw error;
     }
   }
 
   private async fetchSourceItem(sourceType: string, sourceId: string) {
-    const table = sourceType === 'blog' ? 'lab_notes' : sourceType === 'experiment' ? 'experiments' : 'projects';
+    const table =
+      sourceType === 'blog'
+        ? 'lab_notes'
+        : sourceType === 'experiment'
+          ? 'experiments'
+          : 'projects';
     const { data } = await supabase.from(table).select('*').eq('id', sourceId).single();
     return data as any;
   }
@@ -1414,7 +1578,11 @@ Return JSON with keys seoDescription, metaTags, openGraph, keywords.`;
     return data as AiReportRecord;
   }
 
-  private async createJobRecord(type: string, status: string, payload: Record<string, any>): Promise<AiJobRecord | null> {
+  private async createJobRecord(
+    type: string,
+    status: string,
+    payload: Record<string, any>
+  ): Promise<AiJobRecord | null> {
     const { data, error } = await supabase
       .from('ai_jobs')
       .insert([
@@ -1447,14 +1615,17 @@ Return JSON with keys seoDescription, metaTags, openGraph, keywords.`;
       return;
     }
 
-    await supabase.from('ai_jobs').update({
-      status,
-      result,
-      error_message: errorMessage,
-      tokens_used: tokensUsed,
-      completed_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    }).eq('id', jobId);
+    await supabase
+      .from('ai_jobs')
+      .update({
+        status,
+        result,
+        error_message: errorMessage,
+        tokens_used: tokensUsed,
+        completed_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', jobId);
   }
 
   private parseJSON<T>(raw: string): T | null {

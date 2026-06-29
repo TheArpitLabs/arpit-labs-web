@@ -1,4 +1,4 @@
-# Arpit Labs - Production Ready 🚀
+# Axiora - Production Ready 🚀
 
 **Status**: ✅ PRODUCTION READY
 **Build**: 0 Errors | 0 Warnings | 2.2s
@@ -47,8 +47,8 @@ SUPABASE_SERVICE_ROLE_KEY=<YOUR_SUPABASE_SERVICE_ROLE_KEY>
 ADMIN_EMAILS=arpitkumar0211@gmail.com
 
 # Recommended
-NEXT_PUBLIC_SITE_URL=https://arpit-labs.com
-NEXT_PUBLIC_FROM_EMAIL=noreply@arpit-labs.com
+NEXT_PUBLIC_SITE_URL=https://axiora.com
+NEXT_PUBLIC_FROM_EMAIL=noreply@axiora.com
 
 # Optional (for production services)
 NEXT_PUBLIC_GA4_ID=G-XXXXXXXXXX
@@ -61,6 +61,7 @@ RESEND_API_KEY=re_xxxxxxxxxxxxx
 ## What's Included
 
 ### ✅ Features
+
 - **CMS**: Projects, Blog, Experiments, Journey Management
 - **Admin**: Dashboard, CRUD interfaces, Analytics
 - **Public**: Showcase pages, Blog, Contact form, Newsletter
@@ -73,12 +74,14 @@ RESEND_API_KEY=re_xxxxxxxxxxxxx
 - **Security**: Rate limiting, CSRF, input sanitization
 
 ### ✅ Production Systems
+
 - **Analytics** (120 lines) - Event tracking, page views, conversions
 - **Monitoring** (89 lines) - Exception logging, error tracking
 - **Email** (170 lines) - Contact notifications, newsletters
 - **Security** (145 lines) - Rate limiting, CSRF, sanitization
 
 ### ✅ Built With
+
 - Next.js 15.5.19
 - TypeScript (strict mode)
 - React 19
@@ -92,15 +95,15 @@ RESEND_API_KEY=re_xxxxxxxxxxxxx
 
 ## Documentation Files
 
-| Document | Purpose | When to Read |
-|----------|---------|--------------|
-| [FINAL_PRODUCTION_STATUS.md](FINAL_PRODUCTION_STATUS.md) | Complete status report | Before any action |
-| [LAUNCH_CHECKLIST.md](LAUNCH_CHECKLIST.md) | Pre-launch verification | Before deployment |
-| [DEPLOYMENT_CHECKLIST.md](DEPLOYMENT_CHECKLIST.md) | Step-by-step deployment | During deployment |
-| [PRODUCTION_INTEGRATION.md](PRODUCTION_INTEGRATION.md) | Service integration guide | During setup |
-| [PRODUCTION_SETUP.md](PRODUCTION_SETUP.md) | Environment configuration | During setup |
-| [README_PHASE5.md](README_PHASE5.md) | Phase 5 summary | For overview |
-| [DOCUMENTATION.md](DOCUMENTATION.md) | Documentation index | For reference |
+| Document                                                 | Purpose                   | When to Read      |
+| -------------------------------------------------------- | ------------------------- | ----------------- |
+| [FINAL_PRODUCTION_STATUS.md](FINAL_PRODUCTION_STATUS.md) | Complete status report    | Before any action |
+| [LAUNCH_CHECKLIST.md](LAUNCH_CHECKLIST.md)               | Pre-launch verification   | Before deployment |
+| [DEPLOYMENT_CHECKLIST.md](DEPLOYMENT_CHECKLIST.md)       | Step-by-step deployment   | During deployment |
+| [PRODUCTION_INTEGRATION.md](PRODUCTION_INTEGRATION.md)   | Service integration guide | During setup      |
+| [PRODUCTION_SETUP.md](PRODUCTION_SETUP.md)               | Environment configuration | During setup      |
+| [README_PHASE5.md](README_PHASE5.md)                     | Phase 5 summary           | For overview      |
+| [DOCUMENTATION.md](DOCUMENTATION.md)                     | Documentation index       | For reference     |
 
 ---
 
@@ -119,6 +122,7 @@ RESEND_API_KEY=re_xxxxxxxxxxxxx
 ## API Overview
 
 ### Analytics
+
 ```typescript
 import { analytics } from '@/lib/analytics';
 
@@ -128,6 +132,7 @@ analytics.newsletterSignup();
 ```
 
 ### Error Monitoring
+
 ```typescript
 import { monitoring } from '@/lib/monitoring';
 
@@ -136,6 +141,7 @@ monitoring.apiError(endpoint, status, error);
 ```
 
 ### Email
+
 ```typescript
 import { sendContactFormEmail } from '@/lib/email';
 
@@ -143,11 +149,12 @@ await sendContactFormEmail({
   name: 'John',
   email: 'john@example.com',
   subject: 'Hello',
-  message: 'Hi there'
+  message: 'Hi there',
 });
 ```
 
 ### Security
+
 ```typescript
 import { checkRateLimit, sanitizeInput } from '@/lib/security';
 
@@ -160,36 +167,42 @@ const safe = sanitizeInput(userInput);
 ## Deployment Options
 
 ### Option 1: Vercel (Recommended)
+
 - **Time**: 15 minutes
 - **Difficulty**: Easy
 - **Cost**: Free tier available
 - **Benefits**: Zero-config, automatic scaling, global CDN
 
 **Steps**:
+
 1. Push to GitHub `main`
 2. Import in vercel.com
 3. Add environment variables
 4. Deploy (automatic)
 
 ### Option 2: Docker
+
 - **Time**: 30 minutes
 - **Difficulty**: Moderate
 - **Cost**: Varies
 - **Benefits**: Full control, self-hosted
 
 **Command**:
+
 ```bash
-docker build -t arpit-labs .
-docker run -p 3000:3000 arpit-labs
+docker build -t axiora .
+docker run -p 3000:3000 axiora
 ```
 
 ### Option 3: Traditional Server
+
 - **Time**: 1 hour
 - **Difficulty**: Moderate
 - **Cost**: Varies
 - **Benefits**: Full control, standard server
 
 **Setup**:
+
 ```bash
 npm run build
 npm start
@@ -199,15 +212,15 @@ npm start
 
 ## Performance Targets
 
-| Metric | Target | Status |
-|--------|--------|--------|
-| Lighthouse Performance | 90+ | ✅ Optimized |
-| Lighthouse Accessibility | 95+ | ✅ Optimized |
-| Lighthouse Best Practices | 95+ | ✅ Optimized |
-| Lighthouse SEO | 95+ | ✅ Optimized |
-| First Load JS | < 150KB | ✅ 102KB |
-| Build Time | < 5min | ✅ 2.2s |
-| Type Errors | 0 | ✅ 0 errors |
+| Metric                    | Target  | Status       |
+| ------------------------- | ------- | ------------ |
+| Lighthouse Performance    | 90+     | ✅ Optimized |
+| Lighthouse Accessibility  | 95+     | ✅ Optimized |
+| Lighthouse Best Practices | 95+     | ✅ Optimized |
+| Lighthouse SEO            | 95+     | ✅ Optimized |
+| First Load JS             | < 150KB | ✅ 102KB     |
+| Build Time                | < 5min  | ✅ 2.2s      |
+| Type Errors               | 0       | ✅ 0 errors  |
 
 ---
 
@@ -228,6 +241,7 @@ npm start
 ## Environment Variables Reference
 
 ### Database (Required)
+
 ```env
 NEXT_PUBLIC_SUPABASE_URL=your_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_key
@@ -235,27 +249,32 @@ SUPABASE_SERVICE_ROLE_KEY=your_key
 ```
 
 ### Admin (Required)
+
 ```env
 ADMIN_EMAILS=your_email@example.com
 ```
 
 ### Site (Recommended)
+
 ```env
 NEXT_PUBLIC_SITE_URL=https://your-domain.com
 NEXT_PUBLIC_FROM_EMAIL=noreply@your-domain.com
 ```
 
 ### Analytics (Optional)
+
 ```env
 NEXT_PUBLIC_GA4_ID=G-XXXXXXXXXX
 ```
 
 ### Monitoring (Optional)
+
 ```env
 NEXT_PUBLIC_SENTRY_DSN=https://xxxxx@xxxxx.ingest.sentry.io/xxxxx
 ```
 
 ### Email (Optional)
+
 ```env
 RESEND_API_KEY=re_xxxxxxxxxxxxx
 ```
@@ -265,6 +284,7 @@ RESEND_API_KEY=re_xxxxxxxxxxxxx
 ## Installation of Optional Services
 
 ### Google Analytics 4
+
 ```bash
 # 1. Create account at analytics.google.com
 # 2. Create property for your domain
@@ -274,6 +294,7 @@ RESEND_API_KEY=re_xxxxxxxxxxxxx
 ```
 
 ### Sentry Error Monitoring
+
 ```bash
 # 1. Create account at sentry.io
 # 2. Create Next.js project
@@ -284,6 +305,7 @@ npm install @sentry/nextjs
 ```
 
 ### Resend Email Service
+
 ```bash
 # 1. Create account at resend.com
 # 2. Verify your domain
@@ -294,6 +316,7 @@ npm install resend
 ```
 
 ### HTML Sanitization
+
 ```bash
 # For enhanced XSS protection
 npm install isomorphic-dompurify
@@ -304,7 +327,7 @@ npm install isomorphic-dompurify
 ## Project Structure
 
 ```
-arpit-labs/
+axiora/
 ├── src/
 │   ├── app/                    # Next.js app directory
 │   ├── components/
@@ -351,18 +374,23 @@ npm run clean            # Clean build cache
 ## Troubleshooting
 
 ### Build Errors
+
 → Check [DEPLOYMENT_CHECKLIST.md](DEPLOYMENT_CHECKLIST.md) "Pre-Deployment" section
 
 ### TypeScript Errors
+
 → Run `npm run type-check` and fix reported issues
 
 ### Database Connection Issues
+
 → Verify environment variables in [PRODUCTION_SETUP.md](PRODUCTION_SETUP.md)
 
 ### Analytics Not Tracking
+
 → See [PRODUCTION_INTEGRATION.md](PRODUCTION_INTEGRATION.md) "Analytics Integration"
 
 ### Emails Not Sending
+
 → See [PRODUCTION_INTEGRATION.md](PRODUCTION_INTEGRATION.md) "Email Service"
 
 ---
@@ -370,11 +398,13 @@ npm run clean            # Clean build cache
 ## Support Resources
 
 ### Internal Docs
+
 - [FINAL_PRODUCTION_STATUS.md](FINAL_PRODUCTION_STATUS.md) - Status overview
 - [DEPLOYMENT_CHECKLIST.md](DEPLOYMENT_CHECKLIST.md) - Deployment steps
 - [PRODUCTION_INTEGRATION.md](PRODUCTION_INTEGRATION.md) - Integration guide
 
 ### External Docs
+
 - [Next.js Docs](https://nextjs.org/docs)
 - [Supabase Docs](https://supabase.com/docs)
 - [Vercel Docs](https://vercel.com/docs)
@@ -401,14 +431,14 @@ Before launching, ensure:
 
 ## Status & Sign-Off
 
-| Component | Status | Last Verified |
-|-----------|--------|---------------|
-| Build | ✅ PASS | June 4, 2026 |
-| Types | ✅ PASS | June 4, 2026 |
-| Features | ✅ PASS | June 4, 2026 |
-| Security | ✅ PASS | June 4, 2026 |
-| Performance | ✅ PASS | June 4, 2026 |
-| Documentation | ✅ COMPLETE | June 4, 2026 |
+| Component     | Status      | Last Verified |
+| ------------- | ----------- | ------------- |
+| Build         | ✅ PASS     | June 4, 2026  |
+| Types         | ✅ PASS     | June 4, 2026  |
+| Features      | ✅ PASS     | June 4, 2026  |
+| Security      | ✅ PASS     | June 4, 2026  |
+| Performance   | ✅ PASS     | June 4, 2026  |
+| Documentation | ✅ COMPLETE | June 4, 2026  |
 
 ---
 
@@ -420,4 +450,4 @@ Before launching, ensure:
 
 ---
 
-**Arpit Labs is production-ready. Time to launch! 🚀**
+**Axiora is production-ready. Time to launch! 🚀**

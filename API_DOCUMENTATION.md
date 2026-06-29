@@ -1,10 +1,10 @@
-# Arpit Labs - API Documentation
+# Axiora - API Documentation
 
 **Version**: 1.0  
 **Base URL**: `https://arpitlabs.com/api`  
 **Last Updated**: June 22, 2026
 
-This document provides comprehensive API documentation for the Arpit Labs platform.
+This document provides comprehensive API documentation for the Axiora platform.
 
 ---
 
@@ -85,16 +85,16 @@ X-Client-Platform: web
 
 ### Common Error Codes
 
-| Code | Status | Description |
-|------|--------|-------------|
-| `VALIDATION_ERROR` | 400 | Request validation failed |
-| `UNAUTHORIZED_ERROR` | 401 | Authentication required |
-| `FORBIDDEN_ERROR` | 403 | Insufficient permissions |
-| `NOT_FOUND_ERROR` | 404 | Resource not found |
-| `RATE_LIMIT_ERROR` | 429 | Rate limit exceeded |
-| `SERVER_ERROR` | 500 | Internal server error |
-| `CSRF_ERROR` | 403 | Invalid CSRF token |
-| `NETWORK_ERROR` | 503 | Network or service unavailable |
+| Code                 | Status | Description                    |
+| -------------------- | ------ | ------------------------------ |
+| `VALIDATION_ERROR`   | 400    | Request validation failed      |
+| `UNAUTHORIZED_ERROR` | 401    | Authentication required        |
+| `FORBIDDEN_ERROR`    | 403    | Insufficient permissions       |
+| `NOT_FOUND_ERROR`    | 404    | Resource not found             |
+| `RATE_LIMIT_ERROR`   | 429    | Rate limit exceeded            |
+| `SERVER_ERROR`       | 500    | Internal server error          |
+| `CSRF_ERROR`         | 403    | Invalid CSRF token             |
+| `NETWORK_ERROR`      | 503    | Network or service unavailable |
 
 ---
 
@@ -110,12 +110,12 @@ X-RateLimit-Reset: 1719087000
 
 ### Rate Limits by Endpoint
 
-| Endpoint | Limit | Window |
-|----------|-------|--------|
-| Public endpoints | 100/hour | 1 hour |
-| Authenticated | 1000/hour | 1 hour |
-| Admin endpoints | 500/hour | 1 hour |
-| Webhooks | 10/minute | 1 minute |
+| Endpoint         | Limit     | Window   |
+| ---------------- | --------- | -------- |
+| Public endpoints | 100/hour  | 1 hour   |
+| Authenticated    | 1000/hour | 1 hour   |
+| Admin endpoints  | 500/hour  | 1 hour   |
+| Webhooks         | 10/minute | 1 minute |
 
 ---
 
@@ -309,15 +309,15 @@ Authorization: Bearer YOUR_SESSION_TOKEN
 
 **Query Parameters:**
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| page | integer | Page number (default: 1) |
-| pageSize | integer | Items per page (default: 20, max: 100) |
-| search | string | Search query |
-| sort | string | Sort field (stars, forks, updated) |
-| order | string | Sort order (asc, desc) |
-| category | string | Filter by category |
-| language | string | Filter by programming language |
+| Parameter | Type    | Description                            |
+| --------- | ------- | -------------------------------------- |
+| page      | integer | Page number (default: 1)               |
+| pageSize  | integer | Items per page (default: 20, max: 100) |
+| search    | string  | Search query                           |
+| sort      | string  | Sort field (stars, forks, updated)     |
+| order     | string  | Sort order (asc, desc)                 |
+| category  | string  | Filter by category                     |
+| language  | string  | Filter by programming language         |
 
 **Response:**
 
@@ -638,12 +638,12 @@ Authorization: Bearer YOUR_SESSION_TOKEN
 
 **Query Parameters:**
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| q | string | Search query (required) |
-| type | string | Search type (projects, users, learning) |
-| page | integer | Page number |
-| filters | string | JSON encoded filters |
+| Parameter | Type    | Description                             |
+| --------- | ------- | --------------------------------------- |
+| q         | string  | Search query (required)                 |
+| type      | string  | Search type (projects, users, learning) |
+| page      | integer | Page number                             |
+| filters   | string  | JSON encoded filters                    |
 
 **Response:**
 
@@ -670,13 +670,13 @@ Authorization: Bearer YOUR_SESSION_TOKEN
 
 ### Webhook Events
 
-| Event | Description |
-|-------|-------------|
-| `user.created` | New user registered |
-| `user.updated` | User profile updated |
-| `project.created` | New project created |
-| `project.approved` | Project approved |
-| `project.rejected` | Project rejected |
+| Event                | Description             |
+| -------------------- | ----------------------- |
+| `user.created`       | New user registered     |
+| `user.updated`       | User profile updated    |
+| `project.created`    | New project created     |
+| `project.approved`   | Project approved        |
+| `project.rejected`   | Project rejected        |
 | `learning.completed` | Learning path completed |
 
 ### Webhook Payload
@@ -700,15 +700,9 @@ Authorization: Bearer YOUR_SESSION_TOKEN
 import crypto from 'crypto';
 
 const verifyWebhook = (payload: string, signature: string, secret: string): boolean => {
-  const expectedSignature = crypto
-    .createHmac('sha256', secret)
-    .update(payload)
-    .digest('hex');
-  
-  return crypto.timingSafeEqual(
-    Buffer.from(signature),
-    Buffer.from(`sha256=${expectedSignature}`)
-  );
+  const expectedSignature = crypto.createHmac('sha256', secret).update(payload).digest('hex');
+
+  return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(`sha256=${expectedSignature}`));
 };
 ```
 
@@ -723,21 +717,21 @@ import { ArpitLabsAPI } from '@arpitlabs/sdk';
 
 const api = new ArpitLabsAPI({
   apiKey: 'your-api-key',
-  baseUrl: 'https://arpitlabs.com/api'
+  baseUrl: 'https://arpitlabs.com/api',
 });
 
 // Get projects
 const projects = await api.projects.list({
   page: 1,
   pageSize: 20,
-  search: 'react'
+  search: 'react',
 });
 
 // Create project
 const project = await api.projects.create({
   name: 'New Project',
   description: 'Description',
-  url: 'https://github.com/user/project'
+  url: 'https://github.com/user/project',
 });
 ```
 
@@ -794,6 +788,7 @@ For testing, use the sandbox environment:
 ### Test Data
 
 Use test data prefixes:
+
 - Emails: `test+user@example.com`
 - Project names: `Test Project`
 - URLs: `https://github.com/test/project`
@@ -811,4 +806,4 @@ Use test data prefixes:
 
 **Last Updated**: June 22, 2026  
 **API Version**: 1.0  
-**Maintained By**: Arpit Labs API Team
+**Maintained By**: Axiora API Team

@@ -1,15 +1,15 @@
-import { Container } from "@/components/layout/Container";
-import { Footer } from "@/components/layout/Footer";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, ExternalLink, BookOpen } from "lucide-react";
-import Link from "next/link";
-import Image from "next/image";
-import { notFound } from "next/navigation";
-import { productsRepository } from "@/lib/repositories/products.repository";
-import { createArticleMetadata } from "@/lib/seo";
-import { Product } from "@/types/content";
-import { ProductTracker } from "@/components/analytics/ProductTracker";
+import { Container } from '@/components/layout/Container';
+import { Footer } from '@/components/layout/Footer';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { ArrowLeft, ExternalLink, BookOpen } from 'lucide-react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { notFound } from 'next/navigation';
+import { productsRepository } from '@/lib/repositories/products.repository';
+import { createArticleMetadata } from '@/lib/seo';
+import { Product } from '@/types/content';
+import { ProductTracker } from '@/components/analytics/ProductTracker';
 import { logger } from '@/lib/logger';
 
 interface ProductDetailPageProps {
@@ -23,11 +23,11 @@ export async function generateMetadata({ params }: ProductDetailPageProps) {
   const product = await productsRepository.getProductBySlug(slug);
 
   if (!product || !product.published) {
-    return { title: "Product Not Found" };
+    return { title: 'Product Not Found' };
   }
 
   return createArticleMetadata({
-    title: `${product.title} | Arpit Labs`,
+    title: `${product.title} | Axiora`,
     description: product.description,
     path: `/products/${slug}`,
     keywords: [product.category],
@@ -44,7 +44,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
       notFound();
     }
   } catch (error) {
-    logger.error("Error fetching product detail:", error);
+    logger.error('Error fetching product detail:', error);
     notFound();
   }
 
@@ -69,15 +69,22 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
             <div className="space-y-8">
               <div className="space-y-4">
                 <div className="flex flex-wrap items-center gap-3">
-                  <Badge variant="outline" className="px-3 py-1 text-xs uppercase tracking-[0.22em] text-muted">
+                  <Badge
+                    variant="outline"
+                    className="px-3 py-1 text-xs uppercase tracking-[0.22em] text-muted"
+                  >
                     {product.category}
                   </Badge>
                   <Badge className="px-3 py-1 text-xs uppercase tracking-[0.22em]">
                     {product.pricing_type}
                   </Badge>
                 </div>
-                <h1 className="text-5xl font-bold tracking-tight text-foreground sm:text-6xl">{product.title}</h1>
-                <p className="max-w-3xl text-xl leading-relaxed text-muted">{product.description}</p>
+                <h1 className="text-5xl font-bold tracking-tight text-foreground sm:text-6xl">
+                  {product.title}
+                </h1>
+                <p className="max-w-3xl text-xl leading-relaxed text-muted">
+                  {product.description}
+                </p>
               </div>
 
               <div className="grid gap-6">
@@ -93,13 +100,17 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                       />
                     </div>
                   ) : (
-                    <div className="flex h-72 items-center justify-center bg-surface text-muted">No cover image available</div>
+                    <div className="flex h-72 items-center justify-center bg-surface text-muted">
+                      No cover image available
+                    </div>
                   )}
                 </Card>
 
                 <Card className="p-8">
                   <h2 className="text-2xl font-bold text-foreground">Overview</h2>
-                  <p className="mt-4 text-body leading-relaxed text-muted whitespace-pre-wrap">{product.overview || product.description}</p>
+                  <p className="mt-4 text-body leading-relaxed text-muted whitespace-pre-wrap">
+                    {product.overview || product.description}
+                  </p>
                 </Card>
 
                 <Card className="p-8">
@@ -107,7 +118,10 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                   <div className="mt-6 space-y-4">
                     {features.length > 0 ? (
                       features.map((feature) => (
-                        <div key={feature.id} className="rounded-3xl border border-border/70 bg-background/80 p-5">
+                        <div
+                          key={feature.id}
+                          className="rounded-3xl border border-border/70 bg-background/80 p-5"
+                        >
                           <h3 className="font-semibold text-foreground">{feature.title}</h3>
                           <p className="mt-2 text-muted">{feature.description}</p>
                         </div>
@@ -124,16 +138,21 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                       <h2 className="text-2xl font-bold text-foreground">Screenshots</h2>
                     </div>
                     <div className="mt-6 grid gap-4 sm:grid-cols-2">
-                      {screenshots.sort((a, b) => a.sort_order - b.sort_order).map((screen) => (
-                        <div key={screen.id} className="relative aspect-[4/3] overflow-hidden rounded-[1.75rem] border border-border/70 bg-surface">
-                          <Image
-                            src={screen.image_url}
-                            alt={`${product?.title} screenshot`}
-                            fill
-                            className="object-cover"
-                          />
-                        </div>
-                      ))}
+                      {screenshots
+                        .sort((a, b) => a.sort_order - b.sort_order)
+                        .map((screen) => (
+                          <div
+                            key={screen.id}
+                            className="relative aspect-[4/3] overflow-hidden rounded-[1.75rem] border border-border/70 bg-surface"
+                          >
+                            <Image
+                              src={screen.image_url}
+                              alt={`${product?.title} screenshot`}
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                        ))}
                     </div>
                   </Card>
                 )}

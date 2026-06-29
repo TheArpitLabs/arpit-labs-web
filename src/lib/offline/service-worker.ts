@@ -213,14 +213,9 @@ export class OfflineManager {
 
 // Create singleton instance
 const offlineManager = new OfflineManager({
-  cacheName: 'arpit-labs-v1',
+  cacheName: 'axiora-v1',
   version: '1.0.0',
-  assetsToCache: [
-    '/',
-    '/offline',
-    '/manifest.json',
-    '/favicon.ico',
-  ],
+  assetsToCache: ['/', '/offline', '/manifest.json', '/favicon.ico'],
   offlineFallback: '/offline',
   maxCacheSize: 50 * 1024 * 1024, // 50MB
 });

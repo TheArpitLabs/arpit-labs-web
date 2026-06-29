@@ -1,15 +1,15 @@
-import { Container } from "@/components/layout/Container";
-import { Footer } from "@/components/layout/Footer";
-import { AnimatedSection } from "@/components/animations/AnimatedSection";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { getLabNoteBySlug, getLabNotes } from "@/lib/actions/server-actions";
-import { Clock, Calendar, ArrowLeft, Share2, Tag } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
-import { notFound } from "next/navigation";
-import { LabNote } from "@/types/content";
-import { createArticleMetadata } from "@/lib/seo";
+import { Container } from '@/components/layout/Container';
+import { Footer } from '@/components/layout/Footer';
+import { AnimatedSection } from '@/components/animations/AnimatedSection';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { getLabNoteBySlug, getLabNotes } from '@/lib/actions/server-actions';
+import { Clock, Calendar, ArrowLeft, Share2, Tag } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import { LabNote } from '@/types/content';
+import { createArticleMetadata } from '@/lib/seo';
 
 interface BlogDetailPageProps {
   params: Promise<{
@@ -19,14 +19,14 @@ interface BlogDetailPageProps {
 
 export async function generateMetadata({ params }: BlogDetailPageProps) {
   const { slug } = await params;
-  const note = await getLabNoteBySlug(slug) as LabNote | null;
-  if (!note) return { title: "Note Not Found" };
+  const note = (await getLabNoteBySlug(slug)) as LabNote | null;
+  if (!note) return { title: 'Note Not Found' };
 
   return createArticleMetadata({
-    title: `${note.title} | Arpit Labs`,
-    description: note.excerpt || "Lab notes and engineering insights from Arpit Labs.",
+    title: `${note.title} | Axiora`,
+    description: note.excerpt || 'Lab notes and engineering insights from Axiora.',
     path: `/blog/${slug}`,
-    keywords: [note.category ?? "Engineering", ...note.tags],
+    keywords: [note.category ?? 'Engineering', ...note.tags],
   });
 }
 
@@ -45,7 +45,8 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
     .filter((item) => item.slug !== note.slug)
     .map((item) => {
       const sharedTags = item.tags.filter((tag) => note.tags.includes(tag)).length;
-      const sameCategory = item.category && note.category && item.category === note.category ? 1 : 0;
+      const sameCategory =
+        item.category && note.category && item.category === note.category ? 1 : 0;
       return { item, score: sharedTags + sameCategory };
     })
     .filter(({ score }) => score > 0)
@@ -55,11 +56,10 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
 
   return (
     <main className="bg-background text-foreground">
-
       <article className="py-12 md:py-20">
         <Container>
-          <Link 
-            href="/blog" 
+          <Link
+            href="/blog"
             className="inline-flex items-center gap-2 text-sm text-muted hover:text-primary transition mb-12"
           >
             <ArrowLeft size={16} />
@@ -71,10 +71,10 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
               <div className="flex justify-center gap-4 text-sm font-medium text-muted">
                 <span className="flex items-center gap-1.5">
                   <Calendar size={16} className="text-primary" />
-                  {new Date(note.created_at).toLocaleDateString("en-US", {
-                    month: "long",
-                    day: "numeric",
-                    year: "numeric",
+                  {new Date(note.created_at).toLocaleDateString('en-US', {
+                    month: 'long',
+                    day: 'numeric',
+                    year: 'numeric',
                   })}
                 </span>
                 {note.reading_time && (
@@ -113,12 +113,7 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
             {note.cover_image && (
               <div className="mt-12 aspect-[21/9] overflow-hidden rounded-[2.5rem] border border-border/70 dark:border-slate-800">
                 <div className="relative h-full w-full">
-                  <Image
-                    src={note.cover_image}
-                    alt={note.title}
-                    fill
-                    className="object-cover"
-                  />
+                  <Image src={note.cover_image} alt={note.title} fill className="object-cover" />
                 </div>
               </div>
             )}
@@ -127,9 +122,7 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
               <AnimatedSection>
                 <div className="prose prose-slate dark:prose-invert max-w-none prose-headings:font-bold prose-p:text-lg prose-p:leading-relaxed prose-pre:bg-slate-900 prose-pre:border prose-pre:border-slate-800">
                   {note.content ? (
-                    <div className="whitespace-pre-wrap">
-                      {note.content}
-                    </div>
+                    <div className="whitespace-pre-wrap">{note.content}</div>
                   ) : (
                     <p className="text-center text-muted italic py-10">
                       Content is being prepared for publication.
@@ -146,11 +139,11 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
                     AL
                   </div>
                   <div>
-                    <p className="font-bold text-foreground">Arpit Labs</p>
+                    <p className="font-bold text-foreground">Axiora</p>
                     <p className="text-sm text-muted">Engineering Research & Design</p>
                   </div>
                 </div>
-                
+
                 <button className="inline-flex items-center gap-2 rounded-2xl border border-border/70 bg-surface px-6 py-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary/5 dark:border-slate-700 dark:bg-slate-900">
                   <Share2 size={18} />
                   Share Note
@@ -177,7 +170,7 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
                           ) : null}
                           <h3 className="text-lg font-semibold text-foreground">{related.title}</h3>
                           <p className="line-clamp-3 text-sm text-muted">
-                            {related.excerpt || related.content || "Technical note in progress."}
+                            {related.excerpt || related.content || 'Technical note in progress.'}
                           </p>
                         </div>
                       </Card>

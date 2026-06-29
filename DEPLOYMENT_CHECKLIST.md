@@ -1,8 +1,9 @@
-# Deployment Checklist - Arpit Labs
+# Deployment Checklist - Axiora
 
 ## Pre-Deployment (Development)
 
 ### Code Quality
+
 - ✅ All TypeScript errors resolved
 - ✅ All tests passing
 - ✅ Linting complete (`npm run lint`)
@@ -11,6 +12,7 @@
 - ✅ Dependencies audit passed
 
 ### Environment Variables (Development)
+
 - ✅ `.env.local` configured
 - ✅ `NEXT_PUBLIC_SUPABASE_URL` set
 - ✅ `NEXT_PUBLIC_SUPABASE_ANON_KEY` set
@@ -18,6 +20,7 @@
 - ✅ `ADMIN_EMAILS` configured
 
 ### Database Setup
+
 - ✅ Supabase project created
 - ✅ Database schema migrated
 - ✅ Tables created (projects, labnotes, experiments, journey_entries, etc.)
@@ -26,6 +29,7 @@
 - ✅ Database backups enabled
 
 ### Admin Setup
+
 - ✅ Admin user created
 - ✅ Admin login tested
 - ✅ Dashboard accessible
@@ -36,11 +40,13 @@
 ## Production Deployment (Vercel)
 
 ### Step 1: Repository Setup
+
 - [ ] Push code to GitHub `main` branch
 - [ ] Repository is public or Vercel has access
 - [ ] No sensitive data in repository
 
 ### Step 2: Vercel Project Setup
+
 - [ ] Create Vercel account (vercel.com)
 - [ ] Connect GitHub repository
 - [ ] Import project
@@ -48,6 +54,7 @@
 - [ ] Install build completed successfully
 
 ### Step 3: Environment Variables
+
 - [ ] Add `NEXT_PUBLIC_SUPABASE_URL`
 - [ ] Add `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - [ ] Add `SUPABASE_SERVICE_ROLE_KEY`
@@ -60,6 +67,7 @@
 - [ ] Add `NODE_ENV` = `production`
 
 ### Step 4: Domain Configuration
+
 - [ ] Add custom domain in Vercel
 - [ ] Point DNS to Vercel (CNAME/A records)
 - [ ] Verify domain ownership
@@ -67,6 +75,7 @@
 - [ ] SSL certificate generated
 
 ### Step 5: Analytics Integration
+
 - [ ] Google Analytics 4 account created
 - [ ] GA4 property created for production
 - [ ] Measurement ID added to env vars
@@ -74,6 +83,7 @@
 - [ ] Test tracking in production
 
 ### Step 6: Monitoring Setup (Optional)
+
 - [ ] Sentry account created
 - [ ] Sentry project configured for Next.js
 - [ ] DSN added to env vars
@@ -81,6 +91,7 @@
 - [ ] Alerts configured
 
 ### Step 7: Email Service Setup (Optional)
+
 - [ ] Resend account created
 - [ ] Domain verified in Resend
 - [ ] API key generated
@@ -88,18 +99,21 @@
 - [ ] Test email sent successfully
 
 ### Step 8: Database Backup
+
 - [ ] Supabase backup scheduled
 - [ ] Backup retention set to 30 days
 - [ ] Test backup restoration
 - [ ] Document backup procedure
 
 ### Step 9: Security Headers
+
 - [ ] CSP headers configured
 - [ ] Security headers in `next.config.mjs`
 - [ ] HSTS enabled
 - [ ] Rate limiting configured
 
 ### Step 10: Performance Optimization
+
 - [ ] Images optimized
 - [ ] Fonts preloaded
 - [ ] Code splitting enabled
@@ -111,6 +125,7 @@
 ## Post-Deployment Testing
 
 ### Functionality Testing
+
 - [ ] Homepage loads
 - [ ] Projects page displays
 - [ ] Blog page displays
@@ -120,6 +135,7 @@
 - [ ] Admin CRUD operations work
 
 ### Performance Testing
+
 - [ ] Google Lighthouse scores:
   - [ ] Performance: >= 90
   - [ ] Accessibility: >= 95
@@ -130,6 +146,7 @@
 - [ ] Largest Contentful Paint < 2.5s
 
 ### Security Testing
+
 - [ ] HTTPS enabled
 - [ ] Security headers present
 - [ ] No sensitive data exposed
@@ -137,12 +154,14 @@
 - [ ] CORS configured correctly
 
 ### Monitoring Testing
+
 - [ ] Analytics tracking works
 - [ ] Events recorded in GA4
 - [ ] Errors appear in Sentry (if configured)
 - [ ] Email notifications working (if configured)
 
 ### SEO Testing
+
 - [ ] Sitemap.xml accessible
 - [ ] Robots.txt correct
 - [ ] Meta tags present
@@ -155,6 +174,7 @@
 ## Launch Day
 
 ### Before Launch
+
 - [ ] Final build successful
 - [ ] All tests passing
 - [ ] Team notified
@@ -163,6 +183,7 @@
 - [ ] Status page ready
 
 ### Launch
+
 - [ ] Deploy to production
 - [ ] Monitor errors in real-time
 - [ ] Check analytics
@@ -170,6 +191,7 @@
 - [ ] Monitor performance metrics
 
 ### After Launch
+
 - [ ] Review error logs (24 hours)
 - [ ] Review analytics (first week)
 - [ ] Gather user feedback
@@ -181,17 +203,20 @@
 ## Ongoing Maintenance
 
 ### Daily
+
 - [ ] Check error logs
 - [ ] Monitor uptime
 - [ ] Respond to critical errors
 
 ### Weekly
+
 - [ ] Review analytics trends
 - [ ] Check security updates
 - [ ] Verify backups working
 - [ ] Review error patterns
 
 ### Monthly
+
 - [ ] Performance review
 - [ ] Database cleanup
 - [ ] Update dependencies
@@ -199,6 +224,7 @@
 - [ ] Backup restoration test
 
 ### Quarterly
+
 - [ ] Security review
 - [ ] Performance optimization
 - [ ] Architecture review
@@ -245,6 +271,7 @@ If critical issues occur:
 ## Success Criteria
 
 ✅ Production deployment is successful when:
+
 - Site is live and accessible
 - All core features working
 - No critical errors in logs

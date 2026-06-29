@@ -1,9 +1,9 @@
-import Image from "next/image";
-import { coursesRepository, courseModulesRepository } from "@/lib/repositories/courses.repository";
-import { notFound } from "next/navigation";
-import Link from "next/link";
-import { Clock, BarChart3, ArrowLeft } from "lucide-react";
-import ReactMarkdown from "react-markdown";
+import Image from 'next/image';
+import { coursesRepository, courseModulesRepository } from '@/lib/repositories/courses.repository';
+import { notFound } from 'next/navigation';
+import Link from 'next/link';
+import { Clock, BarChart3, ArrowLeft } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
 
 interface CourseDetailPageProps {
   params: Promise<{ slug: string }>;
@@ -14,11 +14,11 @@ export async function generateMetadata({ params }: CourseDetailPageProps) {
   const course = await coursesRepository.getBySlug(slug);
 
   if (!course) {
-    return { title: "Course Not Found" };
+    return { title: 'Course Not Found' };
   }
 
   return {
-    title: `${course.title} | Arpit Labs`,
+    title: `${course.title} | Axiora`,
     description: course.description,
   };
 }
@@ -49,22 +49,13 @@ export default async function CourseDetailPage({ params }: CourseDetailPageProps
 
             {course.thumbnail && (
               <div className="mb-8 h-64 w-full overflow-hidden rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 relative">
-                <Image
-                  src={course.thumbnail}
-                  alt={course.title}
-                  fill
-                  className="object-cover"
-                />
+                <Image src={course.thumbnail} alt={course.title} fill className="object-cover" />
               </div>
             )}
 
-            <h1 className="text-4xl font-bold tracking-tight text-foreground">
-              {course.title}
-            </h1>
+            <h1 className="text-4xl font-bold tracking-tight text-foreground">{course.title}</h1>
 
-            <p className="mt-4 text-lg text-muted max-w-2xl">
-              {course.description}
-            </p>
+            <p className="mt-4 text-lg text-muted max-w-2xl">{course.description}</p>
 
             <div className="mt-8 flex flex-wrap items-center gap-6 text-sm">
               <div className="flex items-center gap-2">

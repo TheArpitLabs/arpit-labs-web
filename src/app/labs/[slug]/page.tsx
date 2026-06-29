@@ -1,8 +1,8 @@
-import { labsRepository } from "@/lib/repositories/labs.repository";
-import { notFound } from "next/navigation";
-import Link from "next/link";
-import { BarChart3, ArrowLeft, Code2 } from "lucide-react";
-import ReactMarkdown from "react-markdown";
+import { labsRepository } from '@/lib/repositories/labs.repository';
+import { notFound } from 'next/navigation';
+import Link from 'next/link';
+import { BarChart3, ArrowLeft, Code2 } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
 
 interface LabDetailPageProps {
   params: Promise<{ slug: string }>;
@@ -13,11 +13,11 @@ export async function generateMetadata({ params }: LabDetailPageProps) {
   const lab = await labsRepository.getBySlug(slug);
 
   if (!lab) {
-    return { title: "Lab Not Found" };
+    return { title: 'Lab Not Found' };
   }
 
   return {
-    title: `${lab.title} | Arpit Labs`,
+    title: `${lab.title} | Axiora`,
     description: lab.description,
   };
 }
@@ -44,13 +44,9 @@ export default async function LabDetailPage({ params }: LabDetailPageProps) {
               Back to Labs
             </Link>
 
-            <h1 className="text-4xl font-bold tracking-tight text-foreground">
-              {lab.title}
-            </h1>
+            <h1 className="text-4xl font-bold tracking-tight text-foreground">{lab.title}</h1>
 
-            <p className="mt-4 text-lg text-muted max-w-2xl">
-              {lab.description}
-            </p>
+            <p className="mt-4 text-lg text-muted max-w-2xl">{lab.description}</p>
 
             <div className="mt-8 flex flex-wrap items-center gap-6 text-sm">
               <div className="flex items-center gap-2">
@@ -91,8 +87,12 @@ export default async function LabDetailPage({ params }: LabDetailPageProps) {
 
             {/* Call to Action */}
             <div className="rounded-2xl border border-primary/30 bg-primary/5 p-8 text-center">
-              <h3 className="text-xl font-semibold text-foreground mb-2">Ready to Complete This Lab?</h3>
-              <p className="text-muted mb-6">Start working on this hands-on project to solidify your skills.</p>
+              <h3 className="text-xl font-semibold text-foreground mb-2">
+                Ready to Complete This Lab?
+              </h3>
+              <p className="text-muted mb-6">
+                Start working on this hands-on project to solidify your skills.
+              </p>
               <button className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors">
                 <Code2 className="h-5 w-5" />
                 Start Lab

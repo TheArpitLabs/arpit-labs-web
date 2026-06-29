@@ -1,8 +1,8 @@
-import { roadmapsRepository } from "@/lib/repositories/roadmaps.repository";
-import { notFound } from "next/navigation";
-import Link from "next/link";
-import { ArrowLeft, Map } from "lucide-react";
-import ReactMarkdown from "react-markdown";
+import { roadmapsRepository } from '@/lib/repositories/roadmaps.repository';
+import { notFound } from 'next/navigation';
+import Link from 'next/link';
+import { ArrowLeft, Map } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
 
 interface RoadmapDetailPageProps {
   params: Promise<{ slug: string }>;
@@ -13,11 +13,11 @@ export async function generateMetadata({ params }: RoadmapDetailPageProps) {
   const roadmap = await roadmapsRepository.getBySlug(slug);
 
   if (!roadmap) {
-    return { title: "Roadmap Not Found" };
+    return { title: 'Roadmap Not Found' };
   }
 
   return {
-    title: `${roadmap.title} | Arpit Labs`,
+    title: `${roadmap.title} | Axiora`,
     description: roadmap.description,
   };
 }
@@ -54,9 +54,7 @@ export default async function RoadmapDetailPage({ params }: RoadmapDetailPagePro
                 <h1 className="text-4xl font-bold tracking-tight text-foreground">
                   {roadmap.title}
                 </h1>
-                <p className="mt-4 text-lg text-muted max-w-2xl">
-                  {roadmap.description}
-                </p>
+                <p className="mt-4 text-lg text-muted max-w-2xl">{roadmap.description}</p>
                 <div className="mt-6 flex items-center gap-2 text-sm">
                   <div className="h-3 w-3 rounded-full bg-primary/60" />
                   <span className="text-muted">{roadmap.category}</span>

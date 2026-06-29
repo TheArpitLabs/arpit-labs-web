@@ -1,12 +1,12 @@
-import Image from "next/image";
-import { coursesRepository } from "@/lib/repositories/courses.repository";
-import Link from "next/link";
-import { Clock, BarChart3 } from "lucide-react";
+import Image from 'next/image';
+import { coursesRepository } from '@/lib/repositories/courses.repository';
+import Link from 'next/link';
+import { Clock, BarChart3 } from 'lucide-react';
 import { logger } from '@/lib/logger';
 
 export const metadata = {
-  title: "Courses | Arpit Labs",
-  description: "Learn cutting-edge skills in IoT, AI, Cybersecurity, and Web Development",
+  title: 'Courses | Axiora',
+  description: 'Learn cutting-edge skills in IoT, AI, Cybersecurity, and Web Development',
 };
 
 export default async function CoursesPage() {
@@ -14,22 +14,21 @@ export default async function CoursesPage() {
   try {
     courses = await coursesRepository.getAll(true);
   } catch (error) {
-    logger.error("Error fetching courses:", error);
+    logger.error('Error fetching courses:', error);
     courses = [];
   }
 
-  const categories = Array.from(new Set(courses.map(c => c.category)));
+  const categories = Array.from(new Set(courses.map((c) => c.category)));
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-background to-background/80">
       {/* Header */}
       <div className="border-b border-border/40 px-4 py-12 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
-          <h1 className="text-4xl font-bold tracking-tight text-foreground">
-            Learning Courses
-          </h1>
+          <h1 className="text-4xl font-bold tracking-tight text-foreground">Learning Courses</h1>
           <p className="mt-4 text-lg text-muted">
-            Master new technologies with comprehensive, hands-on courses designed for developers at every level.
+            Master new technologies with comprehensive, hands-on courses designed for developers at
+            every level.
           </p>
         </div>
       </div>
@@ -41,7 +40,7 @@ export default async function CoursesPage() {
             <>
               {/* Category Sections */}
               {categories.map((category) => {
-                const categoryCourses = courses.filter(c => c.category === category);
+                const categoryCourses = courses.filter((c) => c.category === category);
                 return (
                   <div key={category} className="mb-16">
                     <h2 className="text-2xl font-bold text-foreground mb-8">{category}</h2>
@@ -62,7 +61,7 @@ export default async function CoursesPage() {
                               />
                             </div>
                           )}
-                          
+
                           <div className="space-y-3">
                             <div>
                               <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">

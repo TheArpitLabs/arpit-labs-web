@@ -154,7 +154,9 @@ export default function RecruiterPage() {
       <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center px-4 py-20 text-white">
         <div className="max-w-xl rounded-3xl border border-slate-700 bg-slate-900/90 p-8 text-center">
           <h1 className="text-2xl font-semibold">Recruiter Assistant</h1>
-          <p className="mt-4 text-slate-300">Unable to load recruiter insights at this time. Please try again later.</p>
+          <p className="mt-4 text-slate-300">
+            Unable to load recruiter insights at this time. Please try again later.
+          </p>
         </div>
       </div>
     );
@@ -166,9 +168,14 @@ export default function RecruiterPage() {
         <div className="space-y-10">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-3xl">
-              <p className="text-sm uppercase tracking-[0.32em] text-blue-300">Recruiter Assistant</p>
+              <p className="text-sm uppercase tracking-[0.32em] text-blue-300">
+                Recruiter Assistant
+              </p>
               <h1 className="mt-4 text-4xl font-bold">Arpit Kumar — Engineering Report</h1>
-              <p className="mt-4 max-w-2xl text-slate-300">Recruiter-focused overview of technical capabilities, product delivery, and leadership strengths drawn from the live Arpit Labs portfolio.</p>
+              <p className="mt-4 max-w-2xl text-slate-300">
+                Recruiter-focused overview of technical capabilities, product delivery, and
+                leadership strengths drawn from the live Axiora portfolio.
+              </p>
             </div>
             <div className="flex flex-wrap gap-3">
               <Button onClick={generatePDF} variant="primary" className="flex items-center gap-2">
@@ -194,7 +201,10 @@ export default function RecruiterPage() {
                   <div className="mt-4 flex flex-wrap gap-2">
                     {skills.length ? (
                       skills.map((skill) => (
-                        <span key={skill} className="rounded-full bg-slate-800 px-3 py-2 text-sm text-slate-200">
+                        <span
+                          key={skill}
+                          className="rounded-full bg-slate-800 px-3 py-2 text-sm text-slate-200"
+                        >
                           {skill}
                         </span>
                       ))
@@ -212,13 +222,19 @@ export default function RecruiterPage() {
               <h2 className="text-3xl font-semibold">Project Showcase</h2>
               <div className="mt-6 space-y-6">
                 {data.projects.map((project) => (
-                  <div key={project.title} className="rounded-3xl border border-slate-800 bg-slate-950/70 p-6">
+                  <div
+                    key={project.title}
+                    className="rounded-3xl border border-slate-800 bg-slate-950/70 p-6"
+                  >
                     <h3 className="text-xl font-semibold">{project.title}</h3>
                     <p className="mt-3 text-slate-300">{project.description}</p>
                     <p className="mt-3 text-sm text-blue-300">Impact: {project.impact}</p>
                     <div className="mt-4 flex flex-wrap gap-2">
                       {project.technologies.map((tech) => (
-                        <span key={tech} className="rounded-full bg-slate-800 px-3 py-2 text-xs text-slate-200">
+                        <span
+                          key={tech}
+                          className="rounded-full bg-slate-800 px-3 py-2 text-xs text-slate-200"
+                        >
                           {tech}
                         </span>
                       ))}
@@ -255,7 +271,9 @@ export default function RecruiterPage() {
             <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div>
                 <h2 className="text-3xl font-semibold">Recruiter Questions</h2>
-                <p className="mt-2 text-slate-400">Ask common recruiter prompts about technologies and project focus.</p>
+                <p className="mt-2 text-slate-400">
+                  Ask common recruiter prompts about technologies and project focus.
+                </p>
               </div>
             </div>
 

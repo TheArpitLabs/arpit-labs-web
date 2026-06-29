@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { motion } from "framer-motion";
-import { ArrowRight, Rocket, Sparkles, Zap } from "lucide-react";
-import Link from "next/link";
+import { motion } from 'framer-motion';
+import { ArrowRight, Rocket, Sparkles, Zap } from 'lucide-react';
+import Link from 'next/link';
 
 export function LaunchCTA() {
   return (
@@ -41,7 +41,7 @@ export function LaunchCTA() {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="mb-4 font-heading text-4xl font-bold text-gradient sm:text-5xl"
           >
-            Build The Future With Arpit Labs
+            Build The Future With Axiora
           </motion.h1>
 
           {/* Description */}
@@ -52,7 +52,8 @@ export function LaunchCTA() {
             transition={{ duration: 0.6, delay: 0.4 }}
             className="mx-auto mb-8 max-w-3xl text-lg text-muted"
           >
-            Join thousands of engineers, researchers, and innovators who are already building the next generation of AI, IoT, and software systems.
+            Join thousands of engineers, researchers, and innovators who are already building the
+            next generation of AI, IoT, and software systems.
           </motion.p>
 
           {/* CTAs */}
@@ -106,7 +107,7 @@ export function LaunchCTA() {
         {/* Decorative elements */}
         <motion.div
           animate={{ y: [0, -20, 0] }}
-          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+          transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
           className="absolute left-10 top-20 hidden lg:block"
         >
           <div className="rounded-2xl glass p-4">
@@ -116,7 +117,7 @@ export function LaunchCTA() {
 
         <motion.div
           animate={{ y: [0, 20, 0] }}
-          transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+          transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
           className="absolute right-10 bottom-20 hidden lg:block"
         >
           <div className="rounded-2xl glass p-4">

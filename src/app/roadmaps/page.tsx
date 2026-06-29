@@ -1,11 +1,11 @@
-import { roadmapsRepository } from "@/lib/repositories/roadmaps.repository";
-import Link from "next/link";
-import { Map } from "lucide-react";
+import { roadmapsRepository } from '@/lib/repositories/roadmaps.repository';
+import Link from 'next/link';
+import { Map } from 'lucide-react';
 import { logger } from '@/lib/logger';
 
 export const metadata = {
-  title: "Learning Roadmaps | Arpit Labs",
-  description: "Structured learning paths for IoT, AI, Cybersecurity, and Web Development",
+  title: 'Learning Roadmaps | Axiora',
+  description: 'Structured learning paths for IoT, AI, Cybersecurity, and Web Development',
 };
 
 export default async function RoadmapsPage() {
@@ -13,22 +13,21 @@ export default async function RoadmapsPage() {
   try {
     roadmaps = await roadmapsRepository.getAll(true);
   } catch (error) {
-    logger.error("Error fetching roadmaps:", error);
+    logger.error('Error fetching roadmaps:', error);
     roadmaps = [];
   }
 
-  const categories = Array.from(new Set(roadmaps.map(r => r.category)));
+  const categories = Array.from(new Set(roadmaps.map((r) => r.category)));
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-background to-background/80">
       {/* Header */}
       <div className="border-b border-border/40 px-4 py-12 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
-          <h1 className="text-4xl font-bold tracking-tight text-foreground">
-            Learning Roadmaps
-          </h1>
+          <h1 className="text-4xl font-bold tracking-tight text-foreground">Learning Roadmaps</h1>
           <p className="mt-4 text-lg text-muted">
-            Follow curated learning paths designed to take you from beginner to expert in your chosen field.
+            Follow curated learning paths designed to take you from beginner to expert in your
+            chosen field.
           </p>
         </div>
       </div>
@@ -40,7 +39,7 @@ export default async function RoadmapsPage() {
             <>
               {/* Category Sections */}
               {categories.map((category) => {
-                const categoryRoadmaps = roadmaps.filter(r => r.category === category);
+                const categoryRoadmaps = roadmaps.filter((r) => r.category === category);
                 return (
                   <div key={category} className="mb-16">
                     <h2 className="text-2xl font-bold text-foreground mb-8">{category}</h2>

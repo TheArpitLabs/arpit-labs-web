@@ -1,17 +1,18 @@
-import { Container } from "@/components/layout/Container";
-import { Footer } from "@/components/layout/Footer";
-import { AnimatedSection } from "@/components/animations/AnimatedSection";
-import { TimelineExplorer } from "@/components/shared/TimelineExplorer";
-import { Badge } from "@/components/ui/badge";
-import { getJourneyTimeline } from "@/lib/actions/server-actions";
-import { GraduationCap, Briefcase, Award, Trophy } from "lucide-react";
-import { createPageMetadata } from "@/lib/seo";
+import { Container } from '@/components/layout/Container';
+import { Footer } from '@/components/layout/Footer';
+import { AnimatedSection } from '@/components/animations/AnimatedSection';
+import { TimelineExplorer } from '@/components/shared/TimelineExplorer';
+import { Badge } from '@/components/ui/badge';
+import { getJourneyTimeline } from '@/lib/actions/server-actions';
+import { GraduationCap, Briefcase, Award, Trophy } from 'lucide-react';
+import { createPageMetadata } from '@/lib/seo';
 
 export const metadata = createPageMetadata({
-  title: "Journey",
-  description: "A timeline of educational milestones, projects, and achievements in my engineering journey.",
-  path: "/journey",
-  keywords: ["Journey", "Timeline", "Education", "Hackathons", "Certifications", "Milestones"],
+  title: 'Journey',
+  description:
+    'A timeline of educational milestones, projects, and achievements in my engineering journey.',
+  path: '/journey',
+  keywords: ['Journey', 'Timeline', 'Education', 'Hackathons', 'Certifications', 'Milestones'],
 });
 
 export default async function JourneyPage() {
@@ -19,18 +20,21 @@ export default async function JourneyPage() {
 
   return (
     <main className="bg-background text-foreground">
-
       <section className="border-b border-border/70 bg-background/75 py-20 dark:border-slate-800 dark:bg-slate-950/70">
         <Container>
           <div className="mx-auto max-w-4xl text-center">
-            <Badge variant="outline" className="mb-6 px-4 py-1.5 text-sm uppercase tracking-widest text-primary">
+            <Badge
+              variant="outline"
+              className="mb-6 px-4 py-1.5 text-sm uppercase tracking-widest text-primary"
+            >
               Evolution of a Lab
             </Badge>
             <h1 className="text-4xl font-bold tracking-tight text-foreground md:text-5xl">
-              The Journey of <span className="text-primary">Arpit Labs</span>
+              The Journey of <span className="text-primary">Axiora</span>
             </h1>
             <p className="mt-6 text-lg text-muted">
-              From the first line of code to complex system architectures. This is a record of milestones, achievements, and the evolution of engineering thinking.
+              From the first line of code to complex system architectures. This is a record of
+              milestones, achievements, and the evolution of engineering thinking.
             </p>
           </div>
         </Container>
@@ -42,7 +46,10 @@ export default async function JourneyPage() {
             <AnimatedSection>
               <div className="space-y-4">
                 <h2 className="text-2xl font-bold text-foreground">Milestones & History</h2>
-                <p className="text-muted">A filterable timeline covering education, competitions, hackathons, certifications, and major milestones.</p>
+                <p className="text-muted">
+                  A filterable timeline covering education, competitions, hackathons,
+                  certifications, and major milestones.
+                </p>
               </div>
               <div className="mt-10">
                 <TimelineExplorer items={journeyItems} />
@@ -90,7 +97,8 @@ export default async function JourneyPage() {
               <div className="rounded-3xl border border-border/70 bg-card p-6 shadow-glow dark:border-slate-800 dark:bg-slate-950">
                 <h3 className="text-lg font-bold text-foreground">Current Focus</h3>
                 <p className="mt-3 text-sm text-muted">
-                  Currently exploring Edge AI optimization and secure IoT communication protocols for industrial applications.
+                  Currently exploring Edge AI optimization and secure IoT communication protocols
+                  for industrial applications.
                 </p>
                 <div className="mt-6">
                   <Badge variant="outline" className="w-full justify-center py-2">

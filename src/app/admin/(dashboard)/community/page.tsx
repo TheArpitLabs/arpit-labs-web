@@ -1,55 +1,53 @@
-import Link from "next/link";
-import { AdminEmptyState } from "@/components/admin/AdminEmptyState";
-import { AdminSection } from "@/components/admin/AdminSection";
-import { AdminTable } from "@/components/admin/AdminTable";
-import { AdminTopbar } from "@/components/admin/AdminTopbar";
-import { ecosystemRepository } from "@/lib/repositories/ecosystem.repository";
-import { CommunityChapterForm } from "@/components/admin/CommunityChapterForm";
-import { CommunityEventForm } from "@/components/admin/CommunityEventForm";
-import { Users, Globe, Calendar, Plus } from "lucide-react";
+import Link from 'next/link';
+import { AdminEmptyState } from '@/components/admin/AdminEmptyState';
+import { AdminSection } from '@/components/admin/AdminSection';
+import { AdminTable } from '@/components/admin/AdminTable';
+import { AdminTopbar } from '@/components/admin/AdminTopbar';
+import { ecosystemRepository } from '@/lib/repositories/ecosystem.repository';
+import { CommunityChapterForm } from '@/components/admin/CommunityChapterForm';
+import { CommunityEventForm } from '@/components/admin/CommunityEventForm';
+import { Users, Globe, Calendar, Plus } from 'lucide-react';
 
 interface AdminCommunityPageProps {
   searchParams?: Promise<{
     editChapter?: string;
     editEvent?: string;
-    tab?: "chapters" | "events";
+    tab?: 'chapters' | 'events';
   }>;
 }
 
 export default async function AdminCommunityPage({ searchParams }: AdminCommunityPageProps) {
   const params = await searchParams;
-  const activeTab = params?.tab || "chapters";
-  
+  const activeTab = params?.tab || 'chapters';
+
   const [chapters, events] = await Promise.all([
     ecosystemRepository.getCommunityChapters(),
-    ecosystemRepository.getCommunityEvents()
+    ecosystemRepository.getCommunityEvents(),
   ]);
-  
-  const editingChapter = params?.editChapter 
-    ? chapters.find((c) => c.id === params.editChapter) 
+
+  const editingChapter = params?.editChapter
+    ? chapters.find((c) => c.id === params.editChapter)
     : null;
 
-  const editingEvent = params?.editEvent
-    ? events.find((e) => e.id === params.editEvent)
-    : null;
+  const editingEvent = params?.editEvent ? events.find((e) => e.id === params.editEvent) : null;
 
   return (
     <div className="space-y-6">
-      <AdminTopbar 
-        title="Global Community" 
-        subtitle="Manage regional chapters, country ambassadors, and global events." 
+      <AdminTopbar
+        title="Global Community"
+        subtitle="Manage regional chapters, country ambassadors, and global events."
       />
 
       <div className="flex gap-4 border-b border-border/70">
-        <Link 
-          href="/admin/community?tab=chapters" 
-          className={`pb-4 text-sm font-bold transition ${activeTab === "chapters" ? "border-b-2 border-primary text-primary" : "text-muted hover:text-foreground"}`}
+        <Link
+          href="/admin/community?tab=chapters"
+          className={`pb-4 text-sm font-bold transition ${activeTab === 'chapters' ? 'border-b-2 border-primary text-primary' : 'text-muted hover:text-foreground'}`}
         >
           Chapters
         </Link>
-        <Link 
-          href="/admin/community?tab=events" 
-          className={`pb-4 text-sm font-bold transition ${activeTab === "events" ? "border-b-2 border-primary text-primary" : "text-muted hover:text-foreground"}`}
+        <Link
+          href="/admin/community?tab=events"
+          className={`pb-4 text-sm font-bold transition ${activeTab === 'events' ? 'border-b-2 border-primary text-primary' : 'text-muted hover:text-foreground'}`}
         >
           Events
         </Link>
@@ -57,16 +55,16 @@ export default async function AdminCommunityPage({ searchParams }: AdminCommunit
 
       <div className="flex flex-col gap-6 lg:flex-row">
         <div className="w-full lg:w-2/5">
-          {activeTab === "chapters" ? (
-            <AdminSection 
-              title={editingChapter ? "Edit Chapter" : "New Chapter"} 
-              description="Establish a new regional chapter for Arpit Labs."
+          {activeTab === 'chapters' ? (
+            <AdminSection
+              title={editingChapter ? 'Edit Chapter' : 'New Chapter'}
+              description="Establish a new regional chapter for Axiora."
             >
               <CommunityChapterForm chapter={editingChapter as any} />
             </AdminSection>
           ) : (
-            <AdminSection 
-              title={editingEvent ? "Edit Event" : "Schedule Event"} 
+            <AdminSection
+              title={editingEvent ? 'Edit Event' : 'Schedule Event'}
               description="Create community events for your chapters."
             >
               <CommunityEventForm event={editingEvent as any} chapters={chapters} />
@@ -75,10 +73,10 @@ export default async function AdminCommunityPage({ searchParams }: AdminCommunit
         </div>
 
         <div className="w-full lg:w-3/5">
-          {activeTab === "chapters" ? (
+          {activeTab === 'chapters' ? (
             <AdminSection title="Regional Chapters" description="Active communities worldwide.">
               {chapters.length > 0 ? (
-                <AdminTable headers={["Chapter", "Country", "Members", "Actions"]}>
+                <AdminTable headers={['Chapter', 'Country', 'Members', 'Actions']}>
                   {chapters.map((chapter) => (
                     <tr key={chapter.id} className="border-b border-border/40 last:border-0">
                       <td className="px-4 py-4">
@@ -92,7 +90,7 @@ export default async function AdminCommunityPage({ searchParams }: AdminCommunit
                       <td className="px-4 py-4 text-sm">{chapter.country}</td>
                       <td className="px-4 py-4 text-sm">{chapter.member_count}</td>
                       <td className="px-4 py-4">
-                        <Link 
+                        <Link
                           href={`/admin/community?tab=chapters&editChapter=${chapter.id}`}
                           className="rounded-lg border border-border/70 p-2 hover:border-primary inline-block"
                         >
@@ -103,13 +101,16 @@ export default async function AdminCommunityPage({ searchParams }: AdminCommunit
                   ))}
                 </AdminTable>
               ) : (
-                <AdminEmptyState title="No chapters" description="Expand the ecosystem by creating your first chapter." />
+                <AdminEmptyState
+                  title="No chapters"
+                  description="Expand the ecosystem by creating your first chapter."
+                />
               )}
             </AdminSection>
           ) : (
             <AdminSection title="Community Events" description="Upcoming events and meetups.">
               {events.length > 0 ? (
-                <AdminTable headers={["Event", "Chapter", "Date", "Actions"]}>
+                <AdminTable headers={['Event', 'Chapter', 'Date', 'Actions']}>
                   {events.map((event) => (
                     <tr key={event.id} className="border-b border-border/40 last:border-0">
                       <td className="px-4 py-4">
@@ -123,7 +124,7 @@ export default async function AdminCommunityPage({ searchParams }: AdminCommunit
                         {new Date(event.start_time).toLocaleDateString()}
                       </td>
                       <td className="px-4 py-4">
-                        <Link 
+                        <Link
                           href={`/admin/community?tab=events&editEvent=${event.id}`}
                           className="rounded-lg border border-border/70 p-2 hover:border-primary inline-block"
                         >
@@ -134,7 +135,10 @@ export default async function AdminCommunityPage({ searchParams }: AdminCommunit
                   ))}
                 </AdminTable>
               ) : (
-                <AdminEmptyState title="No events" description="Schedule your first community event." />
+                <AdminEmptyState
+                  title="No events"
+                  description="Schedule your first community event."
+                />
               )}
             </AdminSection>
           )}

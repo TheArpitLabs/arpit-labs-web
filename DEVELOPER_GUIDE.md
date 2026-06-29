@@ -1,9 +1,9 @@
-# Arpit Labs - Developer Guide
+# Axiora - Developer Guide
 
 **Version**: 1.0  
 **Last Updated**: June 22, 2026
 
-This guide provides comprehensive documentation for developers working on the Arpit Labs platform.
+This guide provides comprehensive documentation for developers working on the Axiora platform.
 
 ---
 
@@ -23,7 +23,7 @@ This guide provides comprehensive documentation for developers working on the Ar
 
 ## Architecture Overview
 
-The Arpit Labs platform is built on Next.js 14 with TypeScript, using a modern architecture that emphasizes:
+The Axiora platform is built on Next.js 14 with TypeScript, using a modern architecture that emphasizes:
 
 - **Type Safety**: Comprehensive TypeScript usage with minimal `any` types
 - **Performance**: Optimized loading, caching, and lazy loading
@@ -47,7 +47,7 @@ The Arpit Labs platform is built on Next.js 14 with TypeScript, using a modern a
 ## Project Structure
 
 ```
-arpit_labs/
+axiora/
 ├── src/
 │   ├── app/                    # Next.js App Router pages
 │   ├── components/             # React components
@@ -162,13 +162,10 @@ globalCache.set('key', data, 300); // 5 minutes TTL
 const cached = globalCache.get('key');
 
 // Cache decorator for functions
-const cachedFetch = withCache(
-  async (id: string) => await fetchUser(id),
-  {
-    keyGenerator: (id) => `user:${id}`,
-    ttl: 600,
-  }
-);
+const cachedFetch = withCache(async (id: string) => await fetchUser(id), {
+  keyGenerator: (id) => `user:${id}`,
+  ttl: 600,
+});
 ```
 
 ### CSRF Protection (`src/lib/csrf.ts`)
@@ -176,12 +173,7 @@ const cachedFetch = withCache(
 CSRF token generation and validation:
 
 ```typescript
-import {
-  generateCSRFToken,
-  validateCSRFToken,
-  initializeCSRF,
-  csrfProtection,
-} from '@/lib/csrf';
+import { generateCSRFToken, validateCSRFToken, initializeCSRF, csrfProtection } from '@/lib/csrf';
 
 // Generate token
 const token = await generateCSRFToken();
@@ -203,14 +195,11 @@ Retry with exponential backoff and circuit breaker:
 import { withRetry, CircuitBreaker } from '@/lib/retry';
 
 // Retry with exponential backoff
-const result = await withRetry(
-  async () => await apiCall(),
-  {
-    maxAttempts: 3,
-    baseDelay: 1000,
-    maxDelay: 10000,
-  }
-);
+const result = await withRetry(async () => await apiCall(), {
+  maxAttempts: 3,
+  baseDelay: 1000,
+  maxDelay: 10000,
+});
 
 // Circuit breaker pattern
 const circuitBreaker = new CircuitBreaker(apiCall, {
@@ -229,17 +218,13 @@ Per-endpoint rate limiting:
 import { rateLimiter } from '@/lib/rate-limit';
 
 // Check rate limit
-const { allowed, remaining, reset } = await rateLimiter.check(
-  'api:endpoint',
-  'user-id',
-  { limit: 100, window: 60000 }
-);
+const { allowed, remaining, reset } = await rateLimiter.check('api:endpoint', 'user-id', {
+  limit: 100,
+  window: 60000,
+});
 
 if (!allowed) {
-  return Response.json(
-    { error: 'Rate limit exceeded' },
-    { status: 429 }
-  );
+  return Response.json({ error: 'Rate limit exceeded' }, { status: 429 });
 }
 ```
 
@@ -263,7 +248,7 @@ actions.learning.updateProgress(50);
 function MyComponent() {
   const user = useAppState(selectors.user.profile);
   const theme = useAppState(selectors.ui.theme);
-  
+
   return <div>Theme: {theme}</div>;
 }
 
@@ -327,10 +312,10 @@ const { clause, params } = buildWhereClause({
 });
 
 // Paginated queries
-const result = await executePaginatedQuery(
-  (options) => await db.query('users', options),
-  { page: 1, pageSize: 20 }
-);
+const result = await executePaginatedQuery((options) => await db.query('users', options), {
+  page: 1,
+  pageSize: 20,
+});
 ```
 
 ---
@@ -412,19 +397,13 @@ const srcset = generateSrcSet(src, [400, 800, 1200]);
 ### Lazy Loading (`src/lib/lazy-loading.ts`)
 
 ```typescript
-import {
-  lazyLoadImage,
-  lazyLoadComponent,
-  initLazyLoading,
-} from '@/lib/lazy-loading';
+import { lazyLoadImage, lazyLoadComponent, initLazyLoading } from '@/lib/lazy-loading';
 
 // Lazy load images
 lazyLoadImage(imgElement, src, placeholder);
 
 // Lazy load React components
-const HeavyComponent = lazyLoadComponent(
-  () => import('./HeavyComponent')
-);
+const HeavyComponent = lazyLoadComponent(() => import('./HeavyComponent'));
 
 // Initialize automatic lazy loading
 initLazyLoading();
@@ -443,9 +422,7 @@ import {
 initPerformanceMonitoring();
 
 // Measure API calls
-const data = await measureAPICall('/api/users', () =>
-  fetch('/api/users')
-);
+const data = await measureAPICall('/api/users', () => fetch('/api/users'));
 
 // Get performance summary
 const summary = performanceMonitor.getSummary();
@@ -458,11 +435,7 @@ const summary = performanceMonitor.getSummary();
 ### Content Sanitization (`src/lib/content-sanitization.ts`)
 
 ```typescript
-import {
-  sanitizeHTML,
-  sanitizeURL,
-  sanitizeUserContent,
-} from '@/lib/content-sanitization';
+import { sanitizeHTML, sanitizeURL, sanitizeUserContent } from '@/lib/content-sanitization';
 
 // Sanitize HTML content
 const clean = sanitizeHTML(userInput);
@@ -498,11 +471,7 @@ initMobileOptimizations();
 ### Offline Support (`src/lib/offline-support.ts`)
 
 ```typescript
-import {
-  isOnline,
-  offlineAwareFetch,
-  initOfflineSupport,
-} from '@/lib/offline-support';
+import { isOnline, offlineAwareFetch, initOfflineSupport } from '@/lib/offline-support';
 
 // Check online status
 if (isOnline()) {
@@ -526,12 +495,7 @@ initOfflineSupport({
 ### Event Bus (`src/lib/event-driven.ts`)
 
 ```typescript
-import {
-  eventBus,
-  EventType,
-  emitWithMiddleware,
-  PublishEvent,
-} from '@/lib/event-driven';
+import { eventBus, EventType, emitWithMiddleware, PublishEvent } from '@/lib/event-driven';
 
 // Subscribe to events
 eventBus.on(EventType.USER_LOGIN, (data) => {
@@ -633,4 +597,4 @@ Before deploying:
 ---
 
 **Last Updated**: June 22, 2026  
-**Maintained By**: Arpit Labs Development Team
+**Maintained By**: Axiora Development Team

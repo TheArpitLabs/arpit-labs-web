@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 test.describe('Homepage', () => {
   test('should load successfully', async ({ page }) => {
     await page.goto('/');
-    await expect(page).toHaveTitle(/Arpit Labs/);
+    await expect(page).toHaveTitle(/Axiora/);
   });
 
   test('should display navigation', async ({ page }) => {
@@ -31,10 +31,10 @@ test.describe('Projects Page', () => {
     await page.goto('/projects');
     const filterButton = page.getByRole('button', { name: /filter/i });
     await filterButton.click();
-    
+
     const domainFilter = page.getByRole('combobox', { name: /domain/i });
     await domainFilter.selectOption('web-development');
-    
+
     await expect(page).toHaveURL(/domain=web-development/);
   });
 });

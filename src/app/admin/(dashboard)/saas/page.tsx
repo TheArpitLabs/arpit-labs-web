@@ -1,34 +1,47 @@
-import { AdminSection } from "@/components/admin/AdminSection";
-import { AdminTopbar } from "@/components/admin/AdminTopbar";
-import { AdminTable } from "@/components/admin/AdminTable";
-import { MetricCard } from "@/components/admin/MetricCard";
-import { saasRepository } from "@/lib/repositories/saas.repository";
-import { Globe, Building2, Layout, Users, Activity } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { AdminSection } from '@/components/admin/AdminSection';
+import { AdminTopbar } from '@/components/admin/AdminTopbar';
+import { AdminTable } from '@/components/admin/AdminTable';
+import { MetricCard } from '@/components/admin/MetricCard';
+import { saasRepository } from '@/lib/repositories/saas.repository';
+import { Globe, Building2, Layout, Users, Activity } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
 export default async function SaasAdminDashboard() {
   const [organizations, stats] = await Promise.all([
     saasRepository.getOrganizations(),
-    saasRepository.getAdminStats()
+    saasRepository.getAdminStats(),
   ]);
 
   return (
     <div className="space-y-6">
-      <AdminTopbar 
-        title="SaaS Infrastructure" 
-        subtitle="Global management of organizations, workspaces, and tenant isolation." 
+      <AdminTopbar
+        title="SaaS Infrastructure"
+        subtitle="Global management of organizations, workspaces, and tenant isolation."
       />
 
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <MetricCard label="Organizations" value={stats.organizationsCount} helper="Total registered" />
+        <MetricCard
+          label="Organizations"
+          value={stats.organizationsCount}
+          helper="Total registered"
+        />
         <MetricCard label="Workspaces" value={stats.workspacesCount} helper="Across all orgs" />
         <MetricCard label="Total Members" value={stats.totalMembersCount} helper="Platform-wide" />
-        <MetricCard label="Active Workspaces" value={stats.activeWorkspacesCount} helper="Currently active" />
+        <MetricCard
+          label="Active Workspaces"
+          value={stats.activeWorkspacesCount}
+          helper="Currently active"
+        />
       </section>
 
       <div className="grid gap-6">
-        <AdminSection title="Organization Directory" description="Complete list of all registered tenants on the platform.">
-          <AdminTable headers={["Organization", "Slug", "Workspaces", "Members", "Created", "Actions"]}>
+        <AdminSection
+          title="Organization Directory"
+          description="Complete list of all registered tenants on the platform."
+        >
+          <AdminTable
+            headers={['Organization', 'Slug', 'Workspaces', 'Members', 'Created', 'Actions']}
+          >
             {organizations.map((org) => (
               <tr key={org.id} className="border-b border-border/40 last:border-0">
                 <td className="px-4 py-4">
@@ -40,7 +53,10 @@ export default async function SaasAdminDashboard() {
                   </div>
                 </td>
                 <td className="px-4 py-4">
-                  <Badge variant="outline" className="text-[10px] uppercase font-bold tracking-widest">
+                  <Badge
+                    variant="outline"
+                    className="text-[10px] uppercase font-bold tracking-widest"
+                  >
                     {org.slug}
                   </Badge>
                 </td>
@@ -58,14 +74,20 @@ export default async function SaasAdminDashboard() {
         </AdminSection>
 
         <div className="grid gap-6 lg:grid-cols-2">
-          <AdminSection title="System Health" description="Real-time multi-tenant performance metrics.">
+          <AdminSection
+            title="System Health"
+            description="Real-time multi-tenant performance metrics."
+          >
             <div className="space-y-4">
               {[
-                { label: "Database Isolation", status: "Healthy", color: "text-green-500" },
-                { label: "Storage Buckets", status: "Active", color: "text-green-500" },
-                { label: "Auth Sync", status: "Synchronized", color: "text-green-500" },
+                { label: 'Database Isolation', status: 'Healthy', color: 'text-green-500' },
+                { label: 'Storage Buckets', status: 'Active', color: 'text-green-500' },
+                { label: 'Auth Sync', status: 'Synchronized', color: 'text-green-500' },
               ].map((item) => (
-                <div key={item.label} className="flex items-center justify-between rounded-xl border border-border/40 p-4">
+                <div
+                  key={item.label}
+                  className="flex items-center justify-between rounded-xl border border-border/40 p-4"
+                >
                   <span className="text-sm font-medium">{item.label}</span>
                   <span className={`text-xs font-bold uppercase ${item.color}`}>{item.status}</span>
                 </div>
@@ -73,12 +95,15 @@ export default async function SaasAdminDashboard() {
             </div>
           </AdminSection>
 
-          <AdminSection title="Provisioning Logs" description="Recent workspace and organization lifecycle events.">
+          <AdminSection
+            title="Provisioning Logs"
+            description="Recent workspace and organization lifecycle events."
+          >
             <div className="space-y-3">
               {[
-                "New Org: Nebula AI created",
+                'New Org: Nebula AI created',
                 "Workspace: 'prod-1' provisioned for Acme Corp",
-                "Member: arpit@labs.com joined Dev Team",
+                'Member: contact@axiora.com joined Dev Team',
               ].map((log, i) => (
                 <div key={i} className="flex items-center gap-3 text-xs text-muted">
                   <div className="h-1.5 w-1.5 rounded-full bg-primary" />

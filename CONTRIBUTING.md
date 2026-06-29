@@ -1,6 +1,6 @@
-# Contributing to Arpit Labs
+# Contributing to Axiora
 
-Thank you for your interest in contributing to Arpit Labs! This guide will help you get started with contributing to the project.
+Thank you for your interest in contributing to Axiora! This guide will help you get started with contributing to the project.
 
 ---
 
@@ -43,11 +43,11 @@ Thank you for your interest in contributing to Arpit Labs! This guide will help 
 ```bash
 # Fork the repository on GitHub
 # Clone your fork
-git clone https://github.com/YOUR_USERNAME/arpit-labs.git
-cd arpit-labs
+git clone https://github.com/YOUR_USERNAME/axiora.git
+cd axiora
 
 # Add the original repository as upstream
-git remote add upstream https://github.com/arpitlabs/arpit-labs.git
+git remote add upstream https://github.com/arpitlabs/axiora.git
 ```
 
 ### 2. Install Dependencies
@@ -103,7 +103,7 @@ npm run test:coverage
 ## Project Structure
 
 ```
-arpit_labs/
+axiora/
 ├── src/
 │   ├── app/                    # Next.js App Router
 │   │   ├── (auth)/            # Auth routes
@@ -203,6 +203,7 @@ footer
 ```
 
 Types:
+
 - `feat`: New feature
 - `fix`: Bug fix
 - `docs`: Documentation changes
@@ -212,6 +213,7 @@ Types:
 - `chore`: Maintenance tasks
 
 Examples:
+
 ```bash
 git commit -m "feat(auth): add OAuth2 support"
 git commit -m "fix(api): resolve rate limiting issue"
@@ -316,20 +318,24 @@ git push origin feature/your-feature-name
 
 ```markdown
 ## Description
+
 Brief description of changes
 
 ## Type of Change
+
 - [ ] Bug fix
 - [ ] New feature
 - [ ] Breaking change
 - [ ] Documentation update
 
 ## Testing
+
 - [ ] Unit tests added/updated
 - [ ] Integration tests added/updated
 - [ ] Manual testing completed
 
 ## Checklist
+
 - [ ] Code follows project guidelines
 - [ ] Tests pass locally
 - [ ] Documentation updated
@@ -416,6 +422,7 @@ npm run lint -- --fix
 ## Recognition
 
 Contributors are recognized in:
+
 - `CONTRIBUTORS.md` file
 - Release notes
 - Project README
@@ -438,6 +445,6 @@ By contributing, you agree that your contributions will be licensed under the sa
 
 ---
 
-**Thank you for contributing to Arpit Labs!** 🚀
+**Thank you for contributing to Axiora!** 🚀
 
 For questions, contact: dev@arpitlabs.com

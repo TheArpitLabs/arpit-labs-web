@@ -12,10 +12,16 @@ interface RecruiterQueryResult {
   }>;
 }
 
-async function generateAnswer(question: string, contextEntries: Array<{ title: string; sourceType: string; preview: string }>) {
+async function generateAnswer(
+  question: string,
+  contextEntries: Array<{ title: string; sourceType: string; preview: string }>
+) {
   const apiKey = process.env.OPENAI_API_KEY;
   const contextText = contextEntries
-    .map((entry, index) => `Source ${index + 1} [${entry.sourceType}]: ${entry.title}\n${entry.preview}`)
+    .map(
+      (entry, index) =>
+        `Source ${index + 1} [${entry.sourceType}]: ${entry.title}\n${entry.preview}`
+    )
     .join('\n\n');
 
   if (!apiKey) {
@@ -26,7 +32,7 @@ async function generateAnswer(question: string, contextEntries: Array<{ title: s
     return `I found the following relevant content:\n\n${contextText}`;
   }
 
-  const systemPrompt = `You are a recruiter assistant for Arpit Labs. Answer questions using the provided content references and keep the response concise and factual.`;
+  const systemPrompt = `You are a recruiter assistant for Axiora. Answer questions using the provided content references and keep the response concise and factual.`;
   const userPrompt = `Question: ${question}\n\nRelevant information:\n${contextText}`;
 
   const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -60,13 +66,13 @@ async function generateAnswer(question: string, contextEntries: Array<{ title: s
 
 export async function POST(request: NextRequest) {
   try {
-    const access = await membershipRepository.validateFeatureAccessFromRequest(request, 'recruiter_assistant');
+    const access = await membershipRepository.validateFeatureAccessFromRequest(
+      request,
+      'recruiter_assistant'
+    );
 
     if (!access.allowed) {
-      return NextResponse.json(
-        { success: false, error: access.error },
-        { status: access.status }
-      );
+      return NextResponse.json({ success: false, error: access.error }, { status: access.status });
     }
 
     const payload = await request.json();

@@ -1,6 +1,6 @@
-# Arpit Labs UI Foundation
+# Axiora UI Foundation
 
-This repository contains reusable UI primitives and design-system components for the Arpit Labs frontend.
+This repository contains reusable UI primitives and design-system components for the Axiora frontend.
 
 ## Component Structure
 
@@ -45,6 +45,6 @@ Import components directly from `@/components/...` or create new composition blo
 Example:
 
 ```tsx
-import { SectionWrapper } from "@/components/layout/SectionWrapper";
-import { FloatingIcon } from "@/components/shared/FloatingIcon";
+import { SectionWrapper } from '@/components/layout/SectionWrapper';
+import { FloatingIcon } from '@/components/shared/FloatingIcon';
 ```
