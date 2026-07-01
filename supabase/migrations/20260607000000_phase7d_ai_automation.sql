@@ -58,13 +58,23 @@ ALTER TABLE ai_reports ENABLE ROW LEVEL SECURITY;
 ALTER TABLE ai_jobs ENABLE ROW LEVEL SECURITY;
 
 -- Policy: Admins (authenticated role) have full access — adjust for your auth model
+DROP POLICY IF EXISTS "Admins have full access to ai_generations" ON ai_generations;
 CREATE POLICY "Admins have full access to ai_generations" ON ai_generations FOR ALL USING (auth.role() = 'authenticated');
+
+DROP POLICY IF EXISTS "Admins have full access to ai_reports" ON ai_reports;
 CREATE POLICY "Admins have full access to ai_reports" ON ai_reports FOR ALL USING (auth.role() = 'authenticated');
+
+DROP POLICY IF EXISTS "Admins have full access to ai_jobs" ON ai_jobs;
 CREATE POLICY "Admins have full access to ai_jobs" ON ai_jobs FOR ALL USING (auth.role() = 'authenticated');
 
 -- Public/Authenticated access as needed
+DROP POLICY IF EXISTS "Authenticated users can insert generations" ON ai_generations;
 CREATE POLICY "Authenticated users can insert generations" ON ai_generations FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+
+DROP POLICY IF EXISTS "Authenticated users can select reports" ON ai_reports;
 CREATE POLICY "Authenticated users can select reports" ON ai_reports FOR SELECT USING (auth.role() = 'authenticated');
+
+DROP POLICY IF EXISTS "Authenticated users can manage jobs" ON ai_jobs;
 CREATE POLICY "Authenticated users can manage jobs" ON ai_jobs FOR ALL USING (auth.role() = 'authenticated');
 
 -- =============================================================================

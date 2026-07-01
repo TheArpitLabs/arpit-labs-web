@@ -491,7 +491,7 @@ begin
       alter table community_events add column available_seats integer;
     end if;
     if not exists (select 1 from information_schema.columns where table_name = 'community_events' and column_name = 'organizer_id') then
-      alter table community_events add column organizer_id uuid references auth.users(id);
+      alter table community_events add column organizer_id uuid references profiles(id);
     end if;
     if not exists (select 1 from information_schema.columns where table_name = 'community_events' and column_name = 'status') then
       alter table community_events add column status text not null default 'upcoming';
@@ -523,7 +523,7 @@ do $$
 begin
   if exists (select 1 from information_schema.tables where table_name = 'community_ambassadors') then
     if not exists (select 1 from information_schema.columns where table_name = 'community_ambassadors' and column_name = 'user_id') then
-      alter table community_ambassadors add column user_id uuid references auth.users(id);
+      alter table community_ambassadors add column user_id uuid references profiles(id);
     end if;
     if not exists (select 1 from information_schema.columns where table_name = 'community_ambassadors' and column_name = 'status') then
       alter table community_ambassadors add column status text not null default 'active';
@@ -563,7 +563,7 @@ begin
   end if;
   if exists (select 1 from information_schema.tables where table_name = 'user_badges') then
     if not exists (select 1 from information_schema.columns where table_name = 'user_badges' and column_name = 'user_id') then
-      alter table user_badges add column user_id uuid references auth.users(id);
+      alter table user_badges add column user_id uuid references profiles(id);
     end if;
     if not exists (select 1 from information_schema.columns where table_name = 'user_badges' and column_name = 'badge_id') then
       alter table user_badges add column badge_id uuid references community_badges(id);
@@ -597,10 +597,10 @@ do $$
 begin
   if exists (select 1 from information_schema.tables where table_name = 'community_leaderboard') then
     if not exists (select 1 from information_schema.columns where table_name = 'community_leaderboard' and column_name = 'user_id') then
-      alter table community_leaderboard add column user_id uuid references auth.users(id);
+      alter table community_leaderboard add column user_id uuid references profiles(id);
     end if;
     if not exists (select 1 from information_schema.columns where table_name = 'community_leaderboard' and column_name = 'period') then
-      alter table community_leaderboard add column period text;
+      alter table community_leaderboard add column period text not null default 'all-time';
     end if;
     if not exists (select 1 from information_schema.columns where table_name = 'community_leaderboard' and column_name = 'contribution_score') then
       alter table community_leaderboard add column contribution_score integer not null default 0;
@@ -641,7 +641,7 @@ begin
       alter table community_collaborations add column status text not null default 'open';
     end if;
     if not exists (select 1 from information_schema.columns where table_name = 'community_collaborations' and column_name = 'created_by') then
-      alter table community_collaborations add column created_by uuid references auth.users(id);
+      alter table community_collaborations add column created_by uuid references profiles(id);
     end if;
   end if;
   if exists (select 1 from information_schema.tables where table_name = 'collaboration_applications') then
@@ -649,7 +649,7 @@ begin
       alter table collaboration_applications add column collaboration_id uuid references community_collaborations(id);
     end if;
     if not exists (select 1 from information_schema.columns where table_name = 'collaboration_applications' and column_name = 'user_id') then
-      alter table collaboration_applications add column user_id uuid references auth.users(id);
+      alter table collaboration_applications add column user_id uuid references profiles(id);
     end if;
     if not exists (select 1 from information_schema.columns where table_name = 'collaboration_applications' and column_name = 'status') then
       alter table collaboration_applications add column status text not null default 'pending';
@@ -700,7 +700,7 @@ begin
       alter table gallery_likes add column gallery_id uuid references community_gallery(id);
     end if;
     if not exists (select 1 from information_schema.columns where table_name = 'gallery_likes' and column_name = 'user_id') then
-      alter table gallery_likes add column user_id uuid references auth.users(id);
+      alter table gallery_likes add column user_id uuid references profiles(id);
     end if;
   end if;
 end $$;
@@ -734,7 +734,7 @@ do $$
 begin
   if exists (select 1 from information_schema.tables where table_name = 'community_feed') then
     if not exists (select 1 from information_schema.columns where table_name = 'community_feed' and column_name = 'user_id') then
-      alter table community_feed add column user_id uuid references auth.users(id);
+      alter table community_feed add column user_id uuid references profiles(id);
     end if;
     if not exists (select 1 from information_schema.columns where table_name = 'community_feed' and column_name = 'activity_type') then
       alter table community_feed add column activity_type text;
@@ -748,7 +748,7 @@ begin
       alter table feed_interactions add column feed_id uuid references community_feed(id);
     end if;
     if not exists (select 1 from information_schema.columns where table_name = 'feed_interactions' and column_name = 'user_id') then
-      alter table feed_interactions add column user_id uuid references auth.users(id);
+      alter table feed_interactions add column user_id uuid references profiles(id);
     end if;
   end if;
   if exists (select 1 from information_schema.tables where table_name = 'feed_comments') then
@@ -756,7 +756,7 @@ begin
       alter table feed_comments add column feed_id uuid references community_feed(id);
     end if;
     if not exists (select 1 from information_schema.columns where table_name = 'feed_comments' and column_name = 'user_id') then
-      alter table feed_comments add column user_id uuid references auth.users(id);
+      alter table feed_comments add column user_id uuid references profiles(id);
     end if;
   end if;
 end $$;
@@ -798,7 +798,7 @@ do $$
 begin
   if exists (select 1 from information_schema.tables where table_name = 'community_notifications') then
     if not exists (select 1 from information_schema.columns where table_name = 'community_notifications' and column_name = 'user_id') then
-      alter table community_notifications add column user_id uuid references auth.users(id);
+      alter table community_notifications add column user_id uuid references profiles(id);
     end if;
     if not exists (select 1 from information_schema.columns where table_name = 'community_notifications' and column_name = 'is_read') then
       alter table community_notifications add column is_read boolean not null default false;
@@ -830,10 +830,10 @@ do $$
 begin
   if exists (select 1 from information_schema.tables where table_name = 'community_followers') then
     if not exists (select 1 from information_schema.columns where table_name = 'community_followers' and column_name = 'follower_id') then
-      alter table community_followers add column follower_id uuid references auth.users(id);
+      alter table community_followers add column follower_id uuid references profiles(id);
     end if;
     if not exists (select 1 from information_schema.columns where table_name = 'community_followers' and column_name = 'following_id') then
-      alter table community_followers add column following_id uuid references auth.users(id);
+      alter table community_followers add column following_id uuid references profiles(id);
     end if;
   end if;
 end $$;
@@ -924,6 +924,13 @@ end $$;
 do $$
 begin
   if exists (select 1 from information_schema.tables where table_name = 'community_chapters') then
+    drop policy if exists "public can view active chapters" on community_chapters;
+    drop policy if exists "authenticated can manage chapters" on community_chapters;
+    drop policy if exists "chapter ambassadors can update own chapters" on community_chapters;
+    drop policy if exists "public can read chapters" on community_chapters;
+    drop policy if exists "admins can insert chapters" on community_chapters;
+    drop policy if exists "ambassadors can update own chapter" on community_chapters;
+    drop policy if exists "admins can delete chapters" on community_chapters;
     create policy "public can read chapters" on community_chapters for select using (true);
     create policy "admins can insert chapters" on community_chapters for insert with check (public.is_admin());
     create policy "ambassadors can update own chapter" on community_chapters for update using (auth.uid() = ambassador_id or public.is_admin());
@@ -935,6 +942,10 @@ end $$;
 do $$
 begin
   if exists (select 1 from information_schema.tables where table_name = 'chapter_members') then
+    drop policy if exists "public can read chapter members" on chapter_members;
+    drop policy if exists "authenticated can join chapters" on chapter_members;
+    drop policy if exists "users can update own membership" on chapter_members;
+    drop policy if exists "users can leave chapters" on chapter_members;
     create policy "public can read chapter members" on chapter_members for select using (true);
     create policy "authenticated can join chapters" on chapter_members for insert with check (auth.uid() = user_id);
     create policy "users can update own membership" on chapter_members for update using (auth.uid() = user_id);
@@ -946,6 +957,10 @@ end $$;
 do $$
 begin
   if exists (select 1 from information_schema.tables where table_name = 'chapter_events') then
+    drop policy if exists "public can read chapter events" on chapter_events;
+    drop policy if exists "ambassadors can create events" on chapter_events;
+    drop policy if exists "event creators can update" on chapter_events;
+    drop policy if exists "admins can delete events" on chapter_events;
     create policy "public can read chapter events" on chapter_events for select using (true);
     create policy "ambassadors can create events" on chapter_events for insert with check (
       auth.uid() = created_by or 
@@ -960,6 +975,10 @@ end $$;
 do $$
 begin
   if exists (select 1 from information_schema.tables where table_name = 'event_registrations') then
+    drop policy if exists "authenticated can read own registrations" on event_registrations;
+    drop policy if exists "authenticated can register" on event_registrations;
+    drop policy if exists "users can update own registration" on event_registrations;
+    drop policy if exists "users can cancel registration" on event_registrations;
     create policy "authenticated can read own registrations" on event_registrations for select using (auth.uid() = user_id);
     create policy "authenticated can register" on event_registrations for insert with check (auth.uid() = user_id);
     create policy "users can update own registration" on event_registrations for update using (auth.uid() = user_id);
@@ -971,6 +990,12 @@ end $$;
 do $$
 begin
   if exists (select 1 from information_schema.tables where table_name = 'community_events') then
+    drop policy if exists "public can view events" on community_events;
+    drop policy if exists "authenticated can insert events" on community_events;
+    drop policy if exists "public can read community events" on community_events;
+    drop policy if exists "authenticated can create events" on community_events;
+    drop policy if exists "organizers can update events" on community_events;
+    drop policy if exists "admins can delete events" on community_events;
     create policy "public can read community events" on community_events for select using (true);
     create policy "authenticated can create events" on community_events for insert with check (auth.uid() = organizer_id);
     create policy "organizers can update events" on community_events for update using (auth.uid() = organizer_id or public.is_admin());
@@ -982,6 +1007,14 @@ end $$;
 do $$
 begin
   if exists (select 1 from information_schema.tables where table_name = 'community_ambassadors') then
+    drop policy if exists "public can view approved ambassadors" on community_ambassadors;
+    drop policy if exists "users can manage own ambassador profile" on community_ambassadors;
+    drop policy if exists "users can view own ambassador applications" on community_ambassadors;
+    drop policy if exists "users can insert own ambassador applications" on community_ambassadors;
+    drop policy if exists "users can update own ambassador profile" on community_ambassadors;
+    drop policy if exists "public can read ambassadors" on community_ambassadors;
+    drop policy if exists "authenticated can apply" on community_ambassadors;
+    drop policy if exists "admins can manage ambassadors" on community_ambassadors;
     create policy "public can read ambassadors" on community_ambassadors for select using (true);
     create policy "authenticated can apply" on community_ambassadors for insert with check (auth.uid() = user_id);
     create policy "admins can manage ambassadors" on community_ambassadors for all using (public.is_admin()) with check (public.is_admin());
@@ -992,6 +1025,8 @@ end $$;
 do $$
 begin
   if exists (select 1 from information_schema.tables where table_name = 'community_badges') then
+    drop policy if exists "public can read badges" on community_badges;
+    drop policy if exists "admins can manage badges" on community_badges;
     create policy "public can read badges" on community_badges for select using (true);
     create policy "admins can manage badges" on community_badges for all using (public.is_admin()) with check (public.is_admin());
   end if;
@@ -1001,6 +1036,9 @@ end $$;
 do $$
 begin
   if exists (select 1 from information_schema.tables where table_name = 'user_badges') then
+    drop policy if exists "public can read user badges" on user_badges;
+    drop policy if exists "system can award badges" on user_badges;
+    drop policy if exists "admins can manage user badges" on user_badges;
     create policy "public can read user badges" on user_badges for select using (true);
     create policy "system can award badges" on user_badges for insert with check (public.is_admin());
     create policy "admins can manage user badges" on user_badges for all using (public.is_admin()) with check (public.is_admin());
@@ -1011,6 +1049,9 @@ end $$;
 do $$
 begin
   if exists (select 1 from information_schema.tables where table_name = 'community_leaderboard') then
+    drop policy if exists "public can view leaderboard" on community_leaderboard;
+    drop policy if exists "public can read leaderboard" on community_leaderboard;
+    drop policy if exists "system can update leaderboard" on community_leaderboard;
     create policy "public can read leaderboard" on community_leaderboard for select using (true);
     create policy "system can update leaderboard" on community_leaderboard for all using (public.is_admin()) with check (public.is_admin());
   end if;
@@ -1020,6 +1061,12 @@ end $$;
 do $$
 begin
   if exists (select 1 from information_schema.tables where table_name = 'community_collaborations') then
+    drop policy if exists "public can view public collaborations" on community_collaborations;
+    drop policy if exists "creators can manage collaborations" on community_collaborations;
+    drop policy if exists "public can read collaborations" on community_collaborations;
+    drop policy if exists "authenticated can create collaborations" on community_collaborations;
+    drop policy if exists "creators can update collaborations" on community_collaborations;
+    drop policy if exists "creators can delete collaborations" on community_collaborations;
     create policy "public can read collaborations" on community_collaborations for select using (true);
     create policy "authenticated can create collaborations" on community_collaborations for insert with check (auth.uid() = created_by);
     create policy "creators can update collaborations" on community_collaborations for update using (auth.uid() = created_by);
@@ -1031,6 +1078,10 @@ end $$;
 do $$
 begin
   if exists (select 1 from information_schema.tables where table_name = 'collaboration_applications') then
+    drop policy if exists "authenticated can read own applications" on collaboration_applications;
+    drop policy if exists "creators can read applications" on collaboration_applications;
+    drop policy if exists "authenticated can apply" on collaboration_applications;
+    drop policy if exists "creators can manage applications" on collaboration_applications;
     create policy "authenticated can read own applications" on collaboration_applications for select using (auth.uid() = user_id);
     create policy "creators can read applications" on collaboration_applications for select using (
       auth.uid() = user_id or 
@@ -1047,6 +1098,12 @@ end $$;
 do $$
 begin
   if exists (select 1 from information_schema.tables where table_name = 'community_gallery') then
+    drop policy if exists "public can view gallery" on community_gallery;
+    drop policy if exists "users can insert gallery items" on community_gallery;
+    drop policy if exists "public can read gallery" on community_gallery;
+    drop policy if exists "authenticated can upload" on community_gallery;
+    drop policy if exists "uploaders can update" on community_gallery;
+    drop policy if exists "uploaders can delete" on community_gallery;
     create policy "public can read gallery" on community_gallery for select using (true);
     create policy "authenticated can upload" on community_gallery for insert with check (auth.uid() = uploaded_by);
     create policy "uploaders can update" on community_gallery for update using (auth.uid() = uploaded_by or public.is_admin());
@@ -1058,6 +1115,9 @@ end $$;
 do $$
 begin
   if exists (select 1 from information_schema.tables where table_name = 'gallery_likes') then
+    drop policy if exists "public can read likes" on gallery_likes;
+    drop policy if exists "authenticated can like" on gallery_likes;
+    drop policy if exists "users can unlike" on gallery_likes;
     create policy "public can read likes" on gallery_likes for select using (true);
     create policy "authenticated can like" on gallery_likes for insert with check (auth.uid() = user_id);
     create policy "users can unlike" on gallery_likes for delete using (auth.uid() = user_id);
@@ -1068,6 +1128,9 @@ end $$;
 do $$
 begin
   if exists (select 1 from information_schema.tables where table_name = 'community_feed') then
+    drop policy if exists "public can read feed" on community_feed;
+    drop policy if exists "system can create feed" on community_feed;
+    drop policy if exists "admins can manage feed" on community_feed;
     create policy "public can read feed" on community_feed for select using (true);
     create policy "system can create feed" on community_feed for insert with check (public.is_admin());
     create policy "admins can manage feed" on community_feed for all using (public.is_admin()) with check (public.is_admin());
@@ -1078,6 +1141,9 @@ end $$;
 do $$
 begin
   if exists (select 1 from information_schema.tables where table_name = 'feed_interactions') then
+    drop policy if exists "public can read interactions" on feed_interactions;
+    drop policy if exists "authenticated can interact" on feed_interactions;
+    drop policy if exists "users can remove interactions" on feed_interactions;
     create policy "public can read interactions" on feed_interactions for select using (true);
     create policy "authenticated can interact" on feed_interactions for insert with check (auth.uid() = user_id);
     create policy "users can remove interactions" on feed_interactions for delete using (auth.uid() = user_id);
@@ -1085,31 +1151,74 @@ begin
 end $$;
 
 -- Feed Comments policies
-create policy "public can read comments" on feed_comments for select using (true);
-create policy "authenticated can comment" on feed_comments for insert with check (auth.uid() = user_id);
-create policy "users can update own comments" on feed_comments for update using (auth.uid() = user_id);
-create policy "users can delete own comments" on feed_comments for delete using (auth.uid() = user_id);
+do $$
+begin
+  if exists (select 1 from information_schema.tables where table_name = 'feed_comments') then
+    drop policy if exists "public can read comments" on feed_comments;
+    drop policy if exists "authenticated can comment" on feed_comments;
+    drop policy if exists "users can update own comments" on feed_comments;
+    drop policy if exists "users can delete own comments" on feed_comments;
+    create policy "public can read comments" on feed_comments for select using (true);
+    create policy "authenticated can comment" on feed_comments for insert with check (auth.uid() = user_id);
+    create policy "users can update own comments" on feed_comments for update using (auth.uid() = user_id);
+    create policy "users can delete own comments" on feed_comments for delete using (auth.uid() = user_id);
+  end if;
+end $$;
 
 -- Statistics policies
-create policy "public can read statistics" on community_statistics for select using (true);
-create policy "system can update statistics" on community_statistics for all using (public.is_admin()) with check (public.is_admin());
+do $$
+begin
+  if exists (select 1 from information_schema.tables where table_name = 'community_statistics') then
+    drop policy if exists "public can read statistics" on community_statistics;
+    drop policy if exists "system can update statistics" on community_statistics;
+    create policy "public can read statistics" on community_statistics for select using (true);
+    create policy "system can update statistics" on community_statistics for all using (public.is_admin()) with check (public.is_admin());
+  end if;
+end $$;
 
 -- Discord Integration policies
-create policy "users can read own discord" on discord_integration for select using (auth.uid() = user_id);
-create policy "authenticated can link discord" on discord_integration for insert with check (auth.uid() = user_id);
-create policy "users can update own discord" on discord_integration for update using (auth.uid() = user_id);
-create policy "users can unlink discord" on discord_integration for delete using (auth.uid() = user_id);
+do $$
+begin
+  if exists (select 1 from information_schema.tables where table_name = 'discord_integration') then
+    drop policy if exists "users can read own discord" on discord_integration;
+    drop policy if exists "authenticated can link discord" on discord_integration;
+    drop policy if exists "users can update own discord" on discord_integration;
+    drop policy if exists "users can unlink discord" on discord_integration;
+    create policy "users can read own discord" on discord_integration for select using (auth.uid() = user_id);
+    create policy "authenticated can link discord" on discord_integration for insert with check (auth.uid() = user_id);
+    create policy "users can update own discord" on discord_integration for update using (auth.uid() = user_id);
+    create policy "users can unlink discord" on discord_integration for delete using (auth.uid() = user_id);
+  end if;
+end $$;
 
 -- Notifications policies
-create policy "users can read own notifications" on community_notifications for select using (auth.uid() = user_id);
-create policy "system can create notifications" on community_notifications for insert with check (public.is_admin());
-create policy "users can update own notifications" on community_notifications for update using (auth.uid() = user_id);
-create policy "users can delete own notifications" on community_notifications for delete using (auth.uid() = user_id);
+do $$
+begin
+  if exists (select 1 from information_schema.tables where table_name = 'community_notifications') then
+    drop policy if exists "users can view own notifications" on community_notifications;
+    drop policy if exists "users can read own notifications" on community_notifications;
+    drop policy if exists "system can create notifications" on community_notifications;
+    drop policy if exists "users can update own notifications" on community_notifications;
+    drop policy if exists "users can delete own notifications" on community_notifications;
+    create policy "users can read own notifications" on community_notifications for select using (auth.uid() = user_id);
+    create policy "system can create notifications" on community_notifications for insert with check (public.is_admin());
+    create policy "users can update own notifications" on community_notifications for update using (auth.uid() = user_id);
+    create policy "users can delete own notifications" on community_notifications for delete using (auth.uid() = user_id);
+  end if;
+end $$;
 
 -- Followers policies
-create policy "public can read followers" on community_followers for select using (true);
-create policy "authenticated can follow" on community_followers for insert with check (auth.uid() = follower_id);
-create policy "users can unfollow" on community_followers for delete using (auth.uid() = follower_id);
+do $$
+begin
+  if exists (select 1 from information_schema.tables where table_name = 'community_followers') then
+    drop policy if exists "public can read followers" on community_followers;
+    drop policy if exists "authenticated can follow" on community_followers;
+    drop policy if exists "users can unfollow" on community_followers;
+    create policy "public can read followers" on community_followers for select using (true);
+    create policy "authenticated can follow" on community_followers for insert with check (auth.uid() = follower_id);
+    create policy "users can unfollow" on community_followers for delete using (auth.uid() = follower_id);
+  end if;
+end $$;
 
 -- ============================================
 -- VIEWS
@@ -1179,24 +1288,31 @@ end;
 $$ language plpgsql;
 
 -- Apply updated_at triggers
+drop trigger if exists update_community_chapters_updated_at on community_chapters;
 create trigger update_community_chapters_updated_at before update on community_chapters
   for each row execute function update_updated_at_column();
 
+drop trigger if exists update_chapter_events_updated_at on chapter_events;
 create trigger update_chapter_events_updated_at before update on chapter_events
   for each row execute function update_updated_at_column();
 
+drop trigger if exists update_community_events_updated_at on community_events;
 create trigger update_community_events_updated_at before update on community_events
   for each row execute function update_updated_at_column();
 
+drop trigger if exists update_community_ambassadors_updated_at on community_ambassadors;
 create trigger update_community_ambassadors_updated_at before update on community_ambassadors
   for each row execute function update_updated_at_column();
 
+drop trigger if exists update_community_collaborations_updated_at on community_collaborations;
 create trigger update_community_collaborations_updated_at before update on community_collaborations
   for each row execute function update_updated_at_column();
 
+drop trigger if exists update_feed_comments_updated_at on feed_comments;
 create trigger update_feed_comments_updated_at before update on feed_comments
   for each row execute function update_updated_at_column();
 
+drop trigger if exists update_discord_integration_updated_at on discord_integration;
 create trigger update_discord_integration_updated_at before update on discord_integration
   for each row execute function update_updated_at_column();
 
@@ -1213,6 +1329,7 @@ begin
 end;
 $$ language plpgsql;
 
+drop trigger if exists update_chapter_member_count_trigger on chapter_members;
 create trigger update_chapter_member_count_trigger after insert or delete on chapter_members
   for each row execute function update_chapter_member_count();
 
@@ -1229,6 +1346,7 @@ begin
 end;
 $$ language plpgsql;
 
+drop trigger if exists update_gallery_likes_count_trigger on gallery_likes;
 create trigger update_gallery_likes_count_trigger after insert or delete on gallery_likes
   for each row execute function update_gallery_likes_count();
 

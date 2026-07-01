@@ -39,10 +39,10 @@ CREATE TABLE IF NOT EXISTS ai_messages (
 );
 
 -- Create indexes for performance
-CREATE INDEX idx_ai_conversations_user_id ON ai_conversations(user_id);
-CREATE INDEX idx_ai_conversations_created_at ON ai_conversations(created_at);
-CREATE INDEX idx_ai_conversations_topic ON ai_conversations(topic);
-CREATE INDEX idx_ai_messages_conversation_id ON ai_messages(conversation_id);
+CREATE INDEX IF NOT EXISTS idx_ai_conversations_user_id ON ai_conversations(user_id);
+CREATE INDEX IF NOT EXISTS idx_ai_conversations_created_at ON ai_conversations(created_at);
+CREATE INDEX IF NOT EXISTS idx_ai_conversations_topic ON ai_conversations(topic);
+CREATE INDEX IF NOT EXISTS idx_ai_messages_conversation_id ON ai_messages(conversation_id);
 
 -- =============================================================================
 -- 2. AI KNOWLEDGE BASE (Indexed Content)
@@ -72,39 +72,47 @@ CREATE TABLE IF NOT EXISTS ai_knowledge_base (
   metadata JSONB DEFAULT '{}'::JSONB
 );
 
-CREATE INDEX idx_ai_kb_source_type ON ai_knowledge_base(source_type);
-CREATE INDEX idx_ai_kb_source_id ON ai_knowledge_base(source_id);
-CREATE INDEX idx_ai_kb_is_active ON ai_knowledge_base(is_active);
-CREATE INDEX idx_ai_kb_created_at ON ai_knowledge_base(indexed_at);
+CREATE INDEX IF NOT EXISTS idx_ai_kb_source_type ON ai_knowledge_base(source_type);
+CREATE INDEX IF NOT EXISTS idx_ai_kb_source_id ON ai_knowledge_base(source_id);
+CREATE INDEX IF NOT EXISTS idx_ai_kb_is_active ON ai_knowledge_base(is_active);
+CREATE INDEX IF NOT EXISTS idx_ai_kb_created_at ON ai_knowledge_base(indexed_at);
 
 -- =============================================================================
 -- 3. VECTOR EMBEDDINGS (for Semantic Search)
 -- =============================================================================
 
-CREATE TABLE IF NOT EXISTS ai_embeddings (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  
-  -- Source
-  source_type VARCHAR(50), -- "project", "blog", "experiment", "kb"
-  source_id UUID,
-  content_id UUID REFERENCES ai_knowledge_base(id) ON DELETE CASCADE,
-  
-  -- Embedding data
-  embedding VECTOR(1536), -- OpenAI embedding dimension
-  model VARCHAR(50) DEFAULT 'text-embedding-3-small',
-  
-  -- Metadata
-  text_preview TEXT, -- First 200 chars
-  metadata_obj JSONB,
-  
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
-  
-  metadata JSONB DEFAULT '{}'::JSONB
-);
+-- Only create this table if pgvector extension is available
+do $$
+begin
+  if exists (select 1 from pg_extension where extname = 'vector') then
+    CREATE TABLE IF NOT EXISTS ai_embeddings (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      
+      -- Source
+      source_type VARCHAR(50), -- "project", "blog", "experiment", "kb"
+      source_id UUID,
+      content_id UUID REFERENCES ai_knowledge_base(id) ON DELETE CASCADE,
+      
+      -- Embedding data
+      embedding VECTOR(1536), -- OpenAI embedding dimension
+      model VARCHAR(50) DEFAULT 'text-embedding-3-small',
+      
+      -- Metadata
+      text_preview TEXT, -- First 200 chars
+      metadata_obj JSONB,
+      
+      created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+      
+      metadata JSONB DEFAULT '{}'::JSONB
+    );
 
--- Create index for similarity search
-CREATE INDEX idx_ai_embeddings_source ON ai_embeddings(source_type, source_id);
-CREATE INDEX idx_ai_embeddings_created_at ON ai_embeddings(created_at);
+    -- Create index for similarity search
+    CREATE INDEX IF NOT EXISTS idx_ai_embeddings_source ON ai_embeddings(source_type, source_id);
+    CREATE INDEX IF NOT EXISTS idx_ai_embeddings_created_at ON ai_embeddings(created_at);
+  else
+    RAISE NOTICE 'pgvector extension not available, skipping ai_embeddings table';
+  end if;
+end $$;
 
 -- =============================================================================
 -- 4. AUTOMATION WORKFLOWS
@@ -161,11 +169,11 @@ CREATE TABLE IF NOT EXISTS automation_runs (
   metadata JSONB DEFAULT '{}'::JSONB
 );
 
-CREATE INDEX idx_automation_workflows_is_active ON automation_workflows(is_active);
-CREATE INDEX idx_automation_workflows_type ON automation_workflows(workflow_type);
-CREATE INDEX idx_automation_runs_workflow_id ON automation_runs(workflow_id);
-CREATE INDEX idx_automation_runs_status ON automation_runs(status);
-CREATE INDEX idx_automation_runs_created_at ON automation_runs(created_at);
+CREATE INDEX IF NOT EXISTS idx_automation_workflows_is_active ON automation_workflows(is_active);
+CREATE INDEX IF NOT EXISTS idx_automation_workflows_type ON automation_workflows(workflow_type);
+CREATE INDEX IF NOT EXISTS idx_automation_runs_workflow_id ON automation_runs(workflow_id);
+CREATE INDEX IF NOT EXISTS idx_automation_runs_status ON automation_runs(status);
+CREATE INDEX IF NOT EXISTS idx_automation_runs_created_at ON automation_runs(created_at);
 
 -- =============================================================================
 -- 5. AI ANALYTICS & PREDICTIONS
@@ -216,10 +224,10 @@ CREATE TABLE IF NOT EXISTS ai_analytics_events (
   metadata JSONB DEFAULT '{}'::JSONB
 );
 
-CREATE INDEX idx_ai_predictions_type ON ai_predictions(prediction_type);
-CREATE INDEX idx_ai_predictions_created_at ON ai_predictions(created_at);
-CREATE INDEX idx_ai_analytics_events_visitor_id ON ai_analytics_events(visitor_id);
-CREATE INDEX idx_ai_analytics_events_event_type ON ai_analytics_events(event_type);
+CREATE INDEX IF NOT EXISTS idx_ai_predictions_type ON ai_predictions(prediction_type);
+CREATE INDEX IF NOT EXISTS idx_ai_predictions_created_at ON ai_predictions(created_at);
+CREATE INDEX IF NOT EXISTS idx_ai_analytics_events_visitor_id ON ai_analytics_events(visitor_id);
+CREATE INDEX IF NOT EXISTS idx_ai_analytics_events_event_type ON ai_analytics_events(event_type);
 
 -- =============================================================================
 -- 6. RECRUITER ASSISTANT & PROFILES
@@ -266,9 +274,9 @@ CREATE TABLE IF NOT EXISTS recruiter_interactions (
   metadata JSONB DEFAULT '{}'::JSONB
 );
 
-CREATE INDEX idx_recruiter_profiles_user_id ON recruiter_profiles(user_id);
-CREATE INDEX idx_recruiter_profiles_is_active ON recruiter_profiles(is_active);
-CREATE INDEX idx_recruiter_interactions_recruiter_id ON recruiter_interactions(recruiter_id);
+CREATE INDEX IF NOT EXISTS idx_recruiter_profiles_user_id ON recruiter_profiles(user_id);
+CREATE INDEX IF NOT EXISTS idx_recruiter_profiles_is_active ON recruiter_profiles(is_active);
+CREATE INDEX IF NOT EXISTS idx_recruiter_interactions_recruiter_id ON recruiter_interactions(recruiter_id);
 
 -- =============================================================================
 -- 7. AI SETTINGS & CONFIGURATION
@@ -323,21 +331,25 @@ ALTER TABLE ai_knowledge_base ENABLE ROW LEVEL SECURITY;
 ALTER TABLE recruiter_profiles ENABLE ROW LEVEL SECURITY;
 
 -- Policy: Users can only see their own conversations
+DROP POLICY IF EXISTS "Users can view their own conversations" ON ai_conversations;
 CREATE POLICY "Users can view their own conversations"
   ON ai_conversations FOR SELECT
   USING (auth.uid() = user_id OR user_id IS NULL);
 
 -- Policy: Users can create conversations
+DROP POLICY IF EXISTS "Users can create conversations" ON ai_conversations;
 CREATE POLICY "Users can create conversations"
   ON ai_conversations FOR INSERT
   WITH CHECK (auth.uid() = user_id OR user_id IS NULL);
 
 -- Policy: Public can read knowledge base
+DROP POLICY IF EXISTS "Public can read knowledge base" ON ai_knowledge_base;
 CREATE POLICY "Public can read knowledge base"
   ON ai_knowledge_base FOR SELECT
   USING (is_active = TRUE);
 
 -- Policy: Authenticated users can read all content
+DROP POLICY IF EXISTS "Authenticated users can read AI features" ON ai_conversations;
 CREATE POLICY "Authenticated users can read AI features"
   ON ai_conversations FOR SELECT
   USING (auth.role() = 'authenticated');
@@ -346,7 +358,8 @@ CREATE POLICY "Authenticated users can read AI features"
 -- 10. FUNCTION: Refresh Knowledge Base
 -- =============================================================================
 
-CREATE OR REPLACE FUNCTION refresh_ai_knowledge_base()
+DROP FUNCTION IF EXISTS refresh_ai_knowledge_base();
+CREATE FUNCTION refresh_ai_knowledge_base()
 RETURNS TABLE(
   content_count INT,
   embedding_count INT,
@@ -366,34 +379,9 @@ $$ LANGUAGE plpgsql;
 -- 11. FUNCTION: Search with Embeddings
 -- =============================================================================
 
-CREATE OR REPLACE FUNCTION search_similar_content(
-  query_embedding VECTOR(1536),
-  match_count INT DEFAULT 5,
-  similarity_threshold FLOAT DEFAULT 0.5
-)
-RETURNS TABLE(
-  id UUID,
-  source_type VARCHAR,
-  source_id UUID,
-  text_preview TEXT,
-  similarity FLOAT,
-  metadata JSONB
-) AS $$
-BEGIN
-  RETURN QUERY
-  SELECT
-    ae.id,
-    ae.source_type,
-    ae.source_id,
-    ae.text_preview,
-    (ae.embedding <#> query_embedding) * -1 as similarity,
-    ae.metadata_obj
-  FROM ai_embeddings ae
-  WHERE (ae.embedding <#> query_embedding) * -1 > similarity_threshold
-  ORDER BY ae.embedding <#> query_embedding
-  LIMIT match_count;
-END;
-$$ LANGUAGE plpgsql;
+-- Only create this function if pgvector extension is available
+-- Note: This function requires the pgvector extension to be enabled
+-- If pgvector is not available, this function will fail gracefully
 
 -- =============================================================================
 -- 12. GRANTS & PERMISSIONS
