@@ -2,14 +2,27 @@ import { Container } from '@/components/layout/Container';
 import { Footer } from '@/components/layout/Footer';
 import { Globe, Users, MessageSquare, MapPin, Search } from 'lucide-react';
 import Link from 'next/link';
+import { headers } from 'next/headers';
 
 export const dynamic = 'force-dynamic';
+
+async function getApiUrl(path: string) {
+  const configuredBaseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_APP_URL;
+  if (configuredBaseUrl?.trim()) {
+    return `${configuredBaseUrl.replace(/\/$/, '')}${path}`;
+  }
+
+  const headerStore = await headers();
+  const protocol = headerStore.get('x-forwarded-proto') || 'http';
+  const host = headerStore.get('x-forwarded-host') || headerStore.get('host') || 'localhost:3000';
+  return `${protocol}://${host}${path}`;
+}
 
 export default async function GlobalCommunityPage() {
   let chapters: any[] = [];
 
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || ''}/api/community/chapters`, {
+    const res = await fetch(await getApiUrl('/api/community/chapters'), {
       cache: 'no-store',
     });
     const json = await res.json().catch(() => ({ data: [] }));
@@ -109,9 +122,12 @@ export default async function GlobalCommunityPage() {
                   Lead the movement in your region. Axiora Ambassadors are the pillars of our global
                   community, organizing meetups and driving local innovation.
                 </p>
-                <button className="rounded-2xl bg-foreground px-8 py-4 font-heading font-bold text-background transition hover:scale-105">
+                <Link
+                  href="/community#ambassadors"
+                  className="inline-flex rounded-2xl bg-foreground px-8 py-4 font-heading font-bold text-background transition hover:scale-105"
+                >
                   Apply Now
-                </button>
+                </Link>
               </div>
             </section>
           </div>
@@ -122,11 +138,11 @@ export default async function GlobalCommunityPage() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-muted">Regional Chapters</span>
-                  <span className="font-heading font-bold text-foreground">Coming Soon</span>
+                  <span className="font-heading font-bold text-foreground">Live</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-muted">Local Events</span>
-                  <span className="font-heading font-bold text-foreground">Coming Soon</span>
+                  <span className="font-heading font-bold text-foreground">Live</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-muted">Project Collaboration</span>

@@ -2,7 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseServer } from '@/lib/supabase/server';
 import { checkRateLimit } from '@/lib/rate-limiting';
 import { sanitizeText } from '@/lib/utils/sanitize';
-import { createAuthenticatedSupabaseClient, getUserTokenFromRequest, getUserRefreshTokenFromRequest } from '@/lib/auth/auth';
+import {
+  createAuthenticatedSupabaseClient,
+  getUserTokenFromRequest,
+  getUserRefreshTokenFromRequest,
+} from '@/lib/auth/auth';
 import { logger } from '@/lib/logger';
 
 export async function GET(request: NextRequest) {
@@ -20,7 +24,32 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Rate limit exceeded' }, { status: 429 });
     }
 
-    let query = supabaseServer.from('community_posts').select('id,title,slug,content,category,tags,views,upvotes,created_at,updated_at').order('created_at', { ascending: false }).range(offset, offset + limit - 1);
+    let query = supabaseServer
+      .from('community_posts')
+      .select(
+        `
+        id,
+        user_id,
+        title,
+        slug,
+        content,
+        category,
+        tags,
+        views,
+        upvotes,
+        created_at,
+        updated_at,
+        profiles:user_id (
+          username,
+          full_name,
+          avatar_url
+        ),
+        community_replies ( id ),
+        community_votes ( id )
+      `
+      )
+      .order('created_at', { ascending: false })
+      .range(offset, offset + limit - 1);
 
     if (category) query = query.eq('category', category);
     if (q) query = query.ilike('title', `%${q}%`);
@@ -32,7 +61,20 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Failed to load posts' }, { status: 500 });
     }
 
-    return NextResponse.json({ success: true, posts: data || [] }, { status: 200 });
+    const posts = (data || []).map((post) => {
+      const profile = Array.isArray(post.profiles) ? post.profiles[0] : post.profiles;
+      return {
+        ...post,
+        author: profile || null,
+        comments_count: post.community_replies?.length || 0,
+        likes_count: post.community_votes?.length || post.upvotes || 0,
+        bookmarks_count: 0,
+        community_replies: undefined,
+        community_votes: undefined,
+      };
+    });
+
+    return NextResponse.json({ success: true, posts }, { status: 200 });
   } catch (err) {
     logger.error('GET /api/community error', err);
     return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
@@ -43,7 +85,9 @@ export async function POST(request: NextRequest) {
   try {
     const token = getUserTokenFromRequest(request);
     const refreshToken = getUserRefreshTokenFromRequest(request);
-    const supabase = token ? await createAuthenticatedSupabaseClient(token, refreshToken || undefined) : null;
+    const supabase = token
+      ? await createAuthenticatedSupabaseClient(token, refreshToken || undefined)
+      : null;
     if (!supabase) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
@@ -65,13 +109,22 @@ export async function POST(request: NextRequest) {
     const title = sanitizeText(body.title);
     const content = sanitizeText(body.content);
     const category = sanitizeText(body.category || 'discussion');
-    const tags = Array.isArray(body.tags) ? body.tags.map((t: any) => sanitizeText(t)).filter(Boolean) : [];
+    const tags = Array.isArray(body.tags)
+      ? body.tags.map((t: any) => sanitizeText(t)).filter(Boolean)
+      : [];
 
     if (!title || !content) {
-      return NextResponse.json({ success: false, error: 'Missing title or content' }, { status: 400 });
+      return NextResponse.json(
+        { success: false, error: 'Missing title or content' },
+        { status: 400 }
+      );
     }
 
-    const slugBase = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '').slice(0, 160);
+    const slugBase = title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '')
+      .slice(0, 160);
     const slug = `${slugBase}-${Date.now().toString(36).slice(-6)}`;
 
     const { data, error } = await supabase

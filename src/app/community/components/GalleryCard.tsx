@@ -1,8 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Heart, Calendar, MapPin } from 'lucide-react';
-import Image from 'next/image';
+import { Heart } from 'lucide-react';
 import Link from 'next/link';
 
 interface GalleryCardProps {
@@ -17,14 +16,6 @@ interface GalleryCardProps {
       username: string;
       avatar_url?: string;
       full_name?: string;
-    };
-    community_events?: {
-      title: string;
-      event_type: string;
-    };
-    community_chapters?: {
-      name: string;
-      city: string;
     };
   };
 }
@@ -54,9 +45,11 @@ export function GalleryCard({ item }: GalleryCardProps) {
               className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
-            
+
             <div className="absolute top-3 left-3">
-              <span className={`inline-flex items-center rounded-full bg-surface/90 px-3 py-1 text-xs font-semibold backdrop-blur-sm ${categoryColors[item.category as keyof typeof categoryColors] || categoryColors.meetup}`}>
+              <span
+                className={`inline-flex items-center rounded-full bg-surface/90 px-3 py-1 text-xs font-semibold backdrop-blur-sm ${categoryColors[item.category as keyof typeof categoryColors] || categoryColors.meetup}`}
+              >
                 {item.category}
               </span>
             </div>
@@ -87,19 +80,6 @@ export function GalleryCard({ item }: GalleryCardProps) {
                 <span>{item.likes_count}</span>
               </div>
             </div>
-
-            {item.community_events && (
-              <div className="flex items-center gap-1 text-xs text-muted">
-                <Calendar className="h-3 w-3" />
-                <span className="line-clamp-1">{item.community_events.title}</span>
-              </div>
-            )}
-            {item.community_chapters && (
-              <div className="flex items-center gap-1 text-xs text-muted">
-                <MapPin className="h-3 w-3" />
-                <span className="line-clamp-1">{item.community_chapters.name}, {item.community_chapters.city}</span>
-              </div>
-            )}
           </div>
         </div>
       </Link>
