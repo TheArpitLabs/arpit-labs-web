@@ -12,6 +12,14 @@ import {
   ExternalLink,
   ArrowRight,
 } from 'lucide-react';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { ChallengeSubmissionForm, IncubationApplicationForm } from './InnovationForms';
 
 async function apiUrl(path: string) {
@@ -94,10 +102,10 @@ export default async function InnovationHubPage() {
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               {metricCards.map(([label, value]) => (
-                <div key={label} className="rounded-2xl border border-border/70 bg-card p-6">
+                <Card key={label} variant="elevated" className="p-6">
                   <p className="text-sm text-muted">{label}</p>
                   <p className="mt-2 text-3xl font-bold text-foreground">{value}</p>
-                </div>
+                </Card>
               ))}
             </div>
           </div>
@@ -115,42 +123,41 @@ export default async function InnovationHubPage() {
           {startups.length ? (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {startups.map((startup: any) => (
-                <article
-                  key={startup.id}
-                  className="flex flex-col rounded-2xl border border-border/70 bg-card p-6"
-                >
-                  <div className="relative mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-surface">
-                    {startup.logo_url ? (
-                      <Image
-                        src={startup.logo_url}
-                        alt={startup.name}
-                        fill
-                        className="object-contain"
-                        unoptimized
-                      />
-                    ) : (
-                      <Rocket className="text-primary" size={32} />
-                    )}
+                <Card key={startup.id} className="group overflow-hidden">
+                  <div className="relative overflow-hidden rounded-[1.75rem] bg-gradient-to-br from-primary/10 via-transparent to-secondary/10 p-6">
+                    <div className="relative mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-surface shadow-sm">
+                      {startup.logo_url ? (
+                        <Image
+                          src={startup.logo_url}
+                          alt={startup.name}
+                          fill
+                          className="object-contain"
+                          unoptimized
+                        />
+                      ) : (
+                        <Rocket className="text-primary" size={32} />
+                      )}
+                    </div>
                   </div>
-                  <div className="mb-3 flex gap-2">
-                    <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">
-                      {startup.stage}
-                    </span>
-                    {startup.featured ? (
-                      <span className="rounded-full bg-secondary/10 px-3 py-1 text-xs font-bold text-secondary">
-                        Featured
+                  <CardContent className="space-y-4">
+                    <div className="flex flex-wrap gap-2">
+                      <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">
+                        {startup.stage}
                       </span>
-                    ) : null}
-                  </div>
-                  <h3 className="text-2xl font-bold">{startup.name}</h3>
-                  <p className="mt-3 flex-1 text-sm leading-relaxed text-muted">
-                    {startup.description}
-                  </p>
-                  <div className="mt-6 flex items-center gap-4">
+                      {startup.featured ? (
+                        <span className="rounded-full bg-secondary/10 px-3 py-1 text-xs font-bold text-secondary">
+                          Featured
+                        </span>
+                      ) : null}
+                    </div>
+                    <CardTitle className="text-2xl">{startup.name}</CardTitle>
+                    <CardDescription>{startup.description}</CardDescription>
+                  </CardContent>
+                  <CardFooter className="justify-between gap-4 flex-wrap">
                     {startup.website_url ? (
                       <a
                         href={startup.website_url}
-                        className="text-sm font-bold text-primary hover:underline"
+                        className="text-sm font-semibold text-primary transition hover:text-primary/80"
                         target="_blank"
                         rel="noreferrer"
                       >
@@ -160,13 +167,13 @@ export default async function InnovationHubPage() {
                     {startup.slug ? (
                       <a
                         href={`/innovation/${startup.slug}`}
-                        className="text-sm text-muted hover:text-foreground"
+                        className="inline-flex items-center gap-1 text-sm font-semibold text-muted transition hover:text-foreground"
                       >
-                        Profile <ArrowRight className="inline h-4 w-4" />
+                        Profile <ArrowRight className="h-4 w-4" />
                       </a>
                     ) : null}
-                  </div>
-                </article>
+                  </CardFooter>
+                </Card>
               ))}
             </div>
           ) : (
@@ -184,10 +191,12 @@ export default async function InnovationHubPage() {
             </p>
             <div className="mt-6 space-y-4">
               {programs.map((program: any) => (
-                <div key={program.id} className="rounded-2xl border border-border/70 bg-card p-5">
-                  <h3 className="font-bold">{program.name}</h3>
-                  <p className="mt-2 text-sm text-muted">{program.description}</p>
-                </div>
+                <Card key={program.id} className="rounded-3xl">
+                  <CardHeader>
+                    <CardTitle className="text-xl">{program.name}</CardTitle>
+                    <CardDescription>{program.description}</CardDescription>
+                  </CardHeader>
+                </Card>
               ))}
             </div>
           </div>
@@ -198,17 +207,20 @@ export default async function InnovationHubPage() {
           <h2 className="text-4xl font-bold">Innovation Challenges</h2>
           <div className="grid gap-6 lg:grid-cols-3">
             {challenges.map((challenge: any) => (
-              <article
-                key={challenge.id}
-                className="rounded-2xl border border-border/70 bg-card p-6"
-              >
-                <Trophy className="mb-4 text-primary" />
-                <h3 className="text-xl font-bold">{challenge.title}</h3>
-                <p className="mt-2 text-sm text-muted">{challenge.description}</p>
-                <p className="mt-4 text-sm font-semibold">
-                  Deadline: {new Date(challenge.end_date).toLocaleDateString()}
-                </p>
-              </article>
+              <Card key={challenge.id} className="rounded-3xl">
+                <CardHeader className="flex items-center gap-3">
+                  <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                    <Trophy size={20} />
+                  </div>
+                  <CardTitle className="text-xl">{challenge.title}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <CardDescription>{challenge.description}</CardDescription>
+                  <p className="mt-4 text-sm font-semibold text-foreground">
+                    Deadline: {new Date(challenge.end_date).toLocaleDateString()}
+                  </p>
+                </CardContent>
+              </Card>
             ))}
           </div>
           <ChallengeSubmissionForm challenges={challenges} />
@@ -230,10 +242,14 @@ export default async function InnovationHubPage() {
                   href={resource.url}
                   target="_blank"
                   rel="noreferrer"
-                  className="rounded-2xl border border-border/70 bg-card p-6 hover:border-primary"
+                  className="group rounded-3xl border border-border/70 bg-card p-6 transition hover:border-primary hover:bg-surface"
                 >
-                  <Icon className="mb-4 text-primary" />
-                  <h3 className="font-bold">{resource.title}</h3>
+                  <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary transition group-hover:scale-105">
+                    <Icon size={20} />
+                  </div>
+                  <h3 className="font-bold text-foreground transition group-hover:text-primary">
+                    {resource.title}
+                  </h3>
                   <p className="mt-2 text-sm text-muted">{resource.description}</p>
                 </a>
               );
@@ -245,16 +261,18 @@ export default async function InnovationHubPage() {
           <h2 className="text-4xl font-bold">Success Stories</h2>
           <div className="grid gap-6 lg:grid-cols-2">
             {stories.map((story: any) => (
-              <article key={story.id} className="rounded-2xl border border-border/70 bg-card p-6">
-                <div className="mb-4 flex items-center gap-3 text-primary">
+              <Card key={story.id} className="rounded-3xl">
+                <CardHeader className="flex items-center gap-3 text-primary">
                   <Target size={20} />
                   <span className="text-sm font-bold">
                     {story.founder_name || story.startups?.name || 'Innovation Team'}
                   </span>
-                </div>
-                <h3 className="text-2xl font-bold">{story.title}</h3>
-                <p className="mt-3 text-muted">{story.excerpt || story.story}</p>
-              </article>
+                </CardHeader>
+                <CardContent>
+                  <CardTitle className="text-2xl">{story.title}</CardTitle>
+                  <CardDescription>{story.excerpt || story.story}</CardDescription>
+                </CardContent>
+              </Card>
             ))}
           </div>
         </section>
